@@ -1,0 +1,27 @@
+import Link from "next/link";
+import { Header } from "@/components/Header";
+import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
+import { getCity } from "@/data/cities";
+
+export const dynamic = "force-dynamic";
+
+export default function Success({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; email?: string; pending?: string } }) {
+  const t = getDict(params.locale);
+  const city = getCity(searchParams.city ?? "");
+  return (
+    <main className="app">
+      <Header locale={params.locale} />
+      <div className="stack">
+        {searchParams.pending ? (
+          <p className="note">{t.processing}</p>
+        ) : (
+          <>
+            <h1 style={{ fontSize: 30 }}>✓ {t.successTitle}</h1>
+            <p>{fmt(t.successSub, { email: searchParams.email ?? "" })}</p>
+            <Link className="btn tram" href={`/${params.locale}/tour/${city?.id ?? "lis"}`}>{t.openTour}</Link>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}

@@ -1,0 +1,37 @@
+{
+  "name": "self-guided-city-tour",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self Guided City Tour — roteiros autoguiados para passageiros em escala",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.2.17",
+    "drizzle-orm": "0.45.4",
+    "next": "14.2.35",
+    "next-auth": "4.24.15",
+    "pg": "8.23.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "stripe": "17.7.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/pg": "8.11.10",
+    "@types/react": "18.3.18",
+    "@types/react-dom": "18.3.5",
+    "drizzle-kit": "0.31.11",
+    "tsx": "4.19.2",
+    "typescript": "5.6.3"
+  }
+}
