@@ -33,4 +33,11 @@ test("pagamento regista acesso e comissão uma única vez", async () => {
   assert.equal(await findActiveAccess(["viajante@exemplo.com"], "par"), null); // acesso só de cidade
   const unpaid = { ...(session as object), id: "cs_x", payment_status: "unpaid" } as never;
   assert.equal(await fulfilTourSession(unpaid), null);
+
+  // Cliente paga em libras (Adaptive Pricing): regista-se o valor de origem em euros.
+  const gbp = { ...(session as object), id: "cs_test_gbp", amount_total: 438, currency: "gbp",
+    currency_conversion: { amount_subtotal: 499, amount_total: 499, fx_rate: "0.8778", source_currency: "eur" } } as never;
+  const a3 = await fulfilTourSession(gbp);
+  assert.equal(a3?.amountCents, 499);
+  assert.equal(a3?.currency, "eur");
 });
