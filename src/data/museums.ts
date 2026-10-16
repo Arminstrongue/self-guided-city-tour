@@ -82,6 +82,13 @@ export const MUSEUMS: Record<string, Museum[]> = {
     { id: "beatles-m", n: "The Beatles Story", lat: 53.3993, lng: -2.9922, price: 22, h: [[ALL, "10:00", "18:00"]], url: "https://www.beatlesstory.com", pt: "Mais barato online.", en: "Cheaper online." },
     { id: "walker", n: "Walker Art Gallery", lat: 53.4099, lng: -2.9796, price: 0, h: [[ALL, "10:00", "17:00"]], url: "https://www.liverpoolmuseums.org.uk", pt: "Gratuito, ao lado de St George's Hall.", en: "Free, next to St George's Hall." }
   ],
+  ist: [
+    { id: "ayasofya", n: "Santa Sofia (Ayasofya)", lat: 41.0086, lng: 28.9802, price: 1270, h: [[ALL, "08:00", "19:00"]], url: "https://muze.gov.tr", pt: "25 € para estrangeiros, só à porta. À sexta fecha ao meio-dia (oração), cerca das 12:00–14:30.", en: "€25 for foreigners, at the door only. On Fridays it closes around midday prayers (about 12:00–14:30)." },
+    { id: "topkapi-m", n: "Palácio de Topkapı (com Harém)", lat: 41.0115, lng: 28.9834, price: 2750, h: [[[0, 1, 3, 4, 5, 6], "09:00", "17:00"]], book: true, url: "https://muze.gov.tr", pt: "Fechado à terça. Reserve meio dia.", en: "Closed Tuesdays. Allow half a day." },
+    { id: "yerebatan", n: "Cisterna da Basílica", lat: 41.0084, lng: 28.9779, price: 1950, h: [[ALL, "09:00", "22:00"]], url: "https://yerebatan.com", pt: "Pausa diária por volta das 18:30–19:30; o horário noturno pode mudar.", en: "Daily break around 18:30–19:30; evening hours may change." },
+    { id: "galata-m", n: "Torre de Gálata", lat: 41.0256, lng: 28.9742, price: 1525, h: [[ALL, "08:30", "23:00"]], url: "https://muze.gov.tr", pt: "30 € para estrangeiros; pausa por volta das 17:45–19:00. Fila menor de manhã cedo.", en: "€30 for foreigners; break around 17:45–19:00. Shorter queues early morning." },
+    { id: "dolmabahce", n: "Palácio de Dolmabahçe", lat: 41.0391, lng: 29.0001, price: 2000, h: [[[0, 2, 3, 4, 5, 6], "09:00", "17:00"]], url: "https://www.millisaraylar.gov.tr", pt: "Fechado à segunda. Perto de Taksim, à beira do Bósforo.", en: "Closed Mondays. Near Taksim, on the Bosphorus." }
+  ],
   bir: [
     { id: "thinktank", n: "Thinktank Science Museum", lat: 52.4826, lng: -1.8862, price: 16, h: [[ALL, "10:00", "17:00"]], url: "https://www.birminghammuseums.org.uk", pt: "Museu de ciência interativo em Eastside.", en: "Hands-on science museum in Eastside." },
     { id: "barber", n: "Barber Institute of Fine Arts", lat: 52.4508, lng: -1.9293, price: 0, h: [[[1, 2, 3, 4, 5], "10:00", "17:00"], [[0, 6], "11:00", "17:00"]], url: "https://barber.org.uk", pt: "Gratuito: Monet, Van Gogh e Rubens na universidade.", en: "Free: Monet, Van Gogh and Rubens at the university." },

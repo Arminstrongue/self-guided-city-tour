@@ -76,7 +76,7 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 
 ## Cidades
 
-13 cidades: Lisboa, Porto, Madrid, Barcelona, Paris, Londres, Roma, Amesterdão, Edimburgo, Manchester, Glasgow, Liverpool e Birmingham. Tarifas do Reino Unido confirmadas em outubro de 2026 (Airlink 100 £6; Glasgow Airport Express £11 e Subway £1,85 / dia £4,45; autocarro de Liverpool £2; comboios de aeroporto de Manchester e Birmingham ~£5–5,60). Rever todos os anos.
+14 cidades: Lisboa, Porto, Madrid, Barcelona, Paris, Londres, Roma, Amesterdão, Edimburgo, Manchester, Glasgow, Liverpool, Birmingham e Istambul (liras turcas; Istanbulkart 42 TL por viagem e M11 até Gayrettepe 42,34 TL, tarifas de fevereiro de 2026). Tarifas do Reino Unido confirmadas em outubro de 2026 (Airlink 100 £6; Glasgow Airport Express £11 e Subway £1,85 / dia £4,45; autocarro de Liverpool £2; comboios de aeroporto de Manchester e Birmingham ~£5–5,60). Rever todos os anos.
 
 ## Moedas
 

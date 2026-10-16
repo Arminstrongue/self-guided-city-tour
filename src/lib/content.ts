@@ -3,13 +3,14 @@ import { eq } from "drizzle-orm";
 import { db, schema } from "./db";
 import { CITIES, type City } from "@/data/cities";
 
-/** Validação do conteúdo de uma cidade editado no painel. */
+/** Validação do conteúdo de uma cidade editado no painel. Limites de preço largos para moedas como a lira turca. */
+const MONEY = 100_000;
 const Leg = z.object({
-  m: z.enum(["walk", "metro", "tram", "bus", "train"]),
+  m: z.enum(["walk", "metro", "tram", "bus", "train", "ferry"]),
   min: z.number().int().min(0).max(240),
   line: z.string().max(120).optional().default(""),
   r: z.number().int().min(0).max(10).optional(),
-  f: z.number().min(0).max(100).optional()
+  f: z.number().min(0).max(MONEY).optional()
 });
 const Stop = z.object({
   id: z.string().regex(/^[a-z0-9-]{2,40}$/),
@@ -17,20 +18,20 @@ const Stop = z.object({
   lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180),
   v: z.number().int().min(5).max(240),
   top: z.boolean().optional(), x: z.boolean().optional(), o: z.boolean().optional(),
-  c: z.number().min(0).max(200).optional(),
+  c: z.number().min(0).max(MONEY).optional(),
   leg: Leg, pt: z.string().max(600), en: z.string().max(600),
   cl: z.array(z.number().int().min(0).max(6)).max(7).optional()
 });
 const Alt = z.union([
-  z.object({ type: z.literal("pass"), price: z.number().min(0), name: z.string().max(60), includesAirport: z.boolean().optional() }),
+  z.object({ type: z.literal("pass"), price: z.number().min(0).max(MONEY), name: z.string().max(60), includesAirport: z.boolean().optional() }),
   z.object({ type: z.literal("pack"), price: z.number().min(0), n: z.number().int().min(2).max(50), name: z.string().max(60) }),
   z.object({ type: z.literal("cap"), price: z.number().min(0), name: z.string().max(60) })
 ]);
 export const CitySchema = z.object({
   id: z.string().regex(/^[a-z]{2,5}$/),
   n: z.object({ pt: z.string().min(2), en: z.string().min(2), es: z.string().min(2), fr: z.string().min(2), de: z.string().min(2) }),
-  cur: z.enum(["EUR", "GBP"]),
-  single: z.number().min(0).max(50), card: z.number().min(0).max(20), cardName: z.string().max(40),
+  cur: z.enum(["EUR", "GBP", "TRY"]),
+  single: z.number().min(0).max(MONEY), card: z.number().min(0).max(MONEY), cardName: z.string().max(40),
   alt: Alt.nullable(),
   air: Leg, ret: z.object({ core: Leg, extra: Leg }),
   stops: z.array(Stop).min(3).max(15),

@@ -115,7 +115,7 @@ const pt = {
   emergency: "Emergência",
   embassy: "Embaixada do seu país",
   airportLbl: "Aeroporto",
-  tipK: { bag: "Bagagem", sim: "Internet", pay: "Pagamentos", tip: "Gorjetas", water: "Água", safety: "Segurança", plug: "Tomadas", toilet: "Casas de banho" },
+  tipK: { dress: "Mesquitas", bag: "Bagagem", sim: "Internet", pay: "Pagamentos", tip: "Gorjetas", water: "Água", safety: "Segurança", plug: "Tomadas", toilet: "Casas de banho" },
   eatTitle: "Comer rápido e barato",
   eatNear: "Comer perto daqui",
   eatNote: "Preços aproximados.",
@@ -190,6 +190,7 @@ const pt = {
   agTerms: "Comissão de 20% de cada pagamento de assinatura dos clientes angariados, durante 12 meses. Pagamento mensal por transferência.",
   agKinds: { shop: "Loja", food: "Restaurante", cafe: "Café e pastelaria", guesthouse: "Pousada / guest house", hotel: "Hotel", exp: "Experiência", company: "Empresa / companhia", other: "Outro" },
   agSt: { new: "Novo", contacted: "Contactado", proposal: "Proposta", won: "Fechado", lost: "Perdido" },
+  ferry: "ferry", zoneTR: "a Turquia", vEvisa: "Precisa de um visto eletrónico (e-Visa) da Turquia, pedido online em evisa.gov.tr antes de viajar. Algumas nacionalidades só o obtêm com visto ou residência válidos de Schengen, EUA, Reino Unido ou Irlanda.",
   footer: "Self Guided City Tour · roteiros autoguiados para quem está em escala"
 };
 export type Dict = typeof pt;
@@ -303,7 +304,7 @@ const en: Dict = {
   emergency: "Emergency",
   embassy: "Your country's embassy",
   airportLbl: "Airport",
-  tipK: { bag: "Luggage", sim: "Internet", pay: "Payments", tip: "Tipping", water: "Water", safety: "Safety", plug: "Sockets", toilet: "Toilets" },
+  tipK: { dress: "Mosques", bag: "Luggage", sim: "Internet", pay: "Payments", tip: "Tipping", water: "Water", safety: "Safety", plug: "Sockets", toilet: "Toilets" },
   eatTitle: "Eat fast and cheap",
   eatNear: "Eat near here",
   eatNote: "Approximate prices.",
@@ -378,6 +379,7 @@ const en: Dict = {
   agTerms: "20% commission on every subscription payment from clients you refer, for 12 months. Paid monthly by bank transfer.",
   agKinds: { shop: "Shop", food: "Restaurant", cafe: "Café & bakery", guesthouse: "Guesthouse", hotel: "Hotel", exp: "Experience", company: "Company", other: "Other" },
   agSt: { new: "New", contacted: "Contacted", proposal: "Proposal", won: "Won", lost: "Lost" },
+  ferry: "ferry", zoneTR: "Türkiye", vEvisa: "You need a Türkiye e-Visa, applied for online at evisa.gov.tr before travel. Some nationalities only qualify with a valid Schengen, US, UK or Irish visa or residence permit.",
   footer: "Self Guided City Tour · self-guided routes for layover travellers"
 };
 
@@ -486,7 +488,7 @@ const es: Dict = {
   emergency: "Emergencias",
   embassy: "Embajada de tu país",
   airportLbl: "Aeropuerto",
-  tipK: { bag: "Equipaje", sim: "Internet", pay: "Pagos", tip: "Propinas", water: "Agua", safety: "Seguridad", plug: "Enchufes", toilet: "Aseos" },
+  tipK: { dress: "Mezquitas", bag: "Equipaje", sim: "Internet", pay: "Pagos", tip: "Propinas", water: "Agua", safety: "Seguridad", plug: "Enchufes", toilet: "Aseos" },
   eatTitle: "Comer rápido y barato",
   eatNear: "Comer cerca de aquí",
   eatNote: "Precios aproximados.",
@@ -561,6 +563,7 @@ const es: Dict = {
   agTerms: "Comisión del 20% de cada pago de suscripción de los clientes captados, durante 12 meses. Pago mensual por transferencia.",
   agKinds: { shop: "Tienda", food: "Restaurante", cafe: "Cafetería y pastelería", guesthouse: "Hostal / casa de huéspedes", hotel: "Hotel", exp: "Experiencia", company: "Empresa", other: "Otro" },
   agSt: { new: "Nuevo", contacted: "Contactado", proposal: "Propuesta", won: "Cerrado", lost: "Perdido" },
+  ferry: "ferri", zoneTR: "Turquía", vEvisa: "Necesitas un visado electrónico (e-Visa) de Turquía, solicitado en evisa.gov.tr antes del viaje. Algunas nacionalidades solo pueden obtenerlo con un visado o residencia válidos de Schengen, EE. UU., Reino Unido o Irlanda.",
   footer: "Self Guided City Tour · rutas autoguiadas para viajeros en escala"
 };
 
@@ -668,7 +671,7 @@ const fr: Dict = {
   emergency: "Urgences",
   embassy: "Ambassade de votre pays",
   airportLbl: "Aéroport",
-  tipK: { bag: "Bagages", sim: "Internet", pay: "Paiements", tip: "Pourboires", water: "Eau", safety: "Sécurité", plug: "Prises", toilet: "Toilettes" },
+  tipK: { dress: "Mosquées", bag: "Bagages", sim: "Internet", pay: "Paiements", tip: "Pourboires", water: "Eau", safety: "Sécurité", plug: "Prises", toilet: "Toilettes" },
   eatTitle: "Manger vite et pas cher",
   eatNear: "Manger près d'ici",
   eatNote: "Prix approximatifs.",
@@ -743,6 +746,7 @@ const fr: Dict = {
   agTerms: "Commission de 20 % sur chaque paiement d'abonnement des clients apportés, pendant 12 mois. Versement mensuel par virement.",
   agKinds: { shop: "Boutique", food: "Restaurant", cafe: "Café et pâtisserie", guesthouse: "Maison d'hôtes", hotel: "Hôtel", exp: "Activité", company: "Entreprise", other: "Autre" },
   agSt: { new: "Nouveau", contacted: "Contacté", proposal: "Proposition", won: "Signé", lost: "Perdu" },
+  ferry: "ferry", zoneTR: "la Turquie", vEvisa: "Il vous faut un visa électronique (e-Visa) pour la Turquie, demandé sur evisa.gov.tr avant le voyage. Certaines nationalités n'y ont droit qu'avec un visa ou titre de séjour valable Schengen, américain, britannique ou irlandais.",
   footer: "Self Guided City Tour · parcours en autonomie pour les voyageurs en escale"
 };
 
@@ -851,7 +855,7 @@ const de: Dict = {
   emergency: "Notruf",
   embassy: "Botschaft Ihres Landes",
   airportLbl: "Flughafen",
-  tipK: { bag: "Gepäck", sim: "Internet", pay: "Bezahlen", tip: "Trinkgeld", water: "Wasser", safety: "Sicherheit", plug: "Steckdosen", toilet: "Toiletten" },
+  tipK: { dress: "Moscheen", bag: "Gepäck", sim: "Internet", pay: "Bezahlen", tip: "Trinkgeld", water: "Wasser", safety: "Sicherheit", plug: "Steckdosen", toilet: "Toiletten" },
   eatTitle: "Schnell und günstig essen",
   eatNear: "Essen in der Nähe",
   eatNote: "Ungefähre Preise.",
@@ -926,6 +930,7 @@ const de: Dict = {
   agTerms: "20 % Provision auf jede Abozahlung geworbener Kunden, 12 Monate lang. Monatliche Auszahlung per Überweisung.",
   agKinds: { shop: "Laden", food: "Restaurant", cafe: "Café & Bäckerei", guesthouse: "Pension", hotel: "Hotel", exp: "Erlebnis", company: "Unternehmen", other: "Sonstiges" },
   agSt: { new: "Neu", contacted: "Kontaktiert", proposal: "Angebot", won: "Gewonnen", lost: "Verloren" },
+  ferry: "Fähre", zoneTR: "die Türkei", vEvisa: "Sie brauchen ein türkisches E-Visum, vor der Reise online auf evisa.gov.tr beantragt. Manche Staatsangehörige erhalten es nur mit gültigem Schengen-, US-, UK- oder irischem Visum bzw. Aufenthaltstitel.",
   footer: "Self Guided City Tour · Routen auf eigene Faust für Umsteigereisende"
 };
 
@@ -1112,7 +1117,7 @@ const it: Dict = {
   emergency: "Emergenze",
   embassy: "Ambasciata del tuo paese",
   airportLbl: "Aeroporto",
-  tipK: { bag: "Bagagli", sim: "Internet", pay: "Pagamenti", tip: "Mance", water: "Acqua", safety: "Sicurezza", plug: "Prese", toilet: "Bagni" },
+  tipK: { dress: "Moschee", bag: "Bagagli", sim: "Internet", pay: "Pagamenti", tip: "Mance", water: "Acqua", safety: "Sicurezza", plug: "Prese", toilet: "Bagni" },
   eatTitle: "Mangiare veloce ed economico",
   eatNear: "Mangiare qui vicino",
   eatNote: "Prezzi indicativi.",
@@ -1122,6 +1127,7 @@ const it: Dict = {
   wRange: "da {min}° a {max}°",
   closedToday: "Interno chiuso oggi",
   closedNote: "L'interno è chiuso il {d}; l'esterno si visita comunque.",
+  ferry: "traghetto", zoneTR: "la Turchia", vEvisa: "Ti serve un visto elettronico (e-Visa) per la Turchia, richiesto online su evisa.gov.tr prima del viaggio. Alcune nazionalità lo ottengono solo con visto o permesso di soggiorno valido Schengen, USA, Regno Unito o Irlanda.",
   footer: "Self Guided City Tour · itinerari fai da te per chi è in scalo o in vacanza",
   modeLayover: "Sono in scalo",
   modeTrip: "Sono in vacanza",
@@ -1373,7 +1379,7 @@ const zh: Dict = {
   emergency: "紧急电话",
   embassy: "您国家的大使馆",
   airportLbl: "机场",
-  tipK: { bag: "行李", sim: "上网", pay: "支付", tip: "小费", water: "饮用水", safety: "安全", plug: "插座", toilet: "洗手间" },
+  tipK: { dress: "清真寺", bag: "行李", sim: "上网", pay: "支付", tip: "小费", water: "饮用水", safety: "安全", plug: "插座", toilet: "洗手间" },
   eatTitle: "快速又便宜的美食",
   eatNear: "附近美食",
   eatNote: "价格为近似值。",
@@ -1383,6 +1389,7 @@ const zh: Dict = {
   wRange: "{min}° 至 {max}°",
   closedToday: "今日室内不开放",
   closedNote: "室内于{d}闭馆；外部仍可参观。",
+  ferry: "渡轮", zoneTR: "土耳其", vEvisa: "您需要土耳其电子签证（e-Visa），请在出行前通过 evisa.gov.tr 在线申请。部分国籍须持有有效的申根、美国、英国或爱尔兰签证或居留许可才能申请。",
   footer: "Self Guided City Tour · 为转机和短途旅客设计的自助游路线",
   modeLayover: "我在转机",
   modeTrip: "我在度假",
@@ -1634,7 +1641,7 @@ const ar: Dict = {
   emergency: "الطوارئ",
   embassy: "سفارة بلدك",
   airportLbl: "المطار",
-  tipK: { bag: "الأمتعة", sim: "الإنترنت", pay: "الدفع", tip: "البقشيش", water: "الماء", safety: "السلامة", plug: "المقابس", toilet: "دورات المياه" },
+  tipK: { dress: "المساجد", bag: "الأمتعة", sim: "الإنترنت", pay: "الدفع", tip: "البقشيش", water: "الماء", safety: "السلامة", plug: "المقابس", toilet: "دورات المياه" },
   eatTitle: "أكل سريع ورخيص",
   eatNear: "مطاعم قريبة",
   eatNote: "الأسعار تقريبية.",
@@ -1644,6 +1651,7 @@ const ar: Dict = {
   wRange: "من {min}° إلى {max}°",
   closedToday: "الداخل مغلق اليوم",
   closedNote: "الداخل مغلق يوم {d}؛ يمكنك زيارة الخارج.",
+  ferry: "عبّارة", zoneTR: "تركيا", vEvisa: "تحتاج إلى تأشيرة إلكترونية لتركيا (e-Visa) تطلبها عبر evisa.gov.tr قبل السفر. بعض الجنسيات لا تحصل عليها إلا بتأشيرة أو إقامة سارية من شنغن أو الولايات المتحدة أو المملكة المتحدة أو أيرلندا.",
   footer: "Self Guided City Tour · مسارات ذاتية لمسافري الترانزيت والعطلات القصيرة",
   modeLayover: "أنا في ترانزيت",
   modeTrip: "أنا في عطلة",
@@ -1895,7 +1903,7 @@ const ja: Dict = {
   emergency: "緊急番号",
   embassy: "自国の大使館",
   airportLbl: "空港",
-  tipK: { bag: "荷物", sim: "インターネット", pay: "支払い", tip: "チップ", water: "水", safety: "安全", plug: "コンセント", toilet: "トイレ" },
+  tipK: { dress: "モスク", bag: "荷物", sim: "インターネット", pay: "支払い", tip: "チップ", water: "水", safety: "安全", plug: "コンセント", toilet: "トイレ" },
   eatTitle: "早くて安いグルメ",
   eatNear: "近くで食べる",
   eatNote: "価格は目安です。",
@@ -1905,6 +1913,7 @@ const ja: Dict = {
   wRange: "{min}°〜{max}°",
   closedToday: "本日は内部休館",
   closedNote: "内部は{d}に休館です。外観は見学できます。",
+  ferry: "フェリー", zoneTR: "トルコ", vEvisa: "出発前に evisa.gov.tr でトルコの電子ビザ（e-Visa）を申請する必要があります。国籍によっては、有効なシェンゲン、米国、英国、アイルランドのビザまたは在留許可が条件です。",
   footer: "Self Guided City Tour · 乗り継ぎや短い旅行のためのセルフガイドルート",
   modeLayover: "乗り継ぎ中",
   modeTrip: "休暇中",

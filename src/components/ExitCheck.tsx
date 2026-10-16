@@ -50,10 +50,11 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
   function save(k: string, v: string) { try { localStorage.setItem(k, v); } catch { /* ignorar */ } }
 
   const msg: Record<EntryVerdict, string> = {
-    free: t.vFree, "free-ees": t.vFreeEes, etias: t.vEtias, eta: t.vEta, visa: t.vVisa, unknown: t.vUnknown
+    free: t.vFree, "free-ees": t.vFreeEes, etias: t.vEtias, eta: t.vEta, evisa: t.vEvisa, visa: t.vVisa, unknown: t.vUnknown
   };
-  const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" ? "warn" : "ok");
-  const zoneName = zoneOf(city) === "uk" ? t.zoneUK : t.zoneSchengen;
+  const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" || v === "evisa" ? "warn" : "ok");
+  const zone = zoneOf(city);
+  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : t.zoneSchengen;
 
   if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle}</button>;
 

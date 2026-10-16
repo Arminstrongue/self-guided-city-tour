@@ -2,7 +2,7 @@
  * Guia prático por cidade (conteúdo geral; preços aproximados em moeda local, outubro de 2026).
  * Textos em PT e EN; ES, FR e DE usam o inglês até haver tradução.
  */
-export type Tip = { k: "bag" | "sim" | "pay" | "tip" | "water" | "safety" | "plug" | "toilet"; pt: string; en: string };
+export type Tip = { k: "bag" | "sim" | "pay" | "tip" | "water" | "safety" | "plug" | "toilet" | "dress"; pt: string; en: string };
 export type Food = { n: string; p: number; pt: string; en: string };
 export type Practical = { emergency: string; tips: Tip[]; food: Food[] };
 
@@ -20,6 +20,22 @@ const ukSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Trânsito
 const uk = (safety: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency: "999 / 112", tips: [BAG, UK_SIM, UK_PAY, UK_TIP, UK_WATER, safety, UK_PLUG, TOILET, ...extra], food });
 
 export const PRACTICAL: Record<string, Practical> = {
+  ist: { emergency: "112", tips: [
+    { k: "bag", pt: `${BAG.pt} Voa com a Turkish Airlines? Pergunte no balcão Touristanbul do aeroporto se a visita gratuita para passageiros em trânsito cabe no seu horário.`, en: `${BAG.en} Flying Turkish Airlines? Ask at the airport's Touristanbul desk whether the free transit tour fits your schedule.` },
+    { k: "sim", pt: "A Turquia não faz parte do roaming da UE: use um eSIM de dados ou o Wi‑Fi grátis do aeroporto.", en: "Türkiye is outside EU roaming: use a data eSIM or the airport's free Wi‑Fi." },
+    { k: "pay", pt: "Cartão aceite quase em todo o lado, mas bazares, bancas e máquinas do Istanbulkart pedem muitas vezes dinheiro em liras. Evite trocar dinheiro no aeroporto.", en: "Cards work almost everywhere, but bazaars, stalls and Istanbulkart machines often need lira cash. Avoid changing money at the airport." },
+    { k: "tip", pt: "Gorjeta de 5–10% nos restaurantes.", en: "Tip 5–10% in restaurants." },
+    { k: "water", pt: "Beba água engarrafada; a da torneira não é recomendada para beber.", en: "Drink bottled water; tap water isn't recommended for drinking." },
+    { k: "dress", pt: "Nas mesquitas: ombros e joelhos cobertos, sapatos descalçados à entrada, e as mulheres cobrem o cabelo (há lenços à entrada). Não visite durante as orações.", en: "In mosques: cover shoulders and knees, take shoes off at the door, and women cover their hair (scarves are provided). Avoid prayer times." },
+    { k: "safety", pt: "Desconfie de convites para bares e de engraxadores que \"deixam cair\" a escova. Nos táxis, use o taxímetro ou a app BiTaksi.", en: "Beware of bar invitations and shoe-shiners who \"drop\" their brush. In taxis, insist on the meter or use the BiTaksi app." },
+    PLUG_EU,
+    { k: "toilet", pt: "Há casas de banho públicas junto às mesquitas e estações, muitas vezes com uma pequena taxa: tenha moedas.", en: "Public toilets near mosques and stations often charge a small fee: keep some coins." }],
+    food: [
+      { n: "Simit", p: 25, pt: "Rosca de sésamo vendida nas carrinhas vermelhas.", en: "Sesame bread ring from the red street carts." },
+      { n: "Balık ekmek", p: 300, pt: "Sandes de peixe grelhado junto à Ponte de Gálata, em Eminönü.", en: "Grilled fish sandwich by the Galata Bridge in Eminönü." },
+      { n: "Döner", p: 250, pt: "Em pão ou wrap (dürüm), em qualquer bairro.", en: "In bread or a wrap (dürüm), in any neighbourhood." },
+      { n: "Çay", p: 40, pt: "Chá turco em copo de vidro, a bebida de todos os momentos.", en: "Turkish tea in a tulip glass, drunk all day." }
+    ] },
   edi: uk(ukSafety("A Royal Mile e Calton Hill têm ruas inclinadas e calçada; o tempo muda depressa, leve um casaco.", "The Royal Mile and Calton Hill are steep and cobbled; the weather changes fast, bring a jacket."), [
     { n: "Scotch pie", p: 3, pt: "Tarte de carne picante, em padarias como a Greggs ou talhos.", en: "Spiced meat pie from bakeries and butchers." },
     { n: "Haggis, neeps & tatties", p: 12, pt: "O prato escocês, num pub da Old Town.", en: "The Scottish classic, in an Old Town pub." },

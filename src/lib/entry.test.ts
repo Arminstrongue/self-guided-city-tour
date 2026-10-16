@@ -5,12 +5,13 @@ import { _lists, checkEntry, checkLayover } from "./entry";
 import { fitRoute, km, returnEstimate, routeOptions } from "./route-cost";
 import { parseFlights, validFlightNo, normaliseFlightNo } from "./flight";
 
-const lis = getCity("lis")!, lon = getCity("lon")!;
+const lis = getCity("lis")!, lon = getCity("lon")!, ist = getCity("ist")!;
 
 test("listas sem contradições", () => {
   const both = (a: string[], b: string[]) => a.filter((x) => b.includes(x));
   assert.deepEqual(both(_lists.SCHENGEN_EXEMPT, _lists.SCHENGEN_VISA), []);
   assert.deepEqual(both(_lists.UK_ETA, _lists.UK_VISA), []);
+  assert.deepEqual(both(_lists.TR_FREE, [..._lists.TR_EVISA, ..._lists.TR_VISA]), []);
   assert.deepEqual(both([..._lists.EU, ..._lists.EEA_CH], _lists.SCHENGEN_VISA), []);
 });
 
@@ -27,6 +28,15 @@ test("regras de entrada por nacionalidade", () => {
   assert.equal(checkEntry(lon, "IE").verdict, "free");
   assert.equal(checkEntry(lon, "IN").verdict, "visa");
   assert.equal(checkEntry(lis, "QA").verdict, "unknown");
+  // Turquia
+  assert.equal(checkEntry(ist, "PT").verdict, "free");
+  assert.equal(checkEntry(ist, "GB").verdict, "free");
+  assert.equal(checkEntry(ist, "CN").verdict, "free");
+  assert.equal(checkEntry(ist, "CY").verdict, "visa");
+  assert.equal(checkEntry(ist, "IN").verdict, "evisa");
+  assert.equal(checkEntry(ist, "AO").verdict, "visa");
+  assert.equal(checkEntry(ist, "AO", true).verdict, "free");
+  assert.equal(checkEntry(ist, "PT").zone, "tr");
 });
 
 test("tempo de escala: roteiro que cabe", () => {

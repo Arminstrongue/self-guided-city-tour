@@ -4,11 +4,12 @@
  *  - Schengen: https://home-affairs.ec.europa.eu/policies/schengen/visa-policy_en
  *  - ETIAS: https://travel-europe.europa.eu/etias_en
  *  - Reino Unido: https://www.gov.uk/check-uk-visa e https://www.gov.uk/guidance/apply-for-an-electronic-travel-authorisation-eta
+ *  - Turquia: https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa e https://www.evisa.gov.tr
  * As regras mudam: a app mostra sempre a ligação oficial para confirmar.
  */
 import { EXIT_AIRPORT_MIN, fitRoute, type RouteOption } from "./route-cost";
 import { AIRPORT_BUFFER_MIN } from "./pricing";
-import { zoneOf, type City } from "@/data/cities";
+import { zoneOf, type City, type Zone } from "@/data/cities";
 
 /** ETIAS (autorização de 20 € para quem não precisa de visto Schengen): prevista para o 4.º trimestre de 2026. */
 export const ETIAS_LIVE = process.env.NEXT_PUBLIC_ETIAS_LIVE === "1";
@@ -36,17 +37,26 @@ const UK_VISA = ["AF", "AM", "AO", "AZ", "BD", "BW", "BY", "CD", "CI", "CM", "CN
   "GH", "GW", "HN", "ID", "IN", "IQ", "IR", "JM", "JO", "KE", "KH", "KZ", "LA", "LB", "LK", "MA", "MM", "MN", "MZ", "NA", "NG", "NP", "PH", "PK",
   "RU", "SD", "SN", "ST", "SY", "TH", "TN", "TR", "TT", "UA", "UZ", "VE", "VN", "ZA", "ZW"];
 
+/** Turquia: isentos de visto para turismo (até 90 dias; China desde 2 jan 2026). Chipre precisa de visto. */
+const TR_FREE = [...EU.filter((c) => c !== "CY"), ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "BR", "JP", "KR", "CN", "SA", "AE", "QA", "KW", "BH", "OM",
+  "AR", "CL", "RU", "UA", "GE", "AZ", "SG", "MY", "IL"];
+/** Turquia: e-Visa online (algumas só com visto/residência Schengen, EUA, Reino Unido ou Irlanda). */
+const TR_EVISA = ["IN", "PK", "BD", "EG", "ZA", "MX", "CV"];
+/** Turquia: visto consular. */
+const TR_VISA = ["AO", "MZ", "NG", "CY"];
+
 export type EntryVerdict =
   | "free"          // pode sair só com o passaporte ou cartão de cidadão
   | "free-ees"      // pode sair; registo biométrico EES na fronteira (mais demorado)
   | "etias"         // pode sair com ETIAS aprovada
   | "eta"           // pode sair com ETA do Reino Unido aprovada
+  | "evisa"         // pode sair com e-Visa da Turquia
   | "visa"          // precisa de visto
   | "unknown";      // sem regra para esta nacionalidade: confirmar na fonte oficial
 
 export type EntryCheck = {
   verdict: EntryVerdict;
-  zone: "uk" | "schengen";
+  zone: Zone;
   transitVisa: boolean;       // precisa de visto de trânsito aeroportuário mesmo sem sair
   exitMin: number;            // tempo estimado para sair do aeroporto
   officialUrl: string;
@@ -65,6 +75,10 @@ export function checkEntry(city: City, nationality: string, hasPermit = false): 
     else if (SCHENGEN_VISA.includes(n)) verdict = "visa";
     else verdict = "unknown";
     return { verdict, zone, transitVisa: !hasPermit && SCHENGEN_ATV.includes(n), officialUrl, exitMin: isEU ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check };
+  }
+  if (zone === "tr") {
+    const verdict: EntryVerdict = hasPermit || TR_FREE.includes(n) || n === "TR" ? "free" : TR_EVISA.includes(n) ? "evisa" : TR_VISA.includes(n) ? "visa" : "unknown";
+    return { verdict, zone, transitVisa: false, officialUrl: "https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa", exitMin: n === "TR" ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check };
   }
   const officialUrl = "https://www.gov.uk/check-uk-visa";
   let verdict: EntryVerdict;
@@ -97,7 +111,7 @@ export function checkLayover(city: City, nationality: string, arrival: Date, dep
 }
 
 /** Nacionalidades para o seletor (código ISO). Os nomes vêm de Intl.DisplayNames no navegador. */
-export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, ...SCHENGEN_VISA, ...UK_ETA, ...UK_VISA, "IE"])].sort();
+export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, ...SCHENGEN_VISA, ...UK_ETA, ...UK_VISA, ...TR_FREE, ...TR_EVISA, ...TR_VISA, "IE", "TR"])].sort();
 
 /** Só para testes. */
-export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA };
+export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA };

@@ -4,7 +4,7 @@ import type { Alt, City, Leg, Mode, Stop } from "@/data/cities";
 import { planRoute } from "@/lib/route-cost";
 
 type Props = { initial: City; isNew: boolean; edited: boolean; active: boolean; locale: string };
-const MODES: [Mode, string][] = [["walk", "A pé"], ["metro", "Metro"], ["tram", "Elétrico"], ["bus", "Autocarro"], ["train", "Comboio"]];
+const MODES: [Mode, string][] = [["walk", "A pé"], ["metro", "Metro"], ["tram", "Elétrico"], ["bus", "Autocarro"], ["train", "Comboio"], ["ferry", "Ferry / barco"]];
 const LANGS = ["pt", "en", "es", "fr", "de"] as const;
 
 const num = (v: string) => (v === "" ? undefined : Number(v.replace(",", ".")));
@@ -71,7 +71,7 @@ export function CityEditor({ initial, isNew, edited, active: initialActive, loca
         <h2 style={{ fontSize: 20 }}>Geral</h2>
         <div className="ed-grid">
           <Field label="Código (2–5 letras, usado no QR)"><input value={c.id} disabled={!isNew} onChange={(e) => set({ id: e.target.value.toLowerCase().replace(/[^a-z]/g, "").slice(0, 5) })} /></Field>
-          <Field label="Moeda"><select value={c.cur} onChange={(e) => set({ cur: e.target.value as City["cur"] })}><option>EUR</option><option>GBP</option></select></Field>
+          <Field label="Moeda"><select value={c.cur} onChange={(e) => set({ cur: e.target.value as City["cur"] })}><option>EUR</option><option>GBP</option><option>TRY</option></select></Field>
           {LANGS.map((l) => <Field key={l} label={`Nome (${l.toUpperCase()})`}><input value={c.n[l] ?? ""} onChange={(e) => set({ n: { ...c.n, [l]: e.target.value } })} /></Field>)}
           <Field label="Bilhete simples"><input type="number" step="0.01" value={c.single} onChange={(e) => set({ single: num(e.target.value) ?? 0 })} /></Field>
           <Field label="Cartão recarregável (preço)"><input type="number" step="0.01" value={c.card} onChange={(e) => set({ card: num(e.target.value) ?? 0 })} /></Field>

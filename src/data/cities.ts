@@ -4,7 +4,7 @@
  * leg: ligação desde a paragem anterior (a primeira paragem liga ao aeroporto via `air`).
  *   r = viagens pagas com a tarifa da cidade · f = bilhete fixo (ligação ao aeroporto, não coberto por passes)
  */
-export type Mode = "walk" | "metro" | "tram" | "bus" | "train";
+export type Mode = "walk" | "metro" | "tram" | "bus" | "train" | "ferry";
 export type Leg = { m: Mode; min: number; line?: string; r?: number; f?: number };
 export type Alt =
   | { type: "pass"; price: number; name: string; includesAirport?: boolean }
@@ -22,15 +22,16 @@ export type Stop = {
   cl?: number[];      // dias da semana em que o interior está fechado (0 = domingo)
 };
 export type City = {
-  id: string; n: Record<string, string>; cur: "EUR" | "GBP";
+  id: string; n: Record<string, string>; cur: "EUR" | "GBP" | "TRY";
   single: number; card: number; cardName: string; alt: Alt | null;
   air: Leg; ret: { core: Leg; extra: Leg }; stops: Stop[];
   ap?: Airport;       // aeroporto principal
   tz?: string;        // fuso horário (IANA)
 };
 export type Airport = { iata: string; name: string; lat: number; lng: number };
-/** Zona de fronteira: o Reino Unido tem regras de entrada próprias; o resto é espaço Schengen. */
-export const zoneOf = (c: City): "uk" | "schengen" => (c.cur === "GBP" ? "uk" : "schengen");
+/** Zona de fronteira: Reino Unido e Turquia têm regras de entrada próprias; o resto é espaço Schengen. */
+export type Zone = "uk" | "schengen" | "tr";
+export const zoneOf = (c: City): Zone => (c.cur === "GBP" ? "uk" : c.cur === "TRY" ? "tr" : "schengen");
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -262,13 +263,34 @@ export const CITIES: City[] = [
       { id: "jq", n: "Jewellery Quarter", a: "Jewellery Quarter", lat: 52.489, lng: -1.912, v: 30, top: true, leg: W(20), pt: "Bairro de oficinas de joalharia em funcionamento, com o relógio Chamberlain e lojas independentes.", en: "A working jewellery district with the Chamberlain Clock and independent shops." },
       { id: "cadbury", n: "Cadbury World e Bournville", a: "Bournville", lat: 52.4285, lng: -1.9314, v: 60, x: true, top: true, o: true, leg: { m: "train", min: 30, line: "Jewellery Quarter → New Street → Bournville", f: 4.0 }, pt: "A aldeia-modelo da fábrica de chocolate. Cadbury World é pago e convém reservar.", en: "The chocolate factory's model village. Cadbury World is paid and best booked ahead." }
     ]
+  },
+  // ——— Turquia (tarifas Istanbulkart desde fevereiro de 2026; ver README) ———
+  {
+    id: "ist", n: names("Istambul", "Istanbul", "Estambul", "Istanbul", "Istanbul"), cur: "TRY",
+    ap: { iata: "IST", name: "İstanbul Havalimanı", lat: 41.2753, lng: 28.7519 }, tz: "Europe/Istanbul",
+    single: 42, card: 165, cardName: "Istanbulkart",
+    alt: null,
+    air: { m: "metro", min: 55, line: "M11 → Gayrettepe → M2 até Taksim", f: 73.6 },
+    ret: { core: { m: "metro", min: 75, line: "M2 Vezneciler → Gayrettepe → M11", f: 73.6 }, extra: { m: "train", min: 95, line: "Marmaray Üsküdar → Yenikapı → M2 Gayrettepe → M11", r: 1, f: 73.6 } },
+    stops: [
+      { id: "taksim", n: "Praça Taksim", a: "Beyoğlu", lat: 41.037, lng: 28.9858, v: 10, leg: W(0, "Taksim"), pt: "A praça central da Istambul moderna, com o Monumento da República.", en: "The heart of modern Istanbul, with the Republic Monument." },
+      { id: "istiklal", n: "Avenida İstiklal", a: "Beyoğlu", lat: 41.0336, lng: 28.9778, v: 25, top: true, leg: W(15), pt: "A grande avenida pedonal com o elétrico vermelho histórico, passagens antigas e livrarias.", en: "The great pedestrian avenue with the historic red tram, old arcades and bookshops." },
+      { id: "galata", n: "Torre de Gálata", a: "Karaköy", lat: 41.0256, lng: 28.9742, v: 20, top: true, o: true, leg: W(12, "Galip Dede"), pt: "A torre genovesa domina o bairro; subir ao miradouro é pago e opcional.", en: "The Genoese tower rules the district; the viewing deck is paid and optional." },
+      { id: "galata-bridge", n: "Ponte de Gálata", a: "Karaköy / Eminönü", lat: 41.02, lng: 28.9733, v: 15, leg: W(10), pt: "Pescadores no tabuleiro de cima e vista para as mesquitas da cidade velha.", en: "Anglers on the upper deck and views of the old city's mosques." },
+      { id: "spice", n: "Bazar das Especiarias", a: "Eminönü", lat: 41.0166, lng: 28.9707, v: 25, top: true, leg: W(8), pt: "O mercado coberto de especiarias, chás e delícias turcas, ao lado da Mesquita Nova.", en: "The covered market of spices, teas and Turkish delight, next to the New Mosque." },
+      { id: "hagia-sophia", n: "Santa Sofia", a: "Sultanahmet", lat: 41.0086, lng: 28.9802, v: 30, top: true, o: true, leg: { m: "tram", min: 12, line: "T1 Eminönü → Sultanahmet", r: 1 }, pt: "Basílica bizantina e mesquita. Os estrangeiros visitam a galeria superior com bilhete; as mulheres cobrem o cabelo.", en: "Byzantine basilica and mosque. Foreign visitors use the paid upper gallery; women cover their hair." },
+      { id: "blue-mosque", n: "Mesquita Azul e Hipódromo", a: "Sultanahmet", lat: 41.0054, lng: 28.9768, v: 25, top: true, leg: W(5, "Hipódromo"), pt: "Entrada gratuita fora das horas de oração; ombros e joelhos cobertos. No Hipódromo ficam o obelisco egípcio e a coluna serpentina.", en: "Free outside prayer times; cover shoulders and knees. The Hippodrome holds the Egyptian obelisk and the Serpent Column." },
+      { id: "cistern", n: "Cisterna da Basílica", a: "Sultanahmet", lat: 41.0084, lng: 28.9779, v: 25, top: true, o: true, leg: W(6), pt: "O reservatório subterrâneo de colunas e as cabeças de Medusa. Entrada paga, opcional.", en: "The underground forest of columns and the Medusa heads. Paid, optional." },
+      { id: "grand-bazaar", n: "Grande Bazar", a: "Beyazıt", lat: 41.0107, lng: 28.9681, v: 40, top: true, cl: [0], leg: W(12, "Divanyolu"), pt: "Um dos maiores mercados cobertos do mundo. Negocie o preço com calma. Fechado ao domingo.", en: "One of the world's largest covered markets. Haggle calmly. Closed on Sundays." },
+      { id: "topkapi", n: "Palácio de Topkapı", a: "Sultanahmet", lat: 41.0115, lng: 28.9834, v: 60, x: true, top: true, o: true, cl: [2], leg: { m: "tram", min: 12, line: "T1 Beyazıt → Gülhane", r: 1 }, pt: "O palácio dos sultões otomanos, com pátios sobre o Bósforo. Pago; fechado à terça.", en: "The Ottoman sultans' palace, with courtyards over the Bosphorus. Paid; closed Tuesdays." },
+      { id: "uskudar", n: "Ferry no Bósforo e Üsküdar", a: "Üsküdar (Ásia)", lat: 41.027, lng: 29.0135, v: 40, x: true, top: true, leg: { m: "ferry", min: 35, line: "A pé até Eminönü → ferry para Üsküdar", r: 1 }, pt: "A travessia mais barata do Bósforo, da Europa para a Ásia, com vista para a cidade e a Torre da Donzela.", en: "The cheapest Bosphorus crossing, Europe to Asia, with city views and the Maiden's Tower." }
+    ]
   }
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
 export const SOON: Record<string, string>[] = [
   { pt: "Praga", en: "Prague", es: "Praga", fr: "Prague", de: "Prag", it: "Praga", zh: "布拉格", ar: "براغ", ja: "プラハ" },
-  { pt: "Istambul", en: "Istanbul", es: "Estambul", fr: "Istanbul", de: "Istanbul", it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
   { pt: "Viena", en: "Vienna", es: "Viena", fr: "Vienne", de: "Wien", it: "Vienna", zh: "维也纳", ar: "فيينا", ja: "ウィーン" },
   { pt: "Berlim", en: "Berlin", es: "Berlín", fr: "Berlin", de: "Berlin", it: "Berlino", zh: "柏林", ar: "برلين", ja: "ベルリン" },
   { pt: "Atenas", en: "Athens", es: "Atenas", fr: "Athènes", de: "Athen", it: "Atene", zh: "雅典", ar: "أثينا", ja: "アテネ" },
@@ -292,7 +314,8 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   man: { it: "Manchester", zh: "曼彻斯特", ar: "مانشستر", ja: "マンチェスター" },
   gla: { it: "Glasgow", zh: "格拉斯哥", ar: "غلاسكو", ja: "グラスゴー" },
   liv: { it: "Liverpool", zh: "利物浦", ar: "ليفربول", ja: "リバプール" },
-  bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" }
+  bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" },
+  ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" }
 };
 
 export function cityName(c: City, locale: string): string {
