@@ -8,9 +8,13 @@ import pt from "./pt.json";
 import es from "./es.json";
 import fr from "./fr.json";
 import de from "./de.json";
+import it from "./it.json";
+import zh from "./zh.json";
+import ar from "./ar.json";
+import ja from "./ja.json";
 
 type Bios = Record<string, Record<string, string>>;
-const BIOS: Record<string, Bios> = { en, pt, es, fr, de };
+const BIOS: Record<string, Bios> = { en, pt, es, fr, de, it, zh, ar, ja };
 
 export type Bio = { text: string; lang: string };
 

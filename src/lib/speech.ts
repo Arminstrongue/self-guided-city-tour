@@ -37,7 +37,7 @@ export function chunkText(text: string, max = 220): string[] {
     // frase muito longa: parte por vírgulas / espaços
     let rest = s;
     while (rest.length > max) {
-      const cut = Math.max(rest.lastIndexOf(", ", max), rest.lastIndexOf("، ", max), rest.lastIndexOf("，", max), rest.lastIndexOf(" ", max));
+      const cut = Math.max(rest.lastIndexOf(", ", max), rest.lastIndexOf("، ", max), rest.lastIndexOf("，", max), rest.lastIndexOf("、", max), rest.lastIndexOf(" ", max));
       const at = cut > max * 0.4 ? cut + 1 : max;
       out.push(rest.slice(0, at).trim()); rest = rest.slice(at).trim();
     }
