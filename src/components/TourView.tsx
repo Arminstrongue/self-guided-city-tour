@@ -3,7 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
-import { hasExtension, leaveBy, planRoute } from "@/lib/route-cost";
+import { fitRoute, hasExtension, leaveBy, optionByKey, routeOptions } from "@/lib/route-cost";
+import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
+import { BackNow, CityGuide, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
@@ -11,6 +13,7 @@ import { CurrencyPicker } from "./CurrencyPicker";
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
+  flightNo: string | null; flightApi: boolean;
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -22,11 +25,13 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx }: Props) {
-  const [ext, setExt] = useLocalState<boolean>(`sgct:ext:${city.id}`, true);
+export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi }: Props) {
+  const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
+  const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
   const [open, setOpen] = useState<string>(city.stops[0].id);
-  const [tab, setTab] = useState<"route" | "map" | "cost">("route");
+  const [tab, setTab] = useState<"route" | "map" | "cost" | "guide">("route");
+  const geo = useGeo();
   const [now, setNow] = useState(() => Date.now());
   const [copied, setCopied] = useState(false);
   const [online, setOnline] = useState(true);
@@ -38,12 +43,29 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
   }, []);
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
 
-  const plan = useMemo(() => planRoute(city, ext), [city, ext]);
+  // Voo: o que o viajante alterou neste dispositivo tem prioridade sobre o da compra.
+  const flightIso = fo?.at ?? flightAt;
+  const flightNoEff = fo?.no ?? flightNo ?? "";
+  const flightDate = useMemo(() => (flightIso ? new Date(flightIso) : null), [flightIso]);
+  const options = useMemo(() => routeOptions(city), [city]);
+  // Sem escolha guardada: o roteiro mais completo que cabe no tempo até ao voo.
+  const autoKey = useMemo(() => {
+    if (!flightDate) return hasExtension(city) ? "ext" : "core";
+    const avail = (flightDate.getTime() - Date.now()) / 60000 - AIRPORT_BUFFER_MIN;
+    return fitRoute(city, avail)?.key ?? options[0].key;
+  }, [city, flightDate, options]);
+  const chosen = optionByKey(city, lvl) ?? optionByKey(city, autoKey) ?? options[options.length - 1];
+  const plan = chosen.plan;
+  const ext = chosen.key === "ext";
   // Tarifas na moeda da cidade (a que se paga na máquina) e, se diferente, o aproximado na moeda do viajante.
   const money = (v: number) => dualMoney(v, city.cur, fx, INTL_LOCALE[locale]).main;
   const both = (v: number) => { const d = dualMoney(v, city.cur, fx, INTL_LOCALE[locale]); return d.local ? <>{d.main} <span className="fx">{d.local}</span></> : d.main; };
   const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
-  const leave = flightAt ? leaveBy(new Date(flightAt), plan.ret) : null;
+  const leave = flightDate ? leaveBy(flightDate, plan.ret) : null;
+  const today = weekdayIn(city.tz, now);
+  const closedToday = (s: Stop) => Boolean(s.cl?.includes(today));
+  const nextStop = plan.stops.find((s) => !done[s.id]) ?? null;
+  const voiceLang = locale === "pt" ? "pt-PT" : "en-GB";
   const avail = leave ? Math.round((leave.getTime() - now) / 60000) : null;
   const fits = avail === null || avail >= plan.minutesTour;
   const extras = city.stops.filter((s) => s.x);
@@ -116,23 +138,18 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
-          {(["route", "map", "cost"] as const).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{k === "route" ? t.route : k === "map" ? t.map : t.costs}</button>
+          {(["route", "map", "cost", "guide"] as const).map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{k === "route" ? t.route : k === "map" ? t.map : k === "cost" ? t.costs : t.guide}</button>
           ))}
         </div>
       </header>
 
       <div className="stack" style={{ marginTop: 14 }}>
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
-          {hasExtension(city) && (
-            <div className="toggle">
-              <div>
-                <b>{t.extras}: {[...new Set(extras.map((s) => s.a))].join(", ")}</b>
-                <p className="hint">{fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>
-              </div>
-              <button className="switch" role="switch" aria-checked={ext} aria-label={t.extras} onClick={() => setExt(!ext)} />
-            </div>
-          )}
+          <WeatherCard cityId={city.id} t={t} />
+          <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
+          {!lvl && flightDate && <p className="hint">{t.fitAuto}</p>}
+          {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
           {avail !== null && leave && (
             <p className={`fit ${fits ? "ok" : "bad"}`}>
               {fits ? fmt(t.fitsOk, { a: hrs(plan.minutesTour), b: hrs(avail) })
@@ -143,9 +160,18 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
           {leave && avail !== null && avail > 15 && (
             notice ? <p className="hint">🔔 {notice}</p> : <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={remind}>🔔 {t.notifyBtn}</button>
           )}
+          <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
+            onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />
           {!online && <p className="note">{t.offline}</p>}
           {t.contentNote && locale !== "pt" && locale !== "en" && <p className="note">{t.contentNote}</p>}
         </div>
+
+        {tab === "route" && (
+          <BackNow city={city} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
+            next={nextStop} now={now} t={t} locale={locale} />
+        )}
+
+        {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
         {tab === "route" && (
           <div className="route">
@@ -165,12 +191,14 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                         <div style={{ minWidth: 0 }}>
                           <h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3>
                           <p className="meta">{s.a} · {s.v} {t.visit}{s.o ? ` · ${t.optPaid}` : ""}{here.length ? ` · ${here.length} ★` : ""}</p>
+                          {closedToday(s) && <span className="closed-chip">{t.closedToday}</span>}
                         </div>
                         <span className="cost-tag num" style={{ color: s.c ? "var(--warn)" : "var(--good)" }}>{s.c ? `~${money(s.c)}` : t.free}</span>
                       </button>
                       {isOpen && (
                         <div className="detail">
                           <p>{desc(s)}</p>
+                          {s.cl?.length ? <p className="hint">🕒 {fmt(t.closedNote, { d: dayNames(s.cl, locale) })}</p> : null}
                           {here.length > 0 && (
                             <>
                               <span className="label">{t.nearby}</span>
@@ -190,6 +218,8 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                           )}
                           <div className="acts">
                             <a href={`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=${s.leg.m === "walk" ? "walking" : "transit"}`} target="_blank" rel="noopener noreferrer">{t.directions}</a>
+                            <Speak text={`${s.n}. ${desc(s)}`} lang={voiceLang} t={t} />
+                            <a href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`} target="_blank" rel="noopener noreferrer">🍽 {t.eatNear}</a>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
                         </div>

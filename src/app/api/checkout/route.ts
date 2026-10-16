@@ -8,6 +8,7 @@ import { cityName } from "@/data/cities";
 import { loadCity } from "@/lib/content";
 import { LOCALES } from "@/i18n/dictionaries";
 import { merchantByRef } from "@/lib/merchants";
+import { normaliseFlightNo, validFlightNo } from "@/lib/flight";
 
 export const runtime = "nodejs";
 
@@ -17,6 +18,7 @@ const Body = z.object({
   email: z.string().email().max(200),
   name: z.string().max(80).optional().default(""),
   flightAt: z.string().datetime({ offset: true }),
+  flightNo: z.string().max(12).optional().transform((v) => (v ? normaliseFlightNo(v) : "")).refine((v) => !v || validFlightNo(v)),
   locale: z.enum(LOCALES),
   ref: z.string().max(16).optional(),
   consent: z.literal(true) // pedido de acesso imediato (perda do direito de livre resolução)
@@ -39,7 +41,7 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "pt" ? "pt" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: plan.amount, product_data: { name: `Self Guided City Tour · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "" },
+      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt, flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "" },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

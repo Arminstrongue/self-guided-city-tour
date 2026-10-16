@@ -19,8 +19,13 @@ export function hasExtension(city: City): boolean {
   return city.stops.some((s) => s.x);
 }
 
-export function planRoute(city: City, withExtension: boolean): RoutePlan {
-  const stops = city.stops.filter((s) => withExtension || !s.x);
+/**
+ * Plano do roteiro. `maxStops` encurta o roteiro base (sem extensão), mantendo as primeiras paragens;
+ * o regresso continua a ser o do roteiro base (aproximação: as paragens do fim ficam perto do centro).
+ */
+export function planRoute(city: City, withExtension: boolean, maxStops?: number): RoutePlan {
+  let stops = city.stops.filter((s) => withExtension || !s.x);
+  if (!withExtension && maxStops && maxStops < stops.length) stops = stops.slice(0, Math.max(1, maxStops));
   const ret = withExtension && hasExtension(city) ? city.ret.extra : city.ret.core;
   const legs: Leg[] = [city.air, ...stops.slice(1).map((s) => s.leg), ret];
   let minutes = 0, rides = 0, fixed = 0, entries = 0;
@@ -43,6 +48,57 @@ export function planRoute(city: City, withExtension: boolean): RoutePlan {
     singles: round2(singles), alt: alt === null ? null : round2(alt), best,
     transport: round2(best === "singles" ? singles : (alt as number))
   };
+}
+
+/** Escolhas de roteiro, da mais curta à mais completa. `key`: "ext", "core" ou "n<paragens>". */
+export type RouteOption = { key: string; plan: RoutePlan };
+export const MIN_STOPS = 2;
+
+export function routeOptions(city: City): RouteOption[] {
+  const core = city.stops.filter((s) => !s.x).length;
+  const out: RouteOption[] = [];
+  for (let n = Math.min(MIN_STOPS, core); n < core; n++) out.push({ key: `n${n}`, plan: planRoute(city, false, n) });
+  out.push({ key: "core", plan: planRoute(city, false) });
+  if (hasExtension(city)) out.push({ key: "ext", plan: planRoute(city, true) });
+  return out;
+}
+
+export function optionByKey(city: City, key: string | null | undefined): RouteOption | undefined {
+  return routeOptions(city).find((o) => o.key === key);
+}
+
+/**
+ * O roteiro mais completo que cabe no tempo disponível (minutos, de aeroporto a aeroporto,
+ * já sem a margem antes do voo). Devolve null se nem o mais curto cabe.
+ */
+export function fitRoute(city: City, availableMin: number): RouteOption | null {
+  const fits = routeOptions(city).filter((o) => o.plan.minutesTotal <= availableMin);
+  return fits.length ? fits[fits.length - 1] : null;
+}
+
+/** Tempo médio para passar a fronteira e sair do aeroporto (minutos). */
+export const EXIT_AIRPORT_MIN = { free: 30, check: 60 } as const;
+
+/** Distância em linha reta (km). */
+export function km(a: { lat: number; lng: number }, b: { lat: number; lng: number }): number {
+  const R = 6371, rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad, dLng = (b.lng - a.lng) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+/** Minutos a pé (4,5 km/h, com 30% a mais pelo traçado das ruas). */
+export const walkMin = (d: number) => Math.round((d * 1.3 / 4.5) * 60);
+
+/**
+ * Estimativa do tempo de regresso ao aeroporto a partir de um ponto: proporcional à ligação
+ * aeroporto → primeira paragem da cidade, mais 10 minutos de espera. Nunca abaixo de 15 minutos.
+ */
+export function returnEstimate(city: City, from: { lat: number; lng: number }): number | null {
+  if (!city.ap || !city.stops[0]) return null;
+  const ref = km(city.stops[0], city.ap);
+  if (ref < 1) return null;
+  return Math.max(15, Math.round((city.air.min * km(from, city.ap)) / ref + 10));
 }
 
 /** Hora a que o viajante deve sair da última paragem para chegar ao aeroporto a tempo. */

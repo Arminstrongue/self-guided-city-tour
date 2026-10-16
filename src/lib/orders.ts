@@ -30,7 +30,7 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   const expiresAt = new Date(Date.now() + TOUR_PLANS[plan].hours * 3600_000);
   const inserted = await d.insert(schema.accesses).values({
     email, userId: user.id, scope: plan === "all" ? "all" : "city", city: m.city || null,
-    flightAt: m.flightAt ? new Date(m.flightAt) : null, expiresAt,
+    flightAt: m.flightAt ? new Date(m.flightAt) : null, flightNo: m.flightNo || null, expiresAt,
     // Com "Adaptive Pricing" o cliente paga na sua moeda; guardamos sempre o valor de origem (EUR).
     amountCents: session.currency_conversion?.amount_total ?? session.amount_total ?? TOUR_PLANS[plan].amount,
     currency: session.currency_conversion?.source_currency ?? session.currency ?? "eur",

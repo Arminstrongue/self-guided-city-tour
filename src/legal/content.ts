@@ -54,8 +54,9 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Responsável pelo tratamento", p: [`${who}.`] },
       { h: "Que dados tratamos", p: [
-        "Email e nome; hora do próximo voo; cidade e plano comprados; dados de pagamento tratados pela Stripe (não guardamos o cartão).",
+        "Email e nome; hora e número (opcional) do próximo voo; cidade e plano comprados; dados de pagamento tratados pela Stripe (não guardamos o cartão).",
         "Se entrar com Google, Apple ou Facebook: nome e email da conta.",
+        "A localização (se a ativar) e a nacionalidade indicada em \"Posso sair?\" ficam só no seu dispositivo; não as guardamos.",
         "Comerciantes: nome do negócio, contacto, redes sociais e dados de faturação."
       ] },
       { h: "Para quê e com que fundamento", p: [
@@ -66,7 +67,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       ] },
       { h: "Durante quanto tempo", p: ["Dados de acesso: até 24 meses após o último acesso. Documentos de faturação: 10 anos, por obrigação legal."] },
       { h: "Com quem partilhamos", p: [
-        "Prestadores que tratam dados por nossa conta: Stripe (pagamentos), Hetzner (servidores na UE), Cloudflare (rede e segurança), fornecedor de email transacional e, se o usar, o fornecedor de login (Google, Apple, Facebook).",
+        "Prestadores que tratam dados por nossa conta: Stripe (pagamentos), Hetzner (servidores na UE), Cloudflare (rede e segurança), fornecedor de email transacional, AeroDataBox (estado do voo, só o número do voo) e, se o usar, o fornecedor de login (Google, Apple, Facebook).",
         "Algumas destas entidades podem transferir dados para fora do EEE ao abrigo de cláusulas contratuais-tipo ou decisões de adequação."
       ] },
       { h: "Os seus direitos", p: [
@@ -125,8 +126,9 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Controller", p: [`${who}.`] },
       { h: "Data we process", p: [
-        "Email and name; next flight time; city and plan purchased; payment data handled by Stripe (we never store your card).",
+        "Email and name; next flight time and (optional) number; city and plan purchased; payment data handled by Stripe (we never store your card).",
         "If you sign in with Google, Apple or Facebook: your account name and email.",
+        "Your location (if you turn it on) and the nationality entered in \"Can I leave?\" stay on your device; we don't store them.",
         "Merchants: business name, contact details, social links and billing data."
       ] },
       { h: "Purposes and legal bases", p: [
@@ -137,7 +139,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       ] },
       { h: "Retention", p: ["Access data: up to 24 months after your last access. Invoicing records: 10 years, as required by law."] },
       { h: "Processors", p: [
-        "Stripe (payments), Hetzner (EU servers), Cloudflare (network and security), our transactional email provider and, if used, your sign-in provider (Google, Apple, Facebook).",
+        "Stripe (payments), Hetzner (EU servers), Cloudflare (network and security), our transactional email provider, AeroDataBox (flight status, flight number only) and, if used, your sign-in provider (Google, Apple, Facebook).",
         "Some may transfer data outside the EEA under standard contractual clauses or adequacy decisions."
       ] },
       { h: "Your rights", p: [

@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DEP_KEY } from "./ExitCheck";
 import { signIn } from "next-auth/react";
 import type { Dict } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE, type Locale } from "@/i18n/dictionaries";
@@ -25,6 +26,9 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
+  const [flightNo, setFlightNo] = useState("");
+  // Reaproveita a hora de partida indicada em "Posso sair?".
+  useEffect(() => { try { const d = localStorage.getItem(DEP_KEY); if (d) setFlight(d); } catch { /* ignorar */ } }, []);
   // Preço em euros; se o viajante usar outra moeda, mostra-se também o valor aproximado nela.
   const price = (c: number) => dualMoney(c / 100, "EUR", fx, INTL_LOCALE[locale]);
   const priceTag = (c: number) => { const p = price(c); return p.local ? <>{p.local}<span className="price-local">{p.main}</span></> : p.main; };
@@ -36,12 +40,14 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
     if (!/^\S+@\S+\.\S+$/.test(email)) return setError(t.errEmail);
     const when = new Date(flight);
     if (!flight || isNaN(when.getTime()) || when.getTime() < Date.now()) return setError(t.errDep);
+    const fno = flightNo.toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (fno && !/^([A-Z]{2}|[A-Z]\d|\d[A-Z])\d{1,4}[A-Z]?$/.test(fno)) return setError(t.errFlightNo);
     if (!consent) return setError(t.errConsent);
     setBusy(true);
     try {
       const res = await fetch("/api/checkout", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when.toISOString(), locale, ref: refCode || undefined, consent })
+        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when.toISOString(), flightNo: fno || undefined, locale, ref: refCode || undefined, consent })
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "checkout");
@@ -82,6 +88,9 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
       <div className="field"><label htmlFor="flight">{t.dep}</label>
         <input id="flight" type="datetime-local" value={flight} onChange={(e) => setFlight(e.target.value)} required />
         <span className="hint">{t.depHint}</span></div>
+      <div className="field"><label htmlFor="fno">{t.flightNo}</label>
+        <input id="fno" autoCapitalize="characters" autoComplete="off" placeholder="TP1234" maxLength={10} value={flightNo} onChange={(e) => setFlightNo(e.target.value)} />
+        <span className="hint">{t.flightNoHint}</span></div>
       <p className="note">{t.entryNote}</p>
       <label className="consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /> <span>{t.consent}</span></label>
       <p className="hint">{t.termsNote.split(/(\{terms\}|\{privacy\})/).map((part, i) => part === "{terms}" ? <a key={i} href={`/${locale}/legal/terms`} target="_blank">{t.lTerms}</a> : part === "{privacy}" ? <a key={i} href={`/${locale}/legal/privacy`} target="_blank">{t.lPrivacy}</a> : part)}</p>

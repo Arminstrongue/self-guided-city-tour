@@ -15,6 +15,13 @@
       "when": 1792172476559,
       "tag": "0001_city_content",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792182035715,
+      "tag": "0002_flight_no",
+      "breakpoints": true
     }
   ]
 }

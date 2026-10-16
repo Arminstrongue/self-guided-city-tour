@@ -19,12 +19,18 @@ export type Stop = {
   o?: boolean;        // interior pago opcional
   leg: Leg;
   pt: string; en: string;
+  cl?: number[];      // dias da semana em que o interior está fechado (0 = domingo)
 };
 export type City = {
   id: string; n: Record<string, string>; cur: "EUR" | "GBP";
   single: number; card: number; cardName: string; alt: Alt | null;
   air: Leg; ret: { core: Leg; extra: Leg }; stops: Stop[];
+  ap?: Airport;       // aeroporto principal
+  tz?: string;        // fuso horário (IANA)
 };
+export type Airport = { iata: string; name: string; lat: number; lng: number };
+/** Zona de fronteira: o Reino Unido tem regras de entrada próprias; o resto é espaço Schengen. */
+export const zoneOf = (c: City): "uk" | "schengen" => (c.cur === "GBP" ? "uk" : "schengen");
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -32,6 +38,7 @@ const names = (pt: string, en: string, es: string, fr: string, de: string) => ({
 export const CITIES: City[] = [
   {
     id: "lis", n: names("Lisboa", "Lisbon", "Lisboa", "Lisbonne", "Lissabon"), cur: "EUR",
+    ap: { iata: "LIS", name: "Aeroporto Humberto Delgado", lat: 38.7742, lng: -9.1342 }, tz: "Europe/Lisbon",
     single: 1.9, card: 0.5, cardName: "cartão Navegante",
     alt: { type: "pass", price: 7.25, name: "Passe 24h Carris/Metro" },
     air: { m: "metro", min: 30, line: "Metro Vermelha → Alameda → Verde", r: 1 },
@@ -44,12 +51,13 @@ export const CITIES: City[] = [
       { id: "graca", n: "Miradouro da Graça", a: "Graça", lat: 38.7163, lng: -9.1316, v: 20, leg: W(12), pt: "Vista larga sobre o Castelo e a Baixa, à sombra de pinheiros e com menos gente.", en: "A wide view of the castle and Baixa under pine trees, with fewer crowds." },
       { id: "carmo", n: "Largo do Carmo e Chiado", a: "Chiado", lat: 38.712, lng: -9.1405, v: 20, top: true, leg: { m: "tram", min: 20, line: "Elétrico 28", r: 1 }, pt: "Depois do mítico elétrico 28, as ruínas do convento sem tecto e as livrarias da Rua Garrett.", en: "After the famous tram 28, the roofless convent ruins and the old bookshops of Rua Garrett." },
       { id: "sao-pedro", n: "São Pedro de Alcântara", a: "Bairro Alto", lat: 38.7155, lng: -9.1446, v: 15, leg: W(8), pt: "Jardim-miradouro com vista frontal para o Castelo e a Graça.", en: "A garden viewpoint facing the castle and Graça head-on." },
-      { id: "jeronimos", n: "Jerónimos e Pastéis de Belém", a: "Belém", lat: 38.6979, lng: -9.2068, v: 35, top: true, x: true, c: 1.5, o: true, leg: { m: "tram", min: 35, line: "Cais do Sodré → 15E", r: 1 }, pt: "Fachada manuelina do mosteiro e os pastéis de nata mais famosos, ao lado. Custo aproximado de um pastel.", en: "The monastery's Manueline façade and the most famous custard tarts next door. Price is roughly one tart." },
-      { id: "torre-belem", n: "Torre de Belém", a: "Belém", lat: 38.6916, lng: -9.216, v: 30, x: true, o: true, leg: W(15, "Beira-rio"), pt: "Passeio plano pelo Padrão dos Descobrimentos até à torre do século XVI.", en: "A flat riverside walk past the Discoveries monument to the 16th-century tower." }
+      { id: "jeronimos", n: "Jerónimos e Pastéis de Belém", a: "Belém", lat: 38.6979, lng: -9.2068, v: 35, top: true, x: true, c: 1.5, o: true, cl: [1], leg: { m: "tram", min: 35, line: "Cais do Sodré → 15E", r: 1 }, pt: "Fachada manuelina do mosteiro e os pastéis de nata mais famosos, ao lado. Custo aproximado de um pastel.", en: "The monastery's Manueline façade and the most famous custard tarts next door. Price is roughly one tart." },
+      { id: "torre-belem", n: "Torre de Belém", a: "Belém", lat: 38.6916, lng: -9.216, v: 30, x: true, o: true, cl: [1], leg: W(15, "Beira-rio"), pt: "Passeio plano pelo Padrão dos Descobrimentos até à torre do século XVI.", en: "A flat riverside walk past the Discoveries monument to the 16th-century tower." }
     ]
   },
   {
     id: "opo", n: names("Porto", "Porto", "Oporto", "Porto", "Porto"), cur: "EUR",
+    ap: { iata: "OPO", name: "Aeroporto Francisco Sá Carneiro", lat: 41.2481, lng: -8.6814 }, tz: "Europe/Lisbon",
     single: 1.4, card: 0.6, cardName: "cartão Andante", alt: null,
     air: { m: "metro", min: 35, line: "Metro E → Trindade (Z4)", f: 2.3 },
     ret: { core: { m: "metro", min: 40, line: "São Bento → Metro D/E (Z4)", f: 2.3 }, extra: { m: "bus", min: 60, line: "Autocarro 500 + Metro E", r: 1, f: 2.3 } },
@@ -65,6 +73,7 @@ export const CITIES: City[] = [
   },
   {
     id: "mad", n: names("Madrid", "Madrid", "Madrid", "Madrid", "Madrid"), cur: "EUR",
+    ap: { iata: "MAD", name: "Adolfo Suárez Madrid-Barajas", lat: 40.4936, lng: -3.5668 }, tz: "Europe/Madrid",
     single: 2.0, card: 2.5, cardName: "tarjeta Multi",
     alt: { type: "pack", price: 7.3, n: 10, name: "Metro 10 viajes" },
     air: { m: "metro", min: 40, line: "L8 → Nuevos Ministerios → L10/L1 Sol", r: 1, f: 3.0 },
@@ -82,6 +91,7 @@ export const CITIES: City[] = [
   },
   {
     id: "bcn", n: names("Barcelona", "Barcelona", "Barcelona", "Barcelone", "Barcelona"), cur: "EUR",
+    ap: { iata: "BCN", name: "Josep Tarradellas Barcelona-El Prat", lat: 41.2974, lng: 2.0833 }, tz: "Europe/Madrid",
     single: 2.9, card: 0, cardName: "",
     alt: { type: "pack", price: 13.0, n: 10, name: "T-casual 10 viagens" },
     air: { m: "metro", min: 50, line: "L9 Sud → L1 Catalunya", f: 5.9 },
@@ -98,6 +108,7 @@ export const CITIES: City[] = [
   },
   {
     id: "par", n: names("Paris", "Paris", "París", "Paris", "Paris"), cur: "EUR",
+    ap: { iata: "CDG", name: "Paris-Charles de Gaulle", lat: 49.0097, lng: 2.5479 }, tz: "Europe/Paris",
     single: 2.55, card: 2.0, cardName: "Navigo Easy",
     alt: { type: "pass", price: 30.6, name: "Paris Visite 1 jour", includesAirport: true },
     air: { m: "train", min: 35, line: "RER B CDG → Saint-Michel", f: 14.0 },
@@ -115,22 +126,24 @@ export const CITIES: City[] = [
   },
   {
     id: "lon", n: names("Londres", "London", "Londres", "Londres", "London"), cur: "GBP",
+    ap: { iata: "LHR", name: "London Heathrow", lat: 51.47, lng: -0.4543 }, tz: "Europe/London",
     single: 3.0, card: 0, cardName: "",
     alt: { type: "cap", price: 8.9, name: "Teto zonas 1–2" },
     air: { m: "metro", min: 55, line: "Piccadilly → Green Park → Jubilee", f: 5.9 },
     ret: { core: { m: "metro", min: 55, line: "Covent Garden → Piccadilly", f: 5.9 }, extra: { m: "metro", min: 65, line: "Tower Hill → District → Piccadilly", f: 5.9 } },
     stops: [
       { id: "westminster", n: "Westminster e Big Ben", a: "Westminster", lat: 51.5007, lng: -0.1246, v: 20, top: true, leg: W(0, "Westminster"), pt: "O Parlamento, a torre do relógio e a vista da ponte.", en: "Parliament, the clock tower and the view from the bridge." },
-      { id: "abbey", n: "Westminster Abbey", a: "Westminster", lat: 51.4993, lng: -0.1273, v: 10, o: true, leg: W(3), pt: "Onde são coroados os reis. Exterior gratuito.", en: "Where monarchs are crowned. Exterior is free." },
+      { id: "abbey", n: "Westminster Abbey", a: "Westminster", lat: 51.4993, lng: -0.1273, v: 10, o: true, cl: [0], leg: W(3), pt: "Onde são coroados os reis. Exterior gratuito.", en: "Where monarchs are crowned. Exterior is free." },
       { id: "buckingham", n: "Buckingham Palace", a: "St James's", lat: 51.5014, lng: -0.1419, v: 25, top: true, leg: W(15, "St James's Park"), pt: "Pelo parque de St James's até ao palácio e à troca da guarda, em dias selecionados.", en: "Through St James's Park to the palace and the Changing of the Guard on selected days." },
       { id: "trafalgar", n: "Trafalgar Square e National Gallery", a: "West End", lat: 51.508, lng: -0.1281, v: 30, top: true, leg: W(15, "The Mall"), pt: "A praça da coluna de Nelson e um museu de pintura gratuito.", en: "Nelson's Column square and a free painting museum." },
       { id: "covent", n: "Covent Garden", a: "West End", lat: 51.5117, lng: -0.124, v: 20, leg: W(8), pt: "Mercado coberto, artistas de rua e lojas.", en: "Covered market, street performers and shops." },
-      { id: "st-pauls", n: "St Paul's e Tate Modern", a: "City / Bankside", lat: 51.5076, lng: -0.0994, v: 35, x: true, top: true, leg: { m: "metro", min: 15, line: "Central → St Paul's", r: 1 }, pt: "A cúpula de St Paul's, a ponte Millennium e o museu de arte moderna gratuito.", en: "St Paul's dome, the Millennium Bridge and the free modern art museum." },
+      { id: "st-pauls", n: "St Paul's e Tate Modern", a: "City / Bankside", lat: 51.5076, lng: -0.0994, v: 35, x: true, top: true, cl: [0], leg: { m: "metro", min: 15, line: "Central → St Paul's", r: 1 }, pt: "A cúpula de St Paul's, a ponte Millennium e o museu de arte moderna gratuito.", en: "St Paul's dome, the Millennium Bridge and the free modern art museum." },
       { id: "tower-bridge", n: "Tower Bridge", a: "Tower Hill", lat: 51.5055, lng: -0.0754, v: 20, x: true, top: true, leg: W(25, "South Bank"), pt: "Pela margem sul até à ponte mais fotografada de Londres.", en: "Along the South Bank to London's most photographed bridge." }
     ]
   },
   {
     id: "rom", n: names("Roma", "Rome", "Roma", "Rome", "Rom"), cur: "EUR",
+    ap: { iata: "FCO", name: "Roma Fiumicino", lat: 41.8003, lng: 12.2389 }, tz: "Europe/Rome",
     single: 1.5, card: 0, cardName: "",
     alt: { type: "pass", price: 8.5, name: "Passe 24h ATAC" },
     air: { m: "train", min: 32, line: "Leonardo Express → Termini", f: 14.0 },
@@ -148,6 +161,7 @@ export const CITIES: City[] = [
   },
   {
     id: "ams", n: names("Amesterdão", "Amsterdam", "Ámsterdam", "Amsterdam", "Amsterdam"), cur: "EUR",
+    ap: { iata: "AMS", name: "Amsterdam Schiphol", lat: 52.3105, lng: 4.7683 }, tz: "Europe/Amsterdam",
     single: 3.4, card: 0, cardName: "",
     alt: { type: "pass", price: 10.0, name: "GVB 24h" },
     air: { m: "train", min: 15, line: "NS Schiphol → Centraal (OVpay)", f: 5.5 },

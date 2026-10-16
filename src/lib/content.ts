@@ -18,7 +18,8 @@ const Stop = z.object({
   v: z.number().int().min(5).max(240),
   top: z.boolean().optional(), x: z.boolean().optional(), o: z.boolean().optional(),
   c: z.number().min(0).max(200).optional(),
-  leg: Leg, pt: z.string().max(600), en: z.string().max(600)
+  leg: Leg, pt: z.string().max(600), en: z.string().max(600),
+  cl: z.array(z.number().int().min(0).max(6)).max(7).optional()
 });
 const Alt = z.union([
   z.object({ type: z.literal("pass"), price: z.number().min(0), name: z.string().max(60), includesAirport: z.boolean().optional() }),
@@ -32,7 +33,9 @@ export const CitySchema = z.object({
   single: z.number().min(0).max(50), card: z.number().min(0).max(20), cardName: z.string().max(40),
   alt: Alt.nullable(),
   air: Leg, ret: z.object({ core: Leg, extra: Leg }),
-  stops: z.array(Stop).min(3).max(15)
+  stops: z.array(Stop).min(3).max(15),
+  ap: z.object({ iata: z.string().regex(/^[A-Z]{3}$/), name: z.string().max(80), lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }).optional(),
+  tz: z.string().max(40).optional()
 }).superRefine((c, ctx) => {
   const ids = new Set<string>();
   c.stops.forEach((s, i) => { if (ids.has(s.id)) ctx.addIssue({ code: "custom", path: ["stops", i, "id"], message: "duplicate stop id" }); ids.add(s.id); });
@@ -45,12 +48,20 @@ async function rows(): Promise<Row[]> {
   catch { return []; } // base de dados ainda sem a tabela: usa o conteúdo de origem
 }
 
+/** Conteúdo editado no painel: completa campos novos (aeroporto, fuso, dias de fecho) com os de origem. */
+function withStatic(edited: City, base: City): City {
+  return {
+    ...edited, ap: edited.ap ?? base.ap, tz: edited.tz ?? base.tz,
+    stops: edited.stops.map((s) => ({ ...s, cl: s.cl ?? base.stops.find((b) => b.id === s.id)?.cl }))
+  };
+}
+
 /** Cidades ativas: conteúdo de origem com as alterações feitas no painel por cima. */
 export async function loadCities(opts: { includeInactive?: boolean } = {}): Promise<(City & { edited?: boolean; active?: boolean })[]> {
   const over = new Map((await rows()).map((r) => [r.id, r]));
   const out: (City & { edited?: boolean; active?: boolean })[] = CITIES.map((c) => {
     const r = over.get(c.id);
-    return r ? { ...(r.data as City), edited: true, active: r.active } : { ...c, active: true };
+    return r ? { ...withStatic(r.data as City, c), edited: true, active: r.active } : { ...c, active: true };
   });
   for (const r of over.values()) if (!CITIES.some((c) => c.id === r.id)) out.push({ ...(r.data as City), edited: true, active: r.active });
   return opts.includeInactive ? out : out.filter((c) => c.active !== false);

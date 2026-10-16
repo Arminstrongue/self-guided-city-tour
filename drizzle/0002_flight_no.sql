@@ -1,0 +1,1 @@
+ALTER TABLE "accesses" ADD COLUMN "flight_no" text;

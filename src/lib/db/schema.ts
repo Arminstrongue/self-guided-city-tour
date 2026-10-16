@@ -42,6 +42,7 @@ export const accesses = pgTable("accesses", {
   scope: accessScope("scope").notNull(),
   city: text("city"),
   flightAt: timestamp("flight_at", { withTimezone: true }),
+  flightNo: text("flight_no"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   amountCents: integer("amount_cents").notNull(),
   currency: text("currency").notNull().default("eur"),

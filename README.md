@@ -54,6 +54,16 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 5. Os preços (4,99 €, 9,99 €, 19 €/mês, 49 €/mês) estão em `src/lib/pricing.ts`; não é preciso criar produtos no Stripe.
 6. Antes de vender a clientes de outros países da UE, ative o Stripe Tax ou configure o IVA OSS com o contabilista.
 
+## Funcionalidades para quem está em escala
+
+- **Posso sair?** (`src/lib/entry.ts`, na página de compra e no Guia): pela nacionalidade e horas de chegada/partida, diz se pode sair (Schengen: livre, EES, ETIAS, visto; Reino Unido: ETA ou visto), quanto tempo útil tem e que roteiro cabe. Regras revistas em outubro de 2026, sempre com ligação à fonte oficial. Quando a ETIAS arrancar, ponha `NEXT_PUBLIC_ETIAS_LIVE=1`.
+- **Roteiro pelo tempo livre:** escolha entre versões curtas, completa e com extensão; por defeito a app escolhe a maior que cabe até ao voo.
+- **GPS e Voltar já:** distância à próxima paragem, tempo estimado até ao aeroporto a partir de onde está, hora limite para sair e direções Google Maps. A localização não sai do telemóvel.
+- **Estado do voo:** número de voo opcional na compra; com `AERODATABOX_API_KEY` mostra atrasos, terminal e porta e permite ajustar a contagem. O viajante pode alterar o voo no roteiro.
+- **Áudio-guia:** narração de cada paragem com a voz do telemóvel (PT ou EN).
+- **Guia prático** (`src/data/practical.ts`): emergência, aeroporto, embaixada, bagagem, internet, pagamentos, gorjetas, água, segurança, tomadas e comida barata com preços.
+- **Horários e meteorologia:** aviso de interiores fechados no dia (`cl` em cada paragem) e previsão Open-Meteo para as próximas horas.
+
 ## Moedas
 
 - O preço de venda é sempre em euros (`src/lib/pricing.ts`). Na Stripe, ative **Adaptive Pricing** (Definições → Pagamentos) para cada viajante pagar na sua moeda; a app regista sempre o valor de origem em euros.

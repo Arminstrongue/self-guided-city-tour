@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
 import { BuyForm } from "@/components/BuyForm";
 import { WebOnly } from "@/components/WebOnly";
+import { ExitCheck } from "@/components/ExitCheck";
 import Link from "next/link";
 import { cityName } from "@/data/cities";
 import { loadCity } from "@/lib/content";
@@ -25,6 +26,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       <div className="stack">
         <h1 style={{ fontSize: 30 }}>{fmt(t.buyTitle, { city: name })}</h1>
         <p className="hint">{t.buySub}</p>
+        <ExitCheck city={city} locale={params.locale} t={t} />
         <WebOnly fallback={<><p className="note">{t.appReader}</p><Link className="btn" href={`/api/auth/signin?callbackUrl=/${params.locale}/tour/${city.id}`}>{t.signIn}</Link></>}>
         <BuyForm
           locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}

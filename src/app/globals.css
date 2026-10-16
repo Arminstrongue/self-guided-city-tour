@@ -84,8 +84,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .clock b{font-family:var(--display);font-size:18px}
 .progress{height:6px;background:var(--line);border-radius:6px;margin-top:10px;overflow:hidden}
 .progress i{display:block;height:100%;background:var(--cobalt);transition:width .3s}
-.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-top:10px}
-.tabs button{border:0;background:transparent;border-radius:9px;padding:8px;font-weight:700;color:var(--muted);cursor:pointer}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-top:10px}
+.tabs button{border:0;background:transparent;border-radius:9px;padding:8px 2px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer}
 .tabs button[aria-selected="true"]{background:var(--cobalt);color:var(--on-cobalt)}
 .toggle{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .switch{width:50px;height:30px;border-radius:30px;border:0;background:var(--line);position:relative;cursor:pointer;flex:none}
@@ -166,3 +166,19 @@ footer.foot p{margin-block:4px}
 .price-local{display:block;font-size:12px;font-weight:600;color:var(--muted)}
 .fx{color:var(--muted);font-weight:500}
 .top-row .cur-pick{margin-left:auto}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid2>*{min-width:0}
+.grid2 input{width:100%;min-width:0}
+@media (max-width:480px){.grid2{grid-template-columns:1fr}}
+.verdict-box{border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--line)}
+.verdict-box.ok{background:var(--good-soft);border-color:transparent}
+.verdict-box.warn{background:var(--warn-soft);border-color:transparent}
+.verdict-box.bad{background:#fde7e7;border-color:transparent}
+@media (prefers-color-scheme:dark){.verdict-box.bad{background:#3a1717}}
+.closed-chip{display:inline-block;margin-top:4px;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:6px;padding:2px 6px}
+.back-now.late,.flight.late{border:2px solid var(--warn)}
+.bad-txt{color:var(--warn)}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.link-btn{background:none;border:0;padding:0;color:var(--cobalt);font:inherit;font-weight:600;cursor:pointer;text-align:left}
+.weather{display:flex;flex-direction:column;gap:2px}
+.acts button[aria-pressed]{background:none;border:1.5px solid var(--line);color:var(--cobalt)}
