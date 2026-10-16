@@ -27,6 +27,13 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
   const [tab, setTab] = useState<"route" | "map" | "cost">("route");
   const [now, setNow] = useState(() => Date.now());
   const [copied, setCopied] = useState(false);
+  const [online, setOnline] = useState(true);
+  const [notice, setNotice] = useState("");
+  useEffect(() => {
+    const up = () => setOnline(navigator.onLine);
+    up(); window.addEventListener("online", up); window.addEventListener("offline", up);
+    return () => { window.removeEventListener("online", up); window.removeEventListener("offline", up); };
+  }, []);
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
 
   const plan = useMemo(() => planRoute(city, ext), [city, ext]);
@@ -56,6 +63,33 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
     const nv = { ...done, [id]: !done[id] };
     setDone(nv);
     if (nv[id]) { const i = plan.stops.findIndex((s) => s.id === id); const next = plan.stops[i + 1]; if (next) setOpen(next.id); }
+  }
+
+  async function remind() {
+    if (!leave) return;
+    const at = new Date(leave.getTime() - 15 * 60_000);
+    const body = fmt(t.notifyBody, { t: hm(leave) });
+    const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+    try {
+      if (cap?.isNativePlatform?.()) {
+        // App nativa: notificação agendada no sistema, funciona com a app fechada.
+        const { LocalNotifications } = await import("@capacitor/local-notifications");
+        const perm = await LocalNotifications.requestPermissions();
+        if (perm.display !== "granted") return setNotice(t.notifyDenied);
+        await LocalNotifications.schedule({ notifications: [{ id: 1, title: t.notifyTitle, body, schedule: { at } }] });
+      } else {
+        // Navegador: aviso enquanto a página estiver aberta.
+        if (!("Notification" in window) || (await Notification.requestPermission()) !== "granted") return setNotice(t.notifyDenied);
+        const ms = Math.max(0, at.getTime() - Date.now());
+        setTimeout(() => {
+          const show = () => { new Notification(t.notifyTitle, { body }); };
+          navigator.serviceWorker?.getRegistration()
+            .then((r) => { if (r) void r.showNotification(t.notifyTitle, { body }); else show(); })
+            .catch(show);
+        }, ms);
+      }
+      setNotice(fmt(t.notifyOn, { t: hm(at) }));
+    } catch { setNotice(t.notifyDenied); }
   }
 
   const shareText = fmt(t.shareText, { city: cityLabel, n: plan.stops.length, c: money(plan.transport) });
@@ -101,6 +135,10 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                   : fmt(t.fitsBad, { a: hrs(plan.minutesTour), b: hrs(avail) }) + (ext && hasExtension(city) ? t.fitsTip : t.fitsTip2)}
             </p>
           )}
+          {leave && avail !== null && avail > 15 && (
+            notice ? <p className="hint">🔔 {notice}</p> : <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={remind}>🔔 {t.notifyBtn}</button>
+          )}
+          {!online && <p className="note">{t.offline}</p>}
           {t.contentNote && locale !== "pt" && locale !== "en" && <p className="note">{t.contentNote}</p>}
         </div>
 

@@ -5,7 +5,8 @@ import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan } from "./pricing";
 import { createAccessToken } from "./access-token";
 import { sendEmail } from "./email";
 import { env } from "./env";
-import { getCity, cityName } from "@/data/cities";
+import { cityName } from "@/data/cities";
+import { loadCities } from "./content";
 import { isLocale, type Locale } from "@/i18n/dictionaries";
 
 /**
@@ -49,7 +50,7 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   }
 
   const locale: Locale = m.locale && isLocale(m.locale) ? m.locale : "en";
-  const city = access.city ? getCity(access.city) : undefined;
+  const city = access.city ? (await loadCities({ includeInactive: true })).find((c) => c.id === access.city) : undefined;
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email))}&locale=${locale}${city ? `&city=${city.id}` : ""}`;
   await sendEmail(email, `Self Guided City Tour — ${city ? cityName(city, locale) : "Europe Pass"}`,
     `<p>${m.name ? `Olá ${escapeHtml(m.name)},` : "Olá,"}</p><p>O seu roteiro está pronto. Abra-o em qualquer dispositivo:</p><p><a href="${link}">${link}</a></p><p>Válido até ${expiresAt.toISOString().slice(0, 16).replace("T", " ")} UTC.</p>`);

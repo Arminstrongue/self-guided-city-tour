@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
+import "@fontsource/figtree/400.css";
+import "@fontsource/figtree/600.css";
+import "@fontsource/figtree/700.css";
+import "@fontsource/bricolage-grotesque/600.css";
+import "@fontsource/bricolage-grotesque/800.css";
 import "../globals.css";
+import Link from "next/link";
+import { ServiceWorker } from "@/components/ServiceWorker";
 import { isLocale, getDict } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
@@ -16,13 +23,13 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
   const t = getDict(params.locale);
   return (
     <html lang={params.locale}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;600;700&display=swap" />
-      </head>
       <body>
+        <ServiceWorker />
         {children}
-        <p className="foot">{t.footer}</p>
+        <footer className="foot">
+          <p>{t.footer}</p>
+          <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link></p>
+        </footer>
       </body>
     </html>
   );

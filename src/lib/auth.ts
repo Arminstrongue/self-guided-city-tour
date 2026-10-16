@@ -42,7 +42,11 @@ export async function sessionEmail(): Promise<string | null> {
   return s?.user?.email?.toLowerCase() ?? null;
 }
 
+/** Só em desenvolvimento local: DEV_ADMIN=1 abre o painel sem login social. Ignorado em produção. */
+const devAdmin = () => process.env.NODE_ENV === "development" && process.env.DEV_ADMIN === "1";
+
 export async function isAdmin(): Promise<boolean> {
+  if (devAdmin()) return true;
   const email = await sessionEmail();
   return Boolean(email && env.adminEmails.includes(email));
 }

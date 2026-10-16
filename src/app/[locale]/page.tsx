@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { WebOnly } from "@/components/WebOnly";
-import { CITIES, SOON, cityName } from "@/data/cities";
+import { SOON, cityName } from "@/data/cities";
+import { loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default function Home({ params }: { params: { locale: Locale } }) {
+export default async function Home({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
   return (
     <main className="app">
@@ -19,7 +20,7 @@ export default function Home({ params }: { params: { locale: Locale } }) {
       <div className="stack" style={{ marginTop: 18 }}>
         <span className="label">{t.chooseCity}</span>
         <div className="cities">
-          {CITIES.map((c) => (
+          {(await loadCities()).map((c) => (
             <Link key={c.id} className="city" href={`/${params.locale}/c/${c.id}`}>
               <b>{cityName(c, params.locale)}</b>
               <small>{c.stops.length} {t.stops}</small>

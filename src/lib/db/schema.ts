@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, jsonb, boolean } from "drizzle-orm/pg-core";
 
 export const accessScope = pgEnum("access_scope", ["city", "all"]);
 export const merchantPlan = pgEnum("merchant_plan", ["basic", "featured", "partner"]);
@@ -65,3 +65,12 @@ export const commissions = pgTable("commissions", {
 
 export type Merchant = typeof merchants.$inferSelect;
 export type Access = typeof accesses.$inferSelect;
+
+/** Conteúdo editável no painel: substitui (ou acrescenta) cidades de src/data/cities.ts. */
+export const cityContent = pgTable("city_content", {
+  id: text("id").primaryKey(),
+  data: jsonb("data").notNull(),
+  active: boolean("active").notNull().default(true),
+  updatedBy: text("updated_by"),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+});

@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
-import { getCity } from "@/data/cities";
+import { loadCity } from "@/lib/content";
 
 export const dynamic = "force-dynamic";
 
-export default function Success({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; email?: string; pending?: string } }) {
+export default async function Success({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; email?: string; pending?: string } }) {
   const t = getDict(params.locale);
-  const city = getCity(searchParams.city ?? "");
+  const city = await loadCity(searchParams.city ?? "");
   return (
     <main className="app">
       <Header locale={params.locale} />

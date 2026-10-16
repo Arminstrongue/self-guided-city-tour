@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { isAdmin } from "@/lib/auth";
-import { getCity } from "@/data/cities";
+import { loadCities } from "@/lib/content";
 import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +39,8 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
     );
   }
   const d = await db();
+  const allCities = await loadCities({ includeInactive: true });
+  const getCity = (id: string) => allCities.find((c) => c.id === id);
   const since = new Date(Date.now() - 30 * 24 * 3600_000);
   const byCity = await d.select({ city: schema.accesses.city, scope: schema.accesses.scope, n: sql<number>`count(*)::int`, cents: sql<number>`coalesce(sum(${schema.accesses.amountCents}),0)::int` })
     .from(schema.accesses).where(gt(schema.accesses.createdAt, since)).groupBy(schema.accesses.city, schema.accesses.scope);
@@ -54,7 +56,7 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
   return (
     <main className="app wide">
       <div className="stack" style={{ paddingTop: 20 }}>
-        <h1>Administração</h1>
+        <div className="top-row"><h1>Administração</h1><Link className="mini" href={`/${params.locale}/admin/content`}>Editar cidades e paragens →</Link></div>
         <div className="kpis">
           <div className="card kpi"><span className="label">Acessos, 30 dias</span><b className="num">{sales}</b></div>
           <div className="card kpi"><span className="label">Receita, 30 dias</span><b className="num">{eur(revenue)}</b></div>

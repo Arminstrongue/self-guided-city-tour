@@ -5,7 +5,8 @@ import { db, schema } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { activateFromSession } from "@/lib/merchants";
 import { env } from "@/lib/env";
-import { getCity, cityName } from "@/data/cities";
+import { cityName } from "@/data/cities";
+import { loadCities } from "@/lib/content";
 import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export default async function MerchantDone({ params, searchParams }: { params: {
     const s = await stripe().checkout.sessions.retrieve(searchParams.session_id);
     if (s.metadata?.merchantId === m.id) m = (await activateFromSession(s)) ?? m;
   }
-  const city = getCity(m.city)!;
+  const city = (await loadCities({ includeInactive: true })).find((c) => c.id === m.city)!;
   const stop = city.stops.find((s) => s.id === m.stopId);
   const qrUrl = `${env.appUrl}/${city.id}?ref=${m.refCode}`;
   return (

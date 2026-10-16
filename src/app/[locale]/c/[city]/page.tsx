@@ -3,7 +3,8 @@ import { Header } from "@/components/Header";
 import { BuyForm } from "@/components/BuyForm";
 import { WebOnly } from "@/components/WebOnly";
 import Link from "next/link";
-import { getCity, cityName } from "@/data/cities";
+import { cityName } from "@/data/cities";
+import { loadCity } from "@/lib/content";
 import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
 import { enabledProviders, sessionEmail } from "@/lib/auth";
 import { TOUR_PLANS } from "@/lib/pricing";
@@ -12,7 +13,7 @@ import { TOUR_PLANS } from "@/lib/pricing";
 export const dynamic = "force-dynamic";
 
 export default async function CityEntry({ params, searchParams }: { params: { locale: Locale; city: string }; searchParams: { ref?: string } }) {
-  const city = getCity(params.city);
+  const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
   const name = cityName(city, params.locale);

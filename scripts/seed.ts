@@ -1,4 +1,5 @@
 /**
+import "./env";
  * Dados de demonstração para desenvolvimento (NÃO usar em produção):
  * dois comerciantes de exemplo em Lisboa e um acesso para demo@example.com.
  * Imprime um link de acesso para abrir o roteiro sem pagar.

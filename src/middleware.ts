@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 const LOCALES = ["pt", "en", "es", "fr", "de"];
-const CITY_IDS = ["lis", "opo", "mad", "bcn", "par", "lon", "rom", "ams"];
+const ROUTES = ["admin", "tour", "legal", "c", "success"]; // páginas, não códigos de cidade
 
 function pickLocale(req: NextRequest): string {
   const saved = req.cookies.get("sgct_locale")?.value;
@@ -28,7 +28,7 @@ export function middleware(req: NextRequest) {
   }
   const locale = pickLocale(req);
   const url = req.nextUrl.clone();
-  url.pathname = CITY_IDS.includes(first) && pathname.split("/").length === 2 ? `/${locale}/c/${first}` : `/${locale}${pathname === "/" ? "" : pathname}`;
+  url.pathname = /^[a-z]{2,5}$/.test(first) && !ROUTES.includes(first) && pathname.split("/").length === 2 ? `/${locale}/c/${first}` : `/${locale}${pathname === "/" ? "" : pathname}`;
   url.search = search;
   return NextResponse.redirect(url);
 }

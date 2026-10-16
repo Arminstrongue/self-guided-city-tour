@@ -1,0 +1,27 @@
+import { notFound } from "next/navigation";
+import { Header } from "@/components/Header";
+import { legalEN, legalPT, company, type LegalDoc } from "@/legal/content";
+import type { Locale } from "@/i18n/dictionaries";
+
+export const dynamic = "force-dynamic";
+const DOCS: LegalDoc[] = ["terms", "privacy", "cookies"];
+
+export default function Legal({ params }: { params: { locale: Locale; doc: string } }) {
+  if (!DOCS.includes(params.doc as LegalDoc)) notFound();
+  const content = (params.locale === "pt" ? legalPT : legalEN)(params.doc as LegalDoc);
+  return (
+    <main className="app">
+      <Header locale={params.locale} />
+      <article className="stack legal">
+        <h1 style={{ fontSize: 28 }}>{content.title}</h1>
+        <p className="hint">{params.locale === "pt" ? "Última atualização" : "Last updated"}: {company().updated}</p>
+        {content.sections.map((s) => (
+          <section key={s.h} className="stack" style={{ gap: 6 }}>
+            <h2 style={{ fontSize: 18 }}>{s.h}</h2>
+            {s.p.map((p, i) => <p key={i}>{p}</p>)}
+          </section>
+        ))}
+      </article>
+    </main>
+  );
+}

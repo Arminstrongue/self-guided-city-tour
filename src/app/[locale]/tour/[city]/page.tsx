@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { TourView } from "@/components/TourView";
 import { WebOnly } from "@/components/WebOnly";
-import { getCity, cityName, CITIES } from "@/data/cities";
+import { cityName } from "@/data/cities";
+import { loadCity, loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { ACCESS_COOKIE, readAccessToken } from "@/lib/access-token";
 import { sessionEmail } from "@/lib/auth";
@@ -14,7 +15,7 @@ import { activeOffers } from "@/lib/merchants";
 export const dynamic = "force-dynamic";
 
 export default async function Tour({ params }: { params: { locale: Locale; city: string } }) {
-  const city = getCity(params.city);
+  const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
   const emails = [readAccessToken(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
@@ -37,7 +38,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
     );
   }
 
-  const otherCities = access.scope === "all" ? CITIES.map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
+  const otherCities = access.scope === "all" ? (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
   return (
     <main className="app">
       <TourView

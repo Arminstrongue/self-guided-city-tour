@@ -1,4 +1,5 @@
 /** Aplica as migrações SQL de ./drizzle à base de dados de DATABASE_URL. */
+import "./env";
 import { db } from "../src/lib/db";
 
 async function main() {

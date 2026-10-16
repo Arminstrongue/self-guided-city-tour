@@ -5,7 +5,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { MERCHANT_PLANS } from "@/lib/pricing";
 import { newRefCode } from "@/lib/merchants";
-import { getCity } from "@/data/cities";
+import { loadCity } from "@/lib/content";
 import { LOCALES } from "@/i18n/dictionaries";
 
 export const runtime = "nodejs";
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid", issues: parsed.error.flatten() }, { status: 400 });
   const b = parsed.data;
-  const city = getCity(b.city);
+  const city = await loadCity(b.city);
   if (!city || !city.stops.some((s) => s.id === b.stopId)) return NextResponse.json({ error: "unknown_stop" }, { status: 400 });
 
   const d = await db();

@@ -85,13 +85,17 @@ Atalho: num servidor Ubuntu 24.04 novo, `deploy/hetzner-setup.sh <url do reposit
 
 ## Administração
 
+- `/pt/admin/content` — editar cidades, paragens, textos e tarifas sem mexer no código (pré-visualização do custo antes de publicar; botão para repor o conteúdo de origem). Também cria cidades novas.
+- No seu computador, `DEV_ADMIN=1` no `.env` abre o painel sem login social (ignorado em produção).
+
 `/pt/admin` — vendas por cidade, receita, assinaturas ativas, aprovar ou suspender comerciantes e marcar comissões como pagas. Acesso para os emails em `ADMIN_EMAILS` (entrar com login social).
+
+## Legal
+
+Termos, privacidade e cookies em `/pt/legal/terms|privacy|cookies` (modelo em `src/legal/content.ts`, a rever por advogado). Preencha `COMPANY_NAME`, `COMPANY_NIPC`, `COMPANY_ADDRESS` e `COMPANY_EMAIL` no `.env` quando a empresa estiver criada. No pagamento, o turista confirma o pedido de acesso imediato (perda do direito de livre resolução de 14 dias, exigida para conteúdo digital). As fontes são servidas localmente (sem Google Fonts).
 
 ## Próximos passos
 
-- Backoffice para editar cidades, paragens e tarifas sem mexer no código (hoje em `src/data/cities.ts`).
 - Áudio-guia por paragem e fotos próprias.
-- Modo offline (service worker) para o roteiro já pago.
-- Páginas legais: termos, privacidade (RGPD), política de cookies e aviso de responsabilidade sobre voos.
 - Limite de pedidos nas APIs e monitorização (por exemplo Sentry e Uptime Kuma).
 - Pagamento automático de comissões (Stripe Connect).
