@@ -32,7 +32,7 @@ scripts/                   migrate.ts, seed.ts (dados de demonstração)
 
 ## Correr localmente
 
-Requisitos: Node 22.
+Requisitos: Node 22. No Mac, basta dar duplo clique em `start-mac.command` (instala, cria a base de dados de demonstração e abre o navegador).
 
 ```bash
 cp .env.example .env          # DATABASE_URL=pglite:./.data/db usa PostgreSQL embutido, sem servidor
@@ -64,7 +64,13 @@ Cada fornecedor só aparece se as variáveis estiverem definidas.
 
 Sem login, o turista compra só com o email; o acesso fica no dispositivo e o link segue por email (defina `RESEND_API_KEY` e `EMAIL_FROM` para enviar).
 
+## Apps iOS e Android
+
+Ver [MOBILE.md](MOBILE.md): projetos nativos em `ios/` e `android/`, ícones em `assets/`, e as regras de pagamento das lojas.
+
 ## Instalar na Hetzner
+
+Atalho: num servidor Ubuntu 24.04 novo, `deploy/hetzner-setup.sh <url do repositório>` instala Docker, firewall e a app. Cópias diárias da base de dados: `deploy/backup.sh`.
 
 1. Crie um servidor (CX23 chega para o MVP) com Ubuntu e instale Docker.
 2. Na Cloudflare, aponte o domínio para o IP do servidor (registo A, proxy ligado, SSL "Full (strict)").

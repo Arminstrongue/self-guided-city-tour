@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { TourView } from "@/components/TourView";
+import { WebOnly } from "@/components/WebOnly";
 import { getCity, cityName, CITIES } from "@/data/cities";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { ACCESS_COOKIE, readAccessToken } from "@/lib/access-token";
@@ -26,8 +27,10 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
         <div className="stack">
           <h1 style={{ fontSize: 28 }}>{cityName(city, params.locale)}</h1>
           <p>{t.noAccess}</p>
-          <Link className="btn tram" href={`/${params.locale}/c/${city.id}`}>{t.buyAccess}</Link>
-          <p className="hint">{t.restore}</p>
+          <WebOnly fallback={<p className="note">{t.appReader}</p>}>
+            <Link className="btn tram" href={`/${params.locale}/c/${city.id}`}>{t.buyAccess}</Link>
+            <p className="hint">{t.restore}</p>
+          </WebOnly>
           <Link className="btn ghost" href={`/api/auth/signin?callbackUrl=/${params.locale}/tour/${city.id}`}>{t.signIn}</Link>
         </div>
       </main>

@@ -2,7 +2,7 @@
   "name": "self-guided-city-tour",
   "version": "0.1.0",
   "private": true,
-  "description": "Self Guided City Tour — roteiros autoguiados para passageiros em escala",
+  "description": "Self Guided City Tour \u2014 roteiros autoguiados para passageiros em escala",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,9 +12,17 @@
     "test": "node --import tsx --test src/**/*.test.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "setup": "npm run db:migrate && npm run db:seed",
+    "mobile:sync": "cap sync",
+    "mobile:ios": "cap open ios",
+    "mobile:android": "cap open android",
+    "mobile:icons": "npx @capacitor/assets@3.0.5 generate"
   },
   "dependencies": {
+    "@capacitor/android": "6.2.2",
+    "@capacitor/core": "6.2.2",
+    "@capacitor/ios": "6.2.2",
     "@electric-sql/pglite": "0.2.17",
     "drizzle-orm": "0.45.4",
     "next": "14.2.35",
@@ -26,6 +34,7 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
+    "@capacitor/cli": "6.2.2",
     "@types/node": "22.10.2",
     "@types/pg": "8.11.10",
     "@types/react": "18.3.18",

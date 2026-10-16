@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { BuyForm } from "@/components/BuyForm";
+import { WebOnly } from "@/components/WebOnly";
+import Link from "next/link";
 import { getCity, cityName } from "@/data/cities";
 import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
 import { enabledProviders, sessionEmail } from "@/lib/auth";
@@ -20,11 +22,13 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       <div className="stack">
         <h1 style={{ fontSize: 30 }}>{fmt(t.buyTitle, { city: name })}</h1>
         <p className="hint">{t.buySub}</p>
+        <WebOnly fallback={<><p className="note">{t.appReader}</p><Link className="btn" href={`/api/auth/signin?callbackUrl=/${params.locale}/tour/${city.id}`}>{t.signIn}</Link></>}>
         <BuyForm
           locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
           providers={enabledProviders()} sessionEmail={await sessionEmail()}
           prices={{ city: TOUR_PLANS.city.amount, all: TOUR_PLANS.all.amount }} t={t}
         />
+        </WebOnly>
       </div>
     </main>
   );

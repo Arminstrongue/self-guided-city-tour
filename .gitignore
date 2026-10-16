@@ -5,3 +5,8 @@ node_modules
 .data
 *.tsbuildinfo
 next-env.d.ts
+android/.gradle
+android/app/build
+ios/App/Pods
+ios/App/build
+backups

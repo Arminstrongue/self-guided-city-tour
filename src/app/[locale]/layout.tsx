@@ -6,7 +6,8 @@ import { isLocale, getDict } from "@/i18n/dictionaries";
 export const metadata: Metadata = {
   title: "Self Guided City Tour",
   description: "Self-guided city routes for layover travellers, with the cheapest transport and a countdown to your flight.",
-  manifest: "/manifest.webmanifest"
+  manifest: "/manifest.webmanifest",
+  icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" }
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#1d4aa0" };
 

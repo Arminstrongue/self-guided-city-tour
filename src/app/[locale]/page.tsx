@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { WebOnly } from "@/components/WebOnly";
 import { CITIES, SOON, cityName } from "@/data/cities";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 
@@ -28,9 +29,9 @@ export default function Home({ params }: { params: { locale: Locale } }) {
             <span key={n} className="city off"><b>{n}</b><small>{t.soon}</small></span>
           ))}
         </div>
-        <Link className="merch-cta" href={`/${params.locale}/merchants`}>
+        <WebOnly><Link className="merch-cta" href={`/${params.locale}/merchants`}>
           <div><b>{t.merchCta}</b><span>{t.merchSub}</span></div><i>→</i>
-        </Link>
+        </Link></WebOnly>
       </div>
     </main>
   );

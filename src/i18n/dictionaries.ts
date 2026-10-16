@@ -43,7 +43,7 @@ const pt = {
   mSocial: "Redes sociais (opcional)", mPlan: "Plano de assinatura", perMonth: "/mês", mSubmit: "Subscrever", mFree: "Grátis",
   mErr: "Preencha nome, oferta e um email válido.", mDone: "Negócio registado",
   mDoneSub: "A sua oferta já aparece no roteiro de {city}, na paragem {stop}.", mPending: "Estamos a confirmar a assinatura. A oferta aparece no roteiro assim que o pagamento for confirmado.",
-  mReview: "O seu anúncio gratuito fica visível no roteiro assim que for aprovado pela nossa equipa.", mQR: "O seu código QR de parceiro aponta para:", mYour: "O seu anúncio",
+  appReader: "Na app, entre com a conta ou o email que usou na compra para abrir os seus roteiros.", mReview: "O seu anúncio gratuito fica visível no roteiro assim que for aprovado pela nossa equipa.", mQR: "O seu código QR de parceiro aponta para:", mYour: "O seu anúncio",
   cats: { food: "Restaurante", cafe: "Café e pastelaria", stay: "Alojamento", shop: "Loja", exp: "Experiência", bag: "Guarda-bagagem" },
   mPlans: {
     basic: ["Básico", "Nome e oferta no roteiro", "Categoria e redes sociais"],
@@ -93,7 +93,7 @@ const en: Dict = {
   mSocial: "Social media (optional)", mPlan: "Subscription plan", perMonth: "/mo", mSubmit: "Subscribe", mFree: "Free",
   mErr: "Fill in the name, offer and a valid email.", mDone: "Business registered",
   mDoneSub: "Your offer now shows on the {city} route, at the {stop} stop.", mPending: "We're confirming your subscription. Your offer appears on the route once payment is confirmed.",
-  mReview: "Your free listing appears on the route as soon as our team approves it.", mQR: "Your partner QR code points to:", mYour: "Your listing",
+  appReader: "In the app, sign in with the account or email you used at purchase to open your routes.", mReview: "Your free listing appears on the route as soon as our team approves it.", mQR: "Your partner QR code points to:", mYour: "Your listing",
   cats: { food: "Restaurant", cafe: "Café & bakery", stay: "Accommodation", shop: "Shop", exp: "Experience", bag: "Luggage storage" },
   mPlans: {
     basic: ["Basic", "Name and offer on the route", "Category and social links"],
@@ -138,7 +138,7 @@ const es: Dict = {
   mSocial: "Redes sociales (opcional)", mPlan: "Plan de suscripción", perMonth: "/mes", mSubmit: "Suscribirse", mFree: "Gratis",
   mErr: "Completa nombre, oferta y un email válido.", mDone: "Negocio registrado",
   mDoneSub: "Tu oferta ya aparece en la ruta de {city}, en la parada {stop}.", mPending: "Estamos confirmando la suscripción. La oferta aparecerá cuando se confirme el pago.",
-  mReview: "Tu anuncio gratuito aparecerá en la ruta en cuanto nuestro equipo lo apruebe.", mQR: "Tu código QR de socio apunta a:", mYour: "Tu anuncio",
+  appReader: "En la app, entra con la cuenta o el email que usaste en la compra para abrir tus rutas.", mReview: "Tu anuncio gratuito aparecerá en la ruta en cuanto nuestro equipo lo apruebe.", mQR: "Tu código QR de socio apunta a:", mYour: "Tu anuncio",
   cats: { food: "Restaurante", cafe: "Café y pastelería", stay: "Alojamiento", shop: "Tienda", exp: "Experiencia", bag: "Consigna" },
   mPlans: {
     basic: ["Básico", "Nombre y oferta en la ruta", "Categoría y redes sociales"],
@@ -182,7 +182,7 @@ const fr: Dict = {
   mSocial: "Réseaux sociaux (optionnel)", mPlan: "Formule d'abonnement", perMonth: "/mois", mSubmit: "S'abonner", mFree: "Gratuit",
   mErr: "Remplissez le nom, l'offre et un email valide.", mDone: "Commerce inscrit",
   mDoneSub: "Votre offre apparaît sur le parcours de {city}, à l'étape {stop}.", mPending: "Nous confirmons votre abonnement. L'offre apparaîtra dès confirmation du paiement.",
-  mReview: "Votre annonce gratuite apparaîtra sur le parcours dès validation par notre équipe.", mQR: "Votre QR code partenaire pointe vers :", mYour: "Votre annonce",
+  appReader: "Dans l'app, connectez-vous avec le compte ou l'email utilisé lors de l'achat pour ouvrir vos parcours.", mReview: "Votre annonce gratuite apparaîtra sur le parcours dès validation par notre équipe.", mQR: "Votre QR code partenaire pointe vers :", mYour: "Votre annonce",
   cats: { food: "Restaurant", cafe: "Café et pâtisserie", stay: "Hébergement", shop: "Boutique", exp: "Expérience", bag: "Consigne" },
   mPlans: {
     basic: ["Essentiel", "Nom et offre sur le parcours", "Catégorie et réseaux sociaux"],
@@ -227,7 +227,7 @@ const de: Dict = {
   mSocial: "Soziale Netzwerke (optional)", mPlan: "Abo-Plan", perMonth: "/Monat", mSubmit: "Abonnieren", mFree: "Gratis",
   mErr: "Name, Angebot und gültige E-Mail ausfüllen.", mDone: "Geschäft registriert",
   mDoneSub: "Ihr Angebot erscheint auf der Route {city}, an der Station {stop}.", mPending: "Wir bestätigen Ihr Abo. Das Angebot erscheint, sobald die Zahlung bestätigt ist.",
-  mReview: "Ihr kostenloser Eintrag erscheint auf der Route, sobald unser Team ihn freigibt.", mQR: "Ihr Partner-QR-Code verweist auf:", mYour: "Ihr Eintrag",
+  appReader: "Melden Sie sich in der App mit dem Konto oder der E-Mail an, die Sie beim Kauf verwendet haben, um Ihre Routen zu öffnen.", mReview: "Ihr kostenloser Eintrag erscheint auf der Route, sobald unser Team ihn freigibt.", mQR: "Ihr Partner-QR-Code verweist auf:", mYour: "Ihr Eintrag",
   cats: { food: "Restaurant", cafe: "Café & Bäckerei", stay: "Unterkunft", shop: "Laden", exp: "Erlebnis", bag: "Gepäckaufbewahrung" },
   mPlans: {
     basic: ["Basis", "Name und Angebot auf der Route", "Kategorie und Social Links"],
