@@ -39,6 +39,8 @@ button,input,select,textarea{font:inherit;color:inherit}
 .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:12px}
 .brand{font-family:var(--display);font-weight:800;font-size:18px;line-height:1.1;text-decoration:none;color:var(--ink)}
 .brand span{color:var(--cobalt)}
+.bar-end{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cur-pick{font:inherit;font-weight:700;font-size:12px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:3px 4px}
 .langs{display:flex;gap:4px;flex-wrap:wrap}
 .langs a{font-weight:700;font-size:12px;text-decoration:none;color:var(--muted);padding:4px 6px;border-radius:6px}
 .langs a[aria-current="true"]{background:var(--cobalt);color:var(--on-cobalt)}
@@ -160,3 +162,7 @@ fieldset{margin:0;min-width:0}
 footer.foot p{margin-block:4px}
 .consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.4;cursor:pointer}
 .consent input{margin-top:2px;width:18px;height:18px;flex:none}
+
+.price-local{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+.fx{color:var(--muted);font-weight:500}
+.top-row .cur-pick{margin-left:auto}

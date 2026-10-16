@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { Header } from "@/components/Header";
+import { requestCurrency } from "@/lib/fx";
 import { db, schema } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { activateFromSession } from "@/lib/merchants";
@@ -26,7 +27,7 @@ export default async function MerchantDone({ params, searchParams }: { params: {
   const qrUrl = `${env.appUrl}/${city.id}?ref=${m.refCode}`;
   return (
     <main className="app">
-      <Header locale={params.locale} />
+      <Header locale={params.locale} currency={requestCurrency()} />
       <div className="stack">
         <h1 style={{ fontSize: 28 }}>✓ {t.mDone}</h1>
         {m.status === "active"

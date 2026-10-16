@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
+import { fxContext, requestCurrency } from "@/lib/fx";
 import { TourView } from "@/components/TourView";
 import { WebOnly } from "@/components/WebOnly";
 import { cityName } from "@/data/cities";
@@ -24,7 +25,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   if (!access) {
     return (
       <main className="app">
-        <Header locale={params.locale} />
+        <Header locale={params.locale} currency={requestCurrency()} />
         <div className="stack">
           <h1 style={{ fontSize: 28 }}>{cityName(city, params.locale)}</h1>
           <p>{t.noAccess}</p>
@@ -43,7 +44,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
     <main className="app">
       <TourView
         locale={params.locale} t={t} city={city} cityLabel={cityName(city, params.locale)}
-        flightAt={access.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities}
+        flightAt={access.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={await fxContext()}
       />
     </main>
   );

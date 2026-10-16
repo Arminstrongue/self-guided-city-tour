@@ -54,6 +54,14 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 5. Os preços (4,99 €, 9,99 €, 19 €/mês, 49 €/mês) estão em `src/lib/pricing.ts`; não é preciso criar produtos no Stripe.
 6. Antes de vender a clientes de outros países da UE, ative o Stripe Tax ou configure o IVA OSS com o contabilista.
 
+## Moedas
+
+- O preço de venda é sempre em euros (`src/lib/pricing.ts`). Na Stripe, ative **Adaptive Pricing** (Definições → Pagamentos) para cada viajante pagar na sua moeda; a app regista sempre o valor de origem em euros.
+- A app mostra o valor aproximado na moeda do viajante: escolha guardada no seletor > país do IP (cabeçalho `CF-IPCountry` da Cloudflare) > idioma do navegador > euro. 30 moedas (`src/lib/currency.ts`).
+- Taxas diárias do Banco Central Europeu, guardadas 6 h (`src/lib/fx.ts`); sem ligação usa valores de referência.
+- No roteiro, as tarifas aparecem na moeda da cidade (a que se paga na máquina, ex. £ em Londres) com o aproximado na moeda do viajante.
+- Comerciantes pagam a assinatura em euros.
+
 ## Login social
 
 Cada fornecedor só aparece se as variáveis estiverem definidas.

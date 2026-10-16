@@ -53,6 +53,7 @@ const pt = {
   lTerms: "Termos", lPrivacy: "Privacidade", lCookies: "Cookies",
   consent: "Peço o acesso imediato ao roteiro e aceito que, por isso, deixo de ter o direito de livre resolução de 14 dias.", termsNote: "Ao pagar aceita os {terms} e a {privacy}.", errConsent: "Para continuar, confirme o pedido de acesso imediato.",
   notifyBtn: "Avisar-me 15 min antes de sair", notifyOn: "Aviso ativo para as {t}", notifyDenied: "As notificações estão bloqueadas neste dispositivo.", notifyTitle: "Hora de voltar ao aeroporto", notifyBody: "Saia até às {t} para chegar 2h30 antes do voo.", offline: "Sem ligação: está a ver a última versão guardada do roteiro.",
+  currency: "Moeda", fxNote: "Valor aproximado em {cur}. O preço é {base}; no pagamento vê o valor exato na sua moeda.",
   footer: "Self Guided City Tour · roteiros autoguiados para quem está em escala"
 };
 export type Dict = typeof pt;
@@ -106,6 +107,7 @@ const en: Dict = {
   lTerms: "Terms", lPrivacy: "Privacy", lCookies: "Cookies",
   consent: "I ask for immediate access to the route and accept that I therefore lose the 14-day right of withdrawal.", termsNote: "By paying you accept the {terms} and the {privacy}.", errConsent: "To continue, confirm the request for immediate access.",
   notifyBtn: "Remind me 15 min before leaving", notifyOn: "Reminder set for {t}", notifyDenied: "Notifications are blocked on this device.", notifyTitle: "Time to head back to the airport", notifyBody: "Leave by {t} to arrive 2h30 before your flight.", offline: "Offline: you are viewing the last saved version of the route.",
+  currency: "Currency", fxNote: "Approximate amount in {cur}. The price is {base}; checkout shows the exact amount in your currency.",
   footer: "Self Guided City Tour · self-guided routes for layover travellers"
 };
 
@@ -154,6 +156,7 @@ const es: Dict = {
   lTerms: "Términos", lPrivacy: "Privacidad",
   consent: "Solicito el acceso inmediato a la ruta y acepto que, por ello, pierdo el derecho de desistimiento de 14 días.", termsNote: "Al pagar aceptas los {terms} y la {privacy}.", errConsent: "Para continuar, confirma la solicitud de acceso inmediato.",
   notifyBtn: "Avisarme 15 min antes de salir", notifyOn: "Aviso activo para las {t}", notifyDenied: "Las notificaciones están bloqueadas en este dispositivo.", notifyTitle: "Hora de volver al aeropuerto", notifyBody: "Sal antes de las {t} para llegar 2h30 antes del vuelo.", offline: "Sin conexión: estás viendo la última versión guardada de la ruta.",
+  currency: "Moneda", fxNote: "Importe aproximado en {cur}. El precio es {base}; en el pago verás el importe exacto en tu moneda.",
   footer: "Self Guided City Tour · rutas autoguiadas para viajeros en escala"
 };
 
@@ -201,6 +204,7 @@ const fr: Dict = {
   lTerms: "Conditions", lPrivacy: "Confidentialité",
   consent: "Je demande l'accès immédiat au parcours et j'accepte de perdre ainsi mon droit de rétractation de 14 jours.", termsNote: "En payant, vous acceptez les {terms} et la {privacy}.", errConsent: "Pour continuer, confirmez la demande d'accès immédiat.",
   notifyBtn: "Me prévenir 15 min avant de partir", notifyOn: "Rappel prévu à {t}", notifyDenied: "Les notifications sont bloquées sur cet appareil.", notifyTitle: "Il est temps de retourner à l'aéroport", notifyBody: "Partez avant {t} pour arriver 2h30 avant le vol.", offline: "Hors ligne : vous voyez la dernière version enregistrée du parcours.",
+  currency: "Devise", fxNote: "Montant approximatif en {cur}. Le prix est de {base} ; le paiement affiche le montant exact dans votre devise.",
   footer: "Self Guided City Tour · parcours en autonomie pour les voyageurs en escale"
 };
 
@@ -249,6 +253,7 @@ const de: Dict = {
   lTerms: "AGB", lPrivacy: "Datenschutz",
   consent: "Ich verlange sofortigen Zugang zur Route und akzeptiere, dass ich dadurch mein 14-tägiges Widerrufsrecht verliere.", termsNote: "Mit der Zahlung akzeptieren Sie die {terms} und den {privacy}.", errConsent: "Bitte bestätigen Sie den sofortigen Zugang, um fortzufahren.",
   notifyBtn: "15 Min. vor Aufbruch erinnern", notifyOn: "Erinnerung für {t} gesetzt", notifyDenied: "Benachrichtigungen sind auf diesem Gerät blockiert.", notifyTitle: "Zeit, zum Flughafen zurückzukehren", notifyBody: "Brechen Sie bis {t} auf, um 2h30 vor dem Flug da zu sein.", offline: "Offline: Sie sehen die zuletzt gespeicherte Version der Route.",
+  currency: "Währung", fxNote: "Ungefährer Betrag in {cur}. Der Preis beträgt {base}; an der Kasse sehen Sie den genauen Betrag in Ihrer Währung.",
   footer: "Self Guided City Tour · Routen auf eigene Faust für Umsteigereisende"
 };
 

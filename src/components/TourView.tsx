@@ -5,10 +5,12 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
 import { hasExtension, leaveBy, planRoute } from "@/lib/route-cost";
 import type { Offer } from "@/lib/merchants";
+import { dualMoney, type FxContext } from "@/lib/currency";
+import { CurrencyPicker } from "./CurrencyPicker";
 
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
-  offers: Offer[]; otherCities: { id: string; name: string }[];
+  offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -20,7 +22,7 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities }: Props) {
+export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx }: Props) {
   const [ext, setExt] = useLocalState<boolean>(`sgct:ext:${city.id}`, true);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
   const [open, setOpen] = useState<string>(city.stops[0].id);
@@ -37,7 +39,9 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
 
   const plan = useMemo(() => planRoute(city, ext), [city, ext]);
-  const money = (v: number) => new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: city.cur }).format(v);
+  // Tarifas na moeda da cidade (a que se paga na máquina) e, se diferente, o aproximado na moeda do viajante.
+  const money = (v: number) => dualMoney(v, city.cur, fx, INTL_LOCALE[locale]).main;
+  const both = (v: number) => { const d = dualMoney(v, city.cur, fx, INTL_LOCALE[locale]); return d.local ? <>{d.main} <span className="fx">{d.local}</span></> : d.main; };
   const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
   const leave = flightAt ? leaveBy(new Date(flightAt), plan.ret) : null;
   const avail = leave ? Math.round((leave.getTime() - now) / 60000) : null;
@@ -107,6 +111,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
               </select>
             ) : <h2 style={{ fontSize: 22 }}>{cityLabel}</h2>}
           </div>
+          <CurrencyPicker current={fx.cur} label={t.currency} />
           {leave && <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>}
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
@@ -207,13 +212,13 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
             <div className="verdict">
               <div className={`opt ${plan.best === "singles" ? "best" : ""}`}>
                 <span className={`tag ${plan.best === "singles" ? "" : "n"}`}>{plan.best === "singles" ? t.cheapest : t.singles}</span>
-                <b className="num">{money(plan.singles)}</b>
+                <b className="num">{both(plan.singles)}</b>
                 <small>{fmt(t.singlesN, { n: plan.rides, p: money(city.single) })}{city.card ? ` + ${city.cardName}` : ""} + {t.fixedLeg.toLowerCase()}</small>
               </div>
               {city.alt && plan.alt !== null ? (
                 <div className={`opt ${plan.best === "alt" ? "best" : ""}`}>
                   <span className={`tag ${plan.best === "alt" ? "" : "n"}`}>{plan.best === "alt" ? t.cheapest : city.alt.type === "cap" ? t.capAuto : city.alt.name}</span>
-                  <b className="num">{money(plan.alt)}</b>
+                  <b className="num">{both(plan.alt)}</b>
                   <small>{city.alt.type === "cap" ? t.capAuto : city.alt.name} · {money(city.alt.price)}</small>
                 </div>
               ) : <div className="opt"><span className="tag n">—</span><small>{t.only}</small></div>}
@@ -222,7 +227,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
               <div><span>{t.fixedLeg}: {city.air.line}</span><span className="num">{money(plan.fixed)}</span></div>
               <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
-              <div><b>{t.totalDay}</b><b className="num">{money(plan.transport + plan.entries)}</b></div>
+              <div><b>{t.totalDay}</b><b className="num">{both(plan.transport + plan.entries)}</b></div>
             </div>
             <p className="hint">{t.costNote}</p>
           </>

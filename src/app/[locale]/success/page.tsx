@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { requestCurrency } from "@/lib/fx";
 import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
 import { loadCity } from "@/lib/content";
 
@@ -10,7 +11,7 @@ export default async function Success({ params, searchParams }: { params: { loca
   const city = await loadCity(searchParams.city ?? "");
   return (
     <main className="app">
-      <Header locale={params.locale} />
+      <Header locale={params.locale} currency={requestCurrency()} />
       <div className="stack">
         {searchParams.pending ? (
           <p className="note">{t.processing}</p>

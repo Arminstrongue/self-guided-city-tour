@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
+import { requestCurrency } from "@/lib/fx";
 import { legalEN, legalPT, company, type LegalDoc } from "@/legal/content";
 import type { Locale } from "@/i18n/dictionaries";
 
@@ -11,7 +12,7 @@ export default function Legal({ params }: { params: { locale: Locale; doc: strin
   const content = (params.locale === "pt" ? legalPT : legalEN)(params.doc as LegalDoc);
   return (
     <main className="app">
-      <Header locale={params.locale} />
+      <Header locale={params.locale} currency={requestCurrency()} />
       <article className="stack legal">
         <h1 style={{ fontSize: 28 }}>{content.title}</h1>
         <p className="hint">{params.locale === "pt" ? "Última atualização" : "Last updated"}: {company().updated}</p>

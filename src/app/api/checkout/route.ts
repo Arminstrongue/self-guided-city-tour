@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requestCurrency } from "@/lib/fx";
 import { z } from "zod";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "pt" ? "pt" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: plan.amount, product_data: { name: `Self Guided City Tour · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt, locale: b.locale, refMerchantId: ref?.status === "active" ? ref.id : "" },
+      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "" },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

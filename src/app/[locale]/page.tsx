@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { requestCurrency } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
 import { SOON, cityName } from "@/data/cities";
 import { loadCities } from "@/lib/content";
@@ -11,7 +12,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
   return (
     <main className="app">
-      <Header locale={params.locale} />
+      <Header locale={params.locale} currency={requestCurrency()} />
       <section className="hero stack">
         <span className="scan">▣ {t.scanned}</span>
         <h1>{t.heroA} <em>{t.europe}</em> {t.heroB}</h1>

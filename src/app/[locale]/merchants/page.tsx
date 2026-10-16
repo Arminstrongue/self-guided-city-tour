@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { requestCurrency } from "@/lib/fx";
 import { MerchantForm } from "@/components/MerchantForm";
 import { cityName } from "@/data/cities";
 import { loadCities } from "@/lib/content";
@@ -12,7 +13,7 @@ export default async function Merchants({ params }: { params: { locale: Locale }
   const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale), stops: c.stops.map((s) => ({ id: s.id, name: s.n })) }));
   return (
     <main className="app">
-      <Header locale={params.locale} />
+      <Header locale={params.locale} currency={requestCurrency()} />
       <div className="stack">
         <h1 style={{ fontSize: 28 }}>{t.mTitle}</h1>
         <p className="hint">{t.mSub}</p>
