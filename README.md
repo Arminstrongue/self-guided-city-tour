@@ -50,9 +50,19 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 1. Crie a conta em stripe.com e copie a chave `sk_test_…` para `STRIPE_SECRET_KEY`.
 2. Ative os métodos de pagamento no painel (cartões, Apple Pay, Google Pay; MB WAY e Bizum se disponíveis na sua conta).
 3. Webhook em desenvolvimento: `stripe listen --forward-to localhost:3000/api/stripe/webhook` e copie o `whsec_…` para `STRIPE_WEBHOOK_SECRET`.
-4. Em produção, crie o endpoint `https://SEU_DOMINIO/api/stripe/webhook` com os eventos `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.updated` e `customer.subscription.deleted`.
+4. Em produção, crie o endpoint `https://SEU_DOMINIO/api/stripe/webhook` com os eventos `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `customer.subscription.updated`, `customer.subscription.deleted` e `invoice.paid`.
 5. Os preços (4,99 €, 9,99 €, 19 €/mês, 49 €/mês) estão em `src/lib/pricing.ts`; não é preciso criar produtos no Stripe.
 6. Antes de vender a clientes de outros países da UE, ative o Stripe Tax ou configure o IVA OSS com o contabilista.
+
+## Novidades desta versão
+
+- **Férias curtas:** botão "Estou de férias" na compra, plano de 3 dias por 7,99 € (72 h), voo de regresso opcional e plano dia a dia.
+- **Museus** (`src/data/museums.ts`): 3–4 por cidade com horário de hoje, aberto/fechado agora, preço de adulto, reserva e site oficial.
+- **Portal de comerciais independentes** (`/agents`): registo, entrada por ligação no email, ligação de angariação `/merchants?agent=CÓDIGO`, carteira de negócios (novo → contactado → proposta → fechado), clientes e comissões. Comissão automática de 20% de cada fatura de assinatura durante 12 meses (evento Stripe `invoice.paid`); comissões manuais para negócios com empresas no painel. Aprovação e pagamentos em `/pt/admin`.
+- **9 idiomas:** PT, EN, ES, FR, DE, IT, ZH, AR (da direita para a esquerda) e JA, com seletor pelo nome de cada idioma.
+- **Mapas e ligações dentro da app:** mapa OpenStreetMap (Leaflet) com o roteiro, museus, aeroporto e a sua posição; nas apps iOS/Android as ligações externas abrem no navegador interno (`@capacitor/browser`).
+- **Escala:** cache de conteúdos, limites de pedidos, `/api/health`, várias réplicas atrás do Caddy e teste de carga. Ver [SCALING.md](SCALING.md).
+- No webhook da Stripe, acrescente o evento **`invoice.paid`** (comissões dos comerciais).
 
 ## Funcionalidades para quem está em escala
 

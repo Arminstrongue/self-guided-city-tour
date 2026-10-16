@@ -9,11 +9,15 @@ import { BackNow, CityGuide, dayNames, FlightCard, RouteFit, Speak, useGeo, Weat
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
+import { ExtLink } from "./ExtLink";
+import { MapView, type Focus } from "./MapView";
+import { DayPlan, MuseumsTab } from "./Museums";
+import type { Museum } from "@/data/museums";
 
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
-  flightNo: string | null; flightApi: boolean;
+  flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -25,12 +29,14 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi }: Props) {
+export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan }: Props) {
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
   const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
   const [open, setOpen] = useState<string>(city.stops[0].id);
-  const [tab, setTab] = useState<"route" | "map" | "cost" | "guide">("route");
+  const [tab, setTab] = useState<"route" | "map" | "cost" | "museums" | "guide">("route");
+  const [focus, setFocus] = useState<Focus | null>(null);
+  const showOnMap = (f: Focus) => { setFocus(f); setTab("map"); window.scrollTo({ top: 0 }); };
   const geo = useGeo();
   const [now, setNow] = useState(() => Date.now());
   const [copied, setCopied] = useState(false);
@@ -138,8 +144,8 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
-          {(["route", "map", "cost", "guide"] as const).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>{k === "route" ? t.route : k === "map" ? t.map : k === "cost" ? t.costs : t.guide}</button>
+          {(["route", "map", "cost", "museums", "guide"] as const).map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map") setFocus(null); }}>{k === "route" ? t.route : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
         </div>
       </header>
@@ -217,9 +223,9 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                             </>
                           )}
                           <div className="acts">
-                            <a href={`https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=${s.leg.m === "walk" ? "walking" : "transit"}`} target="_blank" rel="noopener noreferrer">{t.directions}</a>
+                            <button type="button" className="sec" onClick={() => showOnMap({ lat: s.lat, lng: s.lng, name: s.n, walk: s.leg.m === "walk" })}>{t.directions}</button>
                             <Speak text={`${s.n}. ${desc(s)}`} lang={voiceLang} t={t} />
-                            <a href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`} target="_blank" rel="noopener noreferrer">🍽 {t.eatNear}</a>
+                            <ExtLink href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`}>🍽 {t.eatNear}</ExtLink>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
                         </div>
@@ -235,7 +241,17 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
           </div>
         )}
 
-        {tab === "map" && <RouteMap stops={plan.stops} done={done} t={t} airMin={city.air.min} />}
+        {tab === "map" && <MapView stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} focus={focus} t={t} />}
+
+        {tab === "museums" && (
+          <>
+            {(accessPlan === "trip" || accessPlan === "all" || !flightDate) && (
+              <DayPlan core={city.stops.filter((s) => !s.x)} extra={extras} museums={museums} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
+            )}
+            <MuseumsTab city={city} museums={museums} t={t} money={both} locale={locale}
+              onMap={(m) => showOnMap({ lat: m.lat, lng: m.lng, name: m.n, walk: false })} />
+          </>
+        )}
 
         {tab === "cost" && (
           <>
@@ -266,8 +282,8 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <b>{t.share}</b>
           <div className="share">
-            <a href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-            <a href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer">X</a>
+            <ExtLink href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}>WhatsApp</ExtLink>
+            <ExtLink href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`}>X</ExtLink>
             <button onClick={async () => {
               try { if (navigator.share) await navigator.share({ text: shareText }); else await navigator.clipboard.writeText(shareText); setCopied(true); } catch { /* cancelado */ }
             }}>{copied ? t.copied : t.copy}</button>
@@ -278,37 +294,3 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
   );
 }
 
-function RouteMap({ stops, done, t, airMin }: { stops: Stop[]; done: Record<string, boolean>; t: Dict; airMin: number }) {
-  const W = 360, H = 280, pad = 30, k = Math.cos((stops[0].lat * Math.PI) / 180);
-  const xs = stops.map((s) => s.lng * k), ys = stops.map((s) => s.lat);
-  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
-  const sc = Math.min((W - 2 * pad) / (maxX - minX || 0.001), (H - 2 * pad) / (maxY - minY || 0.001));
-  const ox = (W - (maxX - minX) * sc) / 2, oy = (H - (maxY - minY) * sc) / 2;
-  const P = (s: Stop) => [ox + (s.lng * k - minX) * sc, H - oy - (s.lat - minY) * sc] as const;
-  return (
-    <>
-      <div className="mapwrap">
-        <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t.map}>
-          {stops.slice(1).map((s, i) => {
-            const [a, b] = P(stops[i]); const [x, y] = P(s); const paid = s.leg.m !== "walk";
-            return <line key={s.id} x1={a} y1={b} x2={x} y2={y} stroke={paid ? "var(--tram)" : "var(--cobalt)"} strokeWidth={3} strokeDasharray={paid ? "6 5" : undefined} strokeLinecap="round" />;
-          })}
-          {stops.map((s, i) => {
-            const [x, y] = P(s); const d = done[s.id];
-            return (
-              <g key={s.id}>
-                <circle cx={x} cy={y} r={11} fill={d ? "var(--cobalt)" : "var(--surface)"} stroke="var(--cobalt)" strokeWidth={2} />
-                <text x={x} y={y + 4} textAnchor="middle" fontSize={11} fontWeight={800} fill={d ? "var(--surface)" : "var(--cobalt)"}>{i + 1}</text>
-              </g>
-            );
-          })}
-          <text x={W - 8} y={16} textAnchor="end" fontSize={11} fill="var(--muted)">✈ {t.airport}: {airMin} min</text>
-        </svg>
-      </div>
-      <div className="legend"><span>━ {t.walk}</span><span>┅ {t.metro} / {t.tram} / {t.bus}</span></div>
-      <div className="card rows" style={{ paddingBlock: 6 }}>
-        {stops.map((s, i) => <div key={s.id}><span>{i + 1}. {s.n}</span><span className="hint">{s.a}</span></div>)}
-      </div>
-    </>
-  );
-}

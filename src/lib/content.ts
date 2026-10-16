@@ -43,8 +43,14 @@ export const CitySchema = z.object({
 
 type Row = typeof schema.cityContent.$inferSelect;
 
+// Cache em memória (60 s): o conteúdo muda raramente e é lido em quase todos os pedidos.
+const TTL_MS = 60_000;
+let cached: { at: number; rows: Row[] } | null = null;
+export function clearContentCache() { cached = null; }
+
 async function rows(): Promise<Row[]> {
-  try { const d = await db(); return await d.select().from(schema.cityContent); }
+  if (cached && Date.now() - cached.at < TTL_MS) return cached.rows;
+  try { const d = await db(); const r = await d.select().from(schema.cityContent); cached = { at: Date.now(), rows: r }; return r; }
   catch { return []; } // base de dados ainda sem a tabela: usa o conteúdo de origem
 }
 
@@ -73,6 +79,7 @@ export async function loadCity(id: string): Promise<City | undefined> {
 
 export async function saveCity(input: unknown, active: boolean, by: string): Promise<City> {
   const city = CitySchema.parse(input) as City;
+  clearContentCache();
   const d = await db();
   await d.insert(schema.cityContent).values({ id: city.id, data: city, active, updatedBy: by, updatedAt: new Date() })
     .onConflictDoUpdate({ target: schema.cityContent.id, set: { data: city, active, updatedBy: by, updatedAt: new Date() } });
@@ -81,6 +88,7 @@ export async function saveCity(input: unknown, active: boolean, by: string): Pro
 
 /** Remove as alterações e volta ao conteúdo de origem. */
 export async function resetCity(id: string): Promise<void> {
+  clearContentCache();
   const d = await db();
   await d.delete(schema.cityContent).where(eq(schema.cityContent.id, id));
 }

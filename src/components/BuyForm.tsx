@@ -9,7 +9,7 @@ import { dualMoney, type FxContext } from "@/lib/currency";
 type Props = {
   locale: Locale; cityId: string; cityName: string; refCode: string;
   providers: { id: string; name: string }[]; sessionEmail: string | null;
-  prices: { city: number; all: number }; fx: FxContext; t: Dict;
+  prices: { city: number; trip: number; all: number }; fx: FxContext; t: Dict;
 };
 
 function defaultFlight(): string {
@@ -19,27 +19,31 @@ function defaultFlight(): string {
 }
 
 export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionEmail, prices, fx, t }: Props) {
-  const [plan, setPlan] = useState<"city" | "all">("city");
+  // Dois perfis: escala (voo obrigatório) e férias curtas (voo de regresso opcional).
+  const [mode, setMode] = useState<"layover" | "trip">("layover");
+  const [plan, setPlan] = useState<"city" | "trip" | "all">("city");
+  const pickMode = (m: "layover" | "trip") => { setMode(m); setPlan(m === "trip" ? "trip" : "city"); setFlight(m === "trip" ? "" : defaultFlight()); };
   const [email, setEmail] = useState(sessionEmail ?? "");
   const [name, setName] = useState("");
-  const [flight, setFlight] = useState(defaultFlight);
+  const [flight, setFlight] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
   const [flightNo, setFlightNo] = useState("");
   // Reaproveita a hora de partida indicada em "Posso sair?".
-  useEffect(() => { try { const d = localStorage.getItem(DEP_KEY); if (d) setFlight(d); } catch { /* ignorar */ } }, []);
+  useEffect(() => { let d = ""; try { d = localStorage.getItem(DEP_KEY) ?? ""; } catch { /* ignorar */ } setFlight(d || defaultFlight()); }, []);
   // Preço em euros; se o viajante usar outra moeda, mostra-se também o valor aproximado nela.
   const price = (c: number) => dualMoney(c / 100, "EUR", fx, INTL_LOCALE[locale]);
   const priceTag = (c: number) => { const p = price(c); return p.local ? <>{p.local}<span className="price-local">{p.main}</span></> : p.main; };
-  const chosen = price(plan === "all" ? prices.all : prices.city);
+  const chosen = price(prices[plan]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
     if (!/^\S+@\S+\.\S+$/.test(email)) return setError(t.errEmail);
-    const when = new Date(flight);
-    if (!flight || isNaN(when.getTime()) || when.getTime() < Date.now()) return setError(t.errDep);
+    const when = flight ? new Date(flight) : null;
+    const needFlight = mode === "layover";
+    if ((needFlight && !when) || (when && (isNaN(when.getTime()) || when.getTime() < Date.now()))) return setError(t.errDep);
     const fno = flightNo.toUpperCase().replace(/[^A-Z0-9]/g, "");
     if (fno && !/^([A-Z]{2}|[A-Z]\d|\d[A-Z])\d{1,4}[A-Z]?$/.test(fno)) return setError(t.errFlightNo);
     if (!consent) return setError(t.errConsent);
@@ -47,7 +51,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
     try {
       const res = await fetch("/api/checkout", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when.toISOString(), flightNo: fno || undefined, locale, ref: refCode || undefined, consent })
+        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when ? when.toISOString() : undefined, flightNo: fno || undefined, locale, ref: refCode || undefined, consent })
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "checkout");
@@ -70,11 +74,22 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
           <div className="or">{t.orEmail}</div>
         </>
       )}
+      <div className="mode-switch" role="tablist">
+        <button type="button" role="tab" aria-selected={mode === "layover"} onClick={() => pickMode("layover")}>✈ {t.modeLayover}</button>
+        <button type="button" role="tab" aria-selected={mode === "trip"} onClick={() => pickMode("trip")}>🧳 {t.modeTrip}</button>
+      </div>
       <div className="plans" role="radiogroup">
-        <button type="button" className="plan" aria-pressed={plan === "city"} onClick={() => setPlan("city")}>
-          <span className="dot" /><div><b>{fmt(t.planCity, { city: cityName })}</b><p className="hint">{t.planCityDesc}</p></div>
-          <span className="price num">{priceTag(prices.city)}</span>
-        </button>
+        {mode === "layover" ? (
+          <button type="button" className="plan" aria-pressed={plan === "city"} onClick={() => setPlan("city")}>
+            <span className="dot" /><div><b>{fmt(t.planCity, { city: cityName })}</b><p className="hint">{t.planCityDesc}</p></div>
+            <span className="price num">{priceTag(prices.city)}</span>
+          </button>
+        ) : (
+          <button type="button" className="plan" aria-pressed={plan === "trip"} onClick={() => setPlan("trip")}>
+            <span className="dot" /><div><b>{fmt(t.planTrip, { city: cityName })}</b><p className="hint">{t.planTripDesc}</p></div>
+            <span className="price num">{priceTag(prices.trip)}</span>
+          </button>
+        )}
         <button type="button" className="plan" aria-pressed={plan === "all"} onClick={() => setPlan("all")}>
           <span className="dot" /><div><b>{t.planAll}</b><p className="hint">{t.planAllDesc}</p></div>
           <span className="price num">{priceTag(prices.all)}</span>
@@ -85,9 +100,9 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
         <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
       <div className="field"><label htmlFor="name">{t.name}</label>
         <input id="name" autoComplete="given-name" value={name} onChange={(e) => setName(e.target.value)} /></div>
-      <div className="field"><label htmlFor="flight">{t.dep}</label>
-        <input id="flight" type="datetime-local" value={flight} onChange={(e) => setFlight(e.target.value)} required />
-        <span className="hint">{t.depHint}</span></div>
+      <div className="field"><label htmlFor="flight">{mode === "trip" ? t.retFlight : t.dep}</label>
+        <input id="flight" type="datetime-local" value={flight} onChange={(e) => setFlight(e.target.value)} required={mode === "layover"} />
+        <span className="hint">{mode === "trip" ? t.retFlightHint : t.depHint}</span></div>
       <div className="field"><label htmlFor="fno">{t.flightNo}</label>
         <input id="fno" autoCapitalize="characters" autoComplete="off" placeholder="TP1234" maxLength={10} value={flightNo} onChange={(e) => setFlightNo(e.target.value)} />
         <span className="hint">{t.flightNoHint}</span></div>

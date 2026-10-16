@@ -36,3 +36,8 @@ Antes de enviar às lojas:
 4. A Apple rejeita apps que sejam só um site embrulhado sem valor próprio. Para reduzir esse risco, o próximo passo é acrescentar funções nativas: notificações de "hora de voltar ao aeroporto" (`@capacitor/local-notifications`) e roteiro disponível sem internet.
 
 Identificador da app: `com.selfguidedcitytour.app` (alterar em `capacitor.config.ts` antes da primeira submissão, se preferir outro).
+
+
+## Ligações dentro da app
+
+As ligações externas (sites oficiais, direções, WhatsApp) abrem no navegador interno da app com `@capacitor/browser`. Depois de `npm install`, corra `npx cap sync` para o plugin entrar nos projetos iOS e Android.

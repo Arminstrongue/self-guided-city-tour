@@ -4,6 +4,7 @@ import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { fulfilTourSession } from "@/lib/orders";
 import { activateFromSession, syncSubscription } from "@/lib/merchants";
+import { commissionForInvoice, markLeadWon } from "@/lib/agents";
 
 export const runtime = "nodejs";
 
@@ -22,9 +23,12 @@ export async function POST(req: Request) {
       case "checkout.session.async_payment_succeeded": {
         const s = event.data.object;
         if (s.mode === "payment") await fulfilTourSession(s);
-        if (s.mode === "subscription") await activateFromSession(s);
+        if (s.mode === "subscription") { const m = await activateFromSession(s); if (m) await markLeadWon(m); }
         break;
       }
+      case "invoice.paid":
+        await commissionForInvoice(event.data.object);
+        break;
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
         await syncSubscription(event.data.object);

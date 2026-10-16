@@ -182,3 +182,30 @@ footer.foot p{margin-block:4px}
 .link-btn{background:none;border:0;padding:0;color:var(--cobalt);font:inherit;font-weight:600;cursor:pointer;text-align:left}
 .weather{display:flex;flex-direction:column;gap:2px}
 .acts button[aria-pressed]{background:none;border:1.5px solid var(--line);color:var(--cobalt)}
+.mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px}
+.mode-switch button{border:0;background:transparent;border-radius:9px;padding:10px 6px;font:inherit;font-weight:700;color:var(--muted);cursor:pointer}
+.mode-switch button[aria-selected="true"]{background:var(--cobalt);color:var(--on-cobalt)}
+.leaflet-box{height:min(62vh,460px);border-radius:14px;overflow:hidden;border:1px solid var(--line);z-index:0}
+.mk{display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:800;font-size:12px;border:2px solid #1d4aa0;background:#fff;color:#1d4aa0;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.mk.done{background:#1d4aa0;color:#fff}
+.mk.mus{border-color:#a05a00;font-size:14px}
+.mk.air{border-color:#14203a;background:#f3b81c;color:#14203a}
+.mk.focus{border-color:#f3b81c;background:#f3b81c;color:#14203a;font-size:15px}
+.acts button.sec{background:none;border:1.5px solid var(--line);color:var(--cobalt)}
+.ok-txt{color:var(--good)}
+.tabs{grid-template-columns:repeat(5,1fr)}
+.tabs button{font-size:13px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.kpis3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpis3 .kpi{padding:12px;display:flex;flex-direction:column;gap:4px}
+.kpis3 .kpi b{font-size:18px}
+.codebox{display:block;padding:10px;border-radius:10px;background:var(--cobalt-soft);color:var(--cobalt);font-size:12px;word-break:break-all}
+.pipeline{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:12px;font-weight:600;padding:4px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.pill.st-won{background:var(--good-soft);border-color:transparent;color:var(--good)}
+.pill.st-lost{opacity:.6}
+.lead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:8px;border-top:1px solid var(--line)}
+.lead select{max-width:130px}
+.merch-cta.alt{background:var(--cobalt-soft);color:var(--cobalt);margin-top:8px}
+[dir="rtl"] .merch-cta i{transform:scaleX(-1)}
+[dir="rtl"] .num{direction:ltr;unicode-bidi:isolate}

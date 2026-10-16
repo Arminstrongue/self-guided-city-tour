@@ -28,6 +28,37 @@ async function markCommissionsPaid(form: FormData) {
   revalidatePath("/[locale]/admin", "page");
 }
 
+async function setAgentStatus(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const status = String(form.get("status"));
+  if (!["active", "suspended"].includes(status)) return;
+  const d = await db();
+  await d.update(schema.agents).set({ status: status as "active" | "suspended" }).where(eq(schema.agents.id, String(form.get("id"))));
+  revalidatePath("/[locale]/admin", "page");
+}
+
+async function markAgentPaid(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const d = await db();
+  await d.update(schema.agentCommissions).set({ paidAt: new Date() })
+    .where(sql`${schema.agentCommissions.agentId} = ${String(form.get("agentId"))} and ${schema.agentCommissions.paidAt} is null`);
+  revalidatePath("/[locale]/admin", "page");
+}
+
+/** Comissão manual: negócios com empresas (licenças B2B, hotéis com contrato próprio). */
+async function addAgentCommission(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const cents = Math.round(Number(String(form.get("amount")).replace(",", ".")) * 100);
+  const desc = String(form.get("description") ?? "").trim().slice(0, 140);
+  if (!Number.isFinite(cents) || cents <= 0 || !desc) return;
+  const d = await db();
+  await d.insert(schema.agentCommissions).values({ agentId: String(form.get("agentId")), amountCents: cents, description: desc });
+  revalidatePath("/[locale]/admin", "page");
+}
+
 /** Painel interno: vendas, comerciantes e comissões. Acesso só para ADMIN_EMAILS. */
 export default async function Admin({ params }: { params: { locale: Locale } }) {
   if (!(await isAdmin())) {
@@ -48,6 +79,11 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
   const due = await d.select({ merchantId: schema.commissions.merchantId, n: sql<number>`count(*)::int`, cents: sql<number>`sum(${schema.commissions.amountCents})::int` })
     .from(schema.commissions).where(isNull(schema.commissions.paidAt)).groupBy(schema.commissions.merchantId);
   const recent = await d.select().from(schema.accesses).orderBy(desc(schema.accesses.createdAt)).limit(20);
+  const agents = await d.select().from(schema.agents).orderBy(desc(schema.agents.createdAt)).limit(200);
+  const agentDue = await d.select({ agentId: schema.agentCommissions.agentId, cents: sql<number>`coalesce(sum(case when ${schema.agentCommissions.paidAt} is null then ${schema.agentCommissions.amountCents} else 0 end),0)::int`, total: sql<number>`sum(${schema.agentCommissions.amountCents})::int` })
+    .from(schema.agentCommissions).groupBy(schema.agentCommissions.agentId);
+  const agentLeads = await d.select({ agentId: schema.leads.agentId, n: sql<number>`count(*)::int`, won: sql<number>`count(*) filter (where ${schema.leads.status} = 'won')::int` })
+    .from(schema.leads).groupBy(schema.leads.agentId);
 
   const sales = byCity.reduce((a, r) => a + r.n, 0), revenue = byCity.reduce((a, r) => a + r.cents, 0);
   const mrr = merchants.filter((m) => m.status === "active").reduce((a, m) => a + (m.plan === "partner" ? 4900 : m.plan === "featured" ? 1900 : 0), 0);
@@ -66,7 +102,7 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
 
         <h2>Vendas por cidade (30 dias)</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Cidade</th><th>Tipo</th><th>Acessos</th><th>Receita</th></tr></thead>
-          <tbody>{byCity.map((r) => <tr key={`${r.city}-${r.scope}`}><td>{r.city ? getCity(r.city)?.n.pt ?? r.city : "—"}</td><td>{r.scope === "all" ? "Passe Europa" : "Cidade"}</td><td className="num">{r.n}</td><td className="num">{eur(r.cents)}</td></tr>)}</tbody></table></div>
+          <tbody>{byCity.map((r) => <tr key={`${r.city}-${r.scope}`}><td>{r.city ? getCity(r.city)?.n.pt ?? r.city : "—"}</td><td>{r.scope === "all" ? "Passe Europa" : "Cidade / férias"}</td><td className="num">{r.n}</td><td className="num">{eur(r.cents)}</td></tr>)}</tbody></table></div>
 
         <h2>Comerciantes</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Nome</th><th>Cidade / paragem</th><th>Plano</th><th>Estado</th><th>Código QR</th><th>Ação</th></tr></thead>
@@ -93,10 +129,40 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
             <tr key={r.merchantId}><td>{name(r.merchantId)}</td><td className="num">{r.n}</td><td className="num">{eur(r.cents)}</td>
               <td><form action={markCommissionsPaid}><input type="hidden" name="merchantId" value={r.merchantId} /><button className="mini">Marcar como pago</button></form></td></tr>))}</tbody></table></div>
 
+        <h2>Comerciais independentes</h2>
+        <div className="table-wrap card"><table className="data"><thead><tr><th>Comercial</th><th>Código</th><th>Estado</th><th>Negócios (fechados)</th><th>Clientes</th><th>Por pagar / total</th><th>Ações</th></tr></thead>
+          <tbody>{agents.map((a) => {
+            const c = agentDue.find((x) => x.agentId === a.id); const l = agentLeads.find((x) => x.agentId === a.id);
+            return (
+              <tr key={a.id}>
+                <td>{a.name}<div className="hint">{a.email}{a.phone ? ` · ${a.phone}` : ""}{a.country ? ` · ${a.country}` : ""}</div></td>
+                <td><code>{a.code}</code></td>
+                <td><span className={`pill ${a.status}`}>{a.status}</span></td>
+                <td className="num">{l?.n ?? 0} ({l?.won ?? 0})</td>
+                <td className="num">{merchants.filter((m) => m.agentId === a.id).length}</td>
+                <td className="num">{eur(c?.cents ?? 0)} / {eur(c?.total ?? 0)}</td>
+                <td>
+                  <form action={setAgentStatus} style={{ display: "inline" }}><input type="hidden" name="id" value={a.id} />
+                    {a.status !== "active" ? <button className="mini" name="status" value="active">Aprovar</button> : <button className="mini" name="status" value="suspended">Suspender</button>}
+                  </form>{" "}
+                  {(c?.cents ?? 0) > 0 && <form action={markAgentPaid} style={{ display: "inline" }}><input type="hidden" name="agentId" value={a.id} /><button className="mini">Marcar pago</button></form>}
+                  <details><summary className="hint">+ comissão manual</summary>
+                    <form action={addAgentCommission} className="stack" style={{ gap: 6, marginTop: 6 }}>
+                      <input type="hidden" name="agentId" value={a.id} />
+                      <input name="description" placeholder="Ex.: licença hotel X, 12 meses" required />
+                      <input name="amount" placeholder="Valor em € (ex.: 150)" inputMode="decimal" required />
+                      <button className="mini">Registar</button>
+                    </form>
+                  </details>
+                </td>
+              </tr>);
+          })}</tbody></table></div>
+        <p className="hint">Comissão automática: 20% de cada fatura de assinatura paga pelos clientes angariados, nos primeiros 12 meses. Ligação de angariação: /merchants?agent=CÓDIGO.</p>
+
         <h2>Últimos acessos</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Data</th><th>Email</th><th>Cidade</th><th>Valor</th><th>Expira</th></tr></thead>
           <tbody>{recent.map((a) => (
-            <tr key={a.id}><td>{a.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td><td>{a.email}</td><td>{a.scope === "all" ? "Passe Europa" : a.city}</td>
+            <tr key={a.id}><td>{a.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td><td>{a.email}</td><td>{a.scope === "all" ? "Passe Europa" : `${a.city}${a.plan === "trip" ? " (3 dias)" : ""}`}</td>
               <td className="num">{eur(a.amountCents)}</td><td>{a.expiresAt.toISOString().slice(0, 16).replace("T", " ")}</td></tr>))}</tbody></table></div>
       </div>
     </main>

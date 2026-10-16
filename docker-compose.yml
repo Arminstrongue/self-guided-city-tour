@@ -3,6 +3,7 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
+    command: ["postgres", "-c", "max_connections=200", "-c", "shared_buffers=512MB"]
     environment:
       POSTGRES_USER: sgct
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
@@ -27,6 +28,12 @@ services:
     env_file: .env
     environment:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+    # Mais capacidade: docker compose up -d --scale app=3 (o Caddy distribui entre as réplicas).
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 15s
+      retries: 3
     depends_on:
       migrate: { condition: service_completed_successfully }
 

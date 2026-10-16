@@ -13,6 +13,7 @@ import { sessionEmail } from "@/lib/auth";
 import { findActiveAccess } from "@/lib/orders";
 import { activeOffers } from "@/lib/merchants";
 import { flightApiEnabled } from "@/lib/flight";
+import { MUSEUMS } from "@/data/museums";
 
 export const dynamic = "force-dynamic";
 
@@ -47,6 +48,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
         locale={params.locale} t={t} city={city} cityLabel={cityName(city, params.locale)}
         flightAt={access.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={await fxContext()}
         flightNo={access.flightNo ?? null} flightApi={flightApiEnabled()}
+        museums={MUSEUMS[city.id] ?? []} plan={access.plan ?? access.scope}
       />
     </main>
   );

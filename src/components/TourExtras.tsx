@@ -10,6 +10,7 @@ import { PRACTICAL } from "@/data/practical";
 import type { Weather } from "@/lib/weather";
 import type { FlightStatus } from "@/lib/flight";
 import { ExitCheck, NAT_KEY } from "./ExitCheck";
+import { ExtLink } from "./ExtLink";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
@@ -78,7 +79,7 @@ export function BackNow({ city, flightAt, pos, geoState, onGeo, next, now, t, lo
       <b>✈ {t.backNow}</b>
       {est !== null && <p>{fmt(t.backEst, { m: est })} {leaveAt && (late ? <b className="bad-txt">{t.backLate}</b> : fmt(t.backLeave, { t: hm(leaveAt) }))}</p>}
       <p className="hint">{fmt(t.backLine, { l: city.ret.core.line ?? "" })}</p>
-      {dir && <a className="btn tram" href={dir} target="_blank" rel="noopener noreferrer">{t.backGo}</a>}
+      {dir && <ExtLink className="btn tram" href={dir}>{t.backGo}</ExtLink>}
     </div>
   );
 }
@@ -234,7 +235,7 @@ export function CityGuide({ city, cityLabel, t, locale, money }: {
       <div className="card rows" style={{ paddingBlock: 6 }}>
         {g && <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{g.emergency}</b></a></div>}
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}
-        <div><span>🏛 {t.embassy}</span><a href={embassy} target="_blank" rel="noopener noreferrer">{natLocal || "Google Maps"} ↗</a></div>
+        <div><span>🏛 {t.embassy}</span><ExtLink href={embassy}>{natLocal || "Google Maps"} ↗</ExtLink></div>
       </div>
       {g && (
         <div className="card stack" style={{ gap: 10, padding: 14 }}>

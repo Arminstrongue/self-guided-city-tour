@@ -8,7 +8,7 @@ import "@fontsource/bricolage-grotesque/800.css";
 import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
-import { isLocale, getDict } from "@/i18n/dictionaries";
+import { isLocale, getDict, RTL } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
   title: "Self Guided City Tour",
@@ -22,13 +22,13 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   return (
-    <html lang={params.locale}>
+    <html lang={params.locale} dir={RTL.includes(params.locale) ? "rtl" : "ltr"}>
       <body>
         <ServiceWorker />
         {children}
         <footer className="foot">
           <p>{t.footer}</p>
-          <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link></p>
+          <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link></p>
         </footer>
       </body>
     </html>

@@ -265,11 +265,36 @@ export const CITIES: City[] = [
   }
 ];
 
-export const SOON = ["Praga", "Istambul", "Viena", "Berlim", "Atenas", "Dublin"];
+/** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
+export const SOON: Record<string, string>[] = [
+  { pt: "Praga", en: "Prague", es: "Praga", fr: "Prague", de: "Prag", it: "Praga", zh: "布拉格", ar: "براغ", ja: "プラハ" },
+  { pt: "Istambul", en: "Istanbul", es: "Estambul", fr: "Istanbul", de: "Istanbul", it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
+  { pt: "Viena", en: "Vienna", es: "Viena", fr: "Vienne", de: "Wien", it: "Vienna", zh: "维也纳", ar: "فيينا", ja: "ウィーン" },
+  { pt: "Berlim", en: "Berlin", es: "Berlín", fr: "Berlin", de: "Berlin", it: "Berlino", zh: "柏林", ar: "برلين", ja: "ベルリン" },
+  { pt: "Atenas", en: "Athens", es: "Atenas", fr: "Athènes", de: "Athen", it: "Atene", zh: "雅典", ar: "أثينا", ja: "アテネ" },
+  { pt: "Dublin", en: "Dublin", es: "Dublín", fr: "Dublin", de: "Dublin", it: "Dublino", zh: "都柏林", ar: "دبلن", ja: "ダブリン" }
+];
 
 export function getCity(id: string): City | undefined {
   return CITIES.find((c) => c.id === id);
 }
+/** Nomes nos idiomas acrescentados depois (IT, ZH, AR, JA). */
+const MORE_NAMES: Record<string, Record<string, string>> = {
+  lis: { it: "Lisbona", zh: "里斯本", ar: "لشبونة", ja: "リスボン" },
+  opo: { it: "Porto", zh: "波尔图", ar: "بورتو", ja: "ポルト" },
+  mad: { it: "Madrid", zh: "马德里", ar: "مدريد", ja: "マドリード" },
+  bcn: { it: "Barcellona", zh: "巴塞罗那", ar: "برشلونة", ja: "バルセロナ" },
+  par: { it: "Parigi", zh: "巴黎", ar: "باريس", ja: "パリ" },
+  lon: { it: "Londra", zh: "伦敦", ar: "لندن", ja: "ロンドン" },
+  rom: { it: "Roma", zh: "罗马", ar: "روما", ja: "ローマ" },
+  ams: { it: "Amsterdam", zh: "阿姆斯特丹", ar: "أمستردام", ja: "アムステルダム" },
+  edi: { it: "Edimburgo", zh: "爱丁堡", ar: "إدنبرة", ja: "エディンバラ" },
+  man: { it: "Manchester", zh: "曼彻斯特", ar: "مانشستر", ja: "マンチェスター" },
+  gla: { it: "Glasgow", zh: "格拉斯哥", ar: "غلاسكو", ja: "グラスゴー" },
+  liv: { it: "Liverpool", zh: "利物浦", ar: "ليفربول", ja: "リバプール" },
+  bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" }
+};
+
 export function cityName(c: City, locale: string): string {
-  return c.n[locale] ?? c.n.en;
+  return c.n[locale] ?? MORE_NAMES[c.id]?.[locale] ?? c.n.en;
 }

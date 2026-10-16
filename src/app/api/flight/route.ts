@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
+import { rateLimit } from "@/lib/rate-limit";
 import { flightApiEnabled, flightStatus, normaliseFlightNo, validFlightNo } from "@/lib/flight";
 
 export const dynamic = "force-dynamic";
 
 /** GET /api/flight?no=TP1234&date=2026-10-16&from=LIS */
 export async function GET(req: Request) {
+  if (!rateLimit(req, "flight", 30)) return NextResponse.json({ error: "rate" }, { status: 429 });
   if (!flightApiEnabled()) return NextResponse.json({ error: "disabled" }, { status: 501 });
   const q = new URL(req.url).searchParams;
   const no = normaliseFlightNo(q.get("no") ?? "");

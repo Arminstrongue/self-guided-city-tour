@@ -31,7 +31,17 @@ export async function syncSubscription(sub: Stripe.Subscription): Promise<void> 
   await d.update(schema.merchants).set({ status }).where(eq(schema.merchants.stripeSubscriptionId, sub.id));
 }
 
+const offerCache = new Map<string, { at: number; v: Awaited<ReturnType<typeof loadOffers>> }>();
+/** Ofertas ativas por cidade, em cache 60 s (lidas em cada abertura de roteiro). */
 export async function activeOffers(cityId: string) {
+  const hit = offerCache.get(cityId);
+  if (hit && Date.now() - hit.at < 60_000) return hit.v;
+  const v = await loadOffers(cityId);
+  offerCache.set(cityId, { at: Date.now(), v });
+  return v;
+}
+
+async function loadOffers(cityId: string) {
   const d = await db();
   const rows = await d.select().from(schema.merchants)
     .where(and(eq(schema.merchants.city, cityId), eq(schema.merchants.status, "active")));
@@ -41,7 +51,7 @@ export async function activeOffers(cityId: string) {
     instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic"
   }));
 }
-export type Offer = Awaited<ReturnType<typeof activeOffers>>[number];
+export type Offer = Awaited<ReturnType<typeof loadOffers>>[number];
 
 export async function merchantByRef(ref: string | null | undefined) {
   if (!ref) return null;

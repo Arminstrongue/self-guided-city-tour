@@ -31,7 +31,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         <BuyForm
           locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
           providers={enabledProviders()} sessionEmail={await sessionEmail()}
-          prices={{ city: TOUR_PLANS.city.amount, all: TOUR_PLANS.all.amount }} fx={fx} t={t}
+          prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} t={t}
         />
         </WebOnly>
       </div>

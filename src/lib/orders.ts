@@ -1,5 +1,5 @@
 import type Stripe from "stripe";
-import { and, desc, eq, gt, inArray, or } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan } from "./pricing";
 import { createAccessToken } from "./access-token";
@@ -25,11 +25,11 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   if (existing[0]) return existing[0];
 
   const [user] = await d.insert(schema.users).values({ email, name: m.name || null, locale: m.locale || null })
-    .onConflictDoUpdate({ target: schema.users.email, set: { name: m.name || undefined } }).returning();
+    .onConflictDoUpdate({ target: schema.users.email, set: { name: sql`coalesce(excluded.name, ${schema.users.name})` } }).returning();
 
   const expiresAt = new Date(Date.now() + TOUR_PLANS[plan].hours * 3600_000);
   const inserted = await d.insert(schema.accesses).values({
-    email, userId: user.id, scope: plan === "all" ? "all" : "city", city: m.city || null,
+    email, userId: user.id, scope: plan === "all" ? "all" : "city", plan, city: m.city || null,
     flightAt: m.flightAt ? new Date(m.flightAt) : null, flightNo: m.flightNo || null, expiresAt,
     // Com "Adaptive Pricing" o cliente paga na sua moeda; guardamos sempre o valor de origem (EUR).
     amountCents: session.currency_conversion?.amount_total ?? session.amount_total ?? TOUR_PLANS[plan].amount,

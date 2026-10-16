@@ -6,7 +6,7 @@ import { INTL_LOCALE } from "@/i18n/dictionaries";
 type CityOpt = { id: string; name: string; stops: { id: string; name: string }[] };
 type Plan = "basic" | "featured" | "partner";
 
-export function MerchantForm({ locale, t, cities, prices }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number> }) {
+export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string }) {
   const [f, setF] = useState({ name: "", category: "food", city: cities[0].id, stopId: cities[0].stops[0].id, offer: "", email: "", instagram: "", tiktok: "", facebook: "", plan: "featured" as Plan });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -19,7 +19,7 @@ export function MerchantForm({ locale, t, cities, prices }: { locale: Locale; t:
     if (f.name.trim().length < 2 || f.offer.trim().length < 3 || !/^\S+@\S+\.\S+$/.test(f.email)) return setError(t.mErr);
     setBusy(true); setError("");
     try {
-      const res = await fetch("/api/merchants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, locale }) });
+      const res = await fetch("/api/merchants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, locale, agent: agent || undefined }) });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error();
       window.location.href = data.url;

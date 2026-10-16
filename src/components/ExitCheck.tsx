@@ -4,6 +4,7 @@ import type { City } from "@/data/cities";
 import { zoneOf } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
+import { ExtLink } from "./ExtLink";
 import { checkLayover, ETIAS_LIVE, NATIONALITIES, type EntryVerdict } from "@/lib/entry";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -84,7 +85,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
               <p className="hint">{fmt(t.exitNote, { m: res.entry.exitMin })}</p>
             </>
           )}
-          <p className="hint"><a href={res.entry.officialUrl} target="_blank" rel="noopener noreferrer">{t.official}</a> · {t.disclaimer}</p>
+          <p className="hint"><ExtLink href={res.entry.officialUrl}>{t.official}</ExtLink> · {t.disclaimer}</p>
         </div>
       )}
     </section>

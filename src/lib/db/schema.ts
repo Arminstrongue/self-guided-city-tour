@@ -3,6 +3,8 @@ import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, js
 export const accessScope = pgEnum("access_scope", ["city", "all"]);
 export const merchantPlan = pgEnum("merchant_plan", ["basic", "featured", "partner"]);
 export const merchantStatus = pgEnum("merchant_status", ["pending", "active", "past_due", "cancelled"]);
+export const agentStatus = pgEnum("agent_status", ["pending", "active", "suspended"]);
+export const leadStatus = pgEnum("lead_status", ["new", "contacted", "proposal", "won", "lost"]);
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -29,9 +31,12 @@ export const merchants = pgTable("merchants", {
   refCode: text("ref_code").notNull(),
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
+  agentId: uuid("agent_id"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [
   uniqueIndex("merchants_ref_idx").on(t.refCode),
+  index("merchants_sub_idx").on(t.stripeSubscriptionId),
+  index("merchants_agent_idx").on(t.agentId),
   index("merchants_city_stop_idx").on(t.city, t.stopId)
 ]);
 
@@ -43,6 +48,7 @@ export const accesses = pgTable("accesses", {
   city: text("city"),
   flightAt: timestamp("flight_at", { withTimezone: true }),
   flightNo: text("flight_no"),
+  plan: text("plan"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   amountCents: integer("amount_cents").notNull(),
   currency: text("currency").notNull().default("eur"),
@@ -75,3 +81,48 @@ export const cityContent = pgTable("city_content", {
   updatedBy: text("updated_by"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
+
+/** Comerciais independentes: angariam comerciantes, restaurantes, pousadas, hotéis e empresas. */
+export const agents = pgTable("agents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone"),
+  country: text("country"),
+  code: text("code").notNull(),
+  status: agentStatus("status").notNull().default("pending"),
+  iban: text("iban"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("agents_email_idx").on(t.email), uniqueIndex("agents_code_idx").on(t.code)]);
+
+/** Carteira de negócios de cada comercial. */
+export const leads = pgTable("leads", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agentId: uuid("agent_id").notNull().references(() => agents.id),
+  name: text("name").notNull(),
+  kind: text("kind").notNull(),          // shop, food, cafe, guesthouse, hotel, company, other
+  city: text("city"),
+  contact: text("contact"),
+  email: text("email"),
+  phone: text("phone"),
+  status: leadStatus("status").notNull().default("new"),
+  notes: text("notes"),
+  merchantId: uuid("merchant_id").references(() => merchants.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("leads_agent_idx").on(t.agentId)]);
+
+/** Comissões dos comerciais: uma por fatura de assinatura paga (primeiros 12 meses). */
+export const agentCommissions = pgTable("agent_commissions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agentId: uuid("agent_id").notNull().references(() => agents.id),
+  merchantId: uuid("merchant_id").references(() => merchants.id),
+  stripeInvoiceId: text("stripe_invoice_id"),
+  description: text("description"),
+  amountCents: integer("amount_cents").notNull(),
+  paidAt: timestamp("paid_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("agent_comm_invoice_idx").on(t.stripeInvoiceId), index("agent_comm_agent_idx").on(t.agentId)]);
+
+export type Agent = typeof agents.$inferSelect;
+export type Lead = typeof leads.$inferSelect;

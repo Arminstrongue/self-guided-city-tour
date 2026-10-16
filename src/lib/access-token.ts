@@ -13,7 +13,17 @@ export function createAccessToken(email: string, ttlS = ACCESS_TTL_S): string {
   return `${body}.${sign(body)}`;
 }
 
-export function readAccessToken(token: string | undefined | null): string | null {
+/** Token com finalidade (ex.: "agent"): um token de viajante nunca serve para outra área e vice-versa. */
+export function createPurposeToken(email: string, purpose: string, ttlS = ACCESS_TTL_S): string {
+  const body = b64(JSON.stringify({ e: email.toLowerCase(), p: purpose, x: Math.floor(Date.now() / 1000) + ttlS }));
+  return `${body}.${sign(body)}`;
+}
+export function readPurposeToken(token: string | undefined | null, purpose: string): string | null {
+  const r = verify(token);
+  return r && r.p === purpose ? r.e : null;
+}
+
+function verify(token: string | undefined | null): { e: string; p?: string } | null {
   if (!token) return null;
   const [body, sig] = token.split(".");
   if (!body || !sig) return null;
@@ -21,8 +31,13 @@ export function readAccessToken(token: string | undefined | null): string | null
   const given = Buffer.from(sig);
   if (expected.length !== given.length || !timingSafeEqual(expected, given)) return null;
   try {
-    const { e, x } = JSON.parse(Buffer.from(body, "base64url").toString()) as { e: string; x: number };
+    const { e, p, x } = JSON.parse(Buffer.from(body, "base64url").toString()) as { e: string; p?: string; x: number };
     if (typeof e !== "string" || x < Date.now() / 1000) return null;
-    return e;
+    return { e, p };
   } catch { return null; }
+}
+
+export function readAccessToken(token: string | undefined | null): string | null {
+  const r = verify(token);
+  return r && !r.p ? r.e : null;
 }

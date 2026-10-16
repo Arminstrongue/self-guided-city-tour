@@ -57,7 +57,8 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Email e nome; hora e número (opcional) do próximo voo; cidade e plano comprados; dados de pagamento tratados pela Stripe (não guardamos o cartão).",
         "Se entrar com Google, Apple ou Facebook: nome e email da conta.",
         "A localização (se a ativar) e a nacionalidade indicada em \"Posso sair?\" ficam só no seu dispositivo; não as guardamos.",
-        "Comerciantes: nome do negócio, contacto, redes sociais e dados de faturação."
+        "Comerciantes: nome do negócio, contacto, redes sociais e dados de faturação.",
+        "Comerciais independentes: nome, email, telefone, país, carteira de negócios e comissões."
       ] },
       { h: "Para quê e com que fundamento", p: [
         "Prestar o serviço comprado e calcular a hora de regresso (execução do contrato).",
@@ -129,7 +130,8 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Email and name; next flight time and (optional) number; city and plan purchased; payment data handled by Stripe (we never store your card).",
         "If you sign in with Google, Apple or Facebook: your account name and email.",
         "Your location (if you turn it on) and the nationality entered in \"Can I leave?\" stay on your device; we don't store them.",
-        "Merchants: business name, contact details, social links and billing data."
+        "Merchants: business name, contact details, social links and billing data.",
+        "Independent sales partners: name, email, phone, country, deal pipeline and commissions."
       ] },
       { h: "Purposes and legal bases", p: [
         "Providing the service and computing your return time (contract).",

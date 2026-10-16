@@ -28,11 +28,14 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
             </Link>
           ))}
           {SOON.map((n) => (
-            <span key={n} className="city off"><b>{n}</b><small>{t.soon}</small></span>
+            <span key={n.en} className="city off"><b>{n[params.locale] ?? n.en}</b><small>{t.soon}</small></span>
           ))}
         </div>
         <WebOnly><Link className="merch-cta" href={`/${params.locale}/merchants`}>
           <div><b>{t.merchCta}</b><span>{t.merchSub}</span></div><i>→</i>
+        </Link>
+        <Link className="merch-cta alt" href={`/${params.locale}/agents`}>
+          <div><b>{t.agCtaHome}</b><span>{t.agCtaHomeSub}</span></div><i>→</i>
         </Link></WebOnly>
       </div>
     </main>
