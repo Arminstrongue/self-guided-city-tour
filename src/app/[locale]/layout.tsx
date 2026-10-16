@@ -8,15 +8,22 @@ import "@fontsource/bricolage-grotesque/800.css";
 import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
+import { NativeChrome } from "@/components/NativeChrome";
 import { isLocale, getDict, RTL } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
   title: "Self Guided City Tour",
   description: "Self-guided city routes for layover travellers, with the cheapest transport and a countdown to your flight.",
   manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, title: "City Tour", statusBarStyle: "black-translucent" },
+  formatDetection: { telephone: false },
   icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" }
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#1d4aa0" };
+export const viewport: Viewport = {
+  width: "device-width", initialScale: 1, viewportFit: "cover",
+  // Cor da barra do navegador / sistema (Android Chrome, Safari iOS 15+).
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#1d4aa0" }, { media: "(prefers-color-scheme: dark)", color: "#0d1322" }]
+};
 
 export default function LocaleLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound();
@@ -25,6 +32,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
     <html lang={params.locale} dir={RTL.includes(params.locale) ? "rtl" : "ltr"}>
       <body>
         <ServiceWorker />
+        <NativeChrome />
         {children}
         <footer className="foot">
           <p>{t.footer}</p>

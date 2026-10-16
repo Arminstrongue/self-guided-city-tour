@@ -25,6 +25,7 @@
     "@capacitor/core": "6.2.2",
     "@capacitor/ios": "6.2.2",
     "@capacitor/local-notifications": "6.1.3",
+    "@capacitor/status-bar": "^6.0.2",
     "@electric-sql/pglite": "0.2.17",
     "@fontsource/bricolage-grotesque": "5.2.10",
     "@fontsource/figtree": "5.2.10",

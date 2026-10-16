@@ -41,3 +41,12 @@ Identificador da app: `com.selfguidedcitytour.app` (alterar em `capacitor.config
 ## Ligações dentro da app
 
 As ligações externas (sites oficiais, direções, WhatsApp) abrem no navegador interno da app com `@capacitor/browser`. Depois de `npm install`, corra `npx cap sync` para o plugin entrar nos projetos iOS e Android.
+
+
+## Ecrãs iPhone e Android
+
+- A página ocupa o ecrã todo (`viewport-fit=cover`) e respeita o entalhe e a barra inferior do iPhone com `env(safe-area-inset-*)`; no iOS o Capacitor usa `contentInset: "never"`.
+- Barra de estado azul com texto claro nos dois sistemas (`@capacitor/status-bar`); no Android a barra de navegação fica clara.
+- Telemóveis só em vertical (iPad continua a rodar).
+- Campos com 16 px para o iPhone não fazer zoom ao tocar; botões com pelo menos 44 px de altura.
+- Depois de atualizar: `npm install` e `npm run mobile:sync` (no Mac também atualiza o projeto iOS com `pod install`).

@@ -300,6 +300,12 @@ export const SOON: Record<string, string>[] = [
 export function getCity(id: string): City | undefined {
   return CITIES.find((c) => c.id === id);
 }
+/** País de cada cidade (código ISO), para agrupar na escolha da cidade. */
+export const COUNTRY: Record<string, string> = {
+  lis: "PT", opo: "PT", mad: "ES", bcn: "ES", par: "FR", rom: "IT", ams: "NL", ist: "TR",
+  lon: "GB", edi: "GB", man: "GB", gla: "GB", liv: "GB", bir: "GB"
+};
+
 /** Nomes nos idiomas acrescentados depois (IT, ZH, AR, JA). */
 const MORE_NAMES: Record<string, Record<string, string>> = {
   lis: { it: "Lisbona", zh: "里斯本", ar: "لشبونة", ja: "リスボン" },

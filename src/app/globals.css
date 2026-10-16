@@ -13,11 +13,16 @@
   --good:#5fd39a; --good-soft:#123326; --warn:#f0b35c; --warn-soft:#3a2a12; color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);
+  -webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;min-height:100dvh}
+/* Faixa por trás da barra de estado / entalhe (iPhone) e da barra do Android em ecrã inteiro. */
+body::before{content:"";position:fixed;inset:0 0 auto 0;height:env(safe-area-inset-top,0);background:var(--cobalt);z-index:50;pointer-events:none}
 a{color:var(--cobalt)}
 img{max-width:100%}
 [hidden]{display:none!important}
-.app{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:0 40px}
+.app{max-width:480px;margin:0 auto;padding-inline:16px;padding-block:0 calc(40px + env(safe-area-inset-bottom,0))}
 .app.wide{max-width:1040px}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
 p{margin:0}
@@ -40,7 +45,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .brand{font-family:var(--display);font-weight:800;font-size:18px;line-height:1.1;text-decoration:none;color:var(--ink)}
 .brand span{color:var(--cobalt)}
 .bar-end{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.cur-pick{font:inherit;font-weight:700;font-size:12px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:3px 4px}
+.cur-pick{font:inherit;font-weight:700;font-size:16px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 8px;min-height:40px;max-width:150px}
 .langs{display:flex;gap:4px;flex-wrap:wrap}
 .langs a{font-weight:700;font-size:12px;text-decoration:none;color:var(--muted);padding:4px 6px;border-radius:6px}
 .langs a[aria-current="true"]{background:var(--cobalt);color:var(--on-cobalt)}
@@ -193,8 +198,10 @@ footer.foot p{margin-block:4px}
 .mk.focus{border-color:#f3b81c;background:#f3b81c;color:#14203a;font-size:15px}
 .acts button.sec{background:none;border:1.5px solid var(--line);color:var(--cobalt)}
 .ok-txt{color:var(--good)}
-.tabs{grid-template-columns:repeat(5,1fr)}
-.tabs button{font-size:13px}
+/* 5 separadores: em ecrãs estreitos deslizam na horizontal em vez de encolher o texto. */
+.tabs{display:flex;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:1 0 auto;min-width:72px;min-height:44px;padding:8px 12px;font-size:14px;white-space:nowrap;scroll-snap-align:start}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
 .kpis3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .kpis3 .kpi{padding:12px;display:flex;flex-direction:column;gap:4px}
@@ -209,3 +216,35 @@ footer.foot p{margin-block:4px}
 .merch-cta.alt{background:var(--cobalt-soft);color:var(--cobalt);margin-top:8px}
 [dir="rtl"] .merch-cta i{transform:scaleX(-1)}
 [dir="rtl"] .num{direction:ltr;unicode-bidi:isolate}
+
+/* ——— Telemóveis (iOS e Android) ——— */
+/* 16 px nos campos evita o zoom automático do iPhone ao tocar num campo. */
+input,select,textarea{font-size:16px}
+.field input,.field select,.select-wrap select{min-height:48px;-webkit-appearance:none;appearance:none}
+.field input[type="datetime-local"]{display:block;text-align:left;line-height:1.3}
+.field input[type="datetime-local"]::-webkit-date-and-time-value{text-align:left}
+.field select,.select-wrap select{background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+[dir="rtl"] .field select,[dir="rtl"] .select-wrap select{background-position:20px 50%,14px 50%;padding-right:14px;padding-left:36px}
+.cur-pick{-webkit-appearance:none;appearance:none;padding-right:8px}
+.btn,.acts a,.acts button,.mode-switch button,.link-btn{min-height:44px}
+.link-btn{display:inline-flex;align-items:center}
+.select-wrap select{width:100%;border:1.5px solid var(--line);background-color:var(--surface);border-radius:14px;padding:12px 36px 12px 14px;font-weight:700;font-family:var(--display);font-size:18px;color:var(--ink)}
+.select-wrap select:focus{border-color:var(--cobalt);outline:none}
+.city-picker .label{display:block}
+.leaflet-box{height:min(60dvh,460px)}
+.bar-end{gap:8px;flex-wrap:nowrap}
+.bar{flex-wrap:wrap}
+/* Ecrãs estreitos (iPhone SE, Android pequenos): marca numa linha, seletores na seguinte. */
+@media (max-width:400px){
+  .bar .brand{flex-basis:100%}
+  .bar-end{justify-content:flex-start;width:100%}
+  .bar-end .cur-pick{flex:1;max-width:none}
+  .hero h1{font-size:30px}
+}
+@media (max-width:360px){.brand{font-size:16px}.cur-pick{max-width:110px}}
+/* Botões e ligações sem atraso de toque nem seleção acidental de texto. */
+button,a,.btn{touch-action:manipulation}
+.tabs button,.btn,.mode-switch button{-webkit-user-select:none;user-select:none}
+/* Android na app: a barra de estado é nativa (não sobrepõe), por isso não é preciso a faixa. */
+html[data-platform="android"] body::before{display:none}
