@@ -18,7 +18,7 @@ export function MuseumsTab({ city, museums, t, money, onMap, locale }: {
   if (!museums.length) return <p className="hint">—</p>;
   return (
     <div className="stack">
-      {museums.map((m) => {
+      {[...museums].sort((a, b) => a.price - b.price).map((m) => {
         const st = now ? openNow(m, city.tz ?? "UTC", now) : null;
         return (
           <div key={m.id} className="card stack" style={{ gap: 6, padding: 14 }}>

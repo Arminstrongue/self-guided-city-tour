@@ -20,6 +20,7 @@
     "mobile:icons": "npx @capacitor/assets@3.0.5 generate"
   },
   "dependencies": {
+    "@capacitor-community/text-to-speech": "^4.1.1",
     "@capacitor/android": "6.2.2",
     "@capacitor/browser": "^6.0.3",
     "@capacitor/core": "6.2.2",

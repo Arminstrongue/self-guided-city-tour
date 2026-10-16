@@ -191,25 +191,30 @@ export function dayNames(cl: number[], locale: Locale): string {
 
 /* ---------- Áudio-guia ---------- */
 
-export function Speak({ text, lang, t }: { text: string; lang: string; t: Dict }) {
+export function Speak({ text, lang, fallback, t }: { text: string; lang: string; fallback?: string; t: Dict }) {
   const [on, setOn] = useState(false);
   const [ok, setOk] = useState(false);
-  useEffect(() => { setOk(typeof window !== "undefined" && "speechSynthesis" in window); }, []);
-  useEffect(() => () => { if (on) window.speechSynthesis.cancel(); }, [on]);
+  const [note, setNote] = useState("");
+  const cur = useRef<import("@/lib/speech").Speaking | null>(null);
+  useEffect(() => { void import("@/lib/speech").then((m) => setOk(m.speechAvailable())); return () => cur.current?.stop(); }, []);
   if (!ok) return null;
-  function toggle() {
-    const s = window.speechSynthesis;
-    if (on) { s.cancel(); setOn(false); return; }
-    s.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    const v = s.getVoices().find((x) => x.lang.toLowerCase().startsWith(lang.toLowerCase())) ?? s.getVoices().find((x) => x.lang.slice(0, 2) === lang.slice(0, 2));
-    if (v) u.voice = v;
-    u.rate = 0.95;
-    u.onend = () => setOn(false); u.onerror = () => setOn(false);
-    s.speak(u); setOn(true);
+  async function toggle() {
+    if (on) { cur.current?.stop(); setOn(false); return; }
+    setOn(true); setNote("");
+    try {
+      const { speak } = await import("@/lib/speech");
+      const sp = await speak(text, lang, fallback);
+      cur.current = sp;
+      if (sp.usedLang !== lang.slice(0, 2)) setNote(t.audioFallback);
+      await sp.done;
+    } finally { setOn(false); }
   }
-  return <button onClick={toggle} aria-pressed={on}>{on ? `■ ${t.stopAudio}` : `🔊 ${t.listen}`}</button>;
+  return (
+    <>
+      <button onClick={toggle} aria-pressed={on}>{on ? `■ ${t.stopAudio}` : `🔊 ${t.listen}`}</button>
+      {note && <span className="hint audio-note">{note}</span>}
+    </>
+  );
 }
 
 /* ---------- Guia prático ---------- */
@@ -254,6 +259,34 @@ export function CityGuide({ city, cityLabel, t, locale, money }: {
         </div>
       )}
       <ExitCheck city={city} locale={locale} t={t} compact />
+    </div>
+  );
+}
+
+/* ---------- Comer: melhores avaliados e mais baratos (Google) ---------- */
+
+type EatItem = { id: string; name: string; rating: number; reviews: number; price: number | null; openNow: boolean | null; type: string | null; url: string };
+
+export function EatNearby({ cityId, stopId, locale, t }: { cityId: string; stopId: string; locale: Locale; t: Dict }) {
+  const [items, setItems] = useState<EatItem[] | null>(null);
+  useEffect(() => {
+    let live = true;
+    fetch(`/api/eat?city=${cityId}&stop=${stopId}&locale=${locale}`)
+      .then((r) => (r.ok ? r.json() : null)).then((j) => { if (live) setItems(j?.places ?? null); }).catch(() => undefined);
+    return () => { live = false; };
+  }, [cityId, stopId, locale]);
+  if (!items) return null; // sem chave da Google ou sem ligação: fica só a ligação "Comer perto daqui"
+  const nf = new Intl.NumberFormat(INTL_LOCALE[locale]);
+  return (
+    <div className="eat-best">
+      <span className="label">🍽 {t.eatBest}</span>
+      {items.length === 0 ? <p className="hint">{t.eatNone}</p> : items.map((e) => (
+        <ExtLink key={e.id} href={e.url} className="eat-row">
+          <span className="eat-name">{e.name}{e.type ? <small> · {e.type}</small> : null}</span>
+          <span className="eat-meta num">★ {e.rating.toFixed(1)} <small>({nf.format(e.reviews)})</small>{e.price !== null ? ` · ${"€".repeat(Math.max(1, e.price))}` : ""}{e.openNow ? ` · ${t.openNow}` : ""}</span>
+        </ExtLink>
+      ))}
+      <p className="hint">{t.eatSrc}</p>
     </div>
   );
 }

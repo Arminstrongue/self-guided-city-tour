@@ -5,7 +5,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
 import { fitRoute, hasExtension, leaveBy, optionByKey, routeOptions } from "@/lib/route-cost";
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
-import { BackNow, CityGuide, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
+import { BackNow, CityGuide, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
@@ -18,6 +18,7 @@ type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
   flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
+  bios: Record<string, { text: string; lang: string }>; enBios: Record<string, string>;
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -29,7 +30,7 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan }: Props) {
+export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios }: Props) {
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
   const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
@@ -71,7 +72,6 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
   const today = weekdayIn(city.tz, now);
   const closedToday = (s: Stop) => Boolean(s.cl?.includes(today));
   const nextStop = plan.stops.find((s) => !done[s.id]) ?? null;
-  const voiceLang = locale === "pt" ? "pt-PT" : "en-GB";
   const avail = leave ? Math.round((leave.getTime() - now) / 60000) : null;
   const fits = avail === null || avail >= plan.minutesTour;
   const extras = city.stops.filter((s) => s.x);
@@ -169,7 +169,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
           <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
             onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />
           {!online && <p className="note">{t.offline}</p>}
-          {t.contentNote && locale !== "pt" && locale !== "en" && <p className="note">{t.contentNote}</p>}
+          {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 
         {tab === "route" && (
@@ -203,7 +203,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                       </button>
                       {isOpen && (
                         <div className="detail">
-                          <p>{desc(s)}</p>
+                          <p className="bio">{bios[s.id]?.text ?? desc(s)}</p>
                           {s.cl?.length ? <p className="hint">🕒 {fmt(t.closedNote, { d: dayNames(s.cl, locale) })}</p> : null}
                           {here.length > 0 && (
                             <>
@@ -224,10 +224,12 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
                           )}
                           <div className="acts">
                             <button type="button" className="sec" onClick={() => showOnMap({ lat: s.lat, lng: s.lng, name: s.n, walk: s.leg.m === "walk" })}>{t.directions}</button>
-                            <Speak text={`${s.n}. ${desc(s)}`} lang={voiceLang} t={t} />
+                            <Speak text={`${s.n}. ${bios[s.id]?.text ?? desc(s)}`} lang={bios[s.id]?.lang ?? (locale === "pt" ? "pt" : "en")}
+                              fallback={`${s.n}. ${enBios[s.id] ?? s.en}`} t={t} />
                             <ExtLink href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`}>🍽 {t.eatNear}</ExtLink>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
+                          <EatNearby cityId={city.id} stopId={s.id} locale={locale} t={t} />
                         </div>
                       )}
                     </div>

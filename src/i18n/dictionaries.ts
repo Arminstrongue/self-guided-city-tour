@@ -191,6 +191,7 @@ const pt = {
   agKinds: { shop: "Loja", food: "Restaurante", cafe: "Café e pastelaria", guesthouse: "Pousada / guest house", hotel: "Hotel", exp: "Experiência", company: "Empresa / companhia", other: "Outro" },
   agSt: { new: "Novo", contacted: "Contactado", proposal: "Proposta", won: "Fechado", lost: "Perdido" },
   ferry: "ferry", zoneTR: "a Turquia", vEvisa: "Precisa de um visto eletrónico (e-Visa) da Turquia, pedido online em evisa.gov.tr antes de viajar. Algumas nacionalidades só o obtêm com visto ou residência válidos de Schengen, EUA, Reino Unido ou Irlanda.",
+  eatBest: "Mais bem avaliados e baratos aqui perto", eatNone: "Sem restaurantes bem avaliados e baratos abertos aqui perto agora.", eatSrc: "Avaliações e preços: Google Maps.", audioFallback: "Este telemóvel não tem voz neste idioma: a ler em inglês.",
   footer: "Self Guided City Tour · roteiros autoguiados para quem está em escala"
 };
 export type Dict = typeof pt;
@@ -380,6 +381,7 @@ const en: Dict = {
   agKinds: { shop: "Shop", food: "Restaurant", cafe: "Café & bakery", guesthouse: "Guesthouse", hotel: "Hotel", exp: "Experience", company: "Company", other: "Other" },
   agSt: { new: "New", contacted: "Contacted", proposal: "Proposal", won: "Won", lost: "Lost" },
   ferry: "ferry", zoneTR: "Türkiye", vEvisa: "You need a Türkiye e-Visa, applied for online at evisa.gov.tr before travel. Some nationalities only qualify with a valid Schengen, US, UK or Irish visa or residence permit.",
+  eatBest: "Best rated and cheapest nearby", eatNone: "No well-rated, inexpensive places open nearby right now.", eatSrc: "Ratings and prices: Google Maps.", audioFallback: "This phone has no voice for this language: reading in English.",
   footer: "Self Guided City Tour · self-guided routes for layover travellers"
 };
 
@@ -564,6 +566,7 @@ const es: Dict = {
   agKinds: { shop: "Tienda", food: "Restaurante", cafe: "Cafetería y pastelería", guesthouse: "Hostal / casa de huéspedes", hotel: "Hotel", exp: "Experiencia", company: "Empresa", other: "Otro" },
   agSt: { new: "Nuevo", contacted: "Contactado", proposal: "Propuesta", won: "Cerrado", lost: "Perdido" },
   ferry: "ferri", zoneTR: "Turquía", vEvisa: "Necesitas un visado electrónico (e-Visa) de Turquía, solicitado en evisa.gov.tr antes del viaje. Algunas nacionalidades solo pueden obtenerlo con un visado o residencia válidos de Schengen, EE. UU., Reino Unido o Irlanda.",
+  eatBest: "Mejor valorados y más baratos cerca", eatNone: "No hay sitios bien valorados y baratos abiertos cerca ahora.", eatSrc: "Valoraciones y precios: Google Maps.", audioFallback: "Este teléfono no tiene voz en este idioma: leyendo en inglés.",
   footer: "Self Guided City Tour · rutas autoguiadas para viajeros en escala"
 };
 
@@ -747,6 +750,7 @@ const fr: Dict = {
   agKinds: { shop: "Boutique", food: "Restaurant", cafe: "Café et pâtisserie", guesthouse: "Maison d'hôtes", hotel: "Hôtel", exp: "Activité", company: "Entreprise", other: "Autre" },
   agSt: { new: "Nouveau", contacted: "Contacté", proposal: "Proposition", won: "Signé", lost: "Perdu" },
   ferry: "ferry", zoneTR: "la Turquie", vEvisa: "Il vous faut un visa électronique (e-Visa) pour la Turquie, demandé sur evisa.gov.tr avant le voyage. Certaines nationalités n'y ont droit qu'avec un visa ou titre de séjour valable Schengen, américain, britannique ou irlandais.",
+  eatBest: "Les mieux notés et les moins chers à proximité", eatNone: "Aucune adresse bien notée et bon marché ouverte à proximité pour le moment.", eatSrc: "Notes et prix : Google Maps.", audioFallback: "Ce téléphone n'a pas de voix dans cette langue : lecture en anglais.",
   footer: "Self Guided City Tour · parcours en autonomie pour les voyageurs en escale"
 };
 
@@ -931,6 +935,7 @@ const de: Dict = {
   agKinds: { shop: "Laden", food: "Restaurant", cafe: "Café & Bäckerei", guesthouse: "Pension", hotel: "Hotel", exp: "Erlebnis", company: "Unternehmen", other: "Sonstiges" },
   agSt: { new: "Neu", contacted: "Kontaktiert", proposal: "Angebot", won: "Gewonnen", lost: "Verloren" },
   ferry: "Fähre", zoneTR: "die Türkei", vEvisa: "Sie brauchen ein türkisches E-Visum, vor der Reise online auf evisa.gov.tr beantragt. Manche Staatsangehörige erhalten es nur mit gültigem Schengen-, US-, UK- oder irischem Visum bzw. Aufenthaltstitel.",
+  eatBest: "Am besten bewertet und günstig in der Nähe", eatNone: "Gerade keine gut bewerteten, günstigen Lokale in der Nähe geöffnet.", eatSrc: "Bewertungen und Preise: Google Maps.", audioFallback: "Dieses Telefon hat keine Stimme in dieser Sprache: Wiedergabe auf Englisch.",
   footer: "Self Guided City Tour · Routen auf eigene Faust für Umsteigereisende"
 };
 
@@ -1128,6 +1133,7 @@ const it: Dict = {
   closedToday: "Interno chiuso oggi",
   closedNote: "L'interno è chiuso il {d}; l'esterno si visita comunque.",
   ferry: "traghetto", zoneTR: "la Turchia", vEvisa: "Ti serve un visto elettronico (e-Visa) per la Turchia, richiesto online su evisa.gov.tr prima del viaggio. Alcune nazionalità lo ottengono solo con visto o permesso di soggiorno valido Schengen, USA, Regno Unito o Irlanda.",
+  eatBest: "I più votati ed economici qui vicino", eatNone: "Nessun locale ben recensito ed economico aperto qui vicino in questo momento.", eatSrc: "Recensioni e prezzi: Google Maps.", audioFallback: "Questo telefono non ha una voce in questa lingua: lettura in inglese.",
   footer: "Self Guided City Tour · itinerari fai da te per chi è in scalo o in vacanza",
   modeLayover: "Sono in scalo",
   modeTrip: "Sono in vacanza",
@@ -1390,6 +1396,7 @@ const zh: Dict = {
   closedToday: "今日室内不开放",
   closedNote: "室内于{d}闭馆；外部仍可参观。",
   ferry: "渡轮", zoneTR: "土耳其", vEvisa: "您需要土耳其电子签证（e-Visa），请在出行前通过 evisa.gov.tr 在线申请。部分国籍须持有有效的申根、美国、英国或爱尔兰签证或居留许可才能申请。",
+  eatBest: "附近评分最高、最实惠", eatNone: "附近目前没有营业中的高评分平价餐馆。", eatSrc: "评分和价格：Google 地图。", audioFallback: "此手机没有该语言的语音：将以英语朗读。",
   footer: "Self Guided City Tour · 为转机和短途旅客设计的自助游路线",
   modeLayover: "我在转机",
   modeTrip: "我在度假",
@@ -1652,6 +1659,7 @@ const ar: Dict = {
   closedToday: "الداخل مغلق اليوم",
   closedNote: "الداخل مغلق يوم {d}؛ يمكنك زيارة الخارج.",
   ferry: "عبّارة", zoneTR: "تركيا", vEvisa: "تحتاج إلى تأشيرة إلكترونية لتركيا (e-Visa) تطلبها عبر evisa.gov.tr قبل السفر. بعض الجنسيات لا تحصل عليها إلا بتأشيرة أو إقامة سارية من شنغن أو الولايات المتحدة أو المملكة المتحدة أو أيرلندا.",
+  eatBest: "الأعلى تقييمًا والأرخص بالقرب منك", eatNone: "لا توجد أماكن مفتوحة الآن بتقييم جيد وسعر منخفض بالقرب منك.", eatSrc: "التقييمات والأسعار: خرائط Google.", audioFallback: "لا يتوفر صوت بهذه اللغة على هذا الهاتف: القراءة بالإنجليزية.",
   footer: "Self Guided City Tour · مسارات ذاتية لمسافري الترانزيت والعطلات القصيرة",
   modeLayover: "أنا في ترانزيت",
   modeTrip: "أنا في عطلة",
@@ -1914,6 +1922,7 @@ const ja: Dict = {
   closedToday: "本日は内部休館",
   closedNote: "内部は{d}に休館です。外観は見学できます。",
   ferry: "フェリー", zoneTR: "トルコ", vEvisa: "出発前に evisa.gov.tr でトルコの電子ビザ（e-Visa）を申請する必要があります。国籍によっては、有効なシェンゲン、米国、英国、アイルランドのビザまたは在留許可が条件です。",
+  eatBest: "近くの高評価で安いお店", eatNone: "近くに今営業中の高評価で手頃なお店はありません。", eatSrc: "評価と価格：Google マップ。", audioFallback: "この端末にはこの言語の音声がありません。英語で読み上げます。",
   footer: "Self Guided City Tour · 乗り継ぎや短い旅行のためのセルフガイドルート",
   modeLayover: "乗り継ぎ中",
   modeTrip: "休暇中",

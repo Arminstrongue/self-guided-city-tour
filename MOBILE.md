@@ -49,4 +49,5 @@ As ligações externas (sites oficiais, direções, WhatsApp) abrem no navegador
 - Barra de estado azul com texto claro nos dois sistemas (`@capacitor/status-bar`); no Android a barra de navegação fica clara.
 - Telemóveis só em vertical (iPad continua a rodar).
 - Campos com 16 px para o iPhone não fazer zoom ao tocar; botões com pelo menos 44 px de altura.
+- O áudio-guia usa a voz nativa (`@capacitor-community/text-to-speech`): no Android, o idioma tem de estar instalado em Definições → Texto para voz.
 - Depois de atualizar: `npm install` e `npm run mobile:sync` (no Mac também atualiza o projeto iOS com `pod install`).

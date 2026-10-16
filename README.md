@@ -70,7 +70,10 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 - **Roteiro pelo tempo livre:** escolha entre versões curtas, completa e com extensão; por defeito a app escolhe a maior que cabe até ao voo.
 - **GPS e Voltar já:** distância à próxima paragem, tempo estimado até ao aeroporto a partir de onde está, hora limite para sair e direções Google Maps. A localização não sai do telemóvel.
 - **Estado do voo:** número de voo opcional na compra; com `AERODATABOX_API_KEY` mostra atrasos, terminal e porta e permite ajustar a contagem. O viajante pode alterar o voo no roteiro.
-- **Áudio-guia:** narração de cada paragem com a voz do telemóvel (PT ou EN).
+- **Biografias longas** (`src/data/bios/*.json`): história de cada paragem (≈120 palavras) por idioma; sem tradução usa o inglês.
+- **Áudio-guia:** lê a biografia com a voz do idioma (voz nativa do sistema nas apps iOS/Android com `@capacitor-community/text-to-speech`; no navegador escolhe a melhor voz instalada e lê frase a frase para não distorcer). Se o telemóvel não tiver voz desse idioma, lê em inglês e avisa.
+- **Comer perto, bem avaliado e barato:** com `GOOGLE_PLACES_API_KEY`, cada paragem mostra até 5 restaurantes/cafés a 600 m com nota ≥ 4,2, ≥ 50 avaliações e preço baixo, ordenados por nota ponderada e preço (`src/lib/places.ts`, cache de 6 h). Sem chave, mostra a pesquisa no mapa.
+- **Museus** ordenados do mais barato (gratuitos primeiro).
 - **Guia prático** (`src/data/practical.ts`): emergência, aeroporto, embaixada, bagagem, internet, pagamentos, gorjetas, água, segurança, tomadas e comida barata com preços.
 - **Horários e meteorologia:** aviso de interiores fechados no dia (`cl` em cada paragem) e previsão Open-Meteo para as próximas horas.
 
@@ -128,6 +131,6 @@ Termos, privacidade e cookies em `/pt/legal/terms|privacy|cookies` (modelo em `s
 
 ## Próximos passos
 
-- Áudio-guia por paragem e fotos próprias.
+- Fotos próprias e áudio gravado por locutores (opcional).
 - Limite de pedidos nas APIs e monitorização (por exemplo Sentry e Uptime Kuma).
 - Pagamento automático de comissões (Stripe Connect).
