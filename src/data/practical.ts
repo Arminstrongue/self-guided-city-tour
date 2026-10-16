@@ -11,7 +11,40 @@ const PLUG_EU: Tip = { k: "plug", pt: "Tomadas tipo C/F, 230 V.", en: "Type C/F 
 const BAG: Tip = { k: "bag", pt: "Deixe a bagagem no depósito do aeroporto ou num guarda-bagagem parceiro da rota (marcado com ★). Leve só o essencial e o passaporte.", en: "Leave luggage at the airport left-luggage desk or a partner storage point on the route (marked ★). Carry only essentials and your passport." };
 const TOILET: Tip = { k: "toilet", pt: "Casas de banho em estações, centros comerciais e museus; num café, peça uma bebida.", en: "Toilets in stations, shopping centres and museums; in a café, buy a drink first." };
 
+const UK_SIM: Tip = { k: "sim", pt: "O Reino Unido não faz parte do roaming da UE: confirme o tarifário ou use um eSIM. Wi‑Fi grátis no aeroporto e em muitos cafés.", en: "The UK is outside EU roaming: check your plan or use an eSIM. Free Wi‑Fi at the airport and many cafés." };
+const UK_PAY: Tip = { k: "pay", pt: "Quase tudo aceita cartão contactless, incluindo autocarros e comboios.", en: "Almost everything takes contactless, including buses and trains." };
+const UK_TIP: Tip = { k: "tip", pt: "Muitos restaurantes juntam 10–12,5% de serviço; confirme na conta. Nos pubs não se deixa gorjeta ao balcão.", en: "Many restaurants add 10–12.5% service; check the bill. No tipping at the bar in pubs." };
+const UK_WATER: Tip = { k: "water", pt: "A água da torneira é potável; peça \"tap water\", é grátis.", en: "Tap water is safe; ask for \"tap water\", it's free." };
+const UK_PLUG: Tip = { k: "plug", pt: "Tomadas tipo G, 230 V: precisa de adaptador.", en: "Type G sockets, 230 V: you need an adapter." };
+const ukSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Trânsito pela esquerda: olhe para a direita ao atravessar. ${pt}`, en: `Traffic drives on the left: look right when crossing. ${en}` });
+const uk = (safety: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency: "999 / 112", tips: [BAG, UK_SIM, UK_PAY, UK_TIP, UK_WATER, safety, UK_PLUG, TOILET, ...extra], food });
+
 export const PRACTICAL: Record<string, Practical> = {
+  edi: uk(ukSafety("A Royal Mile e Calton Hill têm ruas inclinadas e calçada; o tempo muda depressa, leve um casaco.", "The Royal Mile and Calton Hill are steep and cobbled; the weather changes fast, bring a jacket."), [
+    { n: "Scotch pie", p: 3, pt: "Tarte de carne picante, em padarias como a Greggs ou talhos.", en: "Spiced meat pie from bakeries and butchers." },
+    { n: "Haggis, neeps & tatties", p: 12, pt: "O prato escocês, num pub da Old Town.", en: "The Scottish classic, in an Old Town pub." },
+    { n: "Fish supper", p: 11, pt: "Peixe frito com batatas, num \"chippy\".", en: "Fish and chips from a \"chippy\"." }
+  ]),
+  man: uk(ukSafety("Os autocarros \"Free Bus\" do centro são gratuitos; nos outros paga com contactless.", "The city-centre \"Free Bus\" is free; pay contactless on other buses."), [
+    { n: "Pie & peas", p: 7, pt: "Tarte salgada com ervilhas, num pub ou mercado.", en: "Savoury pie with peas, in a pub or market." },
+    { n: "Curry", p: 10, pt: "Caril no Curry Mile (Wilmslow Road) ou no Northern Quarter.", en: "Curry on the Curry Mile (Wilmslow Road) or in the Northern Quarter." },
+    { n: "Meal deal", p: 5, pt: "Sandes, snack e bebida no supermercado.", en: "Sandwich, snack and drink from a supermarket." }
+  ]),
+  gla: uk(ukSafety("O Airport Express de ida e volta (17,50 £) sai mais barato do que duas viagens simples.", "A return Airport Express ticket (£17.50) is cheaper than two singles."), [
+    { n: "Scotch pie", p: 3, pt: "O lanche clássico escocês.", en: "The classic Scottish snack." },
+    { n: "Fish supper", p: 10, pt: "Peixe frito com batatas, num \"chippy\".", en: "Fish and chips from a \"chippy\"." },
+    { n: "Irn-Bru", p: 1.5, pt: "O refrigerante laranja que os escoceses bebem mais do que Coca-Cola.", en: "The orange soda Scots drink more than cola." }
+  ]),
+  liv: uk(ukSafety("O centro, as docas e o Cavern Quarter fazem-se a pé em poucos minutos.", "The centre, docks and Cavern Quarter are a few minutes apart on foot."), [
+    { n: "Scouse", p: 9, pt: "Guisado de carne e batata que deu nome aos habitantes.", en: "The meat-and-potato stew that gave locals their nickname." },
+    { n: "Fish & chips", p: 11, pt: "Num \"chippy\" perto das docas.", en: "From a chippy near the docks." },
+    { n: "Meal deal", p: 5, pt: "Sandes, snack e bebida no supermercado.", en: "Sandwich, snack and drink from a supermarket." }
+  ]),
+  bir: uk(ukSafety("Os canais são planos e bons para caminhar; cuidado com as bicicletas nos caminhos de sirga.", "The canals are flat and great for walking; watch for bikes on the towpaths."), [
+    { n: "Balti", p: 12, pt: "Caril criado em Birmingham, servido na panela onde é cozinhado.", en: "Curry invented in Birmingham, served in the pan it's cooked in." },
+    { n: "Pork pie", p: 3, pt: "Tarte fria de porco, no mercado do Bullring.", en: "Cold pork pie from the Bullring market." },
+    { n: "Meal deal", p: 5, pt: "Sandes, snack e bebida no supermercado.", en: "Sandwich, snack and drink from a supermarket." }
+  ]),
   lis: { emergency: "112", tips: [BAG, EU_SIM,
     { k: "pay", pt: "Cartão contactless aceite quase em todo o lado; tenha algumas moedas para cafés pequenos.", en: "Contactless cards are accepted almost everywhere; keep some coins for small cafés." },
     { k: "tip", pt: "Gorjeta opcional: arredondar ou 5–10% à mesa.", en: "Tipping is optional: round up or 5–10% at table." },

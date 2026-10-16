@@ -64,6 +64,10 @@ Abra o link impresso pelo `db:seed` para ver um roteiro com acesso, sem pagar.
 - **Guia prático** (`src/data/practical.ts`): emergência, aeroporto, embaixada, bagagem, internet, pagamentos, gorjetas, água, segurança, tomadas e comida barata com preços.
 - **Horários e meteorologia:** aviso de interiores fechados no dia (`cl` em cada paragem) e previsão Open-Meteo para as próximas horas.
 
+## Cidades
+
+13 cidades: Lisboa, Porto, Madrid, Barcelona, Paris, Londres, Roma, Amesterdão, Edimburgo, Manchester, Glasgow, Liverpool e Birmingham. Tarifas do Reino Unido confirmadas em outubro de 2026 (Airlink 100 £6; Glasgow Airport Express £11 e Subway £1,85 / dia £4,45; autocarro de Liverpool £2; comboios de aeroporto de Manchester e Birmingham ~£5–5,60). Rever todos os anos.
+
 ## Moedas
 
 - O preço de venda é sempre em euros (`src/lib/pricing.ts`). Na Stripe, ative **Adaptive Pricing** (Definições → Pagamentos) para cada viajante pagar na sua moeda; a app regista sempre o valor de origem em euros.

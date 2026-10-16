@@ -176,6 +176,92 @@ export const CITIES: City[] = [
       { id: "rijksmuseum", n: "Rijksmuseum e Museumplein", a: "Museumkwartier", lat: 52.36, lng: 4.8852, v: 25, x: true, top: true, o: true, leg: { m: "tram", min: 15, line: "Tram 2", r: 1 }, pt: "Passe pelo túnel de bicicletas do museu e pelo relvado do Museumplein.", en: "Pass through the museum's cycle tunnel and the Museumplein lawn." },
       { id: "vondelpark", n: "Vondelpark", a: "Oud-Zuid", lat: 52.358, lng: 4.8686, v: 25, x: true, leg: W(8), pt: "O parque mais popular da cidade.", en: "The city's most popular park." }
     ]
+  },
+  // ——— Reino Unido (tarifas confirmadas em outubro de 2026; ver README) ———
+  {
+    id: "edi", n: names("Edimburgo", "Edinburgh", "Edimburgo", "Édimbourg", "Edinburgh"), cur: "GBP",
+    ap: { iata: "EDI", name: "Edinburgh Airport", lat: 55.95, lng: -3.3725 }, tz: "Europe/London",
+    single: 2.4, card: 0, cardName: "",
+    alt: null,
+    air: { m: "bus", min: 30, line: "Airlink 100 → Waverley Bridge", f: 6.0 },
+    ret: { core: { m: "bus", min: 40, line: "A pé até Waverley Bridge → Airlink 100", f: 6.0 }, extra: { m: "bus", min: 55, line: "Royal Mile a pé até Waverley Bridge → Airlink 100", f: 6.0 } },
+    stops: [
+      { id: "scott", n: "Princes Street Gardens e Scott Monument", a: "New Town", lat: 55.952, lng: -3.1932, v: 20, top: true, leg: W(3, "Waverley Bridge"), pt: "Os jardins aos pés do castelo e o monumento gótico a Walter Scott, o maior do mundo dedicado a um escritor.", en: "The gardens below the castle and the Gothic monument to Walter Scott, the largest to any writer." },
+      { id: "calton", n: "Calton Hill", a: "New Town", lat: 55.9554, lng: -3.1826, v: 25, top: true, leg: W(12), pt: "Subida curta até aos monumentos neoclássicos, com a melhor vista sobre o castelo, a Royal Mile e o mar.", en: "A short climb to the neoclassical monuments, with the best view of the castle, the Royal Mile and the sea." },
+      { id: "st-giles", n: "Royal Mile e St Giles' Cathedral", a: "Old Town", lat: 55.9495, lng: -3.1908, v: 20, top: true, leg: W(15), pt: "A rua principal da cidade velha e a catedral da coroa. Entrada livre, com donativo sugerido.", en: "The Old Town's main street and the crown-spired cathedral. Free entry, donation suggested." },
+      { id: "castle", n: "Castelo de Edimburgo", a: "Old Town", lat: 55.9486, lng: -3.1999, v: 25, top: true, o: true, leg: W(8), pt: "A esplanada em frente ao castelo é gratuita e tem vista sobre a cidade. O interior é pago e opcional.", en: "The esplanade in front of the castle is free, with city views. The interior is paid and optional." },
+      { id: "victoria-st", n: "Victoria Street e Grassmarket", a: "Old Town", lat: 55.9478, lng: -3.194, v: 20, top: true, leg: W(6), pt: "A rua curva de fachadas coloridas que desce até à antiga praça do mercado.", en: "The curving street of colourful shopfronts leading down to the old market square." },
+      { id: "nms", n: "National Museum of Scotland", a: "Old Town", lat: 55.9469, lng: -3.1892, v: 30, leg: W(6), pt: "Museu gratuito com a ovelha Dolly e um terraço no telhado com vista para o castelo.", en: "Free museum with Dolly the sheep and a rooftop terrace facing the castle." },
+      { id: "holyrood", n: "Holyrood e Arthur's Seat", a: "Holyrood", lat: 55.9527, lng: -3.1722, v: 60, x: true, top: true, leg: W(20, "Royal Mile"), pt: "O palácio real, o Parlamento escocês e a subida aos Salisbury Crags, o miradouro do vulcão extinto.", en: "The royal palace, the Scottish Parliament and the climb to Salisbury Crags on the extinct volcano." }
+    ]
+  },
+  {
+    id: "man", n: names("Manchester", "Manchester", "Mánchester", "Manchester", "Manchester"), cur: "GBP",
+    ap: { iata: "MAN", name: "Manchester Airport", lat: 53.3537, lng: -2.275 }, tz: "Europe/London",
+    single: 2.8, card: 0, cardName: "",
+    alt: null,
+    air: { m: "train", min: 20, line: "Comboio Manchester Airport → Piccadilly", f: 5.6 },
+    ret: { core: { m: "train", min: 35, line: "Deansgate → Manchester Airport", f: 5.6 }, extra: { m: "tram", min: 55, line: "Metrolink Old Trafford → Cornbrook → Airport", f: 4.6 } },
+    stops: [
+      { id: "piccadilly-g", n: "Piccadilly Gardens", a: "City Centre", lat: 53.481, lng: -2.237, v: 10, leg: W(8, "Piccadilly"), pt: "A praça central, ponto de partida dos autocarros gratuitos do centro (Free Bus).", en: "The central square, where the free city-centre buses (Free Bus) start." },
+      { id: "nq", n: "Northern Quarter", a: "Northern Quarter", lat: 53.484, lng: -2.234, v: 25, top: true, leg: W(5), pt: "Arte de rua, lojas vintage, o Afflecks e cafés independentes.", en: "Street art, vintage shops, Afflecks and independent cafés." },
+      { id: "cathedral-m", n: "Catedral e National Football Museum", a: "Cathedral Quarter", lat: 53.4855, lng: -2.2433, v: 30, top: true, o: true, leg: W(12), pt: "A catedral medieval e, ao lado, o museu do futebol no edifício de vidro Urbis (entrada paga, opcional).", en: "The medieval cathedral and, next door, the football museum in the glass Urbis building (paid, optional)." },
+      { id: "rylands", n: "John Rylands Library", a: "Deansgate", lat: 53.4804, lng: -2.2484, v: 25, top: true, leg: W(10), pt: "Biblioteca neogótica que parece uma catedral. Entrada gratuita.", en: "A neo-Gothic library that looks like a cathedral. Free entry." },
+      { id: "albert-sq", n: "Albert Square e Central Library", a: "City Centre", lat: 53.4794, lng: -2.2446, v: 15, leg: W(6), pt: "A Câmara vitoriana e a biblioteca circular de St Peter's Square.", en: "The Victorian Town Hall and the round library on St Peter's Square." },
+      { id: "castlefield", n: "Castlefield", a: "Castlefield", lat: 53.4752, lng: -2.255, v: 25, top: true, leg: W(15), pt: "Canais, pontes de ferro, as ruínas do forte romano e o museu da ciência e da indústria.", en: "Canals, iron bridges, the Roman fort ruins and the science and industry museum." },
+      { id: "old-trafford", n: "Old Trafford", a: "Trafford", lat: 53.4631, lng: -2.2913, v: 30, x: true, top: true, o: true, leg: { m: "tram", min: 15, line: "Metrolink Deansgate-Castlefield → Old Trafford", r: 1 }, pt: "O estádio do Manchester United, o \"Teatro dos Sonhos\". Exterior livre; visita guiada paga.", en: "Manchester United's stadium, the \"Theatre of Dreams\". Outside is free; stadium tour is paid." }
+    ]
+  },
+  {
+    id: "gla", n: names("Glasgow", "Glasgow", "Glasgow", "Glasgow", "Glasgow"), cur: "GBP",
+    ap: { iata: "GLA", name: "Glasgow Airport", lat: 55.8719, lng: -4.4331 }, tz: "Europe/London",
+    single: 1.85, card: 0, cardName: "",
+    alt: { type: "pass", price: 4.45, name: "Subway Daily" },
+    air: { m: "bus", min: 25, line: "Glasgow Airport Express 500 → Queen Street", f: 11.0 },
+    ret: { core: { m: "bus", min: 50, line: "Subway Hillhead → Buchanan Street → Airport Express 500", r: 1, f: 11.0 }, extra: { m: "bus", min: 60, line: "A pé até Partick → Subway → Airport Express 500", r: 1, f: 11.0 } },
+    stops: [
+      { id: "george-sq", n: "George Square", a: "City Centre", lat: 55.8612, lng: -4.2502, v: 15, top: true, leg: W(3, "Queen Street"), pt: "A praça principal, com a imponente City Chambers vitoriana.", en: "The main square, with the grand Victorian City Chambers." },
+      { id: "necropolis", n: "Catedral e Necropolis", a: "Townhead", lat: 55.8628, lng: -4.2343, v: 35, top: true, leg: W(20), pt: "A única catedral medieval intacta da Escócia continental e o cemitério vitoriano na colina, com vista sobre a cidade.", en: "Mainland Scotland's only intact medieval cathedral and the Victorian hilltop cemetery with city views." },
+      { id: "merchant", n: "Merchant City e murais", a: "Merchant City", lat: 55.859, lng: -4.246, v: 20, leg: W(15), pt: "Ruas de antigos armazéns de comerciantes e os murais gigantes do City Centre Mural Trail.", en: "Old merchants' warehouse streets and the giant murals of the City Centre Mural Trail." },
+      { id: "buchanan", n: "Buchanan Street e The Lighthouse", a: "City Centre", lat: 55.86, lng: -4.2557, v: 20, leg: W(10), pt: "A rua comercial e o edifício de Mackintosh com miradouro gratuito no topo.", en: "The shopping street and the Mackintosh building with a free rooftop viewpoint." },
+      { id: "kelvingrove", n: "Kelvingrove Art Gallery and Museum", a: "West End", lat: 55.8686, lng: -4.2906, v: 40, top: true, leg: { m: "metro", min: 12, line: "Subway Buchanan Street → Kelvinhall", r: 1 }, pt: "Museu gratuito num palácio de arenito vermelho, com Dalí, Rennie Mackintosh e um órgão tocado ao meio-dia.", en: "Free museum in a red sandstone palace, with Dalí, Rennie Mackintosh and a lunchtime organ recital." },
+      { id: "uni-gla", n: "Universidade de Glasgow", a: "West End", lat: 55.8721, lng: -4.2882, v: 20, top: true, leg: W(10, "Kelvingrove Park"), pt: "Os claustros góticos (Cloisters) parecem saídos de um filme. Acesso livre.", en: "The Gothic Cloisters look straight out of a film. Free to walk in." },
+      { id: "riverside", n: "Riverside Museum", a: "Partick", lat: 55.865, lng: -4.306, v: 40, x: true, top: true, leg: W(25), pt: "Museu gratuito dos transportes, em edifício de Zaha Hadid, com o veleiro Glenlee à porta.", en: "Free transport museum in a Zaha Hadid building, with the Glenlee tall ship outside." }
+    ]
+  },
+  {
+    id: "liv", n: names("Liverpool", "Liverpool", "Liverpool", "Liverpool", "Liverpool"), cur: "GBP",
+    ap: { iata: "LPL", name: "Liverpool John Lennon Airport", lat: 53.3336, lng: -2.8497 }, tz: "Europe/London",
+    single: 2.0, card: 0, cardName: "",
+    alt: null,
+    air: { m: "bus", min: 35, line: "Autocarro 500 → Liverpool ONE", r: 1 },
+    ret: { core: { m: "bus", min: 45, line: "A pé até Liverpool ONE → autocarro 500", r: 1 }, extra: { m: "bus", min: 50, line: "A pé até Liverpool ONE → autocarro 500", r: 1 } },
+    stops: [
+      { id: "albert-dock", n: "Royal Albert Dock", a: "Waterfront", lat: 53.4004, lng: -2.992, v: 25, top: true, leg: W(8, "Liverpool ONE"), pt: "As docas vitorianas de tijolo e ferro, hoje com museus, lojas e restaurantes.", en: "The Victorian brick-and-iron docks, now home to museums, shops and restaurants." },
+      { id: "beatles-story", n: "The Beatles Story", a: "Waterfront", lat: 53.3993, lng: -2.9922, v: 20, top: true, o: true, leg: W(2), pt: "O museu dos Beatles nas docas. Entrada paga, opcional.", en: "The Beatles museum at the docks. Paid, optional." },
+      { id: "pier-head", n: "Pier Head e Three Graces", a: "Waterfront", lat: 53.4058, lng: -2.9958, v: 15, top: true, leg: W(8), pt: "O Royal Liver Building e os outros dois edifícios históricos do porto, com a estátua dos Beatles.", en: "The Royal Liver Building and its two historic neighbours, plus the Beatles statue." },
+      { id: "museum-liv", n: "Museum of Liverpool", a: "Waterfront", lat: 53.404, lng: -2.995, v: 25, leg: W(3), pt: "Museu gratuito sobre a cidade, o porto, o futebol e a música.", en: "Free museum about the city, its port, football and music." },
+      { id: "cavern", n: "Mathew Street e Cavern Club", a: "Cavern Quarter", lat: 53.4064, lng: -2.9878, v: 20, top: true, leg: W(10), pt: "A rua onde os Beatles começaram. O Cavern Club tem música ao vivo quase todo o dia.", en: "The street where the Beatles started. The Cavern Club has live music most of the day." },
+      { id: "st-georges", n: "St George's Hall", a: "City Centre", lat: 53.4084, lng: -2.9799, v: 15, leg: W(10), pt: "Um dos maiores edifícios neoclássicos da Europa, em frente à estação de Lime Street.", en: "One of Europe's finest neoclassical buildings, opposite Lime Street station." },
+      { id: "met-cathedral", n: "Metropolitan Cathedral", a: "Knowledge Quarter", lat: 53.4045, lng: -2.9686, v: 15, x: true, leg: W(15), pt: "A catedral católica em forma de tenda, com um lanternim de vitrais coloridos.", en: "The tent-shaped Catholic cathedral with its crown of coloured glass." },
+      { id: "liv-cathedral", n: "Liverpool Cathedral", a: "Hope Street", lat: 53.3974, lng: -2.9733, v: 25, x: true, top: true, o: true, leg: W(12, "Hope Street"), pt: "A maior catedral do Reino Unido, no fim de Hope Street. Entrada livre; torre paga.", en: "Britain's largest cathedral, at the end of Hope Street. Free entry; the tower is paid." }
+    ]
+  },
+  {
+    id: "bir", n: names("Birmingham", "Birmingham", "Birmingham", "Birmingham", "Birmingham"), cur: "GBP",
+    ap: { iata: "BHX", name: "Birmingham Airport", lat: 52.4539, lng: -1.748 }, tz: "Europe/London",
+    single: 2.0, card: 0, cardName: "",
+    alt: null,
+    air: { m: "train", min: 15, line: "Birmingham International → New Street", f: 5.0 },
+    ret: { core: { m: "train", min: 40, line: "A pé até New Street → Birmingham International", f: 5.0 }, extra: { m: "train", min: 45, line: "Bournville → New Street → Birmingham International", f: 6.5 } },
+    stops: [
+      { id: "bullring", n: "Bullring e St Martin's", a: "City Centre", lat: 52.4774, lng: -1.8937, v: 20, top: true, leg: W(5, "New Street"), pt: "O centro comercial de curvas metálicas e a igreja vitoriana mesmo ao lado.", en: "The curvy metal-clad shopping centre and the Victorian church right beside it." },
+      { id: "victoria-sq", n: "Victoria Square", a: "City Centre", lat: 52.4795, lng: -1.903, v: 10, leg: W(10), pt: "A Câmara Municipal, o Council House e a fonte \"Floozie in the Jacuzzi\".", en: "The Town Hall, the Council House and the \"Floozie in the Jacuzzi\" fountain." },
+      { id: "library-b", n: "Library of Birmingham", a: "Centenary Square", lat: 52.4797, lng: -1.9083, v: 25, top: true, leg: W(8), pt: "A biblioteca de fachada rendada, com jardins e miradouro gratuitos nos terraços.", en: "The lace-fronted library with free terrace gardens and viewpoints." },
+      { id: "gas-street", n: "Brindleyplace e Gas Street Basin", a: "Canals", lat: 52.476, lng: -1.9105, v: 25, top: true, leg: W(8), pt: "Os canais: Birmingham tem mais quilómetros de canal do que Veneza.", en: "The canals: Birmingham has more miles of canal than Venice." },
+      { id: "jq", n: "Jewellery Quarter", a: "Jewellery Quarter", lat: 52.489, lng: -1.912, v: 30, top: true, leg: W(20), pt: "Bairro de oficinas de joalharia em funcionamento, com o relógio Chamberlain e lojas independentes.", en: "A working jewellery district with the Chamberlain Clock and independent shops." },
+      { id: "cadbury", n: "Cadbury World e Bournville", a: "Bournville", lat: 52.4285, lng: -1.9314, v: 60, x: true, top: true, o: true, leg: { m: "train", min: 30, line: "Jewellery Quarter → New Street → Bournville", f: 4.0 }, pt: "A aldeia-modelo da fábrica de chocolate. Cadbury World é pago e convém reservar.", en: "The chocolate factory's model village. Cadbury World is paid and best booked ahead." }
+    ]
   }
 ];
 
