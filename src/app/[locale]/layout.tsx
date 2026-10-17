@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
-import "@fontsource/figtree/400.css";
-import "@fontsource/figtree/600.css";
-import "@fontsource/figtree/700.css";
-import "@fontsource/bricolage-grotesque/600.css";
-import "@fontsource/bricolage-grotesque/800.css";
+import "@fontsource-variable/inter";
 import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
@@ -22,7 +18,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width", initialScale: 1, viewportFit: "cover",
   // Cor da barra do navegador / sistema (Android Chrome, Safari iOS 15+).
-  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#1d4aa0" }, { media: "(prefers-color-scheme: dark)", color: "#0d1322" }]
+  themeColor: [{ media: "(prefers-color-scheme: light)", color: "#f5f5f7" }, { media: "(prefers-color-scheme: dark)", color: "#000000" }]
 };
 
 export default function LocaleLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {

@@ -6,6 +6,7 @@ export const DEFAULT_LOCALE: Locale = "en";
 export const isLocale = (v: string): v is Locale => (LOCALES as readonly string[]).includes(v);
 
 const pt = {
+  photos: "Fotos", close: "Fechar", gReviews: "{n} avaliações no Google", writeReview: "Escrever avaliação no Google", allReviews: "Ver todas as avaliações", seeOnMaps: "Ver no Google Maps", reviewsSrc: "Notas e avaliações do Google.", photoSrc: "Fotos: Wikimedia Commons (com o nome de cada autor) e Google.", highlights: "Destaques", topDest: "Destinos", topDestSub: "Toque numa cidade para ver o roteiro, as fotos e o preço.", fromP: "Desde {p}", howTitle: "Como funciona", how1t: "Leia o QR", how1s: "No aeroporto, no hotel ou numa loja parceira.", how2t: "Pague uma vez", how2s: "Indique o voo. O acesso fica no telemóvel e no email.", how3t: "Saia e explore", how3s: "Siga o roteiro, ouça o guia e volte a horas.", featTitle: "Tudo numa só app", f1t: "Transporte mais barato", f1s: "Comparamos passes e bilhetes avulso por si.", f2t: "Áudio-guia", f2s: "A história de cada lugar em 9 idiomas.", f3t: "Contagem até ao voo", f3s: "Sabe sempre a que horas tem de voltar.", f4t: "Avaliações reais", f4s: "Notas e fotos do Google em cada paragem.", statCities: "cidades", statLangs: "idiomas", explore: "Ver cidades", bookTitle: "Reserve o seu roteiro", cityMeta: "{n} paragens · cerca de {h} · áudio-guia", seeRoute: "Ver roteiro e preço",
   brand: "Self Guided City Tour",
   scanned: "Leu o código QR",
   heroA: "Escala ou férias curtas? Conheça",
@@ -198,6 +199,7 @@ const pt = {
 export type Dict = typeof pt;
 
 const en: Dict = {
+  photos: "Photos", close: "Close", gReviews: "{n} reviews on Google", writeReview: "Write a review on Google", allReviews: "See all reviews", seeOnMaps: "See on Google Maps", reviewsSrc: "Ratings and reviews from Google.", photoSrc: "Photos: Wikimedia Commons (each author credited) and Google.", highlights: "Highlights", topDest: "Destinations", topDestSub: "Tap a city to see the route, photos and price.", fromP: "From {p}", howTitle: "How it works", how1t: "Scan the QR", how1s: "At the airport, your hotel or a partner shop.", how2t: "Pay once", how2s: "Add your flight. Access stays on your phone and in your inbox.", how3t: "Step out and explore", how3s: "Follow the route, listen to the guide, get back on time.", featTitle: "Everything in one app", f1t: "Cheapest transport", f1s: "We compare day passes and single tickets for you.", f2t: "Audio guide", f2s: "The story of every place in 9 languages.", f3t: "Flight countdown", f3s: "Always know when to head back.", f4t: "Real reviews", f4s: "Google ratings and photos at every stop.", statCities: "cities", statLangs: "languages", explore: "Explore cities", bookTitle: "Book your route", cityMeta: "{n} stops · about {h} · audio guide", seeRoute: "See route & price",
   brand: "Self Guided City Tour",
   scanned: "You scanned the QR code",
   heroA: "Layover or short break? Explore", heroB: "on your own.", europe: "Europe",
@@ -389,6 +391,7 @@ const en: Dict = {
 
 const es: Dict = {
   ...en,
+  photos: "Fotos", close: "Cerrar", gReviews: "{n} reseñas en Google", writeReview: "Escribir una reseña en Google", allReviews: "Ver todas las reseñas", seeOnMaps: "Ver en Google Maps", reviewsSrc: "Valoraciones y reseñas de Google.", photoSrc: "Fotos: Wikimedia Commons (con el nombre de cada autor) y Google.", highlights: "Imprescindibles", topDest: "Destinos", topDestSub: "Toca una ciudad para ver la ruta, las fotos y el precio.", fromP: "Desde {p}", howTitle: "Cómo funciona", how1t: "Escanea el QR", how1s: "En el aeropuerto, el hotel o una tienda asociada.", how2t: "Paga una vez", how2s: "Indica tu vuelo. El acceso queda en el móvil y en tu correo.", how3t: "Sal a explorar", how3s: "Sigue la ruta, escucha la guía y vuelve a tiempo.", featTitle: "Todo en una app", f1t: "Transporte más barato", f1s: "Comparamos abonos y billetes sencillos por ti.", f2t: "Audioguía", f2s: "La historia de cada lugar en 9 idiomas.", f3t: "Cuenta atrás al vuelo", f3s: "Sabes siempre cuándo volver.", f4t: "Reseñas reales", f4s: "Valoraciones y fotos de Google en cada parada.", statCities: "ciudades", statLangs: "idiomas", explore: "Ver ciudades", bookTitle: "Reserva tu ruta", cityMeta: "{n} paradas · unas {h} · audioguía", seeRoute: "Ver ruta y precio",
   scanned: "Has escaneado el código QR", heroA: "¿Escala o escapada corta? Descubre", heroB: "por tu cuenta.", europe: "Europa",
   heroSub: "Los lugares más famosos de cada ciudad, unidos por la ruta de transporte más barata, con cuenta atrás hasta la hora de volver al aeropuerto.",
   chooseCity: "Elige la ciudad", soon: "próximamente", stops: "paradas", start: "Empezar", back: "Volver",
@@ -575,6 +578,7 @@ const es: Dict = {
 
 const fr: Dict = {
   ...en,
+  photos: "Photos", close: "Fermer", gReviews: "{n} avis sur Google", writeReview: "Écrire un avis sur Google", allReviews: "Voir tous les avis", seeOnMaps: "Voir sur Google Maps", reviewsSrc: "Notes et avis de Google.", photoSrc: "Photos : Wikimedia Commons (auteur crédité) et Google.", highlights: "Incontournables", topDest: "Destinations", topDestSub: "Touchez une ville pour voir l’itinéraire, les photos et le prix.", fromP: "Dès {p}", howTitle: "Comment ça marche", how1t: "Scannez le QR", how1s: "À l’aéroport, à l’hôtel ou chez un commerçant partenaire.", how2t: "Payez une fois", how2s: "Indiquez votre vol. L’accès reste sur votre téléphone et par e-mail.", how3t: "Sortez explorer", how3s: "Suivez l’itinéraire, écoutez le guide, rentrez à l’heure.", featTitle: "Tout dans une seule app", f1t: "Transport le moins cher", f1s: "Nous comparons forfaits et tickets à l’unité pour vous.", f2t: "Audioguide", f2s: "L’histoire de chaque lieu en 9 langues.", f3t: "Compte à rebours du vol", f3s: "Vous savez toujours quand repartir.", f4t: "Vrais avis", f4s: "Notes et photos Google à chaque étape.", statCities: "villes", statLangs: "langues", explore: "Voir les villes", bookTitle: "Réservez votre itinéraire", cityMeta: "{n} étapes · environ {h} · audioguide", seeRoute: "Voir l’itinéraire et le prix",
   scanned: "Vous avez scanné le QR code", heroA: "Escale ou court séjour ? Découvrez", heroB: "en autonomie.", europe: "l'Europe",
   heroSub: "Les sites les plus célèbres de chaque ville, reliés par le trajet le moins cher, avec un compte à rebours jusqu'au retour à l'aéroport.",
   chooseCity: "Choisissez la ville", soon: "bientôt", stops: "étapes", start: "Commencer", back: "Retour",
@@ -760,6 +764,7 @@ const fr: Dict = {
 
 const de: Dict = {
   ...en,
+  photos: "Fotos", close: "Schließen", gReviews: "{n} Bewertungen bei Google", writeReview: "Bewertung bei Google schreiben", allReviews: "Alle Bewertungen ansehen", seeOnMaps: "In Google Maps ansehen", reviewsSrc: "Bewertungen von Google.", photoSrc: "Fotos: Wikimedia Commons (mit Urhebernennung) und Google.", highlights: "Highlights", topDest: "Reiseziele", topDestSub: "Tippen Sie auf eine Stadt für Route, Fotos und Preis.", fromP: "Ab {p}", howTitle: "So funktioniert’s", how1t: "QR scannen", how1s: "Am Flughafen, im Hotel oder bei einem Partnergeschäft.", how2t: "Einmal zahlen", how2s: "Flug angeben. Der Zugang bleibt auf dem Handy und im Postfach.", how3t: "Losgehen und entdecken", how3s: "Route folgen, Guide hören, pünktlich zurück.", featTitle: "Alles in einer App", f1t: "Günstigster Nahverkehr", f1s: "Wir vergleichen Tageskarten und Einzeltickets für Sie.", f2t: "Audioguide", f2s: "Die Geschichte jedes Ortes in 9 Sprachen.", f3t: "Countdown zum Flug", f3s: "Sie wissen immer, wann Sie zurückmüssen.", f4t: "Echte Bewertungen", f4s: "Google-Bewertungen und Fotos an jedem Halt.", statCities: "Städte", statLangs: "Sprachen", explore: "Städte ansehen", bookTitle: "Route buchen", cityMeta: "{n} Halte · etwa {h} · Audioguide", seeRoute: "Route und Preis ansehen",
   scanned: "Sie haben den QR-Code gescannt", heroA: "Umstieg oder Kurzurlaub? Entdecken Sie", heroB: "auf eigene Faust.", europe: "Europa",
   heroSub: "Die bekanntesten Orte jeder Stadt, verbunden durch die günstigste Verkehrsroute, mit Countdown bis zur Rückfahrt zum Flughafen.",
   chooseCity: "Stadt wählen", soon: "bald", stops: "Stationen", start: "Loslegen", back: "Zurück",
@@ -946,6 +951,7 @@ const de: Dict = {
 
 const it: Dict = {
   ...en,
+  photos: "Foto", close: "Chiudi", gReviews: "{n} recensioni su Google", writeReview: "Scrivi una recensione su Google", allReviews: "Vedi tutte le recensioni", seeOnMaps: "Vedi su Google Maps", reviewsSrc: "Valutazioni e recensioni di Google.", photoSrc: "Foto: Wikimedia Commons (con il nome di ogni autore) e Google.", highlights: "Da non perdere", topDest: "Destinazioni", topDestSub: "Tocca una città per vedere percorso, foto e prezzo.", fromP: "Da {p}", howTitle: "Come funziona", how1t: "Scansiona il QR", how1s: "In aeroporto, in hotel o in un negozio partner.", how2t: "Paga una volta", how2s: "Indica il volo. L’accesso resta sul telefono e nell’email.", how3t: "Esci ed esplora", how3s: "Segui il percorso, ascolta la guida, torna in tempo.", featTitle: "Tutto in un’app", f1t: "Trasporto più economico", f1s: "Confrontiamo abbonamenti e biglietti singoli per te.", f2t: "Audioguida", f2s: "La storia di ogni luogo in 9 lingue.", f3t: "Conto alla rovescia del volo", f3s: "Sai sempre quando rientrare.", f4t: "Recensioni vere", f4s: "Valutazioni e foto di Google a ogni tappa.", statCities: "città", statLangs: "lingue", explore: "Vedi le città", bookTitle: "Prenota il tuo percorso", cityMeta: "{n} tappe · circa {h} · audioguida", seeRoute: "Vedi percorso e prezzo",
   brand: "Self Guided City Tour",
   scanned: "Hai scansionato il codice QR",
   heroA: "Scalo o breve vacanza? Scopri",
@@ -1210,6 +1216,7 @@ const it: Dict = {
 
 const zh: Dict = {
   ...en,
+  photos: "照片", close: "关闭", gReviews: "Google 上 {n} 条评价", writeReview: "在 Google 上写评价", allReviews: "查看全部评价", seeOnMaps: "在 Google 地图中查看", reviewsSrc: "评分和评价来自 Google。", photoSrc: "照片：Wikimedia Commons（注明作者）和 Google。", highlights: "必看亮点", topDest: "目的地", topDestSub: "点击城市查看路线、照片和价格。", fromP: "{p} 起", howTitle: "使用方法", how1t: "扫描二维码", how1s: "在机场、酒店或合作商店。", how2t: "一次付款", how2s: "填写航班。访问权限保存在手机和邮箱中。", how3t: "出发探索", how3s: "跟随路线，收听导览，准时返回。", featTitle: "一个应用搞定一切", f1t: "最便宜的交通", f1s: "我们为您比较日票和单程票。", f2t: "语音导览", f2s: "每个地点的故事，9 种语言。", f3t: "航班倒计时", f3s: "随时知道何时返回。", f4t: "真实评价", f4s: "每一站都有 Google 评分和照片。", statCities: "座城市", statLangs: "种语言", explore: "查看城市", bookTitle: "预订路线", cityMeta: "{n} 站 · 约 {h} · 语音导览", seeRoute: "查看路线和价格",
   brand: "Self Guided City Tour",
   scanned: "您已扫描二维码",
   heroA: "转机或短途度假？自由探索",
@@ -1474,6 +1481,7 @@ const zh: Dict = {
 
 const ar: Dict = {
   ...en,
+  photos: "الصور", close: "إغلاق", gReviews: "{n} مراجعة على Google", writeReview: "اكتب مراجعة على Google", allReviews: "عرض كل المراجعات", seeOnMaps: "عرض على خرائط Google", reviewsSrc: "التقييمات والمراجعات من Google.", photoSrc: "الصور: ويكيميديا كومنز (مع اسم كل مصوّر) وGoogle.", highlights: "أبرز المعالم", topDest: "الوجهات", topDestSub: "اضغط على مدينة لرؤية المسار والصور والسعر.", fromP: "ابتداءً من {p}", howTitle: "كيف يعمل", how1t: "امسح رمز QR", how1s: "في المطار أو الفندق أو متجر شريك.", how2t: "ادفع مرة واحدة", how2s: "أدخل رحلتك. يبقى الوصول على هاتفك وفي بريدك.", how3t: "اخرج واستكشف", how3s: "اتبع المسار واستمع إلى الدليل وعُد في الوقت المحدد.", featTitle: "كل شيء في تطبيق واحد", f1t: "أرخص مواصلات", f1s: "نقارن لك بين التذاكر اليومية والمفردة.", f2t: "دليل صوتي", f2s: "قصة كل مكان بـ 9 لغات.", f3t: "عدّ تنازلي للرحلة", f3s: "تعرف دائمًا متى تعود.", f4t: "مراجعات حقيقية", f4s: "تقييمات وصور Google في كل محطة.", statCities: "مدن", statLangs: "لغات", explore: "استكشف المدن", bookTitle: "احجز مسارك", cityMeta: "{n} محطات · حوالي {h} · دليل صوتي", seeRoute: "عرض المسار والسعر",
   brand: "Self Guided City Tour",
   scanned: "مسحت رمز QR",
   heroA: "ترانزيت أو عطلة قصيرة؟ اكتشف",
@@ -1738,6 +1746,7 @@ const ar: Dict = {
 
 const ja: Dict = {
   ...en,
+  photos: "写真", close: "閉じる", gReviews: "Google のクチコミ {n} 件", writeReview: "Google でクチコミを書く", allReviews: "すべてのクチコミを見る", seeOnMaps: "Google マップで見る", reviewsSrc: "評価とクチコミは Google より。", photoSrc: "写真：Wikimedia Commons（撮影者を表記）と Google。", highlights: "見どころ", topDest: "行き先", topDestSub: "都市をタップしてルート・写真・料金を確認。", fromP: "{p} から", howTitle: "使い方", how1t: "QR を読み取る", how1s: "空港、ホテル、提携店で。", how2t: "一度だけ支払う", how2s: "フライトを入力。アクセスはスマホとメールに保存。", how3t: "街へ出かけよう", how3s: "ルートに沿って歩き、ガイドを聴き、時間通りに戻る。", featTitle: "すべてをひとつのアプリで", f1t: "いちばん安い交通", f1s: "1日券と普通乗車券を比較します。", f2t: "音声ガイド", f2s: "各スポットの物語を 9 言語で。", f3t: "フライトまでのカウントダウン", f3s: "いつ戻ればよいか常にわかります。", f4t: "本物のクチコミ", f4s: "各スポットで Google の評価と写真。", statCities: "都市", statLangs: "言語", explore: "都市を見る", bookTitle: "ルートを予約", cityMeta: "{n} か所 · 約 {h} · 音声ガイド", seeRoute: "ルートと料金を見る",
   brand: "Self Guided City Tour",
   scanned: "QR コードを読み取りました",
   heroA: "乗り継ぎや短い休暇に。",

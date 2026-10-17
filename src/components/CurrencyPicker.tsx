@@ -1,11 +1,11 @@
 "use client";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 
-/** Seletor de moeda: guarda a escolha durante 12 meses e recarrega a página. */
-export function CurrencyPicker({ current, label }: { current: string; label: string }) {
-  return (
+/** Seletor de moeda: guarda a escolha durante 12 meses e recarrega a página. `pill` = botão compacto em vidro. */
+export function CurrencyPicker({ current, label, pill = false }: { current: string; label: string; pill?: boolean }) {
+  const sel = (
     <select
-      className="cur-pick" aria-label={label} title={label} value={current}
+      className={pill ? undefined : "cur-pick"} aria-label={label} title={label} value={current}
       onChange={(e) => {
         document.cookie = `${CURRENCY_COOKIE}=${e.target.value}; path=/; max-age=${365 * 86400}; samesite=lax`;
         window.location.reload();
@@ -14,4 +14,6 @@ export function CurrencyPicker({ current, label }: { current: string; label: str
       {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
     </select>
   );
+  if (!pill) return sel;
+  return <label className="pick press"><span className="num">{current}</span>{sel}</label>;
 }

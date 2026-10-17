@@ -54,14 +54,14 @@ export function MapView({ stops, done, museums, airport, pos, focus, t }: {
     if (!m || !g) return;
     g.clearLayers();
     const icon = (html: string, cls: string) => L.divIcon({ html, className: `mk ${cls}`, iconSize: [28, 28], iconAnchor: [14, 14] });
-    L.polyline(stops.map((s) => [s.lat, s.lng] as [number, number]), { color: "#1d4aa0", weight: 4, opacity: 0.8 }).addTo(g);
+    L.polyline(stops.map((s) => [s.lat, s.lng] as [number, number]), { color: "#2997ff", weight: 5, opacity: 0.9 }).addTo(g);
     stops.forEach((s, i) => L.marker([s.lat, s.lng], { icon: icon(done[s.id] ? "✓" : String(i + 1), done[s.id] ? "done" : "stop") }).bindPopup(`<b>${esc(s.n)}</b><br>${esc(s.a)}`).addTo(g));
     museums.forEach((x) => L.marker([x.lat, x.lng], { icon: icon("🏛", "mus") }).bindPopup(`<b>${esc(x.n)}</b>`).addTo(g));
     if (airport) L.marker([airport.lat, airport.lng], { icon: icon("✈", "air") }).bindPopup(`<b>${esc(airport.name)}</b>`).addTo(g);
     if (pos) L.circleMarker([pos.lat, pos.lng], { radius: 8, color: "#fff", weight: 3, fillColor: "#2b7cff", fillOpacity: 1 }).addTo(g);
     if (focus) {
       L.marker([focus.lat, focus.lng], { icon: icon("★", "focus") }).addTo(g);
-      if (pos) L.polyline([[pos.lat, pos.lng], [focus.lat, focus.lng]], { color: "#f3b81c", weight: 4, dashArray: "6 6" }).addTo(g);
+      if (pos) L.polyline([[pos.lat, pos.lng], [focus.lat, focus.lng]], { color: "#ff9f0a", weight: 4, dashArray: "6 6" }).addTo(g);
     }
     // Só reposiciona o mapa quando muda o destino ou o roteiro (não a cada minuto nem a cada passo do GPS).
     const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}`;

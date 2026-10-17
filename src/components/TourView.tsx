@@ -14,6 +14,7 @@ import { MapView, type Focus } from "./MapView";
 import { DayPlan, MuseumsTab } from "./Museums";
 import { stopName } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
+import { Img, StopMedia, useCityMedia } from "./Media";
 
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
@@ -42,6 +43,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const [focus, setFocus] = useState<Focus | null>(null);
   const showOnMap = (f: Focus) => { setFocus(f); setTab("map"); window.scrollTo({ top: 0 }); };
   const geo = useGeo();
+  const cm = useCityMedia(city.id);
   const [now, setNow] = useState(() => Date.now());
   const [copied, setCopied] = useState(false);
   const [online, setOnline] = useState(true);
@@ -137,10 +139,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             <span className="label">{t.yourRoute}</span>
             {otherCities.length > 0 ? (
               <select aria-label={cityLabel} value={city.id} onChange={(e) => { window.location.href = `/${locale}/tour/${e.target.value}`; }}
-                style={{ display: "block", fontFamily: "var(--display)", fontWeight: 800, fontSize: 22, border: 0, background: "none", padding: 0 }}>
+                style={{ display: "block", fontFamily: "var(--display)", fontWeight: 700, fontSize: 24, letterSpacing: "-.03em", border: 0, background: "none", padding: 0 }}>
                 {otherCities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
               </select>
-            ) : <h2 style={{ fontSize: 22 }}>{cityLabel}</h2>}
+            ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
           </div>
           <CurrencyPicker current={fx.cur} label={t.currency} />
           {leave && <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>}
@@ -196,6 +198,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                   <div className={`stop ${done[s.id] ? "done" : ""}`}>
                     <span className="pin num">{done[s.id] ? "✓" : i + 1}</span>
                     <div className="body">
+                      <button className="cover" tabIndex={-1} aria-hidden="true" onClick={() => setOpen(isOpen ? "" : s.id)}>
+                        {cm ? <Img src={cm.stops[s.id]?.thumb.replace("/500px-", "/960px-")} alt="" /> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
+                        <span className="ov"><span>{s.a}</span><span className="num">{s.v} min</span></span>
+                      </button>
                       <button className="head" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? "" : s.id)}>
                         <div style={{ minWidth: 0 }}>
                           <h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3>
@@ -208,6 +214,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                         <div className="detail">
                           <p className="bio">{bios[s.id]?.text ?? desc(s)}</p>
                           {s.cl?.length ? <p className="hint">🕒 {fmt(t.closedNote, { d: dayNames(s.cl, locale) })}</p> : null}
+                          <StopMedia cityId={city.id} stopId={s.id} name={s.n} t={t} locale={locale} />
                           {here.length > 0 && (
                             <>
                               <span className="label">{t.nearby}</span>
