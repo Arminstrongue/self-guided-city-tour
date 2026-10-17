@@ -102,7 +102,7 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
 
         <h2>Vendas por cidade (30 dias)</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Cidade</th><th>Tipo</th><th>Acessos</th><th>Receita</th></tr></thead>
-          <tbody>{byCity.map((r) => <tr key={`${r.city}-${r.scope}`}><td>{r.city ? getCity(r.city)?.n.pt ?? r.city : "—"}</td><td>{r.scope === "all" ? "Passe Europa" : "Cidade / férias"}</td><td className="num">{r.n}</td><td className="num">{eur(r.cents)}</td></tr>)}</tbody></table></div>
+          <tbody>{byCity.map((r) => <tr key={`${r.city}-${r.scope}`}><td>{r.city ? getCity(r.city)?.n.pt ?? r.city : "—"}</td><td>{r.scope === "all" ? "Passe Todas as Cidades" : "Cidade / férias"}</td><td className="num">{r.n}</td><td className="num">{eur(r.cents)}</td></tr>)}</tbody></table></div>
 
         <h2>Comerciantes</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Nome</th><th>Cidade / paragem</th><th>Plano</th><th>Estado</th><th>Código QR</th><th>Ação</th></tr></thead>
@@ -162,7 +162,7 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
         <h2>Últimos acessos</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Data</th><th>Email</th><th>Cidade</th><th>Valor</th><th>Expira</th></tr></thead>
           <tbody>{recent.map((a) => (
-            <tr key={a.id}><td>{a.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td><td>{a.email}</td><td>{a.scope === "all" ? "Passe Europa" : `${a.city}${a.plan === "trip" ? " (3 dias)" : ""}`}</td>
+            <tr key={a.id}><td>{a.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td><td>{a.email}</td><td>{a.scope === "all" ? "Passe Todas as Cidades" : `${a.city}${a.plan === "trip" ? " (3 dias)" : ""}`}</td>
               <td className="num">{eur(a.amountCents)}</td><td>{a.expiresAt.toISOString().slice(0, 16).replace("T", " ")}</td></tr>))}</tbody></table></div>
       </div>
     </main>

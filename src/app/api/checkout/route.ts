@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
   const plan = TOUR_PLANS[b.plan];
   const ref = await merchantByRef(b.ref);
-  const label = b.plan === "all" ? "Europe Pass — 30 days" : b.plan === "trip" ? `${cityName(city, b.locale)} — 3 days` : `${cityName(city, b.locale)} — 48 h`;
+  const label = b.plan === "all" ? "All-Cities Pass — 30 days" : b.plan === "trip" ? `${cityName(city, b.locale)} — 3 days` : `${cityName(city, b.locale)} — 48 h`;
   try {
     const session = await stripe().checkout.sessions.create({
       mode: "payment",

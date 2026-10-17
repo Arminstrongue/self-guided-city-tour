@@ -25,7 +25,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Quem somos", p: [`A Self Guided City Tour é explorada por ${who}.`] },
       { h: "O serviço", p: [
         "Vendemos acesso digital a roteiros autoguiados por cidade, com indicações de transporte, custos estimados e uma contagem até à hora recomendada de regresso ao aeroporto.",
-        "O acesso a uma cidade é válido durante 48 horas; o Passe Europa é válido durante 30 dias em todas as cidades disponíveis. A contagem começa no momento do pagamento."
+        "O acesso a uma cidade é válido durante 48 horas; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa no momento do pagamento."
       ] },
       { h: "Preços e pagamento", p: ["Os preços incluem IVA à taxa aplicável. O pagamento é processado pela Stripe; não guardamos dados de cartões."] },
       { h: "Direito de livre resolução", p: [
@@ -101,7 +101,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Who we are", p: [`Self Guided City Tour is operated by ${who}.`] },
       { h: "The service", p: [
         "We sell digital access to self-guided city routes with transport directions, estimated costs and a countdown to the recommended time to head back to the airport.",
-        "City access lasts 48 hours; the Europe Pass lasts 30 days in all available cities, starting at payment."
+        "City access lasts 48 hours; the All-Cities Pass lasts 30 days in all available cities, starting at payment."
       ] },
       { h: "Prices and payment", p: ["Prices include VAT at the applicable rate. Payments are processed by Stripe; we do not store card details."] },
       { h: "Right of withdrawal", p: [
