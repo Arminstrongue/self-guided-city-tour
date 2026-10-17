@@ -251,8 +251,6 @@ input,select,textarea{font-size:16px}
 /* Botões e ligações sem atraso de toque nem seleção acidental de texto. */
 button,a,.btn{touch-action:manipulation}
 .tabs button,.btn,.mode-switch button{-webkit-user-select:none;user-select:none}
-/* Android na app: a barra de estado é nativa (não sobrepõe), por isso não é preciso a faixa. */
-html[data-platform="android"] body::before{display:none}
 .eat-best{display:flex;flex-direction:column;gap:6px;margin-top:6px}
 .eat-row{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--surface)}
 .eat-name{font-weight:700}

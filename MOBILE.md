@@ -15,28 +15,30 @@ Antes de submeter, confirme com as regras em vigor da App Store e do Google Play
 
 | Para | Precisa de |
 | --- | --- |
-| iPhone | Mac com Xcode, conta Apple Developer (99 US$/ano) |
-| Android | Android Studio, conta Google Play Console (25 US$ uma vez) |
+| Android (Google Play) | Android Studio (grátis) no Mac e conta Google Play Console (25 US$ uma vez) |
+| iPhone (App Store) | Xcode 16+ no Mac e conta Apple Developer (99 US$/ano) |
 
-## Gerar e publicar
+Desde a versão com Capacitor 8 (Android API 36, exigido pelo Google Play desde 31/08/2026) o iOS usa Swift Package Manager: já não é preciso CocoaPods.
 
-```bash
-npm install
-npm run mobile:icons        # gera ícones e ecrãs de arranque a partir de assets/
-APP_URL=https://selfguidedcitytour.com npm run mobile:sync
-npm run mobile:ios          # abre o Xcode: escolher equipa, versão, Product → Archive → enviar para o App Store Connect
-npm run mobile:android      # abre o Android Studio: Build → Generate Signed Bundle (.aab) → enviar para o Play Console
-```
+## Google Play, passo a passo
 
-Antes de enviar às lojas:
+1. No Mac, na pasta do projeto: `npm install && npx cap sync android && npx cap open android`.
+2. No Android Studio, esperar que o Gradle termine (barra em baixo). Depois **Build → Generate Signed App Bundle or APK → Android App Bundle**.
+3. **Create new…** chave de assinatura: guardar o ficheiro `.jks` e as palavras-passe fora do projeto e num cofre (sem elas não há atualizações). Escolher **release** → Create. O ficheiro fica em `android/app/release/app-release.aab`.
+4. No [Play Console](https://play.google.com/console): **Criar app** → nome, idioma pt-PT, App, Gratuita.
+5. Preencher **Configurar a app** com os textos de `store/play-store.md` (ficha, segurança dos dados, classificação, público-alvo, acesso para revisão).
+6. **Testes → Teste interno** → criar versão → carregar o `.aab` → aceitar a assinatura de apps do Google Play.
+7. Contas pessoais criadas depois de nov/2023: o Google exige **teste fechado com 12 testadores durante 14 dias** antes de pedir acesso à produção.
+8. **Produção → Criar versão** com o mesmo `.aab` → enviar para revisão (normalmente 1 a 7 dias).
 
-1. A app web tem de estar online em `APP_URL` com HTTPS.
-2. Preencha nas lojas: descrição, capturas de ecrã (iPhone 6,7" e 6,5"; Android telemóvel), política de privacidade (URL), classificação etária e dados recolhidos (email, nome, hora do voo).
-3. Login com Google ou Facebook na app iOS: a Apple pode exigir também "Iniciar sessão com a Apple" — ative `APPLE_ID`/`APPLE_SECRET`.
-4. A Apple rejeita apps que sejam só um site embrulhado sem valor próprio. Para reduzir esse risco, o próximo passo é acrescentar funções nativas: notificações de "hora de voltar ao aeroporto" (`@capacitor/local-notifications`) e roteiro disponível sem internet.
+Para cada atualização nativa: subir `versionCode` (e `versionName`) em `android/app/build.gradle`. Mudanças só no site não precisam de nova versão.
 
-Identificador da app: `com.selfguidedcitytour.app` (alterar em `capacitor.config.ts` antes da primeira submissão, se preferir outro).
+## App Store, passo a passo
 
+1. `npm install && npx cap sync ios && npx cap open ios`.
+2. Xcode → target **App** → Signing & Capabilities → escolher a equipa (conta Apple Developer).
+3. Product → **Archive** → Distribute App → App Store Connect → Upload.
+4. No App Store Connect: criar a app com o mesmo identificador, textos (usar os de `store/play-store.md`), capturas 6,9" e 6,5", política de privacidade e conta de demonstração para a revisão.
 
 ## Ligações dentro da app
 
@@ -46,7 +48,7 @@ As ligações externas (sites oficiais, direções, WhatsApp) abrem no navegador
 ## Ecrãs iPhone e Android
 
 - A página ocupa o ecrã todo (`viewport-fit=cover`) e respeita o entalhe e a barra inferior do iPhone com `env(safe-area-inset-*)`; no iOS o Capacitor usa `contentInset: "never"`.
-- Barra de estado azul com texto claro nos dois sistemas (`@capacitor/status-bar`); no Android a barra de navegação fica clara.
+- Barra de estado segue o tema do telemóvel; no Android 15+ a app é de ponta a ponta e o Capacitor 8 (SystemBars) passa as margens para `env(safe-area-inset-*)`.
 - Telemóveis só em vertical (iPad continua a rodar).
 - Campos com 16 px para o iPhone não fazer zoom ao tocar; botões com pelo menos 44 px de altura.
 - O áudio-guia usa a voz nativa (`@capacitor-community/text-to-speech`): no Android, o idioma tem de estar instalado em Definições → Texto para voz.

@@ -1,23 +1,23 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 /**
- * App nativa (iOS/Android) que abre a app web publicada.
- * Altere APP_URL para o domínio escolhido antes de gerar as apps.
+ * App nativa (iOS/Android, Capacitor 8) que abre a app web publicada.
+ * Qualquer melhoria publicada no servidor aparece logo nas apps, sem nova submissão às lojas.
  */
 const APP_URL = process.env.APP_URL ?? "https://selfguidedcitytour.com";
 
 const config: CapacitorConfig = {
   appId: "com.selfguidedcitytour.app",
-  appName: "Self Guided City Tour",
+  appName: "City Tour",
   webDir: "mobile-shell",
   server: { url: APP_URL, cleartext: false, allowNavigation: [new URL(APP_URL).host, "*.stripe.com", "accounts.google.com", "appleid.apple.com", "*.facebook.com"] },
-  backgroundColor: "#1d4aa0",
+  backgroundColor: "#000000",
   // iOS: a página ocupa o ecrã todo e trata o entalhe e a barra inferior com env(safe-area-inset-*).
-  ios: { contentInset: "never", scheme: "Self Guided City Tour", backgroundColor: "#1d4aa0" },
-  android: { allowMixedContent: false, backgroundColor: "#1d4aa0" },
+  ios: { contentInset: "never", scheme: "City Tour", backgroundColor: "#000000" },
+  android: { allowMixedContent: false, backgroundColor: "#000000" },
   plugins: {
-    // Barra de estado azul com texto claro, sem sobrepor a página (Android) — igual nos dois sistemas.
-    StatusBar: { style: "DARK", backgroundColor: "#1d4aa0", overlaysWebView: false }
+    // Android 15+ é sempre de ponta a ponta: o Capacitor 8 passa as margens do sistema para env(safe-area-inset-*).
+    SystemBars: { insetsHandling: "css", initialViewportFitValueHint: "cover" }
   }
 };
 export default config;
