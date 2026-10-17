@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { City, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
-import { km, returnEstimate, walkMin, type RouteOption } from "@/lib/route-cost";
+import { FAR_KM, km, returnEstimate, walkMin, type RouteOption } from "@/lib/route-cost";
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
 import { PRACTICAL } from "@/data/practical";
 import type { Weather } from "@/lib/weather";
@@ -58,8 +58,8 @@ export function useGeo() {
   return { pos, state, start };
 }
 
-export function BackNow({ city, flightAt, pos, geoState, onGeo, next, now, t, locale }: {
-  city: City; flightAt: Date | null; pos: Pos | null; geoState: "off" | "on" | "denied"; onGeo: () => void;
+export function BackNow({ city, cityName, flightAt, pos, geoState, onGeo, next, now, t, locale }: {
+  city: City; cityName: string; flightAt: Date | null; pos: Pos | null; geoState: "off" | "on" | "denied"; onGeo: () => void;
   next: Stop | null; now: number; t: Dict; locale: Locale;
 }) {
   const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
@@ -72,6 +72,8 @@ export function BackNow({ city, flightAt, pos, geoState, onGeo, next, now, t, lo
     <div className={`card stack back-now ${late ? "late" : ""}`} style={{ gap: 8, padding: 14 }}>
       {geoState !== "on" ? (
         <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={onGeo}>📍 {t.gpsOn}</button>
+      ) : pos && city.stops[0] && km(pos, city.stops[0]) > FAR_KM ? (
+        <p>📍 {fmt(t.gpsFar, { d: Math.round(km(pos, city.stops[0])), c: cityName })}</p>
       ) : next && pos ? (
         <p>📍 {fmt(t.gpsNext, { s: next.n, d: dist(km(pos, next)), w: walkMin(km(pos, next)) })}</p>
       ) : <p>📍 {t.gpsDone}</p>}

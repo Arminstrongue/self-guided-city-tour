@@ -94,10 +94,14 @@ export const walkMin = (d: number) => Math.round((d * 1.3 / 4.5) * 60);
  * Estimativa do tempo de regresso ao aeroporto a partir de um ponto: proporcional à ligação
  * aeroporto → primeira paragem da cidade, mais 10 minutos de espera. Nunca abaixo de 15 minutos.
  */
+/** Mais longe do que isto do centro, o viajante ainda não chegou à cidade. */
+export const FAR_KM = 60;
+
 export function returnEstimate(city: City, from: { lat: number; lng: number }): number | null {
   if (!city.ap || !city.stops[0]) return null;
   const ref = km(city.stops[0], city.ap);
   if (ref < 1) return null;
+  if (km(from, city.stops[0]) > FAR_KM) return null; // ainda não está na cidade
   return Math.max(15, Math.round((city.air.min * km(from, city.ap)) / ref + 10));
 }
 

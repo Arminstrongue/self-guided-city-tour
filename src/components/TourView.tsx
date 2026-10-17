@@ -12,6 +12,7 @@ import { CurrencyPicker } from "./CurrencyPicker";
 import { ExtLink } from "./ExtLink";
 import { MapView, type Focus } from "./MapView";
 import { DayPlan, MuseumsTab } from "./Museums";
+import { stopName } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 
 type Props = {
@@ -30,7 +31,9 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios }: Props) {
+export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios }: Props) {
+  // Nomes das paragens no idioma do viajante (os dados estão em português).
+  const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
   const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
@@ -154,7 +157,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} />
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
-          {!lvl && flightDate && <p className="hint">{t.fitAuto}</p>}
+          {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
           {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
           {avail !== null && leave && (
             <p className={`fit ${fits ? "ok" : "bad"}`}>
@@ -173,7 +176,7 @@ export function TourView({ locale, t, city, cityLabel, flightAt, offers, otherCi
         </div>
 
         {tab === "route" && (
-          <BackNow city={city} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
+          <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
             next={nextStop} now={now} t={t} locale={locale} />
         )}
 

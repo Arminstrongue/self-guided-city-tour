@@ -45,3 +45,16 @@ test("biografias: todas as paragens têm texto longo em inglês e português", (
     }
   }
 });
+
+import { stopName } from "../data/stop-names";
+import { returnEstimate } from "./route-cost";
+test("nomes das paragens no idioma do viajante e GPS longe da cidade", () => {
+  for (const c of CITIES) for (const s of c.stops) {
+    const en = stopName(s, "en");
+    assert.ok(!/ e /.test(en), `${c.id}/${s.id}: ${en}`);
+    assert.equal(stopName(s, "pt"), s.n);
+  }
+  const paris = CITIES.find((c) => c.id === "par")!;
+  assert.equal(returnEstimate(paris, { lat: 53.48, lng: -2.24 }), null); // Manchester
+  assert.ok((returnEstimate(paris, { lat: 48.86, lng: 2.35 }) ?? 0) > 0);
+});
