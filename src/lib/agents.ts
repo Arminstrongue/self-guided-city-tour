@@ -45,7 +45,11 @@ export async function sendAgentLink(email: string, locale: string): Promise<stri
  * só nos primeiros 12 meses desde a criação do cliente. Idempotente por fatura.
  */
 export async function commissionForInvoice(inv: Stripe.Invoice): Promise<number | null> {
-  const subId = typeof inv.subscription === "string" ? inv.subscription : inv.subscription?.id;
+  // Versões da API até 2025-02 usam inv.subscription; a partir de 2025-03 ("basil") passa para inv.parent.subscription_details.
+  const legacy = (inv as { subscription?: string | { id: string } | null }).subscription;
+  const parent = (inv as { parent?: { subscription_details?: { subscription?: string | { id: string } | null } | null } | null }).parent?.subscription_details?.subscription;
+  const ref = legacy ?? parent;
+  const subId = typeof ref === "string" ? ref : ref?.id;
   if (!subId || !inv.amount_paid) return null;
   const d = await db();
   const [m] = await d.select().from(schema.merchants).where(eq(schema.merchants.stripeSubscriptionId, subId)).limit(1);

@@ -30,6 +30,8 @@ test("comissão do comercial: 20% das faturas nos primeiros 12 meses, uma vez po
   assert.equal(await commissionForInvoice(inv), null); // repetição do webhook
   const late = now + 400 * 86400;
   assert.equal(await commissionForInvoice({ id: "in_2", subscription: "sub_1", amount_paid: 1900, created: late, status_transitions: { paid_at: late } } as never), null);
+  // formato das versões da API a partir de 2025-03 (subscrição em parent.subscription_details)
+  assert.equal(await commissionForInvoice({ id: "in_4", parent: { subscription_details: { subscription: "sub_1" } }, amount_paid: 1900, created: now, status_transitions: { paid_at: now } } as never), 380);
   assert.equal(await commissionForInvoice({ id: "in_3", subscription: "sub_x", amount_paid: 1900, created: now } as never), null);
 });
 
