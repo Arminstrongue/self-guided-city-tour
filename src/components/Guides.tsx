@@ -206,3 +206,13 @@ export function GuideReviewForm({ t, bookingId, token, guide }: { t: Dict; booki
     </div>
   );
 }
+
+export function ShareProfile({ t, url, title }: { t: Dict; url: string; title: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button className="btn ghost press" onClick={async () => {
+      try { if (navigator.share) { await navigator.share({ title, url }); return; } } catch { return; }
+      try { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { window.prompt("", url); }
+    }}>{copied ? `✓ ${t.gpCopied}` : `↗ ${t.gpShare}`}</button>
+  );
+}

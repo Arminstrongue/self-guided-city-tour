@@ -4,7 +4,12 @@ import GoogleProvider from "next-auth/providers/google";
 import AppleProvider from "next-auth/providers/apple";
 import FacebookProvider from "next-auth/providers/facebook";
 import { db, schema } from "./db";
+import { cookies } from "next/headers";
 import { env } from "./env";
+import { readPurposeToken } from "./access-token";
+
+export const ADMIN_COOKIE = "sgct_admin";
+export const isAdminEmail = (e: string | null | undefined) => Boolean(e && env.adminEmails.includes(e.toLowerCase()));
 
 /** Só ativa os fornecedores com credenciais definidas. */
 function providers() {
@@ -47,6 +52,8 @@ const devAdmin = () => process.env.NODE_ENV === "development" && process.env.DEV
 
 export async function isAdmin(): Promise<boolean> {
   if (devAdmin()) return true;
-  const email = await sessionEmail();
-  return Boolean(email && env.adminEmails.includes(email));
+  // Entrada por link no email (sem depender de Google/Apple): cookie assinado e email ainda na lista ADMIN_EMAILS.
+  if (isAdminEmail(readPurposeToken(cookies().get(ADMIN_COOKIE)?.value, "admin"))) return true;
+  const email = await sessionEmail().catch(() => null);
+  return isAdminEmail(email);
 }

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
-import { isAdmin } from "@/lib/auth";
+import { enabledProviders, isAdmin } from "@/lib/auth";
+import { AdminLogin } from "@/components/AdminLogin";
 import { loadCities } from "@/lib/content";
 import type { Locale } from "@/i18n/dictionaries";
 
@@ -70,14 +71,9 @@ async function setGuideStatus(form: FormData) {
   revalidatePath("/[locale]/admin", "page");
 }
 
-export default async function Admin({ params }: { params: { locale: Locale } }) {
+export default async function Admin({ params, searchParams }: { params: { locale: Locale }; searchParams: { expired?: string } }) {
   if (!(await isAdmin())) {
-    return (
-      <main className="app"><div className="stack" style={{ paddingTop: 40 }}>
-        <h1>Administração</h1><p>Entre com uma conta autorizada.</p>
-        <Link className="btn" href={`/api/auth/signin?callbackUrl=/${params.locale}/admin`}>Entrar</Link>
-      </div></main>
-    );
+    return <main className="app"><AdminLogin locale={params.locale} expired={searchParams.expired === "1"} social={enabledProviders()} /></main>;
   }
   const d = await db();
   const allCities = await loadCities({ includeInactive: true });
@@ -105,7 +101,7 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
   return (
     <main className="app wide">
       <div className="stack" style={{ paddingTop: 20 }}>
-        <div className="top-row"><h1>Administração</h1><span className="links-row"><Link className="mini" href={`/${params.locale}/admin/metrics`}>Métricas e avaliações →</Link><Link className="mini" href={`/${params.locale}/admin/content`}>Editar cidades e paragens →</Link></span></div>
+        <div className="top-row"><h1>Administração</h1><span className="links-row"><Link className="mini" href={`/${params.locale}/admin/metrics`}>Métricas e avaliações →</Link><Link className="mini" href={`/${params.locale}/admin/content`}>Editar cidades e paragens →</Link><form action={`/api/admin/logout?locale=${params.locale}`} method="post"><button className="link-btn">Sair</button></form></span></div>
         <div className="kpis">
           <div className="card kpi"><span className="label">Acessos, 30 dias</span><b className="num">{sales}</b></div>
           <div className="card kpi"><span className="label">Receita, 30 dias</span><b className="num">{eur(revenue)}</b></div>

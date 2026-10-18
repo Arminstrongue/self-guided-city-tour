@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { isAdmin } from "@/lib/auth";
 import { dashboard } from "@/lib/metrics";
@@ -15,8 +16,7 @@ const STEP: Record<string, string> = {
 /** Painel de métricas: funil, receita, avaliações e NPS por período. */
 export default async function Metrics({ params, searchParams }: { params: { locale: Locale }; searchParams: { d?: string } }) {
   if (!(await isAdmin())) {
-    return <main className="app"><div className="stack" style={{ paddingTop: 40 }}><h1>Métricas</h1><p>Entre com uma conta autorizada.</p>
-      <Link className="btn" href={`/api/auth/signin?callbackUrl=/${params.locale}/admin/metrics`}>Entrar</Link></div></main>;
+    redirect(`/${params.locale}/admin`);
   }
   const days = [1, 7, 30, 90].includes(Number(searchParams.d)) ? Number(searchParams.d) : 30;
   const m = await dashboard(days);
