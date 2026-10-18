@@ -5,6 +5,7 @@ import { ALERT_TEXT, safetyFor } from "@/data/safety";
 import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { ExtLink } from "./ExtLink";
 import { Speak } from "./TourExtras";
+import { track } from "@/lib/track";
 
 type Pos = { lat: number; lng: number };
 const tel = (n: string) => `tel:${n.replace(/\s/g, "")}`;
@@ -39,6 +40,7 @@ export function SafetyPanel({ cityId, country, cityName, center, t, locale, comp
   async function share(via: "native" | "wa") {
     const p = await geo.get();
     if (!p) return;
+    track("share_loc", { city: cityId });
     const text = fmt(t.locText, { u: `https://maps.google.com/?q=${p.lat.toFixed(5)},${p.lng.toFixed(5)}` });
     if (via === "native" && navigator.share) { try { await navigator.share({ text }); return; } catch { return; } }
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
@@ -109,7 +111,7 @@ export function SosButton(props: { cityId: string; country?: string; cityName: s
   if (!safetyFor(props.cityId, props.country)) return null;
   return (
     <>
-      <button className="sos-fab press" onClick={() => setOpen(true)} aria-label={props.t.safety}>{props.t.sosBtn}</button>
+      <button className="sos-fab press" onClick={() => { setOpen(true); track("sos_open", { city: props.cityId }); }} aria-label={props.t.safety}>{props.t.sosBtn}</button>
       {open && (
         <div className="sheet-bg" onClick={() => setOpen(false)}>
           <div className="sheet" role="dialog" aria-modal="true" aria-label={props.t.safety} onClick={(e) => e.stopPropagation()}>

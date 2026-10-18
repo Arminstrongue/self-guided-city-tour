@@ -126,3 +126,28 @@ export const agentCommissions = pgTable("agent_commissions", {
 
 export type Agent = typeof agents.$inferSelect;
 export type Lead = typeof leads.$inferSelect;
+
+/** Métricas anónimas (sem cookies nem dados pessoais): só o nome do evento, cidade e contexto. */
+export const events = pgTable("events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  city: text("city"),
+  stop: text("stop"),
+  locale: text("locale"),
+  ref: text("ref"),
+  platform: text("platform"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("events_name_created_idx").on(t.name, t.createdAt), index("events_city_idx").on(t.city)]);
+
+/** Avaliação no fim do roteiro: estrelas, NPS (0–10) e comentário. Uma por compra. */
+export const ratings = pgTable("ratings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  accessId: uuid("access_id").notNull().references(() => accesses.id),
+  city: text("city").notNull(),
+  stars: integer("stars").notNull(),
+  nps: integer("nps"),
+  comment: text("comment"),
+  locale: text("locale"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("ratings_access_city_idx").on(t.accessId, t.city), index("ratings_created_idx").on(t.createdAt)]);
+export type Rating = typeof ratings.$inferSelect;

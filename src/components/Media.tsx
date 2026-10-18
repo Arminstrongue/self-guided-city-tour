@@ -27,7 +27,7 @@ export function useStopMedia(cityId: string, stopId: string | null, locale: Loca
   useEffect(() => {
     if (!stopId) return;
     let live = true; setV(null);
-    void load<Media>(`/api/media?city=${cityId}&stop=${stopId}&locale=${locale}`).then((j) => { if (live) setV(j); });
+    void load<Media>(`/api/media?city=${cityId}&stop=${stopId}&locale=${locale}`).then((j) => { if (live) setV(j && Array.isArray(j.photos) ? { ...j, reviews: j.reviews ?? [] } : { photos: [], reviews: [], rating: null, ratings: null, placeId: null, mapsUrl: null } as unknown as Media); });
     return () => { live = false; };
   }, [cityId, stopId, locale]);
   return v;

@@ -29,6 +29,13 @@
       "when": 1792183963857,
       "tag": "0003_agents_trip",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1792354648014,
+      "tag": "0004_metrics_ratings",
+      "breakpoints": true
     }
   ]
 }

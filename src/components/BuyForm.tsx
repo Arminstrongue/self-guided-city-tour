@@ -1,4 +1,5 @@
 "use client";
+import { track } from "@/lib/track";
 import { useEffect, useState } from "react";
 import { DEP_KEY } from "./ExitCheck";
 import { signIn } from "next-auth/react";
@@ -49,6 +50,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
     if (!consent) return setError(t.errConsent);
     setBusy(true);
     try {
+      track("checkout_start", { city: cityId, locale, ref: refCode || undefined });
       const res = await fetch("/api/checkout", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when ? when.toISOString() : undefined, flightNo: fno || undefined, locale, ref: refCode || undefined, consent })

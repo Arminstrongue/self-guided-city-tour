@@ -535,3 +535,21 @@ html,body{overflow-x:clip}
 .sheet-bg{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;animation:lbIn .2s var(--ease)}
 .sheet{width:100%;max-width:640px;max-height:90vh;overflow:auto;background:var(--bg,#fff);border-radius:24px 24px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom))}
 .lb-x.dark{background:var(--line);color:inherit}
+
+/* ---------- Avaliação no fim do roteiro ---------- */
+.star-pick{display:flex;gap:6px}
+.star-pick button{flex:1;font-size:34px;line-height:1;padding:8px 0;border:0;background:var(--surface-2,#fbfbfd);border-radius:14px;color:var(--line);cursor:pointer;transition:transform .15s var(--ease),color .15s}
+.star-pick button.on{color:#ff9f0a}
+.star-pick button:active{transform:scale(.92)}
+.nps{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+.nps button{padding:9px 0;border:1px solid var(--line);border-radius:10px;background:none;color:inherit;font-size:14px;cursor:pointer}
+.nps button.on{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
+.rate textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit;background:var(--surface-2,#fbfbfd);color:inherit;resize:vertical}
+.big-stars{font-size:28px;color:#ff9f0a}
+.big-stars .off{color:var(--line)}
+/* ---------- Painel de métricas ---------- */
+.funnel{display:flex;flex-direction:column;gap:8px}
+.funnel .bar{height:30px;border-radius:10px;background:var(--cobalt-soft);position:relative;overflow:hidden}
+.funnel .bar i{position:absolute;inset:0 auto 0 0;background:var(--cobalt);border-radius:10px}
+.funnel .row-between{font-size:14px}
+.app:has(.sos-fab){padding-bottom:96px}

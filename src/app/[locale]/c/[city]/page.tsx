@@ -7,6 +7,7 @@ import { ExitCheck } from "@/components/ExitCheck";
 import Link from "next/link";
 import { cityName, COUNTRY } from "@/data/cities";
 import { SafetyPanel } from "@/components/Safety";
+import { Track } from "@/components/Track";
 import { stopName } from "@/data/stop-names";
 import { loadCity } from "@/lib/content";
 import { getDict, fmt, INTL_LOCALE, LOCALES, type Locale } from "@/i18n/dictionaries";
@@ -33,6 +34,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const stops = city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top) }));
   return (
     <main className="app xl">
+      <Track name="view_city" city={city.id} locale={params.locale} refCode={searchParams.ref} />
       <CityHero cityId={city.id}>
         <Header locale={params.locale} currency={fx.cur} over />
         <div className="in rise">

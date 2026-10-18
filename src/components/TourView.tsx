@@ -16,6 +16,8 @@ import { stopName } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./Safety";
+import { RatingCard } from "./Rating";
+import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/cities";
 
 type Props = {
@@ -98,9 +100,15 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
     );
   };
 
+  useEffect(() => { track("tour_open", { city: city.id, locale }, "day"); }, [city.id, locale]);
+
   function toggleDone(id: string) {
     const nv = { ...done, [id]: !done[id] };
     setDone(nv);
+    if (nv[id]) {
+      track("stop_done", { city: city.id, stop: id });
+      if (plan.stops.every((s) => nv[s.id])) track("tour_done", { city: city.id, locale }, "day");
+    }
     if (nv[id]) { const i = plan.stops.findIndex((s) => s.id === id); const next = plan.stops[i + 1]; if (next) setOpen(next.id); }
   }
 
@@ -292,6 +300,11 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             </div>
             <p className="hint">{t.costNote}</p>
           </>
+        )}
+
+        {doneN >= Math.max(1, Math.ceil(plan.stops.length / 2)) && (
+          <RatingCard cityId={city.id} cityLabel={cityLabel} t={t} locale={locale}
+            onShare={async () => { try { if (navigator.share) await navigator.share({ text: shareText }); else window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, "_blank", "noopener"); } catch { /* cancelado */ } }} />
         )}
 
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
