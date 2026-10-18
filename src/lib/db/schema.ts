@@ -151,3 +151,63 @@ export const ratings = pgTable("ratings", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("ratings_access_city_idx").on(t.accessId, t.city), index("ratings_created_idx").on(t.createdAt)]);
 export type Rating = typeof ratings.$inferSelect;
+
+/* ---------- Marketplace de guias (modelo Uber: guias registam-se, turistas escolhem o melhor avaliado) ---------- */
+export const guideStatus = pgEnum("guide_status", ["pending", "active", "suspended", "rejected"]);
+export const bookingStatus = pgEnum("booking_status", ["pending", "requested", "confirmed", "declined", "cancelled", "expired", "completed", "refunded"]);
+
+export const guides = pgTable("guides", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  city: text("city").notNull(),
+  languages: jsonb("languages").$type<string[]>().notNull().default([]),
+  bio: text("bio").notNull().default(""),
+  photo: text("photo"), // data URL JPEG pequena (≤ 60 KB)
+  hourlyCents: integer("hourly_cents").notNull(),
+  maxPeople: integer("max_people").notNull().default(6),
+  meetingPoint: text("meeting_point"),
+  licenseNo: text("license_no"),
+  status: guideStatus("status").notNull().default("pending"),
+  stripeAccountId: text("stripe_account_id"),
+  payoutsReady: boolean("payouts_ready").notNull().default(false),
+  ratingSum: integer("rating_sum").notNull().default(0),
+  ratingCount: integer("rating_count").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("guides_email_idx").on(t.email), index("guides_city_status_idx").on(t.city, t.status)]);
+export type Guide = typeof guides.$inferSelect;
+
+export const guideBookings = pgTable("guide_bookings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  guideId: uuid("guide_id").notNull().references(() => guides.id),
+  email: text("email").notNull(),
+  name: text("name").notNull(),
+  phone: text("phone"),
+  city: text("city").notNull(),
+  startAt: timestamp("start_at", { withTimezone: true }).notNull(),
+  hours: integer("hours").notNull(),
+  people: integer("people").notNull(),
+  amountCents: integer("amount_cents").notNull(),
+  feeCents: integer("fee_cents").notNull(),
+  note: text("note"),
+  locale: text("locale"),
+  status: bookingStatus("status").notNull().default("pending"),
+  stripeSessionId: text("stripe_session_id"),
+  paymentIntentId: text("payment_intent_id"),
+  respondBy: timestamp("respond_by", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("bookings_guide_idx").on(t.guideId, t.startAt), uniqueIndex("bookings_session_idx").on(t.stripeSessionId)]);
+export type GuideBooking = typeof guideBookings.$inferSelect;
+
+export const guideReviews = pgTable("guide_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bookingId: uuid("booking_id").notNull().references(() => guideBookings.id),
+  guideId: uuid("guide_id").notNull().references(() => guides.id),
+  stars: integer("stars").notNull(),
+  comment: text("comment"),
+  author: text("author"),
+  locale: text("locale"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("guide_reviews_booking_idx").on(t.bookingId), index("guide_reviews_guide_idx").on(t.guideId)]);
+export type GuideReview = typeof guideReviews.$inferSelect;

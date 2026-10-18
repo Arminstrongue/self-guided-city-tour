@@ -21,3 +21,10 @@ export const AGENT_MONTHS = 12;
 export const PARTNER_COMMISSION = 0.2;
 /** Margem antes do voo para estar no aeroporto (minutos). */
 export const AIRPORT_BUFFER_MIN = 150;
+
+/** Marketplace de guias: a plataforma fica com 20%, o guia recebe 80% (Stripe Connect). */
+export const GUIDE_FEE = 0.2;
+/** Horas que o guia tem para aceitar um pedido; sem resposta, o pedido expira e o cartão não é cobrado. */
+export const GUIDE_RESPOND_HOURS = 48;
+export const GUIDE_MIN_HOURLY = 1000;  // 10 €/h
+export const GUIDE_MAX_HOURLY = 30000; // 300 €/h

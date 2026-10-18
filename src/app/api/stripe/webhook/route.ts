@@ -5,6 +5,7 @@ import { env } from "@/lib/env";
 import { fulfilTourSession } from "@/lib/orders";
 import { activateFromSession, syncSubscription } from "@/lib/merchants";
 import { commissionForInvoice, markLeadWon } from "@/lib/agents";
+import { onGuideCheckout } from "@/lib/guides";
 
 export const runtime = "nodejs";
 
@@ -22,6 +23,7 @@ export async function POST(req: Request) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         const s = event.data.object;
+        if (s.metadata?.kind === "guide") { await onGuideCheckout(s); break; }
         if (s.mode === "payment") await fulfilTourSession(s);
         if (s.mode === "subscription") { const m = await activateFromSession(s); if (m) await markLeadWon(m); }
         break;

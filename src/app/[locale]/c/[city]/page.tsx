@@ -8,6 +8,8 @@ import Link from "next/link";
 import { cityName, COUNTRY } from "@/data/cities";
 import { SafetyPanel } from "@/components/Safety";
 import { Track } from "@/components/Track";
+import { GuideCard } from "@/components/GuideCard";
+import { listGuides } from "@/lib/guides";
 import { stopName } from "@/data/stop-names";
 import { loadCity } from "@/lib/content";
 import { getDict, fmt, INTL_LOCALE, LOCALES, type Locale } from "@/i18n/dictionaries";
@@ -31,6 +33,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const opts = routeOptions(city); const core = opts.find((o) => o.key === "core") ?? opts[opts.length - 1];
   const meta = fmt(t.cityMeta, { n: city.stops.length, h: hrs(core.plan.minutesTour) });
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
+  const guides = (await listGuides(city.id).catch(() => [])).slice(0, 3);
   const stops = city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top) }));
   return (
     <main className="app xl">
@@ -48,6 +51,13 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
         <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />
+
+        {guides.length > 0 && (
+          <section className="sec" id="guides">
+            <div className="sec-h reveal"><div><h2>{fmt(t.gdTitle, { city: name })}</h2><p>{t.gdSub}</p></div><Link href={`/${params.locale}/guides/${city.id}`}>{t.gdSeeAll}</Link></div>
+            {guides.map((g) => <GuideCard key={g.id} g={g} t={t} locale={params.locale} />)}
+          </section>
+        )}
 
         <section className="sec" id="safety">
           <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>

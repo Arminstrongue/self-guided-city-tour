@@ -36,6 +36,13 @@
       "when": 1792354648014,
       "tag": "0004_metrics_ratings",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792355595660,
+      "tag": "0005_guides",
+      "breakpoints": true
     }
   ]
 }

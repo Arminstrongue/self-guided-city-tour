@@ -32,7 +32,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         {children}
         <footer className="foot">
           <p>{t.footer}</p>
-          <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link></p>
+          <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link> · <Link href={`/${params.locale}/guides/join`}>{t.lGuides}</Link></p>
         </footer>
       </body>
     </html>

@@ -60,6 +60,16 @@ async function addAgentCommission(form: FormData) {
 }
 
 /** Painel interno: vendas, comerciantes e comissões. Acesso só para ADMIN_EMAILS. */
+async function setGuideStatus(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const status = String(form.get("status"));
+  if (!["active", "suspended", "rejected", "pending"].includes(status)) return;
+  const d = await db();
+  await d.update(schema.guides).set({ status: status as "active" | "suspended" | "rejected" | "pending" }).where(eq(schema.guides.id, String(form.get("id"))));
+  revalidatePath("/[locale]/admin", "page");
+}
+
 export default async function Admin({ params }: { params: { locale: Locale } }) {
   if (!(await isAdmin())) {
     return (
@@ -79,6 +89,9 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
   const due = await d.select({ merchantId: schema.commissions.merchantId, n: sql<number>`count(*)::int`, cents: sql<number>`sum(${schema.commissions.amountCents})::int` })
     .from(schema.commissions).where(isNull(schema.commissions.paidAt)).groupBy(schema.commissions.merchantId);
   const recent = await d.select().from(schema.accesses).orderBy(desc(schema.accesses.createdAt)).limit(20);
+  const guides = await d.select().from(schema.guides).orderBy(desc(schema.guides.createdAt)).limit(300);
+  const gBookings = await d.select({ guideId: schema.guideBookings.guideId, n: sql<number>`count(*) filter (where ${schema.guideBookings.status} in ('confirmed','completed'))::int`, cents: sql<number>`coalesce(sum(${schema.guideBookings.feeCents}) filter (where ${schema.guideBookings.status} in ('confirmed','completed')),0)::int`, open: sql<number>`count(*) filter (where ${schema.guideBookings.status} = 'requested')::int` })
+    .from(schema.guideBookings).groupBy(schema.guideBookings.guideId);
   const agents = await d.select().from(schema.agents).orderBy(desc(schema.agents.createdAt)).limit(200);
   const agentDue = await d.select({ agentId: schema.agentCommissions.agentId, cents: sql<number>`coalesce(sum(case when ${schema.agentCommissions.paidAt} is null then ${schema.agentCommissions.amountCents} else 0 end),0)::int`, total: sql<number>`sum(${schema.agentCommissions.amountCents})::int` })
     .from(schema.agentCommissions).groupBy(schema.agentCommissions.agentId);
@@ -158,6 +171,23 @@ export default async function Admin({ params }: { params: { locale: Locale } }) 
               </tr>);
           })}</tbody></table></div>
         <p className="hint">Comissão automática: 20% de cada fatura de assinatura paga pelos clientes angariados, nos primeiros 12 meses. Ligação de angariação: /merchants?agent=CÓDIGO.</p>
+
+        <h2>Guias ({guides.filter((g) => g.status === "pending").length} por aprovar)</h2>
+        <p className="hint">Antes de aprovar, confirme a licença no registo oficial do país (quando exigida) e que a foto e o texto são adequados. O guia só aparece aos turistas depois de aprovado e com os pagamentos Stripe ativos.</p>
+        <div className="table-wrap card"><table className="data"><thead><tr><th>Guia</th><th>Cidade</th><th>Línguas</th><th>€/h</th><th>Licença</th><th>Estado</th><th>Pagamentos</th><th>Nota</th><th>Reservas</th><th>Comissão</th><th>Ação</th></tr></thead>
+          <tbody>{guides.map((g) => { const bk = gBookings.find((b) => b.guideId === g.id); return (
+            <tr key={g.id}>
+              <td><Link href={`/${params.locale}/g/${g.id}`}>{g.name}</Link><br /><span className="hint">{g.email}{g.phone ? ` · ${g.phone}` : ""}</span></td>
+              <td>{getCity(g.city)?.n.pt ?? g.city}</td><td>{g.languages.join(", ")}</td><td className="num">{eur(g.hourlyCents)}</td>
+              <td>{g.licenseNo ?? "—"}</td><td>{g.status}</td><td>{g.payoutsReady ? "✓" : g.stripeAccountId ? "em curso" : "—"}</td>
+              <td className="num">{g.ratingCount ? `${(g.ratingSum / g.ratingCount).toFixed(1)} (${g.ratingCount})` : "—"}</td>
+              <td className="num">{bk?.n ?? 0}{bk?.open ? ` (+${bk.open} pendentes)` : ""}</td><td className="num">{eur(bk?.cents ?? 0)}</td>
+              <td><form action={setGuideStatus} className="row" style={{ gap: 6 }}><input type="hidden" name="id" value={g.id} />
+                {g.status !== "active" && <button className="mini" name="status" value="active">Aprovar</button>}
+                {g.status === "pending" && <button className="mini" name="status" value="rejected">Recusar</button>}
+                {g.status === "active" && <button className="mini" name="status" value="suspended">Suspender</button>}
+              </form></td>
+            </tr>); })}</tbody></table></div>
 
         <h2>Últimos acessos</h2>
         <div className="table-wrap card"><table className="data"><thead><tr><th>Data</th><th>Email</th><th>Cidade</th><th>Valor</th><th>Expira</th></tr></thead>
