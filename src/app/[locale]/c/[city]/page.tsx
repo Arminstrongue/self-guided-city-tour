@@ -5,7 +5,8 @@ import { BuyForm } from "@/components/BuyForm";
 import { WebOnly } from "@/components/WebOnly";
 import { ExitCheck } from "@/components/ExitCheck";
 import Link from "next/link";
-import { cityName } from "@/data/cities";
+import { cityName, COUNTRY } from "@/data/cities";
+import { SafetyPanel } from "@/components/Safety";
 import { stopName } from "@/data/stop-names";
 import { loadCity } from "@/lib/content";
 import { getDict, fmt, INTL_LOCALE, LOCALES, type Locale } from "@/i18n/dictionaries";
@@ -45,6 +46,11 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
         <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />
+
+        <section className="sec" id="safety">
+          <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
+          <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
+        </section>
 
         <section className="sec book" id="book">
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>

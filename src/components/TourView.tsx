@@ -15,6 +15,8 @@ import { DayPlan, MuseumsTab } from "./Museums";
 import { stopName } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
+import { SosButton } from "./Safety";
+import { COUNTRY } from "@/data/cities";
 
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
@@ -182,6 +184,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             next={nextStop} now={now} t={t} locale={locale} />
         )}
 
+        <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
         {tab === "route" && (

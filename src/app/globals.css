@@ -512,3 +512,26 @@ html,body{overflow-x:clip}
 .hero-x h1 em{filter:drop-shadow(0 1px 3px rgba(0,0,0,.35))}
 .hero-x p{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.55),0 0 16px rgba(0,0,0,.35)}
 .hero-x .credit{text-shadow:0 1px 2px rgba(0,0,0,.6)}
+
+/* ---------- Segurança ---------- */
+.sos-call{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:20px;background:#e5342b;color:#fff;text-decoration:none;box-shadow:0 8px 24px rgba(229,52,43,.28)}
+.sos-call small{display:block;font-size:13px;opacity:.9}
+.sos-call b{font-size:30px;letter-spacing:-.02em;line-height:1}
+.sos-dot{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.2);font-weight:800;font-size:13px;letter-spacing:.04em;flex:none}
+.safety-acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.safety-acts .btn{padding:12px 10px;font-size:14px;text-align:center;border-radius:14px}
+.help-card{background:var(--cobalt-soft)}
+.help-txt{font-size:20px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
+.alerts{display:flex;flex-direction:column;gap:8px}
+.alert{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card,#fff)}
+.alert summary{font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.alert summary::-webkit-details-marker{display:none}
+.alert summary::after{content:"+";color:var(--muted);font-weight:400}
+.alert[open] summary::after{content:"–"}
+.alert p{margin-top:6px;color:var(--muted);font-size:15px}
+.zones p{font-size:15px}
+@media (max-width:420px){.zones{grid-template-columns:1fr}}
+.sos-fab{position:fixed;inset-inline-end:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:60;width:56px;height:56px;border-radius:50%;border:0;background:#e5342b;color:#fff;font-weight:800;font-size:14px;letter-spacing:.04em;box-shadow:0 8px 24px rgba(229,52,43,.35);cursor:pointer}
+.sheet-bg{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.35);display:flex;align-items:flex-end;justify-content:center;animation:lbIn .2s var(--ease)}
+.sheet{width:100%;max-width:640px;max-height:90vh;overflow:auto;background:var(--bg,#fff);border-radius:24px 24px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom))}
+.lb-x.dark{background:var(--line);color:inherit}
