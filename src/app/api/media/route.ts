@@ -4,7 +4,7 @@ import { rateLimit } from "@/lib/rate-limit";
 import { isLocale } from "@/i18n/dictionaries";
 import { cityName } from "@/data/cities";
 import { stopName } from "@/data/stop-names";
-import { searchNames, stopMedia, wikiPhotos, type Photo } from "@/lib/media";
+import { cityCover, searchNames, stopMedia, wikiPhotos, type Photo } from "@/lib/media";
 
 export const dynamic = "force-dynamic";
 
@@ -28,16 +28,18 @@ export async function GET(req: Request) {
       const m = await stopMedia({ names: searchNames(stopName(s, "en")), city: cityEn, lat: s.lat, lng: s.lng, lang });
       return NextResponse.json(m, { headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" } });
     }
-    // Uma foto por paragem: as mais famosas primeiro formam a capa.
-    // ?cover=1 (página inicial): só as três paragens mais famosas, para não pedir tudo de uma vez.
-    const ordered = [...city.stops].sort((a, b) => Number(Boolean(b.top)) - Number(Boolean(a.top))).slice(0, q.get("cover") ? 3 : undefined);
+    // ?cover=1 (página inicial): só a fotografia do monumento emblemático da cidade.
+    const coverPhotos = await cityCover(city.id, cityEn);
+    if (q.get("cover")) return NextResponse.json({ cover: coverPhotos, stops: {} }, { headers: { "Cache-Control": coverPhotos.length ? "public, max-age=3600, stale-while-revalidate=86400" : "no-store" } });
+    // Uma foto por paragem; a capa junta o monumento emblemático e as paragens mais famosas.
+    const ordered = [...city.stops].sort((a, b) => Number(Boolean(b.top)) - Number(Boolean(a.top)));
     const res = await Promise.all(ordered.map(async (s) => {
       const w = await wikiPhotos(searchNames(stopName(s, "en")), cityEn).catch(() => ({ photos: [] as Photo[] }));
       return [s.id, w.photos[0] ?? null] as const;
     }));
     const stops = Object.fromEntries(res);
-    const cover = res.map(([, p]) => p).filter((p): p is Photo => Boolean(p)).slice(0, 6);
-    return NextResponse.json({ cover, stops }, { headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" } });
+    const cover = [...coverPhotos.slice(0, 2), ...res.map(([, p]) => p).filter((p): p is Photo => Boolean(p))].slice(0, 6);
+    return NextResponse.json({ cover, stops }, { headers: { "Cache-Control": cover.length ? "public, max-age=3600, stale-while-revalidate=86400" : "no-store" } });
   } catch (e) {
     console.error("media", e);
     return NextResponse.json({ error: "unavailable" }, { status: 502 });

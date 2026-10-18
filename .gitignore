@@ -10,3 +10,9 @@ android/app/build
 ios/App/Pods
 ios/App/build
 backups
+
+# Builds e chaves das apps (nunca no repositório)
+android/app/release/
+android/.idea/
+*.jks
+*.keystore

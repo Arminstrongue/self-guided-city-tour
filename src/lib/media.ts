@@ -22,20 +22,33 @@ export type Media = {
 
 const UA = "SelfGuidedCityTour/1.0 (https://selfguidedcitytour.com; hello@selfguidedcitytour.com)";
 const WIKI_TTL = 7 * 24 * 3600e3;
+const EMPTY_TTL = 15 * 60e3;          // resultados vazios (falha ou limite da Wikimedia): voltar a tentar em 15 min
 const GOOGLE_TTL = 24 * 3600e3;
 const cache = new Map<string, { at: number; ttl: number; v: unknown }>();
 
-async function cached<T>(key: string, ttl: number, fn: () => Promise<T>): Promise<T> {
+async function cached<T>(key: string, ttl: number, fn: () => Promise<T>, isEmpty: (v: T) => boolean = () => false): Promise<T> {
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < hit.ttl) return hit.v as T;
   const v = await fn();
-  cache.set(key, { at: Date.now(), ttl, v });
+  cache.set(key, { at: Date.now(), ttl: isEmpty(v) ? EMPTY_TTL : ttl, v });
   if (cache.size > 4000) cache.delete(cache.keys().next().value as string);
   return v;
 }
 
+/* No máximo 4 pedidos à Wikimedia em simultâneo (acima disso responde 429). */
+let active = 0;
+const waiting: (() => void)[] = [];
+async function slot<T>(fn: () => Promise<T>): Promise<T> {
+  if (active >= 4) await new Promise<void>((r) => waiting.push(r));
+  active++;
+  try { return await fn(); } finally { active--; waiting.shift()?.(); }
+}
+
 async function getJson<T>(url: string, init: RequestInit = {}): Promise<T> {
-  const res = await fetch(url, { ...init, headers: { "User-Agent": UA, "Api-User-Agent": UA, ...(init.headers ?? {}) }, signal: AbortSignal.timeout(7000), cache: "no-store" });
+  const go = () => fetch(url, { ...init, headers: { "User-Agent": UA, "Api-User-Agent": UA, ...(init.headers ?? {}) }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+  const wiki = /wiki(pedia|media)\.org/.test(url);
+  let res = wiki ? await slot(go) : await go();
+  if (res.status === 429 && wiki) { await new Promise((r) => setTimeout(r, 1500)); res = await slot(go); }
   if (!res.ok) throw new Error(`${res.status} ${url.slice(0, 80)}`);
   return res.json() as Promise<T>;
 }
@@ -45,16 +58,28 @@ export function plain(html: string | undefined): string {
   return (html ?? "").replace(/<[^>]+>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, " ").trim();
 }
 
-/** Ficheiros que não são fotografias (mapas, logótipos, ícones, plantas, brasões). */
+/** Ficheiros que não são fotografias atuais (mapas, plantas, logótipos, postais e gravuras antigas, pinturas). */
 export function isPhotoFile(title: string): boolean {
   if (!/\.(jpe?g|webp)$/i.test(title)) return false;
-  return !/(map|mapa|karte|carte|plan\b|plano|logo|icon|flag|coat[ _]of[ _]arms|wappen|brasão|escudo|locator|diagram|seal|signature|svg)/i.test(title);
+  return !/(map|mapa|karte|carte|plan\b|plano|plans\b|logo|icon|flag|coat[ _]of[ _]arms|wappen|brasão|escudo|locator|diagram|seal|signature|svg|postcard|post card|engraving|lithograph|drawing|painting|illustration|etching|sketch|interior of the|dock|chart|1[5-8]\d\d|19[0-6]\d)/i.test(title);
 }
+
+/**
+ * Fotografia de capa de cada cidade: o artigo da Wikipédia do monumento mais emblemático.
+ * A imagem principal desses artigos é escolhida pelos editores e quase sempre é excelente.
+ */
+export const CITY_COVER: Record<string, string> = {
+  lis: "Belém Tower", opo: "Dom Luís I Bridge", mad: "Royal Palace of Madrid", bcn: "Sagrada Família",
+  par: "Eiffel Tower", rom: "Colosseum", ams: "Canals of Amsterdam", lon: "Palace of Westminster",
+  edi: "Edinburgh Castle", man: "Manchester Town Hall", gla: "Glasgow City Chambers", liv: "Royal Liver Building",
+  bir: "Library of Birmingham", ist: "Hagia Sophia"
+};
 
 /* ---------- Wikimedia ---------- */
 
 type SearchRes = { query?: { search?: { title: string }[] } };
 type MediaList = { items?: { title: string; type: string; showInGallery?: boolean }[] };
+type LeadRes = { query?: { pages?: Record<string, { pageimage?: string }> } };
 type InfoRes = { query?: { pages?: Record<string, { title: string; imageinfo?: { thumburl?: string; thumbwidth?: number; thumbheight?: number; descriptionshorturl?: string; width?: number; height?: number; extmetadata?: Record<string, { value: string }> }[] }> } };
 
 async function wikiTitle(q: string): Promise<string | null> {
@@ -63,9 +88,16 @@ async function wikiTitle(q: string): Promise<string | null> {
   return j.query?.search?.[0]?.title ?? null;
 }
 
+/** A imagem principal do artigo (a que aparece no topo da Wikipédia). */
+async function leadImage(title: string): Promise<string | null> {
+  const j = await getJson<LeadRes>(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=pageimages&piprop=name&redirects=1&titles=${encodeURIComponent(title)}`);
+  const name = Object.values(j.query?.pages ?? {})[0]?.pageimage;
+  return name && isPhotoFile(name) ? `File:${name.replace(/_/g, " ")}` : null;
+}
+
 async function articleFiles(title: string): Promise<string[]> {
   const j = await getJson<MediaList>(`https://en.wikipedia.org/api/rest_v1/page/media-list/${encodeURIComponent(title.replace(/ /g, "_"))}`);
-  return (j.items ?? []).filter((i) => i.type === "image" && i.showInGallery !== false && isPhotoFile(i.title)).map((i) => i.title);
+  return (j.items ?? []).filter((i) => i.type === "image" && i.showInGallery !== false && isPhotoFile(i.title)).map((i) => i.title.replace(/_/g, " "));
 }
 
 async function commonsSearch(q: string, n: number): Promise<string[]> {
@@ -74,49 +106,78 @@ async function commonsSearch(q: string, n: number): Promise<string[]> {
   return (j.query?.search ?? []).map((s) => s.title).filter(isPhotoFile);
 }
 
+/** Pontuação de qualidade: imagens destacadas/de qualidade da Commons primeiro; fotos antigas ficam de fora. */
+export function photoScore(meta: Record<string, { value: string }>, w: number, h: number): number | null {
+  const date = plain(meta.DateTimeOriginal?.value);
+  const year = Number(date.match(/\b(1[89]\d\d|20\d\d)\b/)?.[1] ?? 0);
+  if (year && year < 1985) return null;                       // postais e fotos históricas
+  const cats = (meta.Categories?.value ?? "").toLowerCase();
+  let s = 0;
+  if (/featured pictures/.test(cats)) s += 3;
+  if (/quality images/.test(cats)) s += 2;
+  if (/valued images/.test(cats)) s += 1;
+  if (w / h >= 1.2 && w / h <= 1.9) s += 1;                   // paisagem, boa para cartões
+  if (year >= 2010) s += 0.5;
+  return s;
+}
+
 async function fileInfo(titles: string[]): Promise<Photo[]> {
   if (!titles.length) return [];
   const u = `https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url|size|extmetadata&iiurlwidth=1280&titles=${encodeURIComponent(titles.join("|"))}`;
   const j = await getJson<InfoRes>(u);
   const byTitle = new Map(Object.values(j.query?.pages ?? {}).map((p) => [p.title, p]));
-  const out: Photo[] = [];
-  for (const t of titles) {
+  const out: (Photo & { score: number; i: number })[] = [];
+  titles.forEach((t, i) => {
     const ii = byTitle.get(t)?.imageinfo?.[0];
-    if (!ii?.thumburl || !ii.width || !ii.height) continue;
-    if (ii.width < 900 || ii.height < 500) continue;          // pequenas demais para ecrã inteiro
+    if (!ii?.thumburl || !ii.width || !ii.height) return;
+    if (ii.width < 900 || ii.height < 500) return;            // pequenas demais para ecrã inteiro
     const r = ii.width / ii.height;
-    if (r < 0.6 || r > 2.4) continue;                          // panorâmicas extremas
+    if (r < 0.6 || r > 2.4) return;                           // panorâmicas extremas
     const m = ii.extmetadata ?? {};
+    const score = photoScore(m, ii.width, ii.height);
+    if (score === null) return;
     out.push({
       url: ii.thumburl, thumb: ii.thumburl.replace(/\/1280px-/, "/500px-"),
       w: ii.thumbwidth ?? 1280, h: ii.thumbheight ?? Math.round(1280 / r),
       credit: plain(m.Artist?.value).slice(0, 80) || "Wikimedia Commons", license: plain(m.LicenseShortName?.value) || "CC",
-      source: "wikimedia", page: ii.descriptionshorturl
+      source: "wikimedia", page: ii.descriptionshorturl, score, i
     });
-  }
-  return out;
+  });
+  // A imagem principal do artigo (índice 0) fica sempre à frente; o resto por qualidade e ordem original.
+  out.sort((a, b) => (a.i === 0 ? -1 : b.i === 0 ? 1 : b.score - a.score || a.i - b.i));
+  return out.map(({ score: _s, i: _i, ...p }) => p);
 }
 
-/** Até `max` fotos para um ponto: primeiro as do artigo da Wikipédia, depois pesquisa na Commons. */
-export async function wikiPhotos(names: string[], city: string, max = 10): Promise<{ photos: Photo[]; wiki: string | null }> {
-  return cached(`wiki:${names.join("|")}:${city}`, WIKI_TTL, async () => {
+/** Até `max` fotos para um ponto: imagem principal do artigo, galeria do artigo e, se faltar, pesquisa na Commons. */
+export async function wikiPhotos(names: string[], city: string, max = 10, exactTitle?: string): Promise<{ photos: Photo[]; wiki: string | null }> {
+  return cached(`wiki2:${exactTitle ?? names.join("|")}:${city}`, WIKI_TTL, async () => {
     const files: string[] = [];
+    const add = (f: string | null) => { if (f && !files.includes(f)) files.push(f); };
     let wiki: string | null = null;
-    for (const n of names.slice(0, 2)) {
+    const titles = exactTitle ? [exactTitle] : names.slice(0, 2).map((n) => `${n} ${city}`);
+    for (const q of titles) {
       try {
-        const t = await wikiTitle(`${n} ${city}`);
+        const t = exactTitle ?? await wikiTitle(q);
         if (!t) continue;
         wiki ??= `https://en.wikipedia.org/wiki/${encodeURIComponent(t.replace(/ /g, "_"))}`;
-        for (const f of (await articleFiles(t)).slice(0, 8)) if (!files.includes(f)) files.push(f);
+        add(await leadImage(t).catch(() => null));
+        for (const f of (await articleFiles(t).catch(() => [])).slice(0, 10)) add(f);
       } catch { /* tenta o seguinte */ }
     }
-    if (files.length < 6) {
-      try { for (const f of await commonsSearch(`${names[0]} ${city}`, 12)) if (!files.includes(f)) files.push(f); } catch { /* sem mais fotos */ }
+    if (files.length < 6 && !exactTitle) {
+      try { for (const f of await commonsSearch(`${names[0]} ${city}`, 12)) add(f); } catch { /* sem mais fotos */ }
     }
     let photos: Photo[] = [];
-    try { photos = await fileInfo(files.slice(0, 20)); } catch { /* sem fotos */ }
+    try { photos = await fileInfo(files.slice(0, 24)); } catch { /* sem fotos */ }
     return { photos: photos.slice(0, max), wiki };
-  });
+  }, (v) => v.photos.length === 0);
+}
+
+/** Capa da cidade (página inicial e herói da cidade). */
+export async function cityCover(cityId: string, cityEn: string): Promise<Photo[]> {
+  const t = CITY_COVER[cityId];
+  if (!t) return [];
+  return (await wikiPhotos([t], cityEn, 4, t).catch(() => ({ photos: [] as Photo[] }))).photos;
 }
 
 /* ---------- Google Places ---------- */
