@@ -164,8 +164,8 @@ export async function wikiPhotos(names: string[], city: string, max = 10, exactT
         for (const f of (await articleFiles(t).catch(() => [])).slice(0, 10)) add(f);
       } catch { /* tenta o seguinte */ }
     }
-    if (files.length < 6 && !exactTitle) {
-      try { for (const f of await commonsSearch(`${names[0]} ${city}`, 12)) add(f); } catch { /* sem mais fotos */ }
+    if (files.length < 6) {
+      try { for (const f of await commonsSearch(exactTitle ?? `${names[0]} ${city}`, 12)) add(f); } catch { /* sem mais fotos */ }
     }
     let photos: Photo[] = [];
     try { photos = await fileInfo(files.slice(0, 24)); } catch { /* sem fotos */ }
@@ -177,7 +177,10 @@ export async function wikiPhotos(names: string[], city: string, max = 10, exactT
 export async function cityCover(cityId: string, cityEn: string): Promise<Photo[]> {
   const t = CITY_COVER[cityId];
   if (!t) return [];
-  return (await wikiPhotos([t], cityEn, 4, t).catch(() => ({ photos: [] as Photo[] }))).photos;
+  const exact = (await wikiPhotos([t], cityEn, 4, t).catch(() => ({ photos: [] as Photo[] }))).photos;
+  if (exact.length) return exact;
+  // Plano B: pesquisa normal pelo monumento e pela cidade.
+  return (await wikiPhotos([t, cityEn], cityEn, 4).catch(() => ({ photos: [] as Photo[] }))).photos;
 }
 
 /* ---------- Google Places ---------- */
