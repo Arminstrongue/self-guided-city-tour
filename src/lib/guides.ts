@@ -61,11 +61,12 @@ export async function guideCounts(): Promise<Record<string, number>> {
   return Object.fromEntries(rows.map((r) => [r.city, r.n]));
 }
 
-export async function publicGuide(id: string) {
+/** Perfil público. Com `preview`, mostra também perfis ainda não aprovados (só para o admin e o próprio guia). */
+export async function publicGuide(id: string, preview = false) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const d = await db();
   const [g] = await d.select().from(schema.guides).where(eq(schema.guides.id, id)).limit(1);
-  if (!g || g.status !== "active") return null;
+  if (!g || (g.status !== "active" && !preview)) return null;
   const reviews = await d.select().from(schema.guideReviews).where(eq(schema.guideReviews.guideId, id)).orderBy(desc(schema.guideReviews.createdAt)).limit(30);
   return { guide: g, reviews };
 }

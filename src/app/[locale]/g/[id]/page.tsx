@@ -6,22 +6,30 @@ import { BookGuide } from "@/components/Guides";
 import { requestCurrency } from "@/lib/fx";
 import { loadCity } from "@/lib/content";
 import { cityName } from "@/data/cities";
-import { publicGuide } from "@/lib/guides";
+import { currentGuide, publicGuide } from "@/lib/guides";
+import { isAdmin } from "@/lib/auth";
 import { fmt, getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
 export default async function GuidePage({ params, searchParams }: { params: { locale: Locale; id: string }; searchParams: { booked?: string } }) {
-  const r = await publicGuide(params.id);
+  let r = await publicGuide(params.id);
+  let preview = false;
+  if (!r) {
+    // Pré-visualização: o administrador ou o próprio guia veem o perfil antes de estar público.
+    const me = await currentGuide().catch(() => null);
+    if ((await isAdmin()) || me?.id === params.id) { r = await publicGuide(params.id, true); preview = Boolean(r); }
+  }
   if (!r) notFound();
   const { guide: g, reviews } = r;
   const t = getDict(params.locale);
   const city = await loadCity(g.city);
-  const bookable = g.payoutsReady;
+  const bookable = g.payoutsReady && !preview;
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
       <div className="stack">
+        {preview && <div className="card" style={{ padding: 14, borderInlineStart: "4px solid var(--warn)" }}><b>👁 Pré-visualização</b><div className="hint">Este perfil ainda não está visível para os viajantes ({g.status === "pending" ? "à espera de aprovação" : g.status}). As reservas ficam ativas depois de aprovado.</div></div>}
         {searchParams.booked && <div className="card" style={{ padding: 16, borderInlineStart: "4px solid #34c759" }}><b>✓ {fmt(t.gdBooked, { g: g.name })}</b></div>}
         <div className="g-hero">
           <GuideAvatar g={g} size={88} />
