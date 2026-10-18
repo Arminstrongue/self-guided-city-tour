@@ -4,6 +4,7 @@ import { db, schema } from "./db";
 import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan } from "./pricing";
 import { createAccessToken } from "./access-token";
 import { sendEmail } from "./email";
+import { accessEmail } from "./access-email";
 import { env } from "./env";
 import { cityName } from "@/data/cities";
 import { loadCities } from "./content";
@@ -54,8 +55,8 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   const locale: Locale = m.locale && isLocale(m.locale) ? m.locale : "en";
   const city = access.city ? (await loadCities({ includeInactive: true })).find((c) => c.id === access.city) : undefined;
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email))}&locale=${locale}${city ? `&city=${city.id}` : ""}`;
-  await sendEmail(email, `Self Guided City Tour — ${city ? cityName(city, locale) : "All-Cities Pass"}`,
-    `<p>${m.name ? `Olá ${escapeHtml(m.name)},` : "Olá,"}</p><p>O seu roteiro está pronto. Abra-o em qualquer dispositivo:</p><p><a href="${link}">${link}</a></p><p>Válido até ${expiresAt.toISOString().slice(0, 16).replace("T", " ")} UTC.</p>`);
+  const mail = accessEmail({ locale, name: m.name, place: city ? cityName(city, locale) : "All-Cities Pass", link, expiresAt, tz: city?.tz });
+  await sendEmail(email, mail.subject, mail.html, mail.text);
   return access;
 }
 
@@ -72,6 +73,3 @@ export async function findActiveAccess(emails: string[], cityId: string): Promis
   return rows[0] ?? null;
 }
 
-function escapeHtml(s: string) {
-  return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c] as string));
-}
