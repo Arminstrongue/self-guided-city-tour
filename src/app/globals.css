@@ -523,7 +523,7 @@ html,body{overflow-x:clip}
 .help-card{background:var(--cobalt-soft)}
 .help-txt{font-size:20px;font-weight:600;line-height:1.35;letter-spacing:-.01em}
 .alerts{display:flex;flex-direction:column;gap:8px}
-.alert{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--card,#fff)}
+.alert{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:var(--surface)}
 .alert summary{font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px}
 .alert summary::-webkit-details-marker{display:none}
 .alert summary::after{content:"+";color:var(--muted);font-weight:400}
