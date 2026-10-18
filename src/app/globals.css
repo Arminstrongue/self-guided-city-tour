@@ -506,3 +506,13 @@ html,body{overflow-x:clip}
 .hero-x .dots{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);margin:0;z-index:2}
 .hero-x .in{padding-bottom:48px}
 .acts a,.acts button{border-radius:14px}
+
+/* Legibilidade do texto do herói sobre qualquer fotografia (céu claro, pedra branca, neve). */
+.hero-x::after{background:
+  linear-gradient(90deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.25) 55%,rgba(0,0,0,0) 85%),
+  linear-gradient(180deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,.2) 25%,rgba(0,0,0,.45) 55%,rgba(0,0,0,.88) 100%)}
+.hero-x h1{text-shadow:0 2px 6px rgba(0,0,0,.45),0 6px 32px rgba(0,0,0,.4)}
+.hero-x h1 em{background:linear-gradient(90deg,#9fd3ff,#d9ccff);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+.hero-x p{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7),0 2px 18px rgba(0,0,0,.55);font-weight:500}
+.hero-x .eyebrow,.stats span{background:rgba(0,0,0,.35);border-color:rgba(255,255,255,.22)}
+.hero-x .credit{text-shadow:0 1px 3px rgba(0,0,0,.8)}
