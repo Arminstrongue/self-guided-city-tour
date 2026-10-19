@@ -35,7 +35,7 @@ const QUERIES: Record<PlaceCat, { q: string[]; far?: boolean; limit: number }> =
   country: { q: ['nwr["leisure"="nature_reserve"]["name"]', 'nwr["boundary"="national_park"]["name"]', 'nwr["historic"="castle"]["name"]["tourism"="attraction"]'], far: true, limit: 20 }
 };
 export const PLACE_CATS = Object.keys(QUERIES) as PlaceCat[];
-const NEAR_M = 9000, FAR_M = 70000;
+const NEAR_M = 9000, FAR_M = 40000;
 
 export type Place = { id: string; name: string; cat: PlaceCat; lat: number; lng: number; dist: number; web?: string; hours?: string; fee?: boolean; wiki?: string };
 
@@ -45,9 +45,11 @@ export function cityCenter(c: Pick<City, "stops">) {
   return { lat: c.stops.reduce((a, s) => a + s.lat, 0) / n, lng: c.stops.reduce((a, s) => a + s.lng, 0) / n };
 }
 
-export function overpassQuery(center: { lat: number; lng: number }) {
-  const parts = PLACE_CATS.flatMap((cat) => QUERIES[cat].q.map((q) => `${q}(around:${QUERIES[cat].far ? FAR_M : NEAR_M},${center.lat.toFixed(5)},${center.lng.toFixed(5)});`));
-  return `[out:json][timeout:50];(${parts.join("")});out center tags qt 2500;`;
+/** Um pedido por categoria: pedidos pequenos respondem depressa e uma categoria pesada não estraga as outras. */
+export function overpassQuery(center: { lat: number; lng: number }, cat?: PlaceCat) {
+  const cats = cat ? [cat] : PLACE_CATS;
+  const parts = cats.flatMap((c) => QUERIES[c].q.map((q) => `${q}(around:${QUERIES[c].far ? FAR_M : NEAR_M},${center.lat.toFixed(5)},${center.lng.toFixed(5)});`));
+  return `[out:json][timeout:25];(${parts.join("")});out center tags qt ${cat ? QUERIES[cat].limit * 6 : 2500};`;
 }
 
 type OsmEl = { type: string; id: number; lat?: number; lon?: number; center?: { lat: number; lon: number }; tags?: Record<string, string> };
@@ -114,15 +116,32 @@ const cache = new Map<string, { at: number; json: { elements?: OsmEl[] } }>();
 const pending = new Map<string, Promise<{ elements?: OsmEl[] } | null>>();
 const DAY = 24 * 3600_000;
 
-async function fetchOsm(city: City): Promise<{ elements?: OsmEl[] } | null> {
-  const body = new URLSearchParams({ data: overpassQuery(cityCenter(city)) });
+type OsmJson = { elements?: OsmEl[]; remark?: string };
+
+async function fetchCat(city: City, cat: PlaceCat): Promise<OsmEl[] | null> {
+  const body = new URLSearchParams({ data: overpassQuery(cityCenter(city), cat) }).toString();
   for (const url of ENDPOINTS) {
     try {
-      const r = await fetch(url, { method: "POST", body, headers: { "User-Agent": "SelfGuidedCityTour/1.0 (hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(55_000) });
-      if (r.ok) return await r.json();
-    } catch { /* tenta o próximo servidor */ }
+      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "SelfGuidedCityTour/1.0 (hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(30_000) });
+      if (!r.ok) { console.warn(`[explore] ${city.id}/${cat} ${url} HTTP ${r.status}`); continue; }
+      const j = (await r.json()) as OsmJson;
+      // O Overpass responde 200 mesmo quando o pedido falha (tempo ou memória): o erro vem em "remark".
+      if (j.remark && /error|timed out|out of memory/i.test(j.remark) && !j.elements?.length) { console.warn(`[explore] ${city.id}/${cat}: ${j.remark.slice(0, 120)}`); continue; }
+      return j.elements ?? [];
+    } catch (e) { console.warn(`[explore] ${city.id}/${cat} ${url}: ${(e as Error).message}`); }
   }
   return null;
+}
+
+/** Pede as categorias uma a uma (o Overpass só aceita 2 pedidos em simultâneo por servidor). */
+async function fetchOsm(city: City): Promise<{ elements: OsmEl[] } | null> {
+  const elements: OsmEl[] = [];
+  let ok = 0;
+  for (const cat of PLACE_CATS) {
+    const els = await fetchCat(city, cat);
+    if (els) { ok++; elements.push(...els); }
+  }
+  return ok && elements.length ? { elements } : null; // vazio não fica em cache: tenta outra vez no pedido seguinte
 }
 
 /** Um pedido ao OpenStreetMap por cidade a cada 24 h (partilhado por todos os idiomas e pedidos em simultâneo). */

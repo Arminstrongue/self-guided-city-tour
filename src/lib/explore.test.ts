@@ -14,12 +14,12 @@ test("Overpass: categorias, duplicados, nome no idioma e distância", () => {
     { type: "node", id: 4, lat: 53.5, lon: -2.2, tags: { amenity: "bench" } },
     { type: "node", id: 5, lat: 53.5, lon: -2.2, tags: { tourism: "viewpoint" } }
   ];
-  const ps = parseOverpass({ elements: els }, c, "pt");
+  const ps = parseOverpass({ elements: els as never }, c, "pt");
   assert.equal(ps.length, 2);
   assert.equal(ps.find((p) => p.cat === "kids")?.name, "Parque Infantil A");
   const park = ps.find((p) => p.cat === "parks")!;
   assert.equal(park.fee, false); assert.equal(park.web, "https://x.org"); assert.ok(park.dist > 1000 && park.dist < 2000);
-  assert.match(overpassQuery(c), /around:70000/);
+  assert.match(overpassQuery(c, "beach"), /around:40000/); assert.doesNotMatch(overpassQuery(c, "parks"), /around:40000/);
 });
 
 test("ordenar categorias pelos hobbies", () => {
