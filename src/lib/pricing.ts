@@ -6,6 +6,10 @@ export const TOUR_PLANS = {
 } as const;
 export type TourPlan = keyof typeof TOUR_PLANS;
 
+/** Cidades com roteiro gratuito (demonstração): abre sem pagamento nem conta. Pode ser alterado com FREE_CITIES=man,lis. */
+export const FREE_CITIES: string[] = (process.env.FREE_CITIES ?? "man").split(",").map((s) => s.trim()).filter(Boolean);
+export const isFreeCity = (id: string) => FREE_CITIES.includes(id);
+
 export const MERCHANT_PLANS = {
   basic: { amount: 0 },
   featured: { amount: 1900 },

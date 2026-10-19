@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
 import { BuyForm } from "@/components/BuyForm";
+import { isFreeCity } from "@/lib/pricing";
 import { WebOnly } from "@/components/WebOnly";
 import { ExitCheck } from "@/components/ExitCheck";
 import Link from "next/link";
@@ -34,6 +35,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const meta = fmt(t.cityMeta, { n: city.stops.length, h: hrs(core.plan.minutesTour) });
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const guides = (await listGuides(city.id).catch(() => [])).slice(0, 3);
+  const free = isFreeCity(city.id);
   const stops = city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top) }));
   return (
     <main className="app xl">
@@ -45,7 +47,9 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           <h1>{name}</h1>
           <p>{t.heroSub}</p>
           <div className="stats"><span className="num">{meta}</span><span><b>{LOCALES.length}</b> {t.statLangs}</span></div>
-          <div className="ctas"><a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a></div>
+          <div className="ctas">{free
+            ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>🎁 {t.freeCta}</Link>
+            : <a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a>}</div>
         </div>
       </CityHero>
 
@@ -64,6 +68,12 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
         </section>
 
+        {free ? (
+          <section className="sec book" id="book">
+            <div className="sec-h reveal"><div><h2>🎁 {t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
+            <div className="book-card"><Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.freeCta}</Link></div>
+          </section>
+        ) : (
         <section className="sec book" id="book">
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>
           <ExitCheck city={city} locale={params.locale} t={t} />
@@ -77,8 +87,9 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
             </WebOnly>
           </div>
         </section>
+        )}
       </div>
-      <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>
+      {!free && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}
     </main>
   );
 }

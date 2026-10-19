@@ -7,7 +7,7 @@ import { DestGrid, HomeHero, type DestCity } from "@/components/Showcase";
 import { fmt, INTL_LOCALE, LOCALES } from "@/i18n/dictionaries";
 import { loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
-import { TOUR_PLANS } from "@/lib/pricing";
+import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +24,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
   const region = new Intl.DisplayNames([INTL_LOCALE[params.locale]], { type: "region" });
   const list = await loadCities();
-  const cities: DestCity[] = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", stops: c.stops.length }));
+  const cities: DestCity[] = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", stops: c.stops.length, ...(isFreeCity(c.id) ? { free: t.freeBadge } : {}) }));
   const stops = list.reduce((a, c) => a + c.stops.length, 0);
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);

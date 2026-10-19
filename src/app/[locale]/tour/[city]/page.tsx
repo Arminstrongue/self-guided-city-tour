@@ -15,6 +15,7 @@ import { activeOffers } from "@/lib/merchants";
 import { flightApiEnabled } from "@/lib/flight";
 import { MUSEUMS } from "@/data/museums";
 import { biosFor } from "@/data/bios";
+import { isFreeCity } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -23,9 +24,10 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   if (!city) notFound();
   const t = getDict(params.locale);
   const emails = [readAccessToken(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
+  const free = isFreeCity(city.id);
   const access = await findActiveAccess(emails, city.id);
 
-  if (!access) {
+  if (!access && !free) {
     return (
       <main className="app">
         <Header locale={params.locale} currency={requestCurrency()} />
@@ -42,14 +44,14 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
     );
   }
 
-  const otherCities = access.scope === "all" ? (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
+  const otherCities = access?.scope === "all" ? (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
   return (
     <main className="app">
       <TourView
         locale={params.locale} t={t} city={city} cityLabel={cityName(city, params.locale)}
-        flightAt={access.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={await fxContext()}
-        flightNo={access.flightNo ?? null} flightApi={flightApiEnabled()}
-        museums={MUSEUMS[city.id] ?? []} plan={access.plan ?? access.scope}
+        flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={await fxContext()}
+        flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()}
+        museums={MUSEUMS[city.id] ?? []} plan={access ? access.plan ?? access.scope : "free"}
         bios={biosFor(city.id, params.locale)} enBios={Object.fromEntries(Object.entries(biosFor(city.id, "en")).map(([k, v]) => [k, v.text]))}
       />
     </main>

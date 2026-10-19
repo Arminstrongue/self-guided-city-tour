@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 // Manter igual a LOCALES em src/i18n/dictionaries.ts (o middleware não importa os dicionários para ficar leve).
 const LOCALES = ["pt", "en", "es", "fr", "de", "it", "zh", "ar", "ja"];
-const ROUTES = ["admin", "tour", "legal", "c", "success", "merchants", "agents"]; // páginas, não códigos de cidade
+const ROUTES = ["admin", "tour", "legal", "c", "success", "merchants", "agents", "guides", "g"]; // páginas, não códigos de cidade
 
 function pickLocale(req: NextRequest): string {
   const saved = req.cookies.get("sgct_locale")?.value;

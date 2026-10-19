@@ -302,7 +302,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           </>
         )}
 
-        {doneN >= Math.max(1, Math.ceil(plan.stops.length / 2)) && (
+        {accessPlan !== "free" && doneN >= Math.max(1, Math.ceil(plan.stops.length / 2)) && (
           <RatingCard cityId={city.id} cityLabel={cityLabel} t={t} locale={locale}
             onShare={async () => { try { if (navigator.share) await navigator.share({ text: shareText }); else window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, "_blank", "noopener"); } catch { /* cancelado */ } }} />
         )}
