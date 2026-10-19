@@ -20,10 +20,13 @@ async function shrink(file: File): Promise<string> {
   } finally { URL.revokeObjectURL(url); }
 }
 
-export type GuideFormValue = { name: string; email?: string; phone: string; city: string; languages: string[]; bio: string; hourly: string; maxPeople: string; meetingPoint: string; licenseNo: string; photo?: string | null };
+export type GuideFormValue = { name: string; email?: string; phone: string; city: string; languages: string[]; bio: string; hourly: string; maxPeople: string; meetingPoint: string; licenseNo: string; photo?: string | null;
+  activityRegNo: string; insurer: string; policyNo: string; taxId: string; taxCountry: string; address: string; birthDate: string };
 
-export function GuideForm({ t, locale, cities, initial, mode }: { t: Dict; locale: Locale; cities: CityOpt[]; initial?: Partial<GuideFormValue>; mode: "join" | "edit" }) {
-  const [v, setV] = useState<GuideFormValue>({ name: "", email: "", phone: "", city: cities[0]?.id ?? "", languages: [locale === "pt" ? "pt" : "en"], bio: "", hourly: "35", maxPeople: "6", meetingPoint: "", licenseNo: "", ...initial });
+export function GuideForm({ t, locale, cities, initial, mode, declared = false }: { t: Dict; locale: Locale; cities: CityOpt[]; initial?: Partial<GuideFormValue>; mode: "join" | "edit"; declared?: boolean }) {
+  const [v, setV] = useState<GuideFormValue>({ name: "", email: "", phone: "", city: cities[0]?.id ?? "", languages: [locale === "pt" ? "pt" : "en"], bio: "", hourly: "35", maxPeople: "6", meetingPoint: "", licenseNo: "",
+    activityRegNo: "", insurer: "", policyNo: "", taxId: "", taxCountry: locale === "pt" ? "PT" : "", address: "", birthDate: "", ...initial });
+  const [indep, setIndep] = useState(declared);
   const [photo, setPhoto] = useState<string | null | undefined>(undefined);
   const [terms, setTerms] = useState(mode === "edit");
   const [bad, setBad] = useState<string[]>([]);
@@ -36,7 +39,7 @@ export function GuideForm({ t, locale, cities, initial, mode }: { t: Dict; local
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setState("busy"); setBad([]);
-    const body = { ...v, hourly: Number(v.hourly.replace(",", ".")), maxPeople: Number(v.maxPeople), locale, terms, ...(photo !== undefined ? { photo } : {}) };
+    const body = { ...v, taxCountry: v.taxCountry.trim().toUpperCase(), hourly: Number(v.hourly.replace(",", ".")), maxPeople: Number(v.maxPeople), locale, terms, independent: indep, ...(photo !== undefined ? { photo } : {}) };
     const r = await fetch(mode === "join" ? "/api/guides" : "/api/guides/me", { method: mode === "join" ? "POST" : "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).catch(() => null);
     const j = r ? await r.json().catch(() => ({})) : {};
     if (r?.ok) { setState("done"); setDevLink(j.devLink ?? null); if (mode === "edit") setTimeout(() => location.reload(), 600); return; }
@@ -79,7 +82,23 @@ export function GuideForm({ t, locale, cities, initial, mode }: { t: Dict; local
         <div className={`field ${err("licenseNo")}`}><label htmlFor="gl">{t.gjLicense}</label><input id="gl" value={v.licenseNo} onChange={set("licenseNo")} /></div>
       </div>
       <div className="field"><label htmlFor="gmp">{t.gjMeet}</label><input id="gmp" value={v.meetingPoint} onChange={set("meetingPoint")} /></div>
-      {mode === "join" && <label className={`consent ${err("terms")}`}><input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} /> <span>{t.gjTerms}</span></label>}
+      <fieldset className="g-pro">
+        <legend>🔒 {t.gjProTitle}</legend>
+        <p className="hint">{t.gjProHint}</p>
+        <div className={`field ${err("activityRegNo")}`}><label htmlFor="gr">{t.gjReg}</label><input id="gr" value={v.activityRegNo} onChange={set("activityRegNo")} /></div>
+        <div className="grid2">
+          <div className={`field ${err("insurer")}`}><label htmlFor="gi">{t.gjInsurer}</label><input id="gi" value={v.insurer} onChange={set("insurer")} /></div>
+          <div className={`field ${err("policyNo")}`}><label htmlFor="gpo">{t.gjPolicy}</label><input id="gpo" value={v.policyNo} onChange={set("policyNo")} /></div>
+        </div>
+        <div className="grid2">
+          <div className={`field ${err("taxId")}`}><label htmlFor="gt">{t.gjTaxId}</label><input id="gt" value={v.taxId} onChange={set("taxId")} autoComplete="off" /></div>
+          <div className={`field ${err("taxCountry")}`}><label htmlFor="gtc">{t.gjTaxCountry}</label><input id="gtc" maxLength={2} value={v.taxCountry} onChange={set("taxCountry")} style={{ textTransform: "uppercase" }} /></div>
+        </div>
+        <div className={`field ${err("address")}`}><label htmlFor="ga">{t.gjAddress}</label><input id="ga" value={v.address} onChange={set("address")} autoComplete="street-address" /></div>
+        <div className={`field ${err("birthDate")}`}><label htmlFor="gbd">{t.gjBirth}</label><input id="gbd" type="date" value={v.birthDate} onChange={set("birthDate")} autoComplete="bday" /></div>
+        {!declared && <label className={`consent ${err("independent")}`}><input type="checkbox" checked={indep} onChange={(e) => setIndep(e.target.checked)} /> <span>{t.gjIndep}</span></label>}
+      </fieldset>
+      {mode === "join" && <label className={`consent ${err("terms")}`}><input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} /> <span>{t.gjTerms} <a href={`/${locale}/legal/guides`} target="_blank" rel="noreferrer">{t.gjTermsLink}</a></span></label>}
       {state === "error" && <p className="err">{t.gjErr}</p>}
       {mode === "edit" && state === "done" && <p className="hint">✓ {t.gpSaved}</p>}
       <button className="btn press" disabled={state === "busy"}>{mode === "join" ? t.gjSubmit : t.gpSave}</button>

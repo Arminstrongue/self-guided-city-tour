@@ -9,6 +9,7 @@ import { cityName } from "@/data/cities";
 import { currentGuide, expireStale, guideBookings, syncPayouts } from "@/lib/guides";
 import { fmtEur, fmtWhen } from "@/lib/guide-emails";
 import { env } from "@/lib/env";
+import { missingLegal } from "@/lib/guide-input";
 import { GUIDE_FEE } from "@/lib/pricing";
 import { fmt, getDict, type Locale } from "@/i18n/dictionaries";
 
@@ -50,6 +51,7 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
   const steps = [true, approved, g.payoutsReady, visible];
   const current = steps.findIndex((s) => !s);
   const blocked = g.status === "suspended" || g.status === "rejected";
+  const legalMissing = missingLegal(g).length > 0 || !g.independentAt;
 
   const row = (b: (typeof all)[number]) => (
     <div key={b.id} className={`card bk${b.status === "requested" ? " bk-hot" : ""}`}>
@@ -84,6 +86,13 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
           </div>
           {visible && <div className="grid2"><Link className="btn gp-light press" href={`/${L}/g/${g.id}`}>{t.gpView}</Link><ShareProfile t={t} url={profileUrl} title={g.name} /></div>}
         </section>
+
+        {legalMissing && (
+          <section className="card gp-legal">
+            <b>⚠️ {t.gpLegalTitle}</b>
+            <span className="hint">{t.gpLegalSub}</span>
+          </section>
+        )}
 
         {!visible && !blocked && (
           <section className="card gp-steps">
@@ -128,9 +137,9 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
 
         {past.length > 0 && <details className="card gp-fold"><summary><b>{t.gpPast}</b><span className="hint">{past.length}</span></summary><div className="stack" style={{ gap: 10, marginTop: 12 }}>{past.map(row)}</div></details>}
 
-        <details className="card gp-fold"><summary><b>✎ {t.gpEdit}</b></summary>
-          <div style={{ marginTop: 14 }}><GuideForm t={t} locale={L} cities={cities} mode="edit"
-            initial={{ name: g.name, phone: g.phone ?? "", city: g.city, languages: g.languages, bio: g.bio, hourly: String(g.hourlyCents / 100), maxPeople: String(g.maxPeople), meetingPoint: g.meetingPoint ?? "", licenseNo: g.licenseNo ?? "", photo: g.photo }} /></div>
+        <details className="card gp-fold" open={legalMissing || undefined}><summary><b>✎ {t.gpEdit}</b></summary>
+          <div style={{ marginTop: 14 }}><GuideForm t={t} locale={L} cities={cities} mode="edit" declared={Boolean(g.independentAt)}
+            initial={{ activityRegNo: g.activityRegNo ?? "", insurer: g.insurer ?? "", policyNo: g.policyNo ?? "", taxId: g.taxId ?? "", taxCountry: g.taxCountry ?? "", address: g.address ?? "", birthDate: g.birthDate ?? "", name: g.name, phone: g.phone ?? "", city: g.city, languages: g.languages, bio: g.bio, hourly: String(g.hourlyCents / 100), maxPeople: String(g.maxPeople), meetingPoint: g.meetingPoint ?? "", licenseNo: g.licenseNo ?? "", photo: g.photo }} /></div>
         </details>
       </div>
     </main>

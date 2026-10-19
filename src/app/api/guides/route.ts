@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { sendGuideLink } from "@/lib/guides";
-import { GuideSignup } from "@/lib/guide-input";
+import { GUIDE_TERMS_VERSION, GuideSignup } from "@/lib/guide-input";
 import { LOCALES } from "@/i18n/dictionaries";
 import { isProd } from "@/lib/env";
 import { rateLimit } from "@/lib/rate-limit";
@@ -30,7 +30,9 @@ export async function POST(req: Request) {
   if (!exists) {
     await d.insert(schema.guides).values({
       email, name: b.name, phone: b.phone || null, city: b.city, languages: b.languages, bio: b.bio, photo: b.photo ?? null,
-      hourlyCents: Math.round(b.hourly * 100), maxPeople: b.maxPeople, meetingPoint: b.meetingPoint || null, licenseNo: b.licenseNo || null
+      hourlyCents: Math.round(b.hourly * 100), maxPeople: b.maxPeople, meetingPoint: b.meetingPoint || null, licenseNo: b.licenseNo || null,
+      activityRegNo: b.activityRegNo, insurer: b.insurer, policyNo: b.policyNo, taxId: b.taxId, taxCountry: b.taxCountry, address: b.address, birthDate: b.birthDate,
+      independentAt: new Date(), termsVersion: GUIDE_TERMS_VERSION
     });
   }
   const link = await sendGuideLink(email, b.locale);

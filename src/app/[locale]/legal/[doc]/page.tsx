@@ -5,7 +5,7 @@ import { legalEN, legalPT, company, type LegalDoc } from "@/legal/content";
 import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
-const DOCS: LegalDoc[] = ["terms", "privacy", "cookies"];
+const DOCS: LegalDoc[] = ["terms", "privacy", "cookies", "guides"];
 
 export default function Legal({ params }: { params: { locale: Locale; doc: string } }) {
   if (!DOCS.includes(params.doc as LegalDoc)) notFound();

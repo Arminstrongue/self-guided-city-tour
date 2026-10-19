@@ -7,6 +7,7 @@ import { AdminLogin } from "@/components/AdminLogin";
 import { loadCities } from "@/lib/content";
 import type { Locale } from "@/i18n/dictionaries";
 import { GuideAvatar } from "@/components/GuideCard";
+import { missingLegal } from "@/lib/guide-input";
 
 export const dynamic = "force-dynamic";
 const eur = (c: number) => new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(c / 100);
@@ -186,10 +187,16 @@ export default async function Admin({ params, searchParams }: { params: { locale
                 <span><small>Preço</small>{eur(g.hourlyCents)}/h</span>
                 <span><small>Línguas</small>{g.languages.join(" · ").toUpperCase()}</span>
                 <span><small>Grupo máx.</small>{g.maxPeople}</span>
-                <span><small>Licença</small>{g.licenseNo || "não indicada"}</span>
                 <span><small>Pagamentos</small>{g.payoutsReady ? "✓ ativos" : g.stripeAccountId ? "em curso" : "por ativar"}</span>
                 <span><small>Foto</small>{g.photo ? "✓" : "sem foto"}</span>
+                <span><small>Registo da atividade</small>{g.activityRegNo || "—"}</span>
+                <span><small>Seguro</small>{g.insurer ? `${g.insurer}${g.policyNo ? ` · ${g.policyNo}` : ""}` : "—"}</span>
+                <span><small>NIF · país</small>{g.taxId ? `${g.taxId} · ${g.taxCountry ?? "?"}` : "—"}</span>
+                <span><small>Declaração</small>{g.independentAt ? `✓ ${when(g.independentAt)}` : "—"}</span>
               </div>
+              {(missingLegal(g).length > 0 || !g.independentAt)
+                ? <p className="ad-warn">⚠️ Faltam dados profissionais ({[...missingLegal(g), ...(g.independentAt ? [] : ["declaração"])].length}). O guia pode completá-los no portal; aprove só depois de confirmar o registo e o seguro.</p>
+                : <p className="hint">Antes de aprovar, confirme o n.º {g.taxCountry === "PT" ? "no RNAAT (registo nacional do Turismo de Portugal)" : "no registo oficial do país"} e peça a apólice se tiver dúvidas.</p>}
               <form action={setGuideStatus} className="ad-actions"><input type="hidden" name="id" value={g.id} />
                 <button className="btn press" name="status" value="active">✓ Aprovar</button>
                 <button className="btn ghost press" name="status" value="rejected">Recusar</button>
@@ -242,7 +249,8 @@ export default async function Admin({ params, searchParams }: { params: { locale
         </section>
 
         <section id="guias" className="stack ad-sec">
-          <h2 className="gp-h2">Guias <span className="hint" style={{ fontWeight: 400 }}>{guides.filter((g) => g.status === "active").length} ativos · {pendingGuides.length} por aprovar</span></h2>
+          <div className="row-between" style={{ gap: 10 }}><h2 className="gp-h2">Guias <span className="hint" style={{ fontWeight: 400 }}>{guides.filter((g) => g.status === "active").length} ativos · {pendingGuides.length} por aprovar</span></h2>
+            <a className="mini" href={`/api/admin/dac7?year=${new Date().getFullYear()}`}>⬇ Relatório DAC7 {new Date().getFullYear()}</a></div>
           {guides.length ? (
             <div className="ad-guides">
               {guides.map((g) => { const bk = gBookings.find((b) => b.guideId === g.id); return (
@@ -252,6 +260,7 @@ export default async function Admin({ params, searchParams }: { params: { locale
                     <div className="stack" style={{ gap: 0, minWidth: 0, flex: 1 }}><Link href={`/${L}/g/${g.id}`} className="ad-gname">{g.name}</Link><span className="hint">{getCity(g.city)?.n.pt ?? g.city} · {eur(g.hourlyCents)}/h</span></div>
                     <span className={`pill ${g.status}`}>{guideStatus[g.status] ?? g.status}</span>
                   </div>
+                  {(missingLegal(g).length > 0 || !g.independentAt) && <span className="ad-warn" style={{ margin: 0 }}>⚠️ Dados profissionais incompletos</span>}
                   <div className="ad-mini">
                     <span><small>Nota</small>{g.ratingCount ? `★ ${(g.ratingSum / g.ratingCount).toFixed(1)}` : "—"}</span>
                     <span><small>Reservas</small>{bk?.n ?? 0}{bk?.open ? ` +${bk.open}` : ""}</span>

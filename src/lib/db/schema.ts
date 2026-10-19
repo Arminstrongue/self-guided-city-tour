@@ -169,6 +169,16 @@ export const guides = pgTable("guides", {
   maxPeople: integer("max_people").notNull().default(6),
   meetingPoint: text("meeting_point"),
   licenseNo: text("license_no"),
+  // Dados profissionais (não públicos): registo da atividade, seguro e dados fiscais para o DAC7.
+  activityRegNo: text("activity_reg_no"), // RNAAT em Portugal, ou registo equivalente no país
+  insurer: text("insurer"),
+  policyNo: text("policy_no"),
+  taxId: text("tax_id"),
+  taxCountry: text("tax_country"),
+  address: text("address"),
+  birthDate: text("birth_date"), // AAAA-MM-DD (exigido no DAC7 para pessoas singulares)
+  independentAt: timestamp("independent_at", { withTimezone: true }), // declaração de profissional independente + termos
+  termsVersion: text("terms_version"),
   status: guideStatus("status").notNull().default("pending"),
   stripeAccountId: text("stripe_account_id"),
   payoutsReady: boolean("payouts_ready").notNull().default(false),

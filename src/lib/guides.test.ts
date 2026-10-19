@@ -51,3 +51,15 @@ test("pedido → expira sem resposta; recusa liberta; avaliação só depois do 
   assert.equal(after.ratingCount, 1); assert.equal(after.ratingSum, 5);
   assert.equal((await g.listGuides("lis"))[0].id, guide.id);
 });
+
+import { GuideSignup, missingLegal } from "./guide-input";
+test("registo de guia exige dados profissionais e a declaração de independente", () => {
+  const base = { name: "Ana Silva", email: "ana@x.pt", city: "lis", languages: ["pt"], bio: "x".repeat(60), hourly: 30, maxPeople: 6, locale: "pt", terms: true };
+  const legal = { activityRegNo: "RNAAT 1234", insurer: "Fidelidade", policyNo: "AP-1", taxId: "123456789", taxCountry: "pt", address: "Rua A, 1, Lisboa", birthDate: "1990-01-31" };
+  assert.equal(GuideSignup.safeParse(base).success, false);
+  assert.equal(GuideSignup.safeParse({ ...base, ...legal }).success, false); // falta a declaração
+  const ok = GuideSignup.safeParse({ ...base, ...legal, independent: true });
+  assert.ok(ok.success);
+  assert.equal(ok.success && ok.data.taxCountry, "PT");
+  assert.deepEqual(missingLegal({ ...legal, insurer: " " }), ["insurer"]);
+});
