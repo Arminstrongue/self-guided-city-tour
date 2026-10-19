@@ -57,7 +57,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
-        <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} agenda={AGENDA[city.id]} center={cityCenter(city)} tz={city.tz}
+        <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} agenda={AGENDA[city.id]} center={cityCenter(city)} tz={city.tz} gmapsKey={process.env.GOOGLE_MAPS_BROWSER_KEY || undefined}
           moments={(MOMENTS[city.id] ?? []).map((x) => { const [title, text] = params.locale === "pt" ? x.pt : x.en; return { id: x.id, icon: x.icon, when: x.when, h: x.h, lat: x.lat, lng: x.lng, title, text }; })} />
 
         <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />

@@ -37,7 +37,11 @@ const QUERIES: Record<PlaceCat, { q: string[]; far?: boolean; limit: number }> =
 export const PLACE_CATS = Object.keys(QUERIES) as PlaceCat[];
 const NEAR_M = 9000, FAR_M = 40000;
 
-export type Place = { id: string; name: string; cat: PlaceCat; lat: number; lng: number; dist: number; web?: string; hours?: string; fee?: boolean; wiki?: string };
+export type Place = {
+  id: string; name: string; cat: PlaceCat; lat: number; lng: number; dist: number; web?: string; hours?: string; fee?: boolean; wiki?: string;
+  // Só com Google Places:
+  gmaps?: string; rating?: number; reviews?: number; openNow?: boolean; photo?: string; type?: string;
+};
 
 /** Centro aproximado da cidade: média das paragens do roteiro. */
 export function cityCenter(c: Pick<City, "stops">) {
@@ -122,7 +126,7 @@ async function fetchCat(city: City, cat: PlaceCat): Promise<OsmEl[] | null> {
   const body = new URLSearchParams({ data: overpassQuery(cityCenter(city), cat) }).toString();
   for (const url of ENDPOINTS) {
     try {
-      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "SelfGuidedCityTour/1.0 (hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(30_000) });
+      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "SelfGuidedCityTour/1.0 (hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(12_000) });
       if (!r.ok) { console.warn(`[explore] ${city.id}/${cat} ${url} HTTP ${r.status}`); continue; }
       const j = (await r.json()) as OsmJson;
       // O Overpass responde 200 mesmo quando o pedido falha (tempo ou memória): o erro vem em "remark".
@@ -137,9 +141,12 @@ async function fetchCat(city: City, cat: PlaceCat): Promise<OsmEl[] | null> {
 async function fetchOsm(city: City): Promise<{ elements: OsmEl[] } | null> {
   const elements: OsmEl[] = [];
   let ok = 0;
+  let fails = 0;
+  const until = Date.now() + 45_000; // nunca mais de 45 s (o Cloudflare corta aos 100 s)
   for (const cat of PLACE_CATS) {
+    if (fails >= 2 || Date.now() > until) break; // servidores sobrecarregados: desiste e tenta no próximo pedido
     const els = await fetchCat(city, cat);
-    if (els) { ok++; elements.push(...els); }
+    if (els) { ok++; fails = 0; elements.push(...els); } else fails++;
   }
   return ok && elements.length ? { elements } : null; // vazio não fica em cache: tenta outra vez no pedido seguinte
 }

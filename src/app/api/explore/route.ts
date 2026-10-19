@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { loadCity } from "@/lib/content";
 import { cityCenter, placesFor } from "@/lib/explore";
 import { eventsEnabled, eventsNear } from "@/lib/events";
+import { googleExploreEnabled, googlePlacesFor } from "@/lib/gexplore";
 import { isLocale } from "@/i18n/dictionaries";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -14,6 +15,10 @@ export async function GET(req: Request) {
   const city = await loadCity(u.searchParams.get("city") ?? "");
   if (!city) return NextResponse.json({ error: "city" }, { status: 404 });
   const l = u.searchParams.get("locale") ?? "en";
-  const [places, events] = await Promise.all([placesFor(city, isLocale(l) ? l : "en"), eventsNear(city.id, cityCenter(city))]);
-  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled() }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=3600" } });
+  const lang = isLocale(l) ? l : "en";
+  // Google Places quando há chave (fotos, avaliações, horário); OpenStreetMap como reserva.
+  const google = googleExploreEnabled();
+  const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city))]);
+  const places = gp ?? (await placesFor(city, lang));
+  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=3600" } });
 }

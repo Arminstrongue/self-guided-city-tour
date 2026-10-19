@@ -45,3 +45,14 @@ test("todas as cidades têm momentos com coordenadas perto do centro e uma agend
     for (const m of ms) assert.ok(Math.abs(m.lat - city.stops[0].lat) < 0.6 && Math.abs(m.lng - city.stops[0].lng) < 0.6, `${city.id}/${m.id}`);
   }
 });
+
+import { mapGoogle } from "./gexplore";
+test("Google Places: avaliação, foto, aberto e distância", () => {
+  const out = mapGoogle([
+    { id: "A", displayName: { text: "Heaton Park" }, location: { latitude: 53.53, longitude: -2.25 }, rating: 4.7, userRatingCount: 9000, photos: [{ name: "places/A/photos/x" }], currentOpeningHours: { openNow: true }, googleMapsUri: "https://maps.google.com/?cid=1" },
+    { id: "B", location: { latitude: 53, longitude: -2 } }
+  ], "parks", c);
+  assert.equal(out.length, 1);
+  assert.equal(out[0].rating, 4.7); assert.equal(out[0].photo, "places/A/photos/x"); assert.equal(out[0].openNow, true); assert.equal(out[0].id, "g:A");
+  assert.ok(out[0].dist > 5000);
+});
