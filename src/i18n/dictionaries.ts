@@ -3005,7 +3005,15 @@ const ja: Dict = {
 };
 
 /* Traduções das funcionalidades mais recentes (carteira, rede social, agenda, portal do guia), em ficheiros JSON por idioma. */
-const more = (d: Dict, m: unknown): Dict => ({ ...d, ...(m as Partial<Dict>) });
+/** Junta as traduções: objetos aninhados (ex.: wTabs) completam-se chave a chave; listas substituem-se inteiras. */
+const more = (d: Dict, m: unknown): Dict => {
+  const out = { ...d } as Record<string, unknown>;
+  for (const [k, v] of Object.entries(m as Record<string, unknown>)) {
+    const cur = out[k];
+    out[k] = v && typeof v === "object" && !Array.isArray(v) && cur && typeof cur === "object" && !Array.isArray(cur) ? { ...(cur as object), ...(v as object) } : v;
+  }
+  return out as Dict;
+};
 const DICTS: Record<Locale, Dict> = {
   pt, en, es: more(es, esMore), fr: more(fr, frMore), de: more(de, deMore), it: more(it, itMore), zh: more(zh, zhMore), ar: more(ar, arMore), ja: more(ja, jaMore)
 };

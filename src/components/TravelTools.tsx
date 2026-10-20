@@ -240,13 +240,13 @@ function GroupView({ t, locale, id, onBack }: { t: Dict; locale: Locale; id: str
     return r;
   }
   if (g === null) return <div className="card wl-skel" style={{ height: 160 }} />;
-  if (g === "none") return <div className="stack"><button className="link-btn" onClick={onBack}>← {t.ttSplit}</button><p className="hint">{t.spNotFound}</p></div>;
+  if (g === "none") return <div className="stack"><button className="link-btn" onClick={onBack}><span className="rtl-flip">←</span> {t.ttSplit}</button><p className="hint">{t.spNotFound}</p></div>;
   const by = Object.fromEntries(g.members.map((m) => [m.id, m]));
   const nm = (mid: string) => (by[mid]?.me ? t.spYou : by[mid]?.name ?? "?");
   const me = g.members.find((m) => m.me);
   return (
     <div className="stack sp-g" style={{ gap: 12 }}>
-      <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={onBack}>← {t.ttSplit}</button>
+      <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={onBack}><span className="rtl-flip">←</span> {t.ttSplit}</button>
       <div className="card stack sp-head" style={{ gap: 6 }}>
         <b style={{ fontSize: 20 }}>{g.title}</b>
         <span className="hint">{t.spTotal}: <b className="num" style={{ color: "var(--ink)" }}>{money(g.total)}</b> · {fmt(t.spPeopleN, { n: g.members.length })}</span>
