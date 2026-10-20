@@ -82,7 +82,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>
           <ExitCheck city={city} locale={params.locale} t={t} />
           <div className="book-card">
-            <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><Link className="btn" href={`/api/auth/signin?callbackUrl=/${params.locale}/tour/${city.id}`}>{t.signIn}</Link></div>}>
+            <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>
               <BuyForm
                 locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
                 providers={enabledProviders()} sessionEmail={await sessionEmail()}

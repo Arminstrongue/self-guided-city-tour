@@ -39,7 +39,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
             <Link className="btn tram" href={`/${params.locale}/c/${city.id}`}>{t.buyAccess}</Link>
             <p className="hint">{t.restore}</p>
           </WebOnly>
-          <Link className="btn ghost" href={`/api/auth/signin?callbackUrl=/${params.locale}/tour/${city.id}`}>{t.signIn}</Link>
+          <a className="btn ghost" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a>
         </div>
       </main>
     );

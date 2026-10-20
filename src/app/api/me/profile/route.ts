@@ -17,7 +17,7 @@ const Full = z.object({
 const Prefs = z.object({
   theme: z.enum(THEMES).optional(), accent: z.enum(ACCENTS).optional(),
   cities: z.array(z.string().refine((c) => CITIES.some((x) => x.id === c))).max(40).optional(),
-  lessOf: z.array(z.enum(HOBBIES)).max(10).optional()
+  lessOf: z.array(z.enum(HOBBIES)).max(18).optional()
 });
 
 export async function GET() {

@@ -8,6 +8,7 @@ import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { Avatar, act, type PublicProfile, type Social } from "./Social";
 import { ago } from "./Feed";
 import { useLive, type LiveEvent } from "@/lib/live-client";
+import { EmojiButton, emojiLabels } from "./Emoji";
 
 type Msg = { id: string; text: string; ref: { kind: "story"; id: string; text: string } | null; at: string; mine: boolean; read: boolean };
 type Thread = { peer: PublicProfile; canSend: boolean; more: boolean; messages: Msg[]; seenUntil: string | null };
@@ -123,6 +124,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const [reported, setReported] = useState(false);
   const [sending, setSending] = useState(false);
   const box = useRef<HTMLDivElement>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
   const last = useRef<string | null>(null);
   const stick = useRef(true);
   const scrollEnd = () => requestAnimationFrame(() => { const b = box.current; if (b) b.scrollTop = b.scrollHeight; });
@@ -261,7 +263,8 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
       </div>
       {th && th !== "none" && (th.canSend ? (
         <form className="ch-say" onSubmit={send}>
-          <textarea rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
+          <EmojiButton target={taRef} value={txt} set={setTxt} max={1000} labels={emojiLabels(t)} />
+          <textarea ref={taRef} rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
             onChange={(e) => { setTxt(e.target.value); if (e.target.value) typed(); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); void send(e as unknown as React.FormEvent); } }} />
           <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}>➤</button>

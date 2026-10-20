@@ -9,6 +9,8 @@ import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile, type Social } from "./Social";
 import { StoryReply } from "./Chat";
+import { SearchPick } from "./SearchPick";
+import { EmojiButton, emojiLabels } from "./Emoji";
 import { ReelsViewer, VideoThumb, posterUrl } from "./Reels";
 import { useLive, type LiveEvent } from "@/lib/live-client";
 
@@ -157,6 +159,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   const [kind, setKind] = useState<"post" | "story" | "video">(startKind);
   const [video, setVideo] = useState<{ file: File; url: string; secs: number } | null>(null);
   const [pct, setPct] = useState<number | null>(null);
+  const capRef = useRef<HTMLTextAreaElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [city, setCity] = useState<string | null>(defaultCity);
@@ -226,14 +229,11 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
         </label>}
         {photo && kind !== "video" && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
         {kind === "story" && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
-        <div className="field"><textarea rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
+        <div className="field pf-cap"><EmojiButton target={capRef} value={text} set={setText} max={max} labels={emojiLabels(t)} /><textarea ref={capRef} rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
           <small className="hint" style={{ textAlign: "end" }}>{text.length}/{max}</small></div>
         {kind !== "story" && <>
-          <div className="field"><label htmlFor="pfc">{t.pfCity}</label>
-            <select id="pfc" value={city ?? ""} onChange={(e) => setCity(e.target.value || null)}>
-              <option value="">{t.pfNoCity}</option>
-              {Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => <option key={id} value={id}>{n}</option>)}
-            </select></div>
+          <SearchPick id="pfc" label={t.pfCity} placeholder={t.spCity} noneLabel={t.pfNoCity} value={city} onChange={(v) => setCity(v)}
+            options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />
           <b style={{ fontSize: 14 }}>{t.pfTag}</b>
           <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
         </>}
@@ -256,6 +256,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const [sure, setSure] = useState(false);
   const [reported, setReported] = useState(false);
   const [burst, setBurst] = useState(false);
+  const cRef = useRef<HTMLInputElement>(null);
   useEffect(() => setP(post), [post]);
   const [reel, setReel] = useState(false);
   useLive(useCallback((ev: LiveEvent) => { if (ev.t === "video" && ev.id === post.id) setP((x) => ({ ...x, video: ev.status })); }, [post.id]));
@@ -326,7 +327,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
             ))}
             {p.canComment ? (
               <form className="pf-say" onSubmit={send}>
-                <input value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} />
+                <EmojiButton target={cRef} value={txt} set={setTxt} max={300} labels={emojiLabels(t)} />
+                <input ref={cRef} value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} />
                 <button className="link-btn" disabled={!txt.trim()}>{t.pfSend}</button>
               </form>
             ) : <small className="hint">{t.pfOnlyCircle}</small>}
@@ -339,7 +341,9 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
 
 /* ---------- Separador Feed ---------- */
 export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Dict; locale: Locale; social: Social; cities: Record<string, string>; myCities: string[]; onEdit: () => void }) {
-  const [scope, setScope] = useState<string>("following");
+  // #feed:<cidade> abre logo o feed dessa cidade (ex.: a partir da ficha de uma cidade visitada).
+  const [scope, setScope] = useState<string>(() => { if (typeof window === "undefined") return "following"; const m = window.location.hash.match(/^#feed:([a-z]{2,12})$/); return m ? m[1] : "following"; });
+  const [picking, setPicking] = useState(false);
   const [page, setPage] = useState<Page | null>(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [rings, setRings] = useState<{ rings: Ring[]; authors: Record<string, PublicProfile> }>({ rings: [], authors: {} });
@@ -376,11 +380,10 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
       <div className="ex-chips pf-scope">
         <button className={scope === "following" ? "on" : ""} onClick={() => setScope("following")}>👥 {t.pfFollowing}</button>
         {[...chips, ...(scope !== "following" && !chips.includes(scope) ? [scope] : [])].map((c) => <button key={c} className={scope === c ? "on" : ""} onClick={() => setScope(c)}>📍 {cities[c]}</button>)}
-        <select className="pf-city-pick" aria-label={t.pfOtherCity} value="" onChange={(e) => e.target.value && setScope(e.target.value)}>
-          <option value="">＋ {t.pfOtherCity}</option>
-          {Object.entries(cities).filter(([id]) => !chips.includes(id)).sort((x, y) => x[1].localeCompare(y[1])).map(([id, n]) => <option key={id} value={id}>{n}</option>)}
-        </select>
+        <button className={`pf-city-pick ${picking ? "on" : ""}`} onClick={() => setPicking(!picking)}>＋ {t.pfOtherCity}</button>
       </div>
+      {picking && <SearchPick placeholder={t.spCity} value={null} onChange={(v) => { if (v) { setScope(v); setPicking(false); } }}
+        options={Object.entries(cities).sort((x, y) => x[1].localeCompare(y[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />}
       {page === null && <div className="pf-skel card" aria-hidden="true" />}
       {page && page.posts.length === 0 && <div className="card gp-empty"><span aria-hidden="true">🌅</span><b>{t.pfEmpty}</b><p className="hint" style={{ margin: 0 }}>{t.pfEmptyF}</p></div>}
       {page?.posts.map((p) => page.authors[p.handle] && (

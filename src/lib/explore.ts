@@ -4,10 +4,12 @@
  */
 import type { City } from "@/data/cities";
 
-export const HOBBIES = ["food", "photo", "nature", "art", "music", "sport", "night", "shopping", "family", "history"] as const;
+export const HOBBIES = ["food", "photo", "nature", "art", "music", "sport", "night", "shopping", "family", "history",
+  "beach", "adventure", "wellness", "architecture", "cafe", "festival", "wine", "budget"] as const;
 export type Hobby = (typeof HOBBIES)[number];
 export const HOBBY_ICON: Record<Hobby, string> = {
-  food: "🍜", photo: "📷", nature: "🌿", art: "🎨", music: "🎵", sport: "⚽", night: "🌙", shopping: "🛍", family: "🧸", history: "🏰"
+  food: "🍜", photo: "📷", nature: "🌿", art: "🎨", music: "🎵", sport: "⚽", night: "🌙", shopping: "🛍", family: "🧸", history: "🏰",
+  beach: "🏖", adventure: "🧗", wellness: "🧖", architecture: "🏛", cafe: "☕", festival: "🎉", wine: "🍷", budget: "💸"
 };
 
 export type PlaceCat = "parks" | "kids" | "fun" | "views" | "markets" | "culture" | "nightlife" | "sport" | "beach" | "country";
@@ -16,9 +18,9 @@ export const CAT_ICON: Record<PlaceCat, string> = {
 };
 /** Que hobbies cada categoria serve (para ordenar segundo o perfil do viajante). */
 export const CAT_HOBBIES: Record<PlaceCat, Hobby[]> = {
-  parks: ["nature", "family", "photo"], kids: ["family"], fun: ["family", "night"], views: ["photo", "nature"],
-  markets: ["food", "shopping"], culture: ["art", "history", "music"], nightlife: ["night", "music"], sport: ["sport"],
-  beach: ["nature", "photo", "family"], country: ["nature", "photo", "history"]
+  parks: ["nature", "family", "photo", "wellness", "budget"], kids: ["family"], fun: ["family", "night", "festival"], views: ["photo", "nature", "architecture", "budget"],
+  markets: ["food", "shopping", "cafe", "budget"], culture: ["art", "history", "music", "architecture", "festival"], nightlife: ["night", "music", "wine"], sport: ["sport", "adventure"],
+  beach: ["nature", "photo", "family", "beach", "wellness"], country: ["nature", "photo", "history", "adventure"]
 };
 
 /** Filtros Overpass por categoria. Só entram lugares com nome. `far` = procurar nos arredores (raio maior). */

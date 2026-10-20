@@ -144,26 +144,30 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
       </section>
 
       {/* Os seus dados e sessões */}
-      <section className="card stack ac-sec" style={{ gap: 10 }}>
+      <section className="card ac-sec ac-list-sec">
         <b className="sc-h">📦 {t.acData}</b>
-        <a className="btn ghost press" href="/api/me/export" download>⬇️ {t.acExport}</a>
-        <small className="hint">{t.acExportHint}</small>
-        <button className="btn ghost press" disabled={busy === "out"} onClick={async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); }}>🔁 {t.acOutAll}</button>
-        <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="btn ghost press" style={{ width: "100%" }}>{t.wSignOut}</button></form>
-        <a className="hint" href={`/${locale}/legal/privacy`} style={{ fontSize: 12 }}>{t.lPrivacy}</a>
+        <div className="ac-list">
+          <a className="ac-item" href="/api/me/export" download><span className="ac-i">⬇️</span><span className="ac-tx"><b>{t.acExport}</b><small>{t.acExportHint}</small></span><span className="ac-chev">›</span></a>
+          <button className="ac-item" disabled={busy === "out"} onClick={async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); }}><span className="ac-i">🔁</span><span className="ac-tx"><b>{t.acOutAll}</b></span><span className="ac-chev">›</span></button>
+          <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="ac-item"><span className="ac-i">↪️</span><span className="ac-tx"><b>{t.wSignOut}</b></span><span className="ac-chev">›</span></button></form>
+          <a className="ac-item" href={`/${locale}/legal/privacy`}><span className="ac-i">🔒</span><span className="ac-tx"><b>{t.lPrivacy}</b></span><span className="ac-chev">›</span></a>
+        </div>
       </section>
 
-      {/* Apagar a conta */}
-      <section className="card stack ac-sec ac-danger" style={{ gap: 10 }}>
-        <b className="sc-h">⚠️ {t.acDelete}</b>
-        <small className="hint">{t.acDeleteHint}</small>
-        <div className="field"><label htmlFor="acdel">{t.acDeleteType}</label><input id="acdel" value={del} onChange={(e) => setDel(e.target.value)} autoCapitalize="characters" placeholder="DELETE" /></div>
-        <button className="btn press danger" disabled={del !== "DELETE" || busy === "del"} onClick={async () => {
-          setBusy("del");
-          const r = await fetch("/api/me/account", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "DELETE" }) }).catch(() => null);
-          if (r?.ok) { try { localStorage.clear(); } catch { /* ignorar */ } location.href = `/${locale}`; } else { setBusy(""); flash(t.acErr); }
-        }}>{t.acDeleteBtn}</button>
-      </section>
+      {/* Apagar a conta: discreto, abre só quando se pede */}
+      <details className="ac-del">
+        <summary><span>{t.acDelete}</span><span aria-hidden="true">›</span></summary>
+        <div className="stack" style={{ gap: 10, paddingTop: 10 }}>
+          <p className="ac-del-txt">{t.acDeleteHint}</p>
+          <label className="ac-del-lbl" htmlFor="acdel">{t.acDeleteType}</label>
+          <input id="acdel" className="ac-del-in" value={del} onChange={(e) => setDel(e.target.value.toUpperCase())} autoCapitalize="characters" autoComplete="off" placeholder="DELETE" />
+          <button className="ac-del-btn" disabled={del !== "DELETE" || busy === "del"} onClick={async () => {
+            setBusy("del");
+            const r = await fetch("/api/me/account", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "DELETE" }) }).catch(() => null);
+            if (r?.ok) { try { localStorage.clear(); } catch { /* ignorar */ } location.href = `/${locale}`; } else { setBusy(""); flash(t.acErr); }
+          }}>{t.acDeleteBtn}</button>
+        </div>
+      </details>
 
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) void load(); }} />}
     </div>

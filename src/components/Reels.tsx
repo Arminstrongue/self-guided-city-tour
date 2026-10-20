@@ -9,6 +9,7 @@ import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { Avatar, FollowBtn, type PublicProfile, type Social } from "./Social";
 import { Composer, ago, type PostItem } from "./Feed";
+import { EmojiButton, emojiLabels } from "./Emoji";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 export const videoUrl = (id: string) => `/api/social/video/${id}`;
@@ -190,6 +191,7 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
   const [list, setList] = useState<Comment[] | null>(null);
   const [can, setCan] = useState(post.canComment);
   const [txt, setTxt] = useState("");
+  const iRef = useRef<HTMLInputElement>(null);
   const load = useCallback(async () => {
     const r = await fetch(`/api/social/post/${post.id}`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null);
     setList(r?.comments ?? []); if (r) setCan(r.canComment);
@@ -212,7 +214,8 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
         </div>
         {can ? (
           <form className="pf-say" onSubmit={async (e) => { e.preventDefault(); const v = txt.trim(); if (!v) return; setTxt(""); await postAct(post.id, { action: "comment", text: v }); await load(); }}>
-            <input value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} autoFocus />
+            <EmojiButton target={iRef} value={txt} set={setTxt} max={300} labels={emojiLabels(t)} />
+            <input ref={iRef} value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} />
             <button className="link-btn" disabled={!txt.trim()}>{t.pfSend}</button>
           </form>
         ) : <small className="hint">{t.pfOnlyCircle}</small>}

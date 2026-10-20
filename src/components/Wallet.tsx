@@ -8,6 +8,9 @@ import type { Wallet } from "@/lib/wallet";
 import { COUNTRY_CODES, flag } from "@/data/countries";
 import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
+import { SearchPick } from "./SearchPick";
+import { CitySheet } from "./CitySheet";
+import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { FeedTab } from "./Feed";
 import { VideosTab } from "./Reels";
@@ -42,6 +45,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const [now, setNow] = useState(() => Date.now());
   const [social, setSocial] = useState<Social | null>(null);
   const [editing, setEditing] = useState(false);
+  const [onboard, setOnboard] = useState(false);
   const [settings, setSettings] = useState(false);
   const [shared, setShared] = useState(false);
   const goSignIn = () => { setTabState("home"); setTimeout(() => { const e = document.getElementById("wl-email"); e?.scrollIntoView({ behavior: "smooth", block: "center" }); (e as HTMLInputElement | null)?.focus(); }, 50); };
@@ -67,6 +71,22 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: Math.min(window.scrollY, (document.getElementById("wl-tabs")?.offsetTop ?? 0) - 64), behavior: "smooth" }); };
 
   const signed = w && w !== "anon" ? w : null;
+  // Primeira vez com sessão e sem interesses: "Escolha o que gosta".
+  useEffect(() => {
+    if (!signed || signed.hobbies.length) return;
+    let done = false; try { done = Boolean(localStorage.getItem(ONBOARDED)); } catch { /* ignorar */ }
+    if (!done && !new URLSearchParams(window.location.search).get("signin")) setOnboard(true);
+  }, [signed]);
+  // Vindo de "Entrar" num roteiro (?signin=1&city=…): foca o email; se já tem sessão, volta ao roteiro.
+  const [retCity, setRetCity] = useState<string | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("signin") !== "1") return;
+    const c = q.get("city"); const city = c && /^[a-z]{2,12}$/.test(c) ? c : null;
+    setRetCity(city);
+    if (w === "anon") goSignIn();
+    else if (w && city) window.location.replace(`/${locale}/tour/${city}`);
+  }, [w]); // eslint-disable-line react-hooks/exhaustive-deps
   const memories: Mem[] = useMemo(() => [...(signed?.memories ?? []), ...local.map((m) => ({ ...m, local: true }))].sort((a, b) => b.at - a.at), [signed, local]);
   const stamps = useMemo(() => { const m = new Map<string, { name: string; n: number }>(); for (const x of memories) m.set(x.city, { name: x.cityName, n: (m.get(x.city)?.n ?? 0) + 1 }); return [...m.entries()]; }, [memories]);
   // Cidades e países: passes, memórias e as acrescentadas à mão.
@@ -218,7 +238,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
             {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
               <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
                 e.preventDefault();
-                const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) }).catch(() => null);
+                const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale, ...(retCity ? { city: retCity } : {}) }) }).catch(() => null);
                 const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
               }}>
                 <div className="field" style={{ flex: 1, margin: 0 }}><input id="wl-email" type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
@@ -328,6 +348,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
 
       <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
+      {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}
       {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
       {notifOpen && <NotifsSheet t={t} locale={locale} cities={cities} onRead={() => void refreshUnread()} onClose={() => { setNotifOpen(false); if (window.location.hash === "#notifs") history.replaceState(null, "", window.location.pathname); }} />}
       {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
@@ -394,12 +415,9 @@ function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: 
         <form className="card stack wl-form" onSubmit={create}>
           <div className="field"><label htmlFor="pn">{t.plName}</label><input id="pn" value={f.title} maxLength={120} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder={f.city === "__other" ? f.other : cities[f.city]} /></div>
           <div className="grid2">
-            <div className="field"><label htmlFor="pc">{t.plCity}</label>
-              <select id="pc" value={f.city} onChange={(e) => setF({ ...f, city: e.target.value })}>
-                {Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => <option key={id} value={id}>{n}</option>)}
-                <option value="__other">{t.plOther}</option>
-              </select></div>
-            {f.city === "__other" && <div className="field"><label htmlFor="po">{t.plOtherName}</label><input id="po" required value={f.other} maxLength={80} onChange={(e) => setF({ ...f, other: e.target.value })} /></div>}
+            <SearchPick id="pc" free label={t.plCity} placeholder={t.spCity} value={f.city === "__other" ? f.other || null : f.city}
+              onChange={(v, l) => (v && cities[v] ? setF({ ...f, city: v, other: "" }) : setF({ ...f, city: "__other", other: (l ?? v ?? "").slice(0, 80) }))}
+              options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />
           </div>
           <div className="grid2">
             <div className="field"><label htmlFor="ps">{t.plStart}</label><input id="ps" type="date" value={f.start} onChange={(e) => setF({ ...f, start: e.target.value })} /></div>
@@ -420,8 +438,9 @@ function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: 
 }
 
 /* ---------- Cidades visitadas ---------- */
-function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: { t: Dict; locale: Locale; wallet: Wallet; cities: Record<string, string>; countryOf: Record<string, string>; memories: { city: string; cityName: string }[]; onChange: (v: Wallet["visited"]) => void }) {
+function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: { t: Dict; locale: Locale; wallet: Wallet; cities: Record<string, string>; countryOf: Record<string, string>; memories: Memory[]; onChange: (v: Wallet["visited"]) => void }) {
   const [open, setOpen] = useState<"visited" | "wish" | null>(null);
+  const [spot, setSpot] = useState<{ name: string; country: string; year?: number; mine: boolean; want?: boolean } | null>(null);
   const [f, setF] = useState({ name: "", country: "", year: "" });
   const region = useMemo(() => { try { return new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }); } catch { return null; } }, [locale]);
   const countries = useMemo(() => COUNTRY_CODES.map((c) => ({ c, n: region?.of(c) ?? c })).sort((a, b) => a.n.localeCompare(b.n)), [region]);
@@ -449,7 +468,7 @@ function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: {
       <div className="row-between"><h2 className="gp-h2">🌍 {t.vTitle}</h2><span className="hint">{fmt(t.vStats, { c: been.length, p: nCountries })}</span></div>
       <div className="vs-grid">{been.map((v) => (
         <span key={`${v.name}-${v.country}`} className={`vs-chip ${v.mine ? "" : "auto"}`}>
-          <span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : !v.mine ? <small>{t.vAuto}</small> : null}
+          <button className="vs-open" onClick={() => setSpot(v)} aria-label={v.name}><span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : !v.mine ? <small>{t.vAuto}</small> : null}</button>
           {v.mine && <button aria-label="✕" onClick={() => void save(wallet.visited.filter((x) => !same(x, v)))}>✕</button>}
         </span>
       ))}</div>
@@ -459,7 +478,7 @@ function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: {
         const id = ourId(v.name);
         return (
           <span key={`w-${v.name}-${v.country}`} className="vs-chip wish">
-            <span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : null}
+            <button className="vs-open" onClick={() => setSpot({ ...v, mine: true, want: true })} aria-label={v.name}><span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : null}</button>
             {id && <a href={`/${locale}/c/${id}`} title={t.wOpen}>→</a>}
             <button title={t.vBeen} onClick={() => void save(wallet.visited.map((x) => (same(x, v) ? { name: x.name, country: x.country, at: Date.now(), year: new Date().getFullYear() } : x)))}>✓</button>
             <button aria-label="✕" onClick={() => void save(wallet.visited.filter((x) => !same(x, v)))}>✕</button>
@@ -467,6 +486,7 @@ function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: {
         );
       })}</div>}
 
+      {spot && <CitySheet t={t} locale={locale} spot={spot} id={ourId(spot.name) ?? null} wallet={wallet} memories={memories} onClose={() => setSpot(null)} />}
       {open ? (
         <form className="card stack wl-form" onSubmit={(e) => { e.preventDefault(); if (!f.name.trim() || !f.country) return; void save([...wallet.visited.filter((x) => !same(x, { name: f.name.trim(), country: f.country })), { name: f.name.trim(), country: f.country, ...(f.year ? { year: Number(f.year) } : {}), ...(open === "wish" ? { want: true } : {}), at: Date.now() }]); setF({ name: "", country: f.country, year: "" }); setOpen(null); }}>
           <div className="ex-tabs" role="tablist">
@@ -474,8 +494,11 @@ function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: {
             <button type="button" className={open === "wish" ? "on" : ""} onClick={() => setOpen("wish")}>✈️ {t.vKindWish}</button>
           </div>
           <div className="grid2">
-            <div className="field"><label htmlFor="vc">{t.vCity}</label><input id="vc" required value={f.name} maxLength={80} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
-            <div className="field"><label htmlFor="vk">{t.vCountry}</label><select id="vk" required value={f.country} onChange={(e) => setF({ ...f, country: e.target.value })}><option value="" />{countries.map((x) => <option key={x.c} value={x.c}>{flag(x.c)} {x.n}</option>)}</select></div>
+            <SearchPick id="vc" free label={t.vCity} placeholder={t.spCity} value={f.name || null}
+              onChange={(v, l) => { const id = v && cities[v] ? v : null; setF({ ...f, name: id ? cities[id] : l ?? v ?? "", country: id && countryOf[id] ? countryOf[id] : f.country }); }}
+              options={Object.entries(cities).map(([id, n]) => ({ value: id, label: n, icon: flag(countryOf[id] ?? ""), sub: region?.of(countryOf[id] ?? "") ?? "" })).sort((a, b) => a.label.localeCompare(b.label))} />
+            <SearchPick id="vk" label={t.vCountry} placeholder={t.spCountry} value={f.country || null} onChange={(v) => setF({ ...f, country: v ?? "" })}
+              options={countries.map((x) => ({ value: x.c, label: x.n, icon: flag(x.c) }))} />
           </div>
           <div className="field"><label htmlFor="vy">{open === "wish" ? t.vYearWish : t.vYear}</label><input id="vy" inputMode="numeric" maxLength={4} value={f.year} onChange={(e) => setF({ ...f, year: e.target.value.replace(/\D/g, "") })} /></div>
           <div className="grid2"><button type="button" className="btn ghost press" onClick={() => setOpen(null)}>{t.exCancel}</button><button className="btn press">{t.vSave}</button></div>
