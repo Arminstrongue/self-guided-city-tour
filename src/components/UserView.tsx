@@ -6,7 +6,7 @@ import { flag } from "@/data/countries";
 import { Avatar, FollowBtn, act, type PublicProfile } from "./Social";
 import { ProfilePosts, ProfileStories } from "./Feed";
 
-type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[] };
+type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[]; canMessage?: boolean };
 
 export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Locale; handle: string; cities: Record<string, string> }) {
   const [v, setV] = useState<View | null | "none">(null);
@@ -32,7 +32,10 @@ export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Local
           {v.relation !== "self" && <button className="wl-ic" aria-label="⋯" onClick={() => setMenu(!menu)} style={{ color: "var(--ink)", background: "var(--surface-2)" }}>⋯</button>}
         </div>
         {p.bio && <p style={{ margin: 0 }}>{p.bio}</p>}
-        {v.relation === "self" ? <a className="btn ghost press" href={`/${locale}/wallet`}>{t.scEdit}</a> : <FollowBtn t={t} handle={p.handle} rel={v.relation} onChange={() => void load()} />}
+        {v.relation === "self" ? <a className="btn ghost press" href={`/${locale}/wallet`}>{t.scEdit}</a> : (
+          <div className={v.canMessage ? "grid2" : ""}><FollowBtn t={t} handle={p.handle} rel={v.relation} onChange={() => void load()} />
+            {v.canMessage && <a className="sc-follow uv-msg" href={`/${locale}/wallet#chat:${p.handle}`}>💬 {t.chMessage}</a>}</div>
+        )}
         {menu && (
           <div className="stack sc-menu" style={{ gap: 6 }}>
             <button onClick={async () => { await act(p.handle, "block"); setMenu(false); setV("none"); }}>🚫 {t.scBlock}</button>

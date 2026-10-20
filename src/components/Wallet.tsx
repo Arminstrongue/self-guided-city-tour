@@ -10,6 +10,7 @@ import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
 import { NewsFeed } from "./NewsFeed";
 import { FeedTab } from "./Feed";
+import { ChatTab, useUnread } from "./Chat";
 import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
 
 type Mem = Memory & { local?: boolean };
@@ -20,8 +21,8 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "feed" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
-const TABS: Tab[] = ["home", "feed", "people", "passes", "plans", "wish", "places", "memories"];
+type Tab = "home" | "feed" | "chat" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
+const TABS: Tab[] = ["home", "feed", "chat", "people", "passes", "plans", "wish", "places", "memories"];
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
 
 /** Cor do bilhete de cada cidade (estável). */
@@ -55,7 +56,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
   useEffect(() => {
-    const read = () => { const h = window.location.hash.slice(1) as Tab; setTabState(TABS.includes(h) ? h : "home"); };
+    const read = () => { const h = window.location.hash.slice(1).split(":")[0] as Tab; setTabState(TABS.includes(h) ? h : "home"); };
     read(); window.addEventListener("popstate", read);
     return () => window.removeEventListener("popstate", read);
   }, []);
@@ -108,13 +109,14 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
   const prof = social?.profile ?? null;
+  const { unread, refreshUnread } = useUnread(Boolean(prof));
   async function shareProfile() {
     if (!prof) return;
     const url = `${location.origin}/${locale}/u/${prof.handle}`;
     try { if (navigator.share) await navigator.share({ title: prof.name, url }); else { await navigator.clipboard.writeText(url); setShared(true); setTimeout(() => setShared(false), 2000); } } catch { /* cancelado */ }
   }
-  const counts: Record<Tab, number | null> = { home: null, feed: null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", feed: "📸", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  const counts: Record<Tab, number | null> = { home: null, feed: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", feed: "📸", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -141,6 +143,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
         <div className="wl-card-top">
           <span className="wl-brand">👛 {t.wallet}</span>
           <span className="row" style={{ gap: 6 }}>
+            {prof && <button className="wl-ic wl-chat" aria-label={t.chTab} onClick={() => setTab("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
             <button className="wl-ic" aria-label={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
             {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
           </span>
@@ -253,6 +256,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       </>}
 
       {tab === "feed" && (social ? <FeedTab t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+
+      {tab === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 
       {tab === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 

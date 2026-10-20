@@ -44,11 +44,12 @@ export async function savePrefsOnly(email: string, v: Partial<{ theme: string; a
 export async function deleteProfile(email: string) {
   const d = await db();
   await (await import("./posts")).purgeUser(email);
+  await (await import("./chat")).purgeChats(email);
   await d.delete(schema.follows).where(or(eq(schema.follows.follower, email), eq(schema.follows.followee, email)));
   await d.delete(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, email));
 }
 
-async function isBlocked(a: string, b: string) {
+export async function isBlocked(a: string, b: string) {
   const d = await db();
   const r = await d.select({ x: schema.blocks.blocker }).from(schema.blocks)
     .where(or(and(eq(schema.blocks.blocker, a), eq(schema.blocks.blocked, b)), and(eq(schema.blocks.blocker, b), eq(schema.blocks.blocked, a)))).limit(1);
@@ -88,7 +89,12 @@ export async function viewProfile(me: string | null, handle: string) {
     const [pr] = await d.select({ v: schema.travellerPrefs.visited }).from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, p.email)).limit(1);
     visited = (pr?.v ?? []).filter((x) => !x.want).map((x) => ({ name: x.name, country: x.country })).slice(0, 200);
   }
-  return { profile: pub(p), relation: rel, followers: c.followers, following: c.following, canSee, visited, cities: canSee ? p.cities : [] };
+  let followsMe = false;
+  if (me && rel !== "self") {
+    const d = await db();
+    followsMe = (await d.select({ x: schema.follows.follower }).from(schema.follows).where(and(eq(schema.follows.follower, p.email), eq(schema.follows.followee, me), eq(schema.follows.status, "accepted"))).limit(1)).length > 0;
+  }
+  return { profile: pub(p), relation: rel, followers: c.followers, following: c.following, canSee, visited, cities: canSee ? p.cities : [], canMessage: rel === "following" || followsMe };
 }
 
 export async function follow(me: string, handle: string) {

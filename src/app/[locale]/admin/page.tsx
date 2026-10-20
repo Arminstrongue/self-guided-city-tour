@@ -1,4 +1,5 @@
 import { purgeUser, removePost } from "@/lib/posts";
+import { purgeChats } from "@/lib/chat";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { desc, eq, gt, isNull, sql } from "drizzle-orm";
@@ -57,6 +58,7 @@ async function handleReport(form: FormData) {
   }
   if (form.get("action") === "remove") {
     await purgeUser(r.target);
+    await purgeChats(r.target);
     await d.delete(schema.follows).where(sql`${schema.follows.follower} = ${r.target} or ${schema.follows.followee} = ${r.target}`);
     await d.delete(schema.travellerProfiles).where(sql`${schema.travellerProfiles.email} = ${r.target}`);
   }
@@ -152,6 +154,13 @@ export default async function Admin({ params, searchParams }: { params: { locale
     .from(schema.reports).leftJoin(schema.travellerProfiles, sql`${schema.travellerProfiles.email} = ${schema.reports.target}`)
     .leftJoin(schema.posts, sql`${schema.posts.id} = ${schema.reports.postId}`)
     .where(sql`${schema.reports.status} = 'open'`).orderBy(sql`${schema.reports.createdAt} desc`).limit(50);
+  // Denúncias feitas a partir de uma conversa: as últimas 30 mensagens entre os dois (só para moderação).
+  const chatLogs = new Map<string, { mine: boolean; text: string; at: Date }[]>();
+  for (const { r } of openReports.filter((x) => x.r.note === "chat")) {
+    const pair = [r.reporter, r.target].sort().join("|");
+    const ms = await d.select().from(schema.messages).where(sql`${schema.messages.pair} = ${pair}`).orderBy(sql`${schema.messages.createdAt} desc`).limit(30);
+    chatLogs.set(r.id, ms.reverse().map((m) => ({ mine: m.sender === r.target, text: m.text, at: m.createdAt })));
+  }
   const todo = openReports.length + pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Europe/Lisbon" }).format(new Date()));
   const hello = hour < 6 ? "Boa noite" : hour < 13 ? "Bom dia" : hour < 20 ? "Boa tarde" : "Boa noite";
@@ -201,7 +210,9 @@ export default async function Admin({ params, searchParams }: { params: { locale
           {todo === 0 && <Empty icon="✅" text="Nada pendente. Novos guias, parceiros e comissões aparecem aqui." />}
           {openReports.map(({ r, handle, name, bio, postText, postPhoto }) => (
             <div key={r.id} className="card ad-line">
-              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && <span className="hint">“{r.note}”</span>}
+              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && r.note !== "chat" && <span className="hint">“{r.note}”</span>}
+                {chatLogs.get(r.id) && <details><summary className="hint">Conversa denunciada ({chatLogs.get(r.id)!.length} mensagens)</summary>
+                  <div className="stack" style={{ gap: 4, marginTop: 6, fontSize: 13 }}>{chatLogs.get(r.id)!.map((m, i) => <span key={i}><b>{m.mine ? (handle ? `@${handle}` : "denunciado") : "quem denunciou"}:</b> {m.text}</span>)}</div></details>}
                 {r.postId && <span className="row" style={{ gap: 8, alignItems: "flex-start" }}>{/* eslint-disable-next-line @next/next/no-img-element */}{postPhoto && <img src={postPhoto} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8 }} />}<span className="hint">Publicação: {postText ? `“${postText.slice(0, 160)}”` : postPhoto ? "(só foto)" : "(já apagada)"}</span></span>}</div>
               <div className="row" style={{ gap: 6 }}>
                 {handle && <a className="btn ghost press" href={`/pt/u/${handle}`} target="_blank" rel="noreferrer" style={{ width: "auto" }}>Ver</a>}

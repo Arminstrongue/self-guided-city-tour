@@ -329,3 +329,23 @@ export const postComments = pgTable("post_comments", {
   text: text("text").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("post_comments_post_idx").on(t.postId, t.createdAt)]);
+
+/* ---------- Fase 3: conversas privadas entre seguidores / a seguir ---------- */
+export const messages = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  pair: text("pair").notNull(),            // os dois emails ordenados, "a|b"
+  sender: text("sender").notNull(),
+  recipient: text("recipient").notNull(),
+  text: text("text").notNull(),
+  ref: text("ref"),                        // resposta a uma história: "story:<id>:<excerto>"
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  readAt: timestamp("read_at", { withTimezone: true })
+}, (t) => [index("messages_pair_idx").on(t.pair, t.createdAt), index("messages_unread_idx").on(t.recipient, t.readAt)]);
+export type Message = typeof messages.$inferSelect;
+
+/** "Apagar conversa" só para mim: esconde as mensagens anteriores a esta data. */
+export const chatCleared = pgTable("chat_cleared", {
+  email: text("email").notNull(),
+  peer: text("peer").notNull(),
+  before: timestamp("before", { withTimezone: true }).notNull()
+}, (t) => [uniqueIndex("chat_cleared_pair_idx").on(t.email, t.peer)]);

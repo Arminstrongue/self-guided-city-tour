@@ -8,6 +8,7 @@ import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile, type Social } from "./Social";
+import { StoryReply } from "./Chat";
 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
@@ -91,6 +92,8 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
   const [ri, setRi] = useState(start);
   const [ii, setIi] = useState(0);
   const [pause, setPause] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const paused = pause || typing;
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const ring = rings[ri]; const item = ring?.items[ii];
   const next = useCallback(() => {
@@ -102,10 +105,10 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
   const prev = () => { if (ii > 0) setIi(ii - 1); else if (ri > 0) { setRi(ri - 1); setIi(0); } };
   useEffect(() => { if (item) onSeen?.(item.id); }, [item, onSeen]);
   useEffect(() => {
-    if (!item || pause) return;
+    if (!item || paused) return;
     const id = setTimeout(next, 5500);
     return () => clearTimeout(id);
-  }, [item, pause, next]);
+  }, [item, paused, next]);
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
@@ -120,7 +123,7 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {item.photo && <img src={photoUrl(item.id)} alt="" className="st-img" />}
         {item.text && <p className={`st-text ${item.photo ? "cap" : ""}`}>{item.text}</p>}
-        <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (pause ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
+        <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (paused ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
         <div className="st-head">
           <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
             {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{a?.name}</b><small style={{ opacity: .8 }}>{ago(item.at, locale)}</small>
@@ -133,7 +136,10 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
           {item.mine ? (
             <button className="st-btn" onClick={async () => { await postAct(item.id, { action: "delete" }); onChanged?.(); onClose(); }}>🗑 {t.pfDelete}</button>
           ) : (
-            <button className={`st-btn ${isLiked ? "on" : ""}`} aria-pressed={isLiked} onClick={async () => { setLiked({ ...liked, [item.id]: !isLiked }); await postAct(item.id, { action: isLiked ? "unlike" : "like" }); }}>{isLiked ? "❤️" : "🤍"} {t.pfLike}</button>
+            <>
+              <StoryReply t={t} storyId={item.id} name={a?.name.split(" ")[0] ?? ""} onFocus={setTyping} />
+              <button className={`st-btn st-like ${isLiked ? "on" : ""}`} aria-pressed={isLiked} aria-label={t.pfLike} onClick={async () => { setLiked({ ...liked, [item.id]: !isLiked }); await postAct(item.id, { action: isLiked ? "unlike" : "like" }); }}>{isLiked ? "❤️" : "🤍"}</button>
+            </>
           )}
         </div>
       </div>
