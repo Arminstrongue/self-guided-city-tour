@@ -115,7 +115,8 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Guias: dados do perfil público; dados profissionais e fiscais (registo da atividade, seguro, NIF, país fiscal, morada e data de nascimento); a conta bancária é tratada pela Stripe.",
         "Avaliações: estrelas, NPS e comentários, sem o seu nome; os comentários sobre guias podem aparecer no perfil do guia.",
         "Carteira: se entrar com o seu email, guardamos as memórias (fotos e notas), os lugares guardados e os interesses que escolher, para os ter em qualquer dispositivo. Pode apagá-los na própria carteira.",
-        "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes. Pode bloquear e denunciar perfis, e apagar o seu perfil na carteira a qualquer momento. Analisamos as denúncias e podemos remover perfis que violem as regras da comunidade."
+        "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes. Pode bloquear e denunciar perfis, e apagar o seu perfil na carteira a qualquer momento. Analisamos as denúncias e podemos remover perfis que violem as regras da comunidade.",
+        "Publicações e histórias (opcional): as fotos, legendas, cidade e tema que publica, os gostos e os comentários. Num perfil privado só os seguidores aceites as veem; num perfil público, qualquer viajante com sessão iniciada. As histórias são apagadas automaticamente 24 horas depois. Só comentam os seus seguidores e as pessoas que segue. Pode apagar publicações e comentários a qualquer momento; ao apagar o perfil, apagamos tudo isto."
       ] },
       { h: "Para quê e com que fundamento", p: [
         "Prestar o serviço comprado e calcular a hora de regresso (execução do contrato).",
@@ -246,7 +247,8 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Guides: public profile; professional and tax details (activity registration, insurance, tax ID, tax country, address and date of birth); bank details are handled by Stripe.",
         "Ratings: stars, NPS and comments, without your name; comments about guides may appear on the guide's profile.",
         "Wallet: if you sign in with your email, we store your memories (photos and notes), saved places and chosen interests so you have them on any device. You can delete them in the wallet.",
-        "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers. You can block and report profiles, and delete your profile in the wallet at any time. We review reports and may remove profiles that break the community rules."
+        "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers. You can block and report profiles, and delete your profile in the wallet at any time. We review reports and may remove profiles that break the community rules.",
+        "Posts and stories (optional): the photos, captions, city and topic you share, plus likes and comments. On a private profile only approved followers see them; on a public profile, any signed-in traveller can. Stories are deleted automatically after 24 hours. Only your followers and people you follow can comment. You can delete posts and comments at any time; deleting your profile deletes all of this."
       ] },
       { h: "Purposes and legal bases", p: [
         "Providing the service and computing your return time (contract).",

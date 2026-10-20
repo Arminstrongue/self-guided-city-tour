@@ -1,3 +1,4 @@
+import { purgeUser, removePost } from "@/lib/posts";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { desc, eq, gt, isNull, sql } from "drizzle-orm";
@@ -48,7 +49,14 @@ async function handleReport(form: FormData) {
   const id = String(form.get("id"));
   const [r] = await d.select().from(schema.reports).where(sql`${schema.reports.id} = ${id}`).limit(1);
   if (!r) return;
+  if (form.get("action") === "removePost" && r.postId) {
+    await removePost(r.postId);
+    await d.update(schema.reports).set({ status: "removed" }).where(sql`${schema.reports.postId} = ${r.postId} and ${schema.reports.status} = 'open'`);
+    revalidatePath("/[locale]/admin", "page");
+    return;
+  }
   if (form.get("action") === "remove") {
+    await purgeUser(r.target);
     await d.delete(schema.follows).where(sql`${schema.follows.follower} = ${r.target} or ${schema.follows.followee} = ${r.target}`);
     await d.delete(schema.travellerProfiles).where(sql`${schema.travellerProfiles.email} = ${r.target}`);
   }
@@ -140,8 +148,9 @@ export default async function Admin({ params, searchParams }: { params: { locale
   const pendingMerchants = merchants.filter((m) => m.status === "pending");
   const pendingAgents = agents.filter((a) => a.status === "pending");
   const openReq = gBookings.reduce((a, b) => a + b.open, 0);
-  const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio })
+  const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio, postText: schema.posts.text, postPhoto: schema.posts.photo })
     .from(schema.reports).leftJoin(schema.travellerProfiles, sql`${schema.travellerProfiles.email} = ${schema.reports.target}`)
+    .leftJoin(schema.posts, sql`${schema.posts.id} = ${schema.reports.postId}`)
     .where(sql`${schema.reports.status} = 'open'`).orderBy(sql`${schema.reports.createdAt} desc`).limit(50);
   const todo = openReports.length + pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Europe/Lisbon" }).format(new Date()));
@@ -190,12 +199,14 @@ export default async function Admin({ params, searchParams }: { params: { locale
         <section className="stack" style={{ gap: 12 }} id="todo">
           <h2 className="gp-h2">A tratar agora{todo > 0 && <span className="gp-count">{todo}</span>}</h2>
           {todo === 0 && <Empty icon="✅" text="Nada pendente. Novos guias, parceiros e comissões aparecem aqui." />}
-          {openReports.map(({ r, handle, name, bio }) => (
+          {openReports.map(({ r, handle, name, bio, postText, postPhoto }) => (
             <div key={r.id} className="card ad-line">
-              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && <span className="hint">“{r.note}”</span>}</div>
+              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && <span className="hint">“{r.note}”</span>}
+                {r.postId && <span className="row" style={{ gap: 8, alignItems: "flex-start" }}>{/* eslint-disable-next-line @next/next/no-img-element */}{postPhoto && <img src={postPhoto} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8 }} />}<span className="hint">Publicação: {postText ? `“${postText.slice(0, 160)}”` : postPhoto ? "(só foto)" : "(já apagada)"}</span></span>}</div>
               <div className="row" style={{ gap: 6 }}>
                 {handle && <a className="btn ghost press" href={`/pt/u/${handle}`} target="_blank" rel="noreferrer" style={{ width: "auto" }}>Ver</a>}
                 <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="dismiss" /><button className="btn ghost press">Arquivar</button></form>
+                {r.postId && (postText !== null || postPhoto) && <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="removePost" /><button className="btn press danger">Remover publicação</button></form>}
                 <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="remove" /><button className="btn press danger">Remover perfil</button></form>
               </div>
             </div>

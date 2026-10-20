@@ -43,6 +43,7 @@ export async function savePrefsOnly(email: string, v: Partial<{ theme: string; a
 }
 export async function deleteProfile(email: string) {
   const d = await db();
+  await (await import("./posts")).purgeUser(email);
   await d.delete(schema.follows).where(or(eq(schema.follows.follower, email), eq(schema.follows.followee, email)));
   await d.delete(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, email));
 }

@@ -297,5 +297,35 @@ export const reports = pgTable("reports", {
   reason: text("reason").notNull(),
   note: text("note").notNull().default(""),
   status: text("status").notNull().default("open"),
+  postId: uuid("post_id"),                // publicação denunciada (opcional)
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("reports_status_idx").on(t.status, t.createdAt)]);
+
+/* ---------- Fase 2: publicações, histórias (24 h), gostos e comentários ---------- */
+export const posts = pgTable("posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  author: text("author").notNull(),                       // email do autor (nunca mostrado)
+  kind: text("kind").$type<"post" | "story">().notNull(),
+  text: text("text").notNull().default(""),
+  photo: text("photo"),                                   // data URL JPEG reduzida (≤ ~350 KB)
+  city: text("city"),                                     // id da cidade (feed da cidade)
+  tag: text("tag"),                                       // interesse (algoritmo)
+  bg: text("bg"),                                         // cor de fundo das histórias só com texto
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  expiresAt: timestamp("expires_at", { withTimezone: true })
+}, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);
+export type Post = typeof posts.$inferSelect;
+
+export const postLikes = pgTable("post_likes", {
+  postId: uuid("post_id").notNull(),
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("post_likes_pair_idx").on(t.postId, t.email)]);
+
+export const postComments = pgTable("post_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  postId: uuid("post_id").notNull(),
+  author: text("author").notNull(),
+  text: text("text").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("post_comments_post_idx").on(t.postId, t.createdAt)]);

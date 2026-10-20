@@ -1,0 +1,399 @@
+"use client";
+/**
+ * Rede social da carteira (fase 2): feed, histórias de 24 h, publicações com foto, gostos e comentários.
+ * Leve: as fotos vêm por URL (com cache) e só carregam quando aparecem no ecrã.
+ */
+import { useCallback, useEffect, useRef, useState } from "react";
+import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
+import { SheetX } from "@/components/WinNav";
+import { Avatar, type PublicProfile, type Social } from "./Social";
+
+export type PostItem = {
+  id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
+  at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
+};
+type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
+type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
+const BGS = ["sunset", "ocean", "forest", "night", "rose", "sand"] as const;
+const photoUrl = (id: string) => `/api/social/photo/${id}`;
+const postAct = (id: string, body: Record<string, string>) =>
+  fetch(`/api/social/post/${id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json()).catch(() => null);
+
+export function ago(iso: string, locale: Locale) {
+  const s = (Date.now() - Date.parse(iso)) / 1000;
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto", style: "short" });
+  if (s < 60) return rtf.format(0, "minute");
+  if (s < 3600) return rtf.format(-Math.floor(s / 60), "minute");
+  if (s < 86400) return rtf.format(-Math.floor(s / 3600), "hour");
+  if (s < 604800) return rtf.format(-Math.floor(s / 86400), "day");
+  return new Date(iso).toLocaleDateString(locale, { day: "numeric", month: "short" });
+}
+
+/** Foto da publicação reduzida no telemóvel: lado maior ≤ 1080 px, recorte entre 4:5 e 1,91:1, JPEG ≤ ~350 KB. */
+async function postPhoto(file: File): Promise<string> {
+  const img = await createImageBitmap(file);
+  let sw = img.width, sh = img.height;
+  if (sw / sh < 0.8) sh = sw / 0.8; else if (sw / sh > 1.91) sw = sh * 1.91;
+  const k = Math.min(1, 1080 / Math.max(sw, sh));
+  const c = document.createElement("canvas"); c.width = Math.round(sw * k); c.height = Math.round(sh * k);
+  c.getContext("2d")!.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, c.width, c.height);
+  let q = 0.82, data = c.toDataURL("image/jpeg", q);
+  while (data.length > 460_000 && q > 0.35) { q -= 0.08; data = c.toDataURL("image/jpeg", q); }
+  return data;
+}
+
+/* ---------- Histórias ---------- */
+function useSeen() {
+  const [seen, setSeen] = useState<string[]>([]);
+  useEffect(() => { try { setSeen(JSON.parse(localStorage.getItem("sgct:seen") ?? "[]")); } catch { /* ignorar */ } }, []);
+  const mark = useCallback((id: string) => setSeen((s) => {
+    if (s.includes(id)) return s;
+    const n = [...s, id].slice(-400);
+    try { localStorage.setItem("sgct:seen", JSON.stringify(n)); } catch { /* ignorar */ }
+    return n;
+  }), []);
+  return { seen, mark };
+}
+
+export function StoryRing({ p, size = 64, state, onClick, label }: { p: { photo: string | null; name: string }; size?: number; state: "new" | "seen" | "none"; onClick?: () => void; label?: string }) {
+  return (
+    <button type="button" className={`st-ring ${state}`} onClick={onClick} aria-label={label} style={{ width: size + 8, height: size + 8 }}>
+      <Avatar p={p} size={size} />
+    </button>
+  );
+}
+
+function StoriesBar({ t, me, rings, authors, onOpen, onAdd, seen }: { t: Dict; me: PublicProfile; rings: Ring[]; authors: Record<string, PublicProfile>; onOpen: (i: number) => void; onAdd: () => void; seen: string[] }) {
+  const mineIdx = rings.findIndex((r) => r.mine);
+  return (
+    <div className="st-bar" role="list">
+      <div className="st-item" role="listitem">
+        <span className="st-me">
+          <StoryRing p={me} state={mineIdx >= 0 ? "seen" : "none"} onClick={() => (mineIdx >= 0 ? onOpen(mineIdx) : onAdd())} label={t.pfYourStory} />
+          <button type="button" className="st-plus" onClick={onAdd} aria-label={t.pfAddStory}>+</button>
+        </span>
+        <small>{t.pfYourStory}</small>
+      </div>
+      {rings.map((r, i) => r.mine ? null : (
+        <div key={r.handle} className="st-item" role="listitem">
+          <StoryRing p={authors[r.handle]} state={r.items.every((x) => seen.includes(x.id)) ? "seen" : "new"} onClick={() => onOpen(i)} label={authors[r.handle]?.name} />
+          <small className="ad-ellip">{authors[r.handle]?.name.split(" ")[0]}</small>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen, onChanged }: {
+  t: Dict; locale: Locale; rings: Ring[]; authors: Record<string, PublicProfile>; start: number; onClose: () => void; onSeen?: (id: string) => void; onChanged?: () => void;
+}) {
+  const [ri, setRi] = useState(start);
+  const [ii, setIi] = useState(0);
+  const [pause, setPause] = useState(false);
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
+  const ring = rings[ri]; const item = ring?.items[ii];
+  const next = useCallback(() => {
+    if (!ring) return onClose();
+    if (ii < ring.items.length - 1) setIi(ii + 1);
+    else if (ri < rings.length - 1) { setRi(ri + 1); setIi(0); }
+    else onClose();
+  }, [ring, ii, ri, rings.length, onClose]);
+  const prev = () => { if (ii > 0) setIi(ii - 1); else if (ri > 0) { setRi(ri - 1); setIi(0); } };
+  useEffect(() => { if (item) onSeen?.(item.id); }, [item, onSeen]);
+  useEffect(() => {
+    if (!item || pause) return;
+    const id = setTimeout(next, 5500);
+    return () => clearTimeout(id);
+  }, [item, pause, next]);
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
+  });
+  if (!ring || !item) return null;
+  const a = authors[ring.handle];
+  const isLiked = liked[item.id] ?? item.liked;
+  return (
+    <div className="st-view" role="dialog" aria-modal="true" aria-label={a?.name}>
+      <div className={`st-card ${item.photo ? "" : `sg-bg-${item.bg ?? "ocean"}`}`}
+        onPointerDown={() => setPause(true)} onPointerUp={() => setPause(false)} onPointerLeave={() => setPause(false)}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {item.photo && <img src={photoUrl(item.id)} alt="" className="st-img" />}
+        {item.text && <p className={`st-text ${item.photo ? "cap" : ""}`}>{item.text}</p>}
+        <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (pause ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
+        <div className="st-head">
+          <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
+            {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{a?.name}</b><small style={{ opacity: .8 }}>{ago(item.at, locale)}</small>
+          </a>
+          <SheetX onClose={onClose} label={t.close} />
+        </div>
+        <button className="st-tap l" aria-label={t.navBack} onClick={prev} />
+        <button className="st-tap r" aria-label={t.navFwd} onClick={next} />
+        <div className="st-foot">
+          {item.mine ? (
+            <button className="st-btn" onClick={async () => { await postAct(item.id, { action: "delete" }); onChanged?.(); onClose(); }}>🗑 {t.pfDelete}</button>
+          ) : (
+            <button className={`st-btn ${isLiked ? "on" : ""}`} aria-pressed={isLiked} onClick={async () => { setLiked({ ...liked, [item.id]: !isLiked }); await postAct(item.id, { action: isLiked ? "unlike" : "like" }); }}>{isLiked ? "❤️" : "🤍"} {t.pfLike}</button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Nova publicação / história ---------- */
+export function Composer({ t, social, cities, defaultCity, startKind = "post", onClose }: {
+  t: Dict; social: Social; cities: Record<string, string>; defaultCity: string | null; startKind?: "post" | "story"; onClose: (created: "post" | "story" | null) => void;
+}) {
+  const [kind, setKind] = useState<"post" | "story">(startKind);
+  const [photo, setPhoto] = useState<string | null>(null);
+  const [text, setText] = useState("");
+  const [city, setCity] = useState<string | null>(defaultCity);
+  const [tag, setTag] = useState<Hobby | null>(null);
+  const [bg, setBg] = useState<(typeof BGS)[number]>("ocean");
+  const [busy, setBusy] = useState<"" | "photo" | "send">("");
+  const [err, setErr] = useState("");
+  const max = kind === "story" ? 200 : 500;
+  async function send() {
+    if (!photo && !text.trim()) return;
+    setBusy("send"); setErr("");
+    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, city, tag, bg: kind === "story" ? bg : null }) }).catch(() => null);
+    const j = await r?.json().catch(() => null);
+    setBusy("");
+    if (r?.ok) return onClose(kind);
+    setErr(j?.error === "too_many" ? t.pfTooMany : t.pfErr);
+  }
+  return (
+    <div className="sheet-bg" onClick={() => onClose(null)}>
+      <div className="sheet stack pf-comp" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
+        <SheetX onClose={() => onClose(null)} label={t.close} />
+        <b style={{ fontSize: 19 }}>{t.pfNew}</b>
+        <div className="sc-seg">{(["post", "story"] as const).map((k) => <button key={k} className={kind === k ? "on" : ""} onClick={() => setKind(k)}>{k === "post" ? `🖼 ${t.pfPost}` : `⏱ ${t.pfStory}`}</button>)}</div>
+        {kind === "story" && !photo ? (
+          <div className={`pf-prev-story sg-bg-${bg}`}><p>{text || t.pfStoryText}</p></div>
+        ) : photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={photo} alt="" className="pf-prev" />
+        ) : null}
+        <label className="btn ghost press pf-pick">
+          {busy === "photo" ? t.pfPhotoBusy : photo ? `🔄 ${t.pfChange}` : `📷 ${t.pfPhoto}`}
+          <input type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setBusy("photo"); try { setPhoto(await postPhoto(f)); } catch { setErr(t.pfErr); } setBusy(""); }} />
+        </label>
+        {photo && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
+        {kind === "story" && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
+        <div className="field"><textarea rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
+          <small className="hint" style={{ textAlign: "end" }}>{text.length}/{max}</small></div>
+        {kind === "post" && <>
+          <div className="field"><label htmlFor="pfc">{t.pfCity}</label>
+            <select id="pfc" value={city ?? ""} onChange={(e) => setCity(e.target.value || null)}>
+              <option value="">{t.pfNoCity}</option>
+              {Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => <option key={id} value={id}>{n}</option>)}
+            </select></div>
+          <b style={{ fontSize: 14 }}>{t.pfTag}</b>
+          <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
+        </>}
+        <p className="hint" style={{ margin: 0, fontSize: 13 }}>{social.profile?.isPrivate ? `🔒 ${t.pfWhoPriv}` : `🌍 ${t.pfWhoPub}`}{kind === "story" ? ` · ${t.pfStoryNote}` : ""}</p>
+        {err && <p className="err">{err}</p>}
+        <button className="btn press" disabled={busy !== "" || (!photo && !text.trim())} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Uma publicação ---------- */
+type Comment = { id: string; text: string; at: string; author: PublicProfile; canDelete: boolean };
+export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Dict; locale: Locale; post: PostItem; author: PublicProfile; cities: Record<string, string>; onDeleted?: () => void }) {
+  const [p, setP] = useState(post);
+  const [open, setOpen] = useState(false);
+  const [list, setList] = useState<Comment[] | null>(null);
+  const [txt, setTxt] = useState("");
+  const [menu, setMenu] = useState(false);
+  const [sure, setSure] = useState(false);
+  const [reported, setReported] = useState(false);
+  const [burst, setBurst] = useState(false);
+  useEffect(() => setP(post), [post]);
+  async function toggleLike(force?: boolean) {
+    const on = force ?? !p.liked;
+    if (on === p.liked) return;
+    setP({ ...p, liked: on, likes: p.likes + (on ? 1 : -1) });
+    const r = await postAct(p.id, { action: on ? "like" : "unlike" });
+    if (r?.likes !== undefined) setP((x) => ({ ...x, likes: r.likes, liked: on }));
+  }
+  async function loadComments() {
+    const r = await fetch(`/api/social/post/${p.id}`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    setList(r?.comments ?? []);
+    if (r) setP((x) => ({ ...x, comments: r.comments.length, canComment: r.canComment }));
+  }
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    const v = txt.trim(); if (!v) return;
+    setTxt("");
+    await postAct(p.id, { action: "comment", text: v });
+    await loadComments();
+  }
+  return (
+    <article className="card pf-card">
+      <header className="pf-head">
+        <a href={`/${locale}/u/${author.handle}`} className="pf-who"><Avatar p={author} size={36} />
+          <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}</b>
+            <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
+        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}>⋯</button>
+      </header>
+      {menu && (
+        <div className="stack sc-menu" style={{ gap: 6, margin: "0 12px 8px" }}>
+          {p.mine ? (
+            <button className={sure ? "danger" : ""} onClick={async () => { if (!sure) return setSure(true); await postAct(p.id, { action: "delete" }); onDeleted?.(); }}>🗑 {sure ? t.pfDeleteSure : t.pfDelete}</button>
+          ) : reported ? <p className="note">✓ {t.pfReported}</p> : (
+            <><b>⚑ {t.pfReport}</b>
+              <div className="ex-chips">{(Object.keys(t.scReasons) as (keyof typeof t.scReasons)[]).map((r) => <button key={r} onClick={async () => { await postAct(p.id, { action: "report", reason: r }); setReported(true); }}>{t.scReasons[r]}</button>)}</div></>
+          )}
+        </div>
+      )}
+      {p.photo && (
+        <div className="pf-photo" onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" />
+          {burst && <span className="pf-burst" aria-hidden="true">❤️</span>}
+        </div>
+      )}
+      <div className="pf-acts">
+        <button className={`pf-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={() => void toggleLike()}>{p.liked ? "❤️" : "🤍"}</button>
+        <button className="pf-act" aria-label={t.pfComments} onClick={() => { setOpen(!open); if (!list) void loadComments(); }}>💬</button>
+        {p.tag && <span className="pf-tag">{HOBBY_ICON[p.tag as Hobby]} {t.hob[p.tag as Hobby]}</span>}
+      </div>
+      <div className="pf-body">
+        {p.likes > 0 && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}</b>}
+        {p.text && <p className={p.photo ? "" : "pf-big"}><b>{author.handle}</b> {p.text}</p>}
+        {p.comments > 0 && !open && <button className="link-btn hint" onClick={() => { setOpen(true); void loadComments(); }}>{fmt(t.pfView, { n: p.comments })}</button>}
+        {open && (
+          <div className="stack pf-coms" style={{ gap: 8 }}>
+            {list === null && <small className="hint">{t.exLoading}</small>}
+            {list?.map((c) => (
+              <div key={c.id} className="pf-com">
+                <a href={`/${locale}/u/${c.author.handle}`}><Avatar p={c.author} size={26} /></a>
+                <p><b>{c.author.handle}</b> {c.text} <small className="hint">{ago(c.at, locale)}</small></p>
+                {c.canDelete && <button aria-label={t.pfDelete} title={t.pfDelete} onClick={async () => { await postAct(p.id, { action: "uncomment", commentId: c.id }); await loadComments(); }}>✕</button>}
+              </div>
+            ))}
+            {p.canComment ? (
+              <form className="pf-say" onSubmit={send}>
+                <input value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} />
+                <button className="link-btn" disabled={!txt.trim()}>{t.pfSend}</button>
+              </form>
+            ) : <small className="hint">{t.pfOnlyCircle}</small>}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* ---------- Separador Feed ---------- */
+export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Dict; locale: Locale; social: Social; cities: Record<string, string>; myCities: string[]; onEdit: () => void }) {
+  const [scope, setScope] = useState<string>("following");
+  const [page, setPage] = useState<Page | null>(null);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [rings, setRings] = useState<{ rings: Ring[]; authors: Record<string, PublicProfile> }>({ rings: [], authors: {} });
+  const [viewer, setViewer] = useState<number | null>(null);
+  const [comp, setComp] = useState<"post" | "story" | null>(null);
+  const { seen, mark } = useSeen();
+  const req = useRef(0);
+  const feedUrl = (before?: string | null) => `/api/social/feed?${scope === "following" ? "" : `city=${scope}&`}${before ? `before=${encodeURIComponent(before)}` : ""}`;
+  const load = useCallback(async () => {
+    const n = ++req.current;
+    setPage(null);
+    const r = await fetch(feedUrl(), { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    if (n === req.current) setPage(r ?? { posts: [], authors: {}, next: null });
+  }, [scope]); // eslint-disable-line react-hooks/exhaustive-deps
+  const loadStories = useCallback(() => fetch("/api/social/stories", { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => r && setRings(r)).catch(() => null), []);
+  useEffect(() => { if (social.profile) void load(); }, [load, social.profile]);
+  useEffect(() => { if (social.profile) void loadStories(); }, [loadStories, social.profile]);
+  async function more() {
+    if (!page?.next) return;
+    setLoadingMore(true);
+    const r: Page | null = await fetch(feedUrl(page.next), { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    setLoadingMore(false);
+    if (r) setPage({ posts: [...page.posts, ...r.posts.filter((x) => !page.posts.some((y) => y.id === x.id))], authors: { ...page.authors, ...r.authors }, next: r.next });
+  }
+  if (!social.profile) return (
+    <div className="card gp-empty"><span aria-hidden="true">📸</span><b>{t.scCreateTitle}</b><p className="hint" style={{ margin: 0 }}>{t.scCreateSub}</p><button className="btn press" style={{ width: "auto", marginTop: 8 }} onClick={onEdit}>{t.scCreate}</button></div>
+  );
+  const me = social.profile;
+  const chips = [...new Set([...me.cities, ...myCities])].filter((c) => cities[c]);
+  return (
+    <section className="stack pf-feed" style={{ gap: 12 }}>
+      <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />
+      <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true">📷</b></button>
+      <div className="ex-chips pf-scope">
+        <button className={scope === "following" ? "on" : ""} onClick={() => setScope("following")}>👥 {t.pfFollowing}</button>
+        {[...chips, ...(scope !== "following" && !chips.includes(scope) ? [scope] : [])].map((c) => <button key={c} className={scope === c ? "on" : ""} onClick={() => setScope(c)}>📍 {cities[c]}</button>)}
+        <select className="pf-city-pick" aria-label={t.pfOtherCity} value="" onChange={(e) => e.target.value && setScope(e.target.value)}>
+          <option value="">＋ {t.pfOtherCity}</option>
+          {Object.entries(cities).filter(([id]) => !chips.includes(id)).sort((x, y) => x[1].localeCompare(y[1])).map(([id, n]) => <option key={id} value={id}>{n}</option>)}
+        </select>
+      </div>
+      {page === null && <div className="pf-skel card" aria-hidden="true" />}
+      {page && page.posts.length === 0 && <div className="card gp-empty"><span aria-hidden="true">🌅</span><b>{t.pfEmpty}</b><p className="hint" style={{ margin: 0 }}>{t.pfEmptyF}</p></div>}
+      {page?.posts.map((p) => page.authors[p.handle] && (
+        <PostCard key={p.id} t={t} locale={locale} post={p} author={page.authors[p.handle]} cities={cities}
+          onDeleted={() => setPage({ ...page, posts: page.posts.filter((x) => x.id !== p.id) })} />
+      ))}
+      {page?.next && <button className="btn ghost press" disabled={loadingMore} onClick={() => void more()}>{loadingMore ? "…" : t.pfMore}</button>}
+      {viewer !== null && <StoryViewer t={t} locale={locale} rings={rings.rings} authors={rings.authors} start={viewer} onSeen={mark} onChanged={loadStories} onClose={() => setViewer(null)} />}
+      {comp && <Composer t={t} social={social} cities={cities} defaultCity={scope !== "following" ? scope : me.cities[0] ?? null} startKind={comp}
+        onClose={(c) => { setComp(null); if (c === "post") void load(); if (c === "story") void loadStories(); }} />}
+    </section>
+  );
+}
+
+/* ---------- Perfil de outro viajante: histórias e grelha de publicações ---------- */
+export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; locale: Locale; handle: string; cities: Record<string, string>; author: PublicProfile }) {
+  const [page, setPage] = useState<Page | null>(null);
+  const [open, setOpen] = useState<PostItem | null>(null);
+  useEffect(() => {
+    fetch(`/api/social/u/${encodeURIComponent(handle)}/posts`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => setPage(r ?? { posts: [], authors: {}, next: null })).catch(() => setPage({ posts: [], authors: {}, next: null }));
+  }, [handle]);
+  async function more() {
+    if (!page?.next) return;
+    const r: Page | null = await fetch(`/api/social/u/${encodeURIComponent(handle)}/posts?before=${encodeURIComponent(page.next)}`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    if (r) setPage({ posts: [...page.posts, ...r.posts], authors: { ...page.authors, ...r.authors }, next: r.next });
+  }
+  return (
+    <section className="stack" style={{ gap: 10 }}>
+      <h2 className="gp-h2">📸 {t.pfPostsT} {page && <small className="hint num">· {page.posts.length}{page.next ? "+" : ""}</small>}</h2>
+      {page === null && <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>}
+      {page && page.posts.length === 0 && <p className="hint">{t.pfNoPosts}</p>}
+      {page && page.posts.length > 0 && <div className="pf-grid">{page.posts.map((p) => (
+        <button key={p.id} className="pf-tile" onClick={() => setOpen(p)} aria-label={p.text.slice(0, 60) || t.pfPost}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {p.photo ? <img src={photoUrl(p.id)} alt="" loading="lazy" /> : <span className="pf-tile-t">{p.text}</span>}
+          {p.likes > 0 && <small className="pf-tile-l">❤️ {p.likes}</small>}
+        </button>
+      ))}</div>}
+      {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}
+      {open && (
+        <div className="sheet-bg" onClick={() => setOpen(null)}>
+          <div className="sheet pf-one" onClick={(e) => e.stopPropagation()}>
+            <SheetX onClose={() => setOpen(null)} label={t.close} />
+            <PostCard t={t} locale={locale} post={open} author={page?.authors[open.handle] ?? author} cities={cities}
+              onDeleted={() => { setPage(page ? { ...page, posts: page.posts.filter((x) => x.id !== open.id) } : page); setOpen(null); }} />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Anel de histórias no perfil de outro viajante (abre o visualizador). */
+export function ProfileStories({ t, locale, handle, author, size = 84 }: { t: Dict; locale: Locale; handle: string; author: PublicProfile; size?: number }) {
+  const [r, setR] = useState<{ rings: Ring[]; authors: Record<string, PublicProfile> } | null>(null);
+  const [open, setOpen] = useState(false);
+  const { seen, mark } = useSeen();
+  useEffect(() => { fetch(`/api/social/stories?handle=${encodeURIComponent(handle)}`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then(setR).catch(() => null); }, [handle]);
+  const ring = r?.rings[0];
+  if (!ring) return <Avatar p={author} size={size} />;
+  return <>
+    <StoryRing p={author} size={size} state={ring.items.every((x) => seen.includes(x.id)) ? "seen" : "new"} onClick={() => setOpen(true)} label={author.name} />
+    {open && r && <StoryViewer t={t} locale={locale} rings={r.rings} authors={r.authors} start={0} onSeen={mark} onClose={() => setOpen(false)} />}
+  </>;
+}

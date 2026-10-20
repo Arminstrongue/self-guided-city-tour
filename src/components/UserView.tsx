@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { flag } from "@/data/countries";
 import { Avatar, FollowBtn, act, type PublicProfile } from "./Social";
+import { ProfilePosts, ProfileStories } from "./Feed";
 
 type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[] };
 
-export function UserView({ t, locale, handle }: { t: Dict; locale: Locale; handle: string }) {
+export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Locale; handle: string; cities: Record<string, string> }) {
   const [v, setV] = useState<View | null | "none">(null);
   const [menu, setMenu] = useState(false);
   const [reported, setReported] = useState(false);
@@ -18,11 +19,10 @@ export function UserView({ t, locale, handle }: { t: Dict; locale: Locale; handl
   const p = v.profile;
   return (
     <div className="stack" style={{ gap: 16, marginTop: 8 }}>
-      <a className="link-btn" href={`/${locale}/wallet#people`}>← {t.wallet}</a>
       <section className="card stack sc-prof" style={{ gap: 12 }}>
         <div className="row-between" style={{ alignItems: "flex-start" }}>
           <div className="row" style={{ gap: 14, flexWrap: "nowrap", minWidth: 0 }}>
-            <Avatar p={p} size={84} />
+            {v.canSee ? <ProfileStories t={t} locale={locale} handle={p.handle} author={p} /> : <Avatar p={p} size={84} />}
             <div className="stack" style={{ gap: 2, minWidth: 0 }}>
               <b style={{ fontSize: 20 }} className="ad-ellip">{p.name}</b>
               <span className="hint">@{p.handle}{p.isPrivate ? " 🔒" : ""}</span>
@@ -48,10 +48,13 @@ export function UserView({ t, locale, handle }: { t: Dict; locale: Locale; handl
       {!v.canSee ? (
         <div className="card gp-empty"><span aria-hidden="true">🔒</span><b>{t.scPrivateAcc}</b><p className="hint" style={{ margin: 0 }}>{t.scPrivateAccSub}</p></div>
       ) : (
+        <>
+        <ProfilePosts t={t} locale={locale} handle={p.handle} cities={cities} author={p} />
         <section className="stack" style={{ gap: 10 }}>
           <h2 className="gp-h2">🌍 {t.scVisited} <small className="hint num">· {v.visited.length}</small></h2>
           {v.visited.length ? <div className="vs-grid">{v.visited.map((x) => <span key={`${x.name}-${x.country}`} className="vs-chip"><span aria-hidden="true">{flag(x.country)}</span><b>{x.name}</b></span>)}</div> : <p className="hint">{t.scNone}</p>}
         </section>
+        </>
       )}
     </div>
   );
