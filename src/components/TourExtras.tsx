@@ -170,7 +170,7 @@ export function WeatherCard({ cityId, t }: { cityId: string; t: Dict }) {
   const temps = next.map((h) => h.temp);
   return (
     <div className="weather">
-      <span className="num"><b>{iconFor(w.now.code)} {fmt(t.wNow, { t: w.now.temp })}</b> · {fmt(t.wRange, { min: Math.min(...temps), max: Math.max(...temps) })}</span>
+      <span className="num"><b>{iconFor(w.now.code)} {fmt(t.wNow, { t: w.now.temp })}</b>{Math.min(...temps) !== Math.max(...temps) ? <> · {fmt(t.wRange, { min: Math.min(...temps), max: Math.max(...temps) })}</> : null}</span>
       <span className="hint">{wet ? fmt(t.wRain, { h: wet.t.slice(11, 16) }) : t.wDry}</span>
     </div>
   );

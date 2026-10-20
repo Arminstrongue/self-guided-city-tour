@@ -16,6 +16,7 @@ import { flightApiEnabled } from "@/lib/flight";
 import { MUSEUMS } from "@/data/museums";
 import { biosFor } from "@/data/bios";
 import { isFreeCity } from "@/lib/pricing";
+import { exploreProps } from "@/lib/explore-props";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
         flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={await fxContext()}
         flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()}
         museums={MUSEUMS[city.id] ?? []} plan={access ? access.plan ?? access.scope : "free"}
+        explore={exploreProps(city, params.locale)}
         bios={biosFor(city.id, params.locale)} enBios={Object.fromEntries(Object.entries(biosFor(city.id, "en")).map(([k, v]) => [k, v.text]))}
       />
     </main>

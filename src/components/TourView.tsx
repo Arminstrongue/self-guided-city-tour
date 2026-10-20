@@ -17,6 +17,7 @@ import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./Safety";
 import { RatingCard } from "./Rating";
+import { Explore } from "./Explore";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/cities";
 
@@ -24,6 +25,7 @@ type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
   flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
+  explore?: Omit<React.ComponentProps<typeof Explore>, "cityId" | "cityName" | "locale" | "t">;
   bios: Record<string, { text: string; lang: string }>; enBios: Record<string, string>;
 };
 
@@ -36,14 +38,14 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios }: Props) {
+export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore }: Props) {
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
   const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
   const [open, setOpen] = useState<string>(city.stops[0].id);
-  const [tab, setTab] = useState<"route" | "map" | "cost" | "museums" | "guide">("route");
+  const [tab, setTab] = useState<"route" | "live" | "map" | "cost" | "museums" | "guide">("route");
   const [focus, setFocus] = useState<Focus | null>(null);
   const showOnMap = (f: Focus) => { setFocus(f); setTab("map"); window.scrollTo({ top: 0 }); };
   const geo = useGeo();
@@ -159,8 +161,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
-          {(["route", "map", "cost", "museums", "guide"] as const).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map") setFocus(null); }}>{k === "route" ? t.route : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
+          {(["route", ...(explore ? ["live" as const] : []), "map", "cost", "museums", "guide"] as const).map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
         </div>
       </header>
@@ -193,6 +195,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         )}
 
         <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
+        {tab === "live" && explore && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
         {tab === "route" && (

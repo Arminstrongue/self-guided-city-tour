@@ -9,6 +9,7 @@ import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
 import { WHEN_ICON, type When } from "@/data/moments";
 import { saveMemory } from "@/lib/diary";
 
+export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string };
 type Pos = { lat: number; lng: number };
 const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -47,12 +48,12 @@ async function shrink(file: File): Promise<string> {
   } finally { URL.revokeObjectURL(url); }
 }
 
-export function Explore({ cityId, cityName, locale, t, moments, agenda, center, tz, gmapsKey }: {
-  cityId: string; cityName: string; locale: Locale; t: Dict; moments: MomentView[]; agenda?: string; center: Pos; tz?: string; gmapsKey?: string;
+export function Explore({ cityId, cityName, locale, t, moments, agenda, center, tz, gmapsKey, customs = [], bare = false }: {
+  cityId: string; cityName: string; locale: Locale; t: Dict; moments: MomentView[]; agenda?: string; center: Pos; tz?: string; gmapsKey?: string; customs?: CustomView[]; bare?: boolean;
 }) {
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [picking, setPicking] = useState(false);
-  const [tab, setTab] = useState<"moments" | "places" | "events">("moments");
+  const [tab, setTab] = useState<"moments" | "places" | "events" | "customs">("moments");
   const [data, setData] = useState<{ places: Place[] | null; events: CityEvent[] | null; eventsEnabled: boolean; source?: "google" | "osm" } | null>(null);
   const [sv, setSv] = useState<Place | null>(null);
   const [failed, setFailed] = useState(false);
@@ -93,7 +94,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
 
   return (
     <section className="sec ex" id="explore">
-      <div className="sec-h reveal"><div><h2>{fmt(t.exTitle, { city: cityName })}</h2><p>{t.exSub}</p></div></div>
+      {!bare && <div className="sec-h reveal"><div><h2>{fmt(t.exTitle, { city: cityName })}</h2><p>{t.exSub}</p></div></div>}
 
       <div className={`card ex-hob ${picking ? "open" : ""}`}>
         <div className="row-between">
@@ -109,9 +110,9 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
       </div>
 
       <div className="ex-tabs" role="tablist">
-        {(["moments", "places", "events"] as const).map((k) => (
+        {(["moments", "places", "events", ...(customs.length ? ["customs" as const] : [])] as const).map((k) => (
           <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
-            {k === "moments" ? `✨ ${t.exTabMoments}` : k === "places" ? `🎡 ${t.exTabPlaces}` : `🎟 ${t.exTabEvents}`}
+            {k === "moments" ? `✨ ${t.exTabMoments}` : k === "places" ? `🎡 ${t.exTabPlaces}` : k === "events" ? `🎟 ${t.exTabEvents}` : `🤝 ${t.exTabCustoms}`}
           </button>
         ))}
       </div>
@@ -199,6 +200,19 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
       )}
 
       {sv && gmapsKey && <StreetView apiKey={gmapsKey} place={sv} t={t} onClose={() => setSv(null)} />}
+      {tab === "customs" && (
+        <div className="stack" style={{ gap: 14 }}>
+          {[true, false].map((comm) => customs.some((x) => x.community === comm) && (
+            <div key={String(comm)} className="stack" style={{ gap: 8 }}>
+              <b className="ex-day">{comm ? fmt(t.exCommunities, { city: cityName }) : t.exCustoms}</b>
+              <div className="ex-moments">{customs.filter((x) => x.community === comm).map((x) => (
+                <article key={x.title} className="card ex-m"><div className="ex-m-top"><span className="ex-ic" aria-hidden="true">{x.icon}</span></div><b className="ex-m-t">{x.title}</b><p className="hint" style={{ margin: 0 }}>{x.text}</p></article>
+              ))}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {save && <SaveMemory t={t} cityId={cityId} cityName={cityName} item={save} onClose={(ok) => { setSave(null); if (ok) { setToast(t.exSaved); setTimeout(() => setToast(""), 2500); } }} />}
       {toast && <div className="ex-toast" role="status">{toast} <a href={`/${locale}/diary`}>{t.diary} →</a></div>}
     </section>

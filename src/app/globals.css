@@ -706,8 +706,8 @@ html,body{overflow-x:clip}
 .ex-chips.scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .ex-chips button{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .ex-chips button.on{background:var(--cobalt);border-color:var(--cobalt);color:#fff}
-.ex-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
-.ex-tabs button{border:0;background:transparent;border-radius:10px;padding:10px 4px;font:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer}
+.ex-tabs{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.ex-tabs button{flex:1 0 auto;white-space:nowrap;border:0;background:transparent;border-radius:10px;padding:10px 4px;font:inherit;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer}
 .ex-tabs button.on{background:var(--cobalt-soft);color:var(--cobalt)}
 .ex-moments{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
 .ex-m{display:flex;flex-direction:column;gap:8px;padding:16px}
