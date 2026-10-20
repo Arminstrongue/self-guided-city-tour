@@ -9,10 +9,13 @@ import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile, type Social } from "./Social";
 import { StoryReply } from "./Chat";
+import { ReelsViewer, VideoThumb, posterUrl } from "./Reels";
+import { useLive, type LiveEvent } from "@/lib/live-client";
 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
+  video?: "processing" | "ready" | "failed" | null; duration?: number | null;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
@@ -149,9 +152,11 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
 
 /* ---------- Nova publicação / história ---------- */
 export function Composer({ t, social, cities, defaultCity, startKind = "post", onClose }: {
-  t: Dict; social: Social; cities: Record<string, string>; defaultCity: string | null; startKind?: "post" | "story"; onClose: (created: "post" | "story" | null) => void;
+  t: Dict; social: Social; cities: Record<string, string>; defaultCity: string | null; startKind?: "post" | "story" | "video"; onClose: (created: "post" | "story" | "video" | null) => void;
 }) {
-  const [kind, setKind] = useState<"post" | "story">(startKind);
+  const [kind, setKind] = useState<"post" | "story" | "video">(startKind);
+  const [video, setVideo] = useState<{ file: File; url: string; secs: number } | null>(null);
+  const [pct, setPct] = useState<number | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [text, setText] = useState("");
   const [city, setCity] = useState<string | null>(defaultCity);
@@ -160,7 +165,33 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   const [busy, setBusy] = useState<"" | "photo" | "send">("");
   const [err, setErr] = useState("");
   const max = kind === "story" ? 200 : 500;
+  useEffect(() => () => { if (video) URL.revokeObjectURL(video.url); }, [video]);
+  async function pickVideo(f: File) {
+    setErr("");
+    if (f.size > 80 * 1024 * 1024) return setErr(t.rlTooBig);
+    const url = URL.createObjectURL(f);
+    const secs = await new Promise<number>((res) => { const v = document.createElement("video"); v.preload = "metadata"; v.onloadedmetadata = () => res(v.duration || 0); v.onerror = () => res(0); v.src = url; });
+    setVideo({ file: f, url, secs });
+  }
+  function sendVideo() {
+    if (!video) return;
+    setBusy("send"); setErr(""); setPct(0);
+    const q = new URLSearchParams({ text: text.slice(0, 500), ...(city ? { city } : {}), ...(tag ? { tag } : {}) });
+    const x = new XMLHttpRequest();
+    x.open("POST", `/api/social/videos?${q}`);
+    x.setRequestHeader("Content-Type", video.file.type || "video/mp4");
+    x.upload.onprogress = (e) => { if (e.lengthComputable) setPct(Math.round((e.loaded / e.total) * 100)); };
+    x.onload = () => {
+      setBusy(""); setPct(null);
+      if (x.status >= 200 && x.status < 300) return onClose("video");
+      let j: { error?: string } = {}; try { j = JSON.parse(x.responseText); } catch { /* ignorar */ }
+      setErr(j.error === "too_big" || x.status === 413 ? t.rlTooBig : j.error === "busy" || x.status === 429 ? t.rlBusy : t.pfErr);
+    };
+    x.onerror = () => { setBusy(""); setPct(null); setErr(t.pfErr); };
+    x.send(video.file);
+  }
   async function send() {
+    if (kind === "video") return sendVideo();
     if (!photo && !text.trim()) return;
     setBusy("send"); setErr("");
     const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, city, tag, bg: kind === "story" ? bg : null }) }).catch(() => null);
@@ -174,22 +205,30 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
       <div className="sheet stack pf-comp" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={() => onClose(null)} label={t.close} />
         <b style={{ fontSize: 19 }}>{t.pfNew}</b>
-        <div className="sc-seg">{(["post", "story"] as const).map((k) => <button key={k} className={kind === k ? "on" : ""} onClick={() => setKind(k)}>{k === "post" ? `🖼 ${t.pfPost}` : `⏱ ${t.pfStory}`}</button>)}</div>
-        {kind === "story" && !photo ? (
+        <div className="sc-seg pf-seg3">{(["post", "video", "story"] as const).map((k) => <button key={k} className={kind === k ? "on" : ""} onClick={() => setKind(k)}>{k === "post" ? `🖼 ${t.pfPost}` : k === "video" ? `🎬 ${t.rlVideo}` : `⏱ ${t.pfStory}`}</button>)}</div>
+        {kind === "video" ? (<>
+          {video ? <video src={video.url} className="pf-prev pf-prev-v" controls playsInline muted /> : null}
+          <label className="btn ghost press pf-pick">
+            {video ? `🔄 ${t.rlChange}` : `🎬 ${t.rlPick}`}
+            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void pickVideo(f); }} />
+          </label>
+          <small className="hint">{video && video.secs > 60 ? `✂️ ${t.rlTrim}` : t.rlRules}</small>
+          {pct !== null && <div className="pf-up"><i style={{ width: `${pct}%` }} /><span>{fmt(t.rlUploading, { n: pct })}</span></div>}
+        </>) : kind === "story" && !photo ? (
           <div className={`pf-prev-story sg-bg-${bg}`}><p>{text || t.pfStoryText}</p></div>
         ) : photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photo} alt="" className="pf-prev" />
         ) : null}
-        <label className="btn ghost press pf-pick">
+        {kind !== "video" && <label className="btn ghost press pf-pick">
           {busy === "photo" ? t.pfPhotoBusy : photo ? `🔄 ${t.pfChange}` : `📷 ${t.pfPhoto}`}
           <input type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setBusy("photo"); try { setPhoto(await postPhoto(f)); } catch { setErr(t.pfErr); } setBusy(""); }} />
-        </label>
-        {photo && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
+        </label>}
+        {photo && kind !== "video" && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
         {kind === "story" && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
         <div className="field"><textarea rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
           <small className="hint" style={{ textAlign: "end" }}>{text.length}/{max}</small></div>
-        {kind === "post" && <>
+        {kind !== "story" && <>
           <div className="field"><label htmlFor="pfc">{t.pfCity}</label>
             <select id="pfc" value={city ?? ""} onChange={(e) => setCity(e.target.value || null)}>
               <option value="">{t.pfNoCity}</option>
@@ -200,7 +239,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
         </>}
         <p className="hint" style={{ margin: 0, fontSize: 13 }}>{social.profile?.isPrivate ? `🔒 ${t.pfWhoPriv}` : `🌍 ${t.pfWhoPub}`}{kind === "story" ? ` · ${t.pfStoryNote}` : ""}</p>
         {err && <p className="err">{err}</p>}
-        <button className="btn press" disabled={busy !== "" || (!photo && !text.trim())} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
+        <button className="btn press" disabled={busy !== "" || (kind === "video" ? !video : !photo && !text.trim())} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
       </div>
     </div>
   );
@@ -218,6 +257,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const [reported, setReported] = useState(false);
   const [burst, setBurst] = useState(false);
   useEffect(() => setP(post), [post]);
+  const [reel, setReel] = useState(false);
+  useLive(useCallback((ev: LiveEvent) => { if (ev.t === "video" && ev.id === post.id) setP((x) => ({ ...x, video: ev.status })); }, [post.id]));
   async function toggleLike(force?: boolean) {
     const on = force ?? !p.liked;
     if (on === p.liked) return;
@@ -255,6 +296,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
           )}
         </div>
       )}
+      {p.video && <VideoThumb t={t} p={p} onOpen={() => setReel(true)} />}
+      {reel && <ReelsViewer t={t} locale={locale} cities={cities} initial={{ posts: [p], authors: { [author.handle]: author }, next: new Date().toISOString() }} onClose={() => setReel(false)} />}
       {p.photo && (
         <div className="pf-photo" onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -347,7 +390,7 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
       {page?.next && <button className="btn ghost press" disabled={loadingMore} onClick={() => void more()}>{loadingMore ? "…" : t.pfMore}</button>}
       {viewer !== null && <StoryViewer t={t} locale={locale} rings={rings.rings} authors={rings.authors} start={viewer} onSeen={mark} onChanged={loadStories} onClose={() => setViewer(null)} />}
       {comp && <Composer t={t} social={social} cities={cities} defaultCity={scope !== "following" ? scope : me.cities[0] ?? null} startKind={comp}
-        onClose={(c) => { setComp(null); if (c === "post") void load(); if (c === "story") void loadStories(); }} />}
+        onClose={(c) => { setComp(null); if (c === "post" || c === "video") void load(); if (c === "story") void loadStories(); }} />}
     </section>
   );
 }
@@ -356,6 +399,7 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
 export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; locale: Locale; handle: string; cities: Record<string, string>; author: PublicProfile }) {
   const [page, setPage] = useState<Page | null>(null);
   const [open, setOpen] = useState<PostItem | null>(null);
+  const [reel, setReel] = useState<string | null>(null);
   useEffect(() => {
     fetch(`/api/social/u/${encodeURIComponent(handle)}/posts`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => setPage(r ?? { posts: [], authors: {}, next: null })).catch(() => setPage({ posts: [], authors: {}, next: null }));
   }, [handle]);
@@ -370,13 +414,16 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
       {page === null && <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>}
       {page && page.posts.length === 0 && <p className="hint">{t.pfNoPosts}</p>}
       {page && page.posts.length > 0 && <div className="pf-grid">{page.posts.map((p) => (
-        <button key={p.id} className="pf-tile" onClick={() => setOpen(p)} aria-label={p.text.slice(0, 60) || t.pfPost}>
+        <button key={p.id} className="pf-tile" onClick={() => (p.video === "ready" ? setReel(p.id) : setOpen(p))} aria-label={p.text.slice(0, 60) || t.pfPost}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {p.photo ? <img src={photoUrl(p.id)} alt="" loading="lazy" /> : <span className="pf-tile-t">{p.text}</span>}
+          {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true">▶</span></>
+            : p.video ? <span className="pf-tile-t">{p.video === "processing" ? "⏳" : "⚠️"}</span>
+            : p.photo ? <img src={photoUrl(p.id)} alt="" loading="lazy" /> : <span className="pf-tile-t">{p.text}</span>}
           {p.likes > 0 && <small className="pf-tile-l">❤️ {p.likes}</small>}
         </button>
       ))}</div>}
       {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}
+      {reel && <ReelsViewer t={t} locale={locale} cities={cities} handle={handle} startId={reel} onClose={() => setReel(null)} />}
       {open && (
         <div className="sheet-bg" onClick={() => setOpen(null)}>
           <div className="sheet pf-one" onClick={(e) => e.stopPropagation()}>

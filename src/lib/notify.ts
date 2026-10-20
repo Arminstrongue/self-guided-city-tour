@@ -78,7 +78,7 @@ export const notifText = (type: string, name: string, x: string, lang = "en") =>
  * - Gostos repetidos do mesmo viajante na mesma publicação não duplicam.
  */
 export async function notify(to: string, actor: string, type: schema.NotificationType | "message", o: { postId?: string | null; text?: string; storyLike?: boolean; lang?: string } = {}) {
-  if (to === actor) return;
+  if (to === actor && type !== "video_ready") return;
   const d = await db();
   const blocked = await d.select({ x: schema.blocks.blocker }).from(schema.blocks)
     .where(sql`(${schema.blocks.blocker} = ${to} and ${schema.blocks.blocked} = ${actor}) or (${schema.blocks.blocker} = ${actor} and ${schema.blocks.blocked} = ${to})`).limit(1);

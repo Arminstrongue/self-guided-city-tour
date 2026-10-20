@@ -150,7 +150,7 @@ export default async function Admin({ params, searchParams }: { params: { locale
   const pendingMerchants = merchants.filter((m) => m.status === "pending");
   const pendingAgents = agents.filter((a) => a.status === "pending");
   const openReq = gBookings.reduce((a, b) => a + b.open, 0);
-  const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio, postText: schema.posts.text, postPhoto: schema.posts.photo })
+  const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio, postText: schema.posts.text, postPhoto: schema.posts.photo, postVideo: schema.posts.video })
     .from(schema.reports).leftJoin(schema.travellerProfiles, sql`${schema.travellerProfiles.email} = ${schema.reports.target}`)
     .leftJoin(schema.posts, sql`${schema.posts.id} = ${schema.reports.postId}`)
     .where(sql`${schema.reports.status} = 'open'`).orderBy(sql`${schema.reports.createdAt} desc`).limit(50);
@@ -208,12 +208,12 @@ export default async function Admin({ params, searchParams }: { params: { locale
         <section className="stack" style={{ gap: 12 }} id="todo">
           <h2 className="gp-h2">A tratar agora{todo > 0 && <span className="gp-count">{todo}</span>}</h2>
           {todo === 0 && <Empty icon="✅" text="Nada pendente. Novos guias, parceiros e comissões aparecem aqui." />}
-          {openReports.map(({ r, handle, name, bio, postText, postPhoto }) => (
+          {openReports.map(({ r, handle, name, bio, postText, postPhoto, postVideo }) => (
             <div key={r.id} className="card ad-line">
               <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && r.note !== "chat" && <span className="hint">“{r.note}”</span>}
                 {chatLogs.get(r.id) && <details><summary className="hint">Conversa denunciada ({chatLogs.get(r.id)!.length} mensagens)</summary>
                   <div className="stack" style={{ gap: 4, marginTop: 6, fontSize: 13 }}>{chatLogs.get(r.id)!.map((m, i) => <span key={i}><b>{m.mine ? (handle ? `@${handle}` : "denunciado") : "quem denunciou"}:</b> {m.text}</span>)}</div></details>}
-                {r.postId && <span className="row" style={{ gap: 8, alignItems: "flex-start" }}>{/* eslint-disable-next-line @next/next/no-img-element */}{postPhoto && <img src={postPhoto} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8 }} />}<span className="hint">Publicação: {postText ? `“${postText.slice(0, 160)}”` : postPhoto ? "(só foto)" : "(já apagada)"}</span></span>}</div>
+                {r.postId && <span className="row" style={{ gap: 8, alignItems: "flex-start" }}>{/* eslint-disable-next-line @next/next/no-img-element */}{postPhoto && <img src={postPhoto} alt="" style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8 }} />}<span className="hint">{postVideo ? "🎬 Vídeo" : "Publicação"}: {postText ? `“${postText.slice(0, 160)}”` : postPhoto ? "(só foto)" : "(já apagada)"}</span></span>}</div>
               <div className="row" style={{ gap: 6 }}>
                 {handle && <a className="btn ghost press" href={`/pt/u/${handle}`} target="_blank" rel="noreferrer" style={{ width: "auto" }}>Ver</a>}
                 <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="dismiss" /><button className="btn ghost press">Arquivar</button></form>

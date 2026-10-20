@@ -29,6 +29,9 @@ services:
     environment:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct
       DB_POOL_MAX: ${DB_POOL_MAX:-10}
+      MEDIA_DIR: /data/media
+    # Vídeos enviados (partilhados por todas as réplicas da app).
+    volumes: [media:/data/media]
     # Mais capacidade: docker compose up -d --scale app=3 (o Caddy distribui entre as réplicas).
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health || exit 1"]
@@ -51,3 +54,4 @@ services:
 volumes:
   pgdata:
   caddy_data:
+  media:

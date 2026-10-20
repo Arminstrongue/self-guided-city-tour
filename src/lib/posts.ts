@@ -19,6 +19,7 @@ export const STORY_BGS = ["sunset", "ocean", "forest", "night", "rose", "sand"] 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
+  video: "processing" | "ready" | "failed" | null; duration: number | null;
 };
 export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -65,7 +66,8 @@ async function hydrate(me: string, rows: schema.Post[], c: Circle, more = false)
       id: r.id, kind: r.kind, handle: a.handle, text: r.text, photo: Boolean(r.photo), city: r.city, tag: r.tag, bg: r.bg,
       at: r.createdAt.toISOString(), expiresAt: r.expiresAt?.toISOString() ?? null,
       likes: likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
-      mine: r.author === me, canComment: canComment(me, r.author, c)
+      mine: r.author === me, canComment: canComment(me, r.author, c),
+      video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null
     });
   }
   return { posts, authors, next: more && rows.length ? rows[rows.length - 1].createdAt.toISOString() : null };
@@ -98,6 +100,8 @@ export async function createPost(me: string, v: NewPost) {
   return { id: r.id };
 }
 
+/** Vídeos ainda em conversão (ou falhados) só aparecem ao autor. */
+const videoOk = (me: string) => or(isNull(schema.posts.video), eq(schema.posts.videoStatus, "ready"), eq(schema.posts.author, me));
 const before = (b?: string | null) => (b && !Number.isNaN(Date.parse(b)) ? lt(schema.posts.createdAt, new Date(b)) : undefined);
 
 /** Feed "A seguir": as minhas publicações e as de quem sigo, das mais recentes para as mais antigas. */
@@ -106,7 +110,7 @@ export async function feedFollowing(me: string, cursor?: string | null): Promise
   const authors = [me, ...c.following].filter((e) => !c.blocked.has(e));
   const d = await db();
   const rows = await d.select().from(schema.posts)
-    .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), before(cursor)))
+    .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1);
   return hydrate(me, rows.slice(0, PAGE), c, rows.length > PAGE);
 }
@@ -123,7 +127,7 @@ export async function feedCity(me: string, city: string, cursor?: string | null)
   const visible = or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]));
   const rows = (await d.select({ p: schema.posts }).from(schema.posts)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
-    .where(and(eq(schema.posts.kind, "post"), eq(schema.posts.city, city), visible, before(cursor)))
+    .where(and(eq(schema.posts.kind, "post"), eq(schema.posts.city, city), visible, videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1)).map((r) => r.p);
   const all = rows.slice(0, PAGE * 2);
   const ok = (r: schema.Post) => !c.blocked.has(r.author) && !(r.tag && less.has(r.tag) && r.author !== me && !c.following.has(r.author));
@@ -143,7 +147,7 @@ export async function userPosts(me: string, handle: string, cursor?: string | nu
   if (!a) return null;
   const c = await circle(me);
   if (!canSee(me, a, c)) return null;
-  const rows = await d.select().from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), before(cursor)))
+  const rows = await d.select().from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
   return hydrate(me, rows.slice(0, PAGE * 2), c, rows.length > PAGE * 2);
 }
@@ -179,7 +183,55 @@ async function visiblePost(me: string, id: string) {
   if (!r) return null;
   const c = await circle(me);
   if (!canSee(me, r.a, c)) return null;
+  if (r.p.video && r.p.videoStatus !== "ready" && r.p.author !== me) return null;
   return { post: r.p, author: r.a, circle: c };
+}
+
+/** Ficheiro de vídeo de uma publicação, se o viajante a puder ver. */
+export async function videoOf(me: string, id: string) {
+  const v = await visiblePost(me, id);
+  return v?.post.video && v.post.videoStatus === "ready" ? v.post.id : null;
+}
+
+/** Nova publicação em vídeo: fica "a processar" até o ffmpeg terminar. */
+export async function createVideoPost(me: string, v: { text: string; city: string | null; tag: string | null }) {
+  if (!(await myProfile(me))) return { error: "no_profile" as const };
+  const d = await db();
+  const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts)
+    .where(and(eq(schema.posts.author, me), eq(schema.posts.videoStatus, "processing")));
+  if (n >= 3) return { error: "busy" as const };
+  const [r] = await d.insert(schema.posts).values({ author: me, kind: "post", text: v.text.trim(), city: v.city, tag: v.tag, video: "pending", videoStatus: "processing" }).returning({ id: schema.posts.id });
+  await d.update(schema.posts).set({ video: r.id }).where(eq(schema.posts.id, r.id));
+  return { id: r.id };
+}
+
+/**
+ * Feed de vídeos (estilo TikTok).
+ * "following": de quem sigo (e meus). "foryou": públicos + quem sigo, sem os temas "ver menos",
+ * com os temas preferidos e os mais gostados primeiro dentro de cada página.
+ */
+export async function feedVideos(me: string, scope: "foryou" | "following", cursor?: string | null, onlyHandle?: string): Promise<FeedPage> {
+  const c = await circle(me);
+  const d = await db();
+  const prof = await myProfile(me);
+  const less = new Set(prof?.lessOf ?? []);
+  const [prefs] = await d.select({ h: schema.travellerPrefs.hobbies }).from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, me)).limit(1);
+  const more = new Set(prefs?.h ?? []);
+  const conds = [eq(schema.posts.kind, "post"), eq(schema.posts.videoStatus, "ready"), before(cursor)];
+  if (onlyHandle) conds.push(eq(schema.travellerProfiles.handle, onlyHandle.toLowerCase()));
+  if (scope === "following" || onlyHandle) conds.push(or(inArray(schema.posts.author, [me, ...c.following]), onlyHandle ? eq(schema.travellerProfiles.isPrivate, false) : undefined)!);
+  else conds.push(or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]))!);
+  const rows = (await d.select({ p: schema.posts }).from(schema.posts)
+    .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
+    .where(and(...conds)).orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1)).map((x) => x.p);
+  const page = rows.slice(0, PAGE);
+  const shown = page.filter((r) => !c.blocked.has(r.author) && !(scope === "foryou" && !onlyHandle && r.tag && less.has(r.tag) && !c.following.has(r.author)));
+  const out = await hydrate(me, shown, c);
+  if (scope === "foryou" && !onlyHandle) {
+    const score = (p: PostItem) => (p.tag && more.has(p.tag) ? 3 : 0) + Math.log2(1 + p.likes) - (Date.now() - Date.parse(p.at)) / 86_400_000 / 3;
+    out.posts.sort((a, b) => score(b) - score(a));
+  }
+  return { ...out, next: rows.length > PAGE ? page[page.length - 1].createdAt.toISOString() : null };
 }
 
 export async function getPost(me: string, id: string) {
@@ -248,8 +300,9 @@ export async function deleteComment(me: string, commentId: string) {
 export async function removePost(id: string, onlyAuthor?: string) {
   const d = await db();
   const where = onlyAuthor ? and(eq(schema.posts.id, id), eq(schema.posts.author, onlyAuthor)) : eq(schema.posts.id, id);
-  const gone = await d.delete(schema.posts).where(where).returning({ id: schema.posts.id });
+  const gone = await d.delete(schema.posts).where(where).returning({ id: schema.posts.id, video: schema.posts.video });
   if (!gone.length) return false;
+  if (gone[0].video) await (await import("./video")).deleteVideoFiles([id]);
   await d.delete(schema.postLikes).where(eq(schema.postLikes.postId, id));
   await d.delete(schema.postComments).where(eq(schema.postComments.postId, id));
   await dropPostNotifs([id]);
@@ -272,6 +325,7 @@ export async function purgeUser(email: string) {
     await d.delete(schema.postComments).where(inArray(schema.postComments.postId, mine));
     await d.delete(schema.posts).where(inArray(schema.posts.id, mine));
     await dropPostNotifs(mine);
+    await (await import("./video")).deleteVideoFiles(mine);
   }
   await d.delete(schema.postLikes).where(eq(schema.postLikes.email, email));
   await d.delete(schema.postComments).where(eq(schema.postComments.author, email));

@@ -10,6 +10,7 @@ import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
 import { NewsFeed } from "./NewsFeed";
 import { FeedTab } from "./Feed";
+import { VideosTab } from "./Reels";
 import { ChatTab, useUnread } from "./Chat";
 import { NotifsSheet } from "./Notifs";
 import { useLiveConnection } from "@/lib/live-client";
@@ -23,8 +24,8 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "feed" | "chat" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
-const TABS: Tab[] = ["home", "feed", "chat", "people", "passes", "plans", "wish", "places", "memories"];
+type Tab = "home" | "feed" | "videos" | "chat" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
+const TABS: Tab[] = ["home", "feed", "videos", "chat", "people", "passes", "plans", "wish", "places", "memories"];
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
 
 /** Cor do bilhete de cada cidade (estável). */
@@ -120,8 +121,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
     const url = `${location.origin}/${locale}/u/${prof.handle}`;
     try { if (navigator.share) await navigator.share({ title: prof.name, url }); else { await navigator.clipboard.writeText(url); setShared(true); setTimeout(() => setShared(false), 2000); } } catch { /* cancelado */ }
   }
-  const counts: Record<Tab, number | null> = { home: null, feed: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", feed: "📸", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  const counts: Record<Tab, number | null> = { home: null, feed: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", feed: "📸", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -262,6 +263,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       </>}
 
       {tab === "feed" && (social ? <FeedTab t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+
+      {tab === "videos" && (signed ? <VideosTab t={t} locale={locale} social={social} cities={cities} onEdit={() => setEditing(true)} onClose={() => setTab("feed")} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 
       {tab === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 

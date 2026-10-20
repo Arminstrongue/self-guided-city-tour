@@ -305,12 +305,15 @@ export const reports = pgTable("reports", {
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().defaultRandom(),
   author: text("author").notNull(),                       // email do autor (nunca mostrado)
-  kind: text("kind").$type<"post" | "story">().notNull(),
+  kind: text("kind").$type<"post" | "story">().notNull(),   // um vídeo é uma publicação com "video"
   text: text("text").notNull().default(""),
   photo: text("photo"),                                   // data URL JPEG reduzida (≤ ~350 KB)
   city: text("city"),                                     // id da cidade (feed da cidade)
   tag: text("tag"),                                       // interesse (algoritmo)
   bg: text("bg"),                                         // cor de fundo das histórias só com texto
+  video: text("video"),                                   // id do ficheiro de vídeo (MEDIA_DIR/v/<id>.mp4)
+  videoStatus: text("video_status").$type<"processing" | "ready" | "failed">(),
+  duration: integer("duration"),                          // segundos
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true })
 }, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);
