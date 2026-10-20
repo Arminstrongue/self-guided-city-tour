@@ -1,6 +1,6 @@
 "use client";
 /** Mapa OpenStreetMap (Leaflet) dentro da app: roteiro, museus, aeroporto e a posição do viajante. */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import type { Map as LMap, LayerGroup } from "leaflet";
 import type { Airport, Stop } from "@/data/cities";
@@ -9,6 +9,7 @@ import type { Dict } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/dictionaries";
 import { km, walkMin } from "@/lib/route-cost";
 import { ExtLink } from "./ExtLink";
+import { loadGoogle, type G } from "@/lib/gmaps-client";
 
 const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const ATTR = process.env.NEXT_PUBLIC_MAP_ATTRIBUTION || "© OpenStreetMap";
@@ -25,9 +26,76 @@ export function transitLink(to: Pos) {
   return `https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=transit`;
 }
 
-export function MapView({ stops, done, museums, airport, pos, focus, t }: {
-  stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null; focus: Focus | null; t: Dict;
-}) {
+type MapProps = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null; focus: Focus | null; t: Dict; gmapsKey?: string };
+
+/** Google Maps quando há chave de navegador; senão o mapa OpenStreetMap. */
+export function MapView(p: MapProps) {
+  const [failed, setFailed] = useState(false);
+  return p.gmapsKey && !failed ? <GoogleRouteMap {...p} onFail={() => setFailed(true)} /> : <OsmMap {...p} />;
+}
+
+function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail }: MapProps & { onFail: () => void }) {
+  const el = useRef<HTMLDivElement>(null);
+  const map = useRef<G>(null);
+  const objs = useRef<G[]>([]);
+  const viewKey = useRef("");
+  useEffect(() => {
+    let off = false;
+    loadGoogle(gmapsKey!).then((g) => {
+      if (off || !el.current) return;
+      map.current = new g.maps.Map(el.current, { center: { lat: stops[0].lat, lng: stops[0].lng }, zoom: 14, mapTypeControl: false, streetViewControl: true, fullscreenControl: true, gestureHandling: "greedy", clickableIcons: true });
+      draw(g);
+    }).catch(onFail);
+    return () => { off = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); });
+  function draw(g: G) {
+    objs.current.forEach((o) => o.setMap(null)); objs.current = [];
+    const m = map.current, info = new g.maps.InfoWindow();
+    const add = (o: G) => { objs.current.push(o); return o; };
+    const pin = (fill: string, stroke = "#fff", scale = 15) => ({ path: g.maps.SymbolPath.CIRCLE, scale, fillColor: fill, fillOpacity: 1, strokeColor: stroke, strokeWeight: 3 });
+    add(new g.maps.Polyline({ map: m, path: stops.map((s) => ({ lat: s.lat, lng: s.lng })), strokeColor: "#0071e3", strokeOpacity: 0.85, strokeWeight: 5,
+      icons: [{ icon: { path: g.maps.SymbolPath.FORWARD_CLOSED_ARROW, scale: 2.6, strokeColor: "#0071e3", fillColor: "#0071e3", fillOpacity: 1 }, offset: "50%", repeat: "120px" }] }));
+    stops.forEach((s, i) => {
+      const mk = add(new g.maps.Marker({ map: m, position: { lat: s.lat, lng: s.lng }, title: s.n, zIndex: 10 + i,
+        label: { text: done[s.id] ? "✓" : String(i + 1), color: "#fff", fontWeight: "700", fontSize: "13px" }, icon: pin(done[s.id] ? "#30d158" : "#0071e3") }));
+      mk.addListener("click", () => { info.setContent(`<b>${esc(s.n)}</b><br>${esc(s.a)}`); info.open({ map: m, anchor: mk }); });
+    });
+    museums.forEach((x) => { const mk = add(new g.maps.Marker({ map: m, position: { lat: x.lat, lng: x.lng }, title: x.n, label: { text: "🏛", fontSize: "14px" }, icon: pin("#ffffff", "#b25000", 13) })); mk.addListener("click", () => { info.setContent(`<b>${esc(x.n)}</b>`); info.open({ map: m, anchor: mk }); }); });
+    if (airport) add(new g.maps.Marker({ map: m, position: { lat: airport.lat, lng: airport.lng }, title: airport.name, label: { text: "✈", fontSize: "15px" }, icon: pin("#ffffff", "#1d1d1f", 14) }));
+    if (pos) add(new g.maps.Marker({ map: m, position: pos, zIndex: 99, icon: pin("#2b7cff", "#fff", 8) }));
+    if (focus) {
+      add(new g.maps.Marker({ map: m, position: { lat: focus.lat, lng: focus.lng }, zIndex: 98, label: { text: "★", color: "#fff", fontSize: "14px" }, icon: pin("#ff9f0a") }));
+      if (pos) add(new g.maps.Polyline({ map: m, path: [pos, { lat: focus.lat, lng: focus.lng }], strokeOpacity: 0, icons: [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 1, strokeColor: "#ff9f0a", scale: 3 }, offset: "0", repeat: "14px" }] }));
+    }
+    const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}`;
+    if (key !== viewKey.current) {
+      viewKey.current = key;
+      if (focus) { m.setCenter({ lat: focus.lat, lng: focus.lng }); m.setZoom(16); }
+      else { const b = new g.maps.LatLngBounds(); stops.forEach((s) => b.extend({ lat: s.lat, lng: s.lng })); m.fitBounds(b, 36); }
+    }
+  }
+  const d = focus && pos ? km(pos, focus) : null;
+  return (
+    <div className="stack" style={{ gap: 10 }}>
+      <div ref={el} className="leaflet-box g-route-map" role="region" aria-label={t.map} />
+      {focus && (
+        <div className="card stack" style={{ gap: 8, padding: 14 }}>
+          <b>★ {focus.name}</b>
+          {d !== null && <p>{fmt(t.mapDist, { d: d < 1 ? `${Math.round(d * 1000)} m` : `${d.toFixed(1)} km`, w: walkMin(d) })}</p>}
+          <div className="acts">
+            <ExtLink href={`https://www.google.com/maps/dir/?api=1&destination=${focus.lat},${focus.lng}&travelmode=walking`}>🚶 {t.mapWalk}</ExtLink>
+            {!focus.walk && <ExtLink href={transitLink(focus)}>🚇 {t.mapTransit}</ExtLink>}
+          </div>
+        </div>
+      )}
+      <div className="legend"><span>━ {t.route}</span><span>🏛 {t.museums}</span><span>✈ {t.airport}</span><span>👤 Street View</span></div>
+    </div>
+  );
+}
+
+function OsmMap({ stops, done, museums, airport, pos, focus, t }: MapProps) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
   const layer = useRef<LayerGroup | null>(null);

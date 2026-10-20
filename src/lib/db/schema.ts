@@ -171,8 +171,24 @@ export const travellerPrefs = pgTable("traveller_prefs", {
   email: text("email").primaryKey(),
   hobbies: jsonb("hobbies").$type<string[]>().notNull().default([]),
   saved: jsonb("saved").$type<{ city: string; title: string; lat: number; lng: number; at: number }[]>().notNull().default([]),
+  visited: jsonb("visited").$type<{ name: string; country: string; year?: number; at: number }[]>().notNull().default([]),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
+
+export type PlanItem = { id: string; day: number; time?: string; title: string; kind: "moment" | "place" | "stop" | "custom"; lat?: number; lng?: number; note?: string; icon?: string };
+export const travellerPlans = pgTable("traveller_plans", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  title: text("title").notNull(),
+  city: text("city"), // id de uma cidade da app, ou null para outra cidade
+  cityName: text("city_name").notNull(),
+  startDate: text("start_date"), // AAAA-MM-DD
+  days: integer("days").notNull().default(1),
+  items: jsonb("items").$type<PlanItem[]>().notNull().default([]),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("plans_email_idx").on(t.email, t.updatedAt)]);
+export type TravellerPlan = typeof travellerPlans.$inferSelect;
 
 /* ---------- Marketplace de guias (modelo Uber: guias registam-se, turistas escolhem o melhor avaliado) ---------- */
 export const guideStatus = pgEnum("guide_status", ["pending", "active", "suspended", "rejected"]);

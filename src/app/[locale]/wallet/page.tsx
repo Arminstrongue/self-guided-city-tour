@@ -2,7 +2,7 @@ import { Header } from "@/components/Header";
 import { WalletView } from "@/components/Wallet";
 import { requestCurrency } from "@/lib/fx";
 import { loadCities } from "@/lib/content";
-import { cityName } from "@/data/cities";
+import { cityName, COUNTRY } from "@/data/cities";
 import { FREE_CITIES } from "@/lib/pricing";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 
@@ -14,7 +14,7 @@ export default async function WalletPage({ params }: { params: { locale: Locale 
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <WalletView t={t} locale={params.locale} cities={cities} free={FREE_CITIES} />
+      <WalletView t={t} locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} />
     </main>
   );
 }

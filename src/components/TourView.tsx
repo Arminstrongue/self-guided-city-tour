@@ -270,7 +270,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           </div>
         )}
 
-        {tab === "map" && <MapView stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} focus={focus} t={t} />}
+        {tab === "map" && <MapView stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} focus={focus} t={t} gmapsKey={explore?.gmapsKey} />}
 
         {tab === "museums" && (
           <>

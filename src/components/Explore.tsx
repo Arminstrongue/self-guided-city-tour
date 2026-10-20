@@ -8,6 +8,7 @@ import { CAT_HOBBIES, CAT_ICON, HOBBIES, HOBBY_ICON, distM, rankCats, type Hobby
 import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
 import { WHEN_ICON, type When } from "@/data/moments";
 import { saveMemoryAnywhere } from "@/lib/diary";
+import { loadGoogle, type G } from "@/lib/gmaps-client";
 
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string };
@@ -60,6 +61,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
   const [cat, setCat] = useState<PlaceCat | "all">("all");
   const [pos, setPos] = useState<Pos | null>(null);
   const [save, setSave] = useState<{ title: string; lat: number; lng: number } | null>(null);
+  const [toPlan, setToPlan] = useState<{ title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" } | null>(null);
   const [toast, setToast] = useState("");
   const now = useMemo(() => nowWhen(tz), [tz]);
 
@@ -138,6 +140,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
               <div className="ex-acts">
                 <a href={goLink(m)} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
                 <a href={tiktok(`${m.title} ${cityName}`)} target="_blank" rel="noreferrer">♪ {t.exTiktok}</a>
+                <button onClick={() => setToPlan({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon, kind: "moment" })}>🗺 {t.plAddTo}</button>
                 <button onClick={() => setSave({ title: m.title, lat: m.lat, lng: m.lng })}>💾 {t.exSave}</button>
               </div>
             </article>
@@ -172,6 +175,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
                       {gmapsKey && data.source === "google" && <button onClick={() => setSv(p)}>👁 Street View</button>}
                       {p.web && <a href={p.web} target="_blank" rel="noreferrer">{t.exWeb}</a>}
                       <a href={tiktok(`${p.name} ${cityName}`)} target="_blank" rel="noreferrer">♪ TikTok</a>
+                      <button onClick={() => setToPlan({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], kind: "place" })}>🗺 {t.plAddTo}</button>
                       <button onClick={() => setSave({ title: p.name, lat: p.lat, lng: p.lng })}>💾</button>
                     </span>
                   </div>
@@ -222,6 +226,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
         </div>
       )}
 
+      {toPlan && <AddToPlan t={t} locale={locale} cityId={cityId} cityName={cityName} item={toPlan} onClose={(msg) => { setToPlan(null); if (msg) { setToast(msg); setTimeout(() => setToast(""), 3000); } }} />}
       {save && <SaveMemory t={t} cityId={cityId} cityName={cityName} item={save} onClose={(ok) => { setSave(null); if (ok) { setToast(t.exSaved); setTimeout(() => setToast(""), 2500); } }} />}
       {toast && <div className="ex-toast" role="status">{toast} <a href={`/${locale}/wallet`}>{t.wallet} →</a></div>}
     </section>
@@ -289,22 +294,6 @@ function ExploreMap({ places, pos, center }: { places: (Place & { d: number })[]
 
 
 /* ---------- Google Maps (mapa e Street View) ---------- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type G = any;
-let gLoad: Promise<G> | null = null;
-function loadGoogle(key: string): Promise<G> {
-  const w = window as unknown as { google?: G; __sgctG?: () => void };
-  if (w.google?.maps?.Map) return Promise.resolve(w.google);
-  if (!gLoad) gLoad = new Promise((ok, bad) => {
-    w.__sgctG = () => ok(w.google);
-    const s = document.createElement("script");
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly&loading=async&callback=__sgctG`;
-    s.async = true; s.onerror = () => { gLoad = null; bad(new Error("maps")); };
-    document.head.appendChild(s);
-  });
-  return gLoad;
-}
-
 function GoogleMap({ apiKey, places, pos, center }: { apiKey: string; places: (Place & { d: number })[]; pos: Pos | null; center: Pos }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<G>(null);
@@ -355,6 +344,39 @@ function StreetView({ apiKey, place, t, onClose }: { apiKey: string; place: Plac
       <div className="card ex-sv">
         <div className="row-between" style={{ padding: "12px 14px" }}><b className="ad-ellip">👁 {place.name}</b><button className="link-btn" onClick={onClose}>✕</button></div>
         {none ? <p className="hint" style={{ padding: 16 }}>{t.exNoSv}</p> : <div ref={el} className="ex-sv-pano" />}
+      </div>
+    </div>
+  );
+}
+
+function AddToPlan({ t, locale, cityId, cityName, item, onClose }: { t: Dict; locale: Locale; cityId: string; cityName: string; item: { title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" }; onClose: (msg?: string) => void }) {
+  const [plans, setPlans] = useState<{ id: string; title: string; city: string | null; days: number }[] | null | "auth">(null);
+  const [day, setDay] = useState(1);
+  useEffect(() => { fetch("/api/me/plans").then((r) => (r.status === 401 ? "auth" : r.json().then((j) => j.plans))).then(setPlans).catch(() => setPlans([])); }, []);
+  const mine = Array.isArray(plans) ? plans.filter((p) => p.city === cityId) : [];
+  const it = { id: Math.random().toString(36).slice(2, 10), title: item.title, lat: item.lat, lng: item.lng, icon: item.icon, kind: item.kind };
+  async function addTo(id: string) {
+    const p = await fetch(`/api/me/plans/${id}`).then((r) => r.json());
+    await fetch(`/api/me/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [...p.items, { ...it, day: Math.min(day, p.days) }] }) });
+    onClose(t.plAdded);
+  }
+  async function createWith() {
+    const r = await fetch("/api/me/plans", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: cityName, city: cityId, cityName, startDate: null, days: 1, items: [{ ...it, day: 1 }] }) });
+    if (r.ok) onClose(t.plAdded);
+  }
+  return (
+    <div className="ex-modal" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="card stack ex-sheet">
+        <b style={{ fontSize: 18 }}>🗺 {item.title}</b>
+        {plans === null && <p className="hint">…</p>}
+        {plans === "auth" && <><p>{t.plSignIn}</p><a className="btn press" href={`/${locale}/wallet`}>{t.wallet}</a></>}
+        {Array.isArray(plans) && <>
+          <span className="hint">{t.plChoose}</span>
+          {mine.some((p) => p.days > 1) && <div className="field"><select value={day} onChange={(e) => setDay(Number(e.target.value))}>{Array.from({ length: Math.max(...mine.map((p) => p.days)) }, (_, k) => k + 1).map((n) => <option key={n} value={n}>{fmt(t.plDay, { n })}</option>)}</select></div>}
+          {mine.map((p) => <button key={p.id} className="btn ghost press" onClick={() => void addTo(p.id)}>{p.title}</button>)}
+          <button className="btn press" onClick={() => void createWith()}>{t.plNew}</button>
+        </>}
+        <button className="link-btn" onClick={() => onClose()}>{t.exCancel}</button>
       </div>
     </div>
   );

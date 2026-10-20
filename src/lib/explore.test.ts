@@ -56,3 +56,16 @@ test("Google Places: avaliação, foto, aberto e distância", () => {
   assert.equal(out[0].rating, 4.7); assert.equal(out[0].photo, "places/A/photos/x"); assert.equal(out[0].openNow, true); assert.equal(out[0].id, "g:A");
   assert.ok(out[0].dist > 5000);
 });
+
+import { autoPlan, candidates, dayRoute } from "./autoplan";
+test("plano automático: hora certa, interesses, sem repetir, rota do dia", () => {
+  const ms = MOMENTS.man.map((m) => ({ id: m.id, icon: m.icon, when: m.when, h: m.h, lat: m.lat, lng: m.lng, title: m.en[0] }));
+  const items = autoPlan(candidates(ms, []), ["sport"], 2);
+  assert.ok(items.length >= 4);
+  assert.equal(new Set(items.map((i) => i.title)).size, items.length);
+  const d1 = items.filter((i) => i.day === 1);
+  assert.equal(d1[0].title, "Old Trafford"); // desporto primeiro de manhã
+  assert.ok(d1.some((i) => i.time === "21:00" && /Band on the Wall/.test(i.title))); // música à noite
+  assert.ok(d1.some((i) => i.time === "18:30")); // pôr do sol
+  assert.match(dayRoute(d1)!, /waypoints=/);
+});

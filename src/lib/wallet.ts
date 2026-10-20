@@ -20,14 +20,15 @@ export const MAX_MEMORIES = 500;
 
 export async function walletFor(email: string) {
   const d = await db();
-  const [accesses, bookings, memories, prefs] = await Promise.all([
+  const [accesses, bookings, memories, prefs, plans] = await Promise.all([
     d.select().from(schema.accesses).where(eq(schema.accesses.email, email)).orderBy(desc(schema.accesses.createdAt)).limit(50),
     d.select({ b: schema.guideBookings, guide: schema.guides.name, guidePhone: schema.guides.phone, meeting: schema.guides.meetingPoint })
       .from(schema.guideBookings).innerJoin(schema.guides, eq(schema.guides.id, schema.guideBookings.guideId))
       .where(and(eq(schema.guideBookings.email, email), inArray(schema.guideBookings.status, ["requested", "confirmed", "completed", "declined", "expired"])))
       .orderBy(desc(schema.guideBookings.startAt)).limit(50),
     d.select().from(schema.travellerMemories).where(eq(schema.travellerMemories.email, email)).orderBy(desc(schema.travellerMemories.takenAt)).limit(MAX_MEMORIES),
-    d.select().from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, email)).limit(1)
+    d.select().from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, email)).limit(1),
+    d.select().from(schema.travellerPlans).where(eq(schema.travellerPlans.email, email)).orderBy(desc(schema.travellerPlans.updatedAt)).limit(100)
   ]);
   return {
     email,
@@ -39,7 +40,9 @@ export async function walletFor(email: string) {
     })),
     memories: memories.map((m) => ({ id: m.id, city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo, lat: m.lat ? Number(m.lat) : null, lng: m.lng ? Number(m.lng) : null, at: m.takenAt.getTime() })),
     hobbies: prefs[0]?.hobbies ?? [],
-    saved: prefs[0]?.saved ?? []
+    saved: prefs[0]?.saved ?? [],
+    visited: prefs[0]?.visited ?? [],
+    plans: plans.map((p) => ({ id: p.id, title: p.title, city: p.city, cityName: p.cityName, startDate: p.startDate, days: p.days, count: p.items.length, updatedAt: p.updatedAt.toISOString() }))
   };
 }
 export type Wallet = Awaited<ReturnType<typeof walletFor>>;
@@ -58,10 +61,10 @@ export async function removeMemory(email: string, id: string) {
   await d.delete(schema.travellerMemories).where(and(eq(schema.travellerMemories.id, id), eq(schema.travellerMemories.email, email)));
 }
 
-export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: Wallet["saved"] }) {
+export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: Wallet["saved"]; visited?: Wallet["visited"] }) {
   const d = await db();
-  const set = { ...(p.hobbies ? { hobbies: p.hobbies } : {}), ...(p.saved ? { saved: p.saved } : {}), updatedAt: new Date() };
-  await d.insert(schema.travellerPrefs).values({ email, hobbies: p.hobbies ?? [], saved: p.saved ?? [] })
+  const set = { ...(p.hobbies ? { hobbies: p.hobbies } : {}), ...(p.saved ? { saved: p.saved } : {}), ...(p.visited ? { visited: p.visited } : {}), updatedAt: new Date() };
+  await d.insert(schema.travellerPrefs).values({ email, hobbies: p.hobbies ?? [], saved: p.saved ?? [], visited: p.visited ?? [] })
     .onConflictDoUpdate({ target: schema.travellerPrefs.email, set });
 }
 
@@ -82,4 +85,28 @@ export async function sendWalletLink(email: string, locale: string) {
 <p style="color:#6e6e73;font-size:13px">${t.n}</p></div>`;
   await sendEmail(email, `Self Guided City Tour — ${t.s}`, html, `${t.b}\n${link}`);
   return link;
+}
+
+/* ---------- Planos de viagem ---------- */
+export async function listPlans(email: string) {
+  const d = await db();
+  return d.select().from(schema.travellerPlans).where(eq(schema.travellerPlans.email, email)).orderBy(desc(schema.travellerPlans.updatedAt)).limit(100);
+}
+export async function getPlan(email: string, id: string) {
+  const d = await db();
+  const [p] = await d.select().from(schema.travellerPlans).where(and(eq(schema.travellerPlans.id, id), eq(schema.travellerPlans.email, email))).limit(1);
+  return p ?? null;
+}
+export async function createPlan(email: string, p: { title: string; city: string | null; cityName: string; startDate: string | null; days: number; items?: schema.PlanItem[] }) {
+  const d = await db();
+  const [row] = await d.insert(schema.travellerPlans).values({ email, ...p, items: p.items ?? [] }).returning({ id: schema.travellerPlans.id });
+  return row.id;
+}
+export async function updatePlan(email: string, id: string, p: Partial<{ title: string; startDate: string | null; days: number; items: schema.PlanItem[] }>) {
+  const d = await db();
+  await d.update(schema.travellerPlans).set({ ...p, updatedAt: new Date() }).where(and(eq(schema.travellerPlans.id, id), eq(schema.travellerPlans.email, email)));
+}
+export async function deletePlan(email: string, id: string) {
+  const d = await db();
+  await d.delete(schema.travellerPlans).where(and(eq(schema.travellerPlans.id, id), eq(schema.travellerPlans.email, email)));
 }
