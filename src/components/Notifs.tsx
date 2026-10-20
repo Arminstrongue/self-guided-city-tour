@@ -7,7 +7,7 @@ import { useLive } from "@/lib/live-client";
 import { Avatar, act, type PublicProfile } from "./Social";
 import { PostCard, ago, type PostItem } from "./Feed";
 
-type Item = { id: string; type: "mention" | "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined"; text: string; at: string; read: boolean; actor: PublicProfile; post: { id: string; photo: boolean; kind: string } | null };
+type Item = { id: string; type: "split" | "mention" | "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined"; text: string; at: string; read: boolean; actor: PublicProfile; post: { id: string; photo: boolean; kind: string } | null; split?: string | null };
 
 export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; locale: Locale; cities: Record<string, string>; onClose: () => void; onRead: () => void }) {
   const [items, setItems] = useState<Item[] | null>(null);
@@ -34,6 +34,7 @@ export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; l
   }
   function go(n: Item) {
     if (n.type === "story_reply") { onClose(); location.hash = `chat:${n.actor.handle}`; return; }
+    if (n.type === "split" && n.split) { onClose(); location.hash = `split:${n.split}`; return; }
     if (n.post && n.type !== "follow") return void openPost(n.post.id);
     location.href = `/${locale}/u/${n.actor.handle}`;
   }

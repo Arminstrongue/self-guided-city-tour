@@ -149,7 +149,7 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
         <div className="ac-list">
           <a className="ac-item" href="/api/me/export" download><span className="ac-i">⬇️</span><span className="ac-tx"><b>{t.acExport}</b><small>{t.acExportHint}</small></span><span className="ac-chev">›</span></a>
           <button className="ac-item" disabled={busy === "out"} onClick={async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); }}><span className="ac-i">🔁</span><span className="ac-tx"><b>{t.acOutAll}</b></span><span className="ac-chev">›</span></button>
-          <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="ac-item"><span className="ac-i">↪️</span><span className="ac-tx"><b>{t.wSignOut}</b></span><span className="ac-chev">›</span></button></form>
+          <form action={`/api/me/logout?locale=${locale}`} method="post" onSubmit={(e) => { e.preventDefault(); const f = e.currentTarget; void import("@/lib/offline-client").then((m) => m.clearPersonalCache()).finally(() => f.submit()); }}><button className="ac-item"><span className="ac-i">↪️</span><span className="ac-tx"><b>{t.wSignOut}</b></span><span className="ac-chev">›</span></button></form>
           <a className="ac-item" href={`/${locale}/legal/privacy`}><span className="ac-i">🔒</span><span className="ac-tx"><b>{t.lPrivacy}</b></span><span className="ac-chev">›</span></a>
         </div>
       </section>

@@ -19,6 +19,8 @@ import { SosButton } from "./Safety";
 import { RatingCard } from "./Rating";
 import { Explore } from "./Explore";
 import { CostPlanner } from "./CostPlanner";
+import { FxConverter, OfflineButton } from "./TravelTools";
+import { SheetX } from "./WinNav";
 import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/cities";
@@ -57,6 +59,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const [copied, setCopied] = useState(false);
   const [online, setOnline] = useState(true);
   const [notice, setNotice] = useState("");
+  const [fxOpen, setFxOpen] = useState(false);
   useEffect(() => {
     const up = () => setOnline(navigator.onLine);
     up(); window.addEventListener("online", up); window.addEventListener("offline", up);
@@ -192,6 +195,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
             onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />
           {!online && <p className="note">{t.offline}</p>}
+          <OfflineButton t={t} locale={locale} city={city.id} />
+          <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setFxOpen(true)}>💱 {t.ttFx} · {city.cur} → {fx.cur}</button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 
@@ -327,6 +332,15 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           </div>
         </div>
       </div>
+      {fxOpen && (
+        <div className="sheet-bg" onClick={() => setFxOpen(false)}>
+          <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
+            <SheetX onClose={() => setFxOpen(false)} label={t.close} />
+            <b style={{ fontSize: 18 }}>💱 {t.ttFx}</b>
+            <FxConverter t={t} locale={locale} from={city.cur} />
+          </div>
+        </div>
+      )}
     </>
   );
 }

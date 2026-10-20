@@ -14,6 +14,8 @@ import { PostSheet, SavedGrid, TagSheet } from "./PostExtras";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { Composer, FeedTab } from "./Feed";
+import { ToolsSheet, type ToolTab } from "./TravelTools";
+import { currencyForCountry } from "@/lib/currency";
 import { signIn } from "next-auth/react";
 import { VideosTab } from "./Reels";
 import { ChatTab, useUnread } from "./Chat";
@@ -149,10 +151,12 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   useEffect(() => { if (window.location.hash === "#notifs") setNotifOpen(true); }, []);
   // #post:<id> e #tag:<hashtag> abrem por cima de qualquer separador.
   const [deep, setDeep] = useState<{ post?: string; tag?: string } | null>(null);
+  const [tools, setTools] = useState<{ tab: ToolTab; split?: string } | null>(null);
   useEffect(() => {
     const read = () => {
       const h = decodeURIComponent(window.location.hash.slice(1));
       if (h.startsWith("post:")) setDeep({ post: h.slice(5) }); else if (h.startsWith("tag:")) setDeep({ tag: h.slice(4) }); else setDeep(null);
+      if (h.startsWith("split:")) setTools({ tab: "split", split: h.slice(6) }); else if (h === "tools" || h === "split") setTools({ tab: h === "split" ? "split" : "fx" });
     };
     read(); window.addEventListener("popstate", read); window.addEventListener("hashchange", read);
     return () => { window.removeEventListener("popstate", read); window.removeEventListener("hashchange", read); };
@@ -255,6 +259,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         <div className="wl-quick">
           <button className="press" onClick={() => go("plans")}><span>🗺</span>{t.wQuickPlan}</button>
           <button className="press" onClick={() => go("places")}><span>🌍</span>{t.wQuickCity}</button>
+          <button className="press" onClick={() => setTools({ tab: "fx" })}><span>🧰</span>{t.wQuickTools}</button>
           <a className="press" href={`/${locale}#cities`}><span>✨</span>{t.wQuickExplore}</a>
           <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span>{t.evTitle}</a>
         </div>
@@ -380,6 +385,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         </button>
       </nav>
 
+      {tools && <ToolsSheet t={t} locale={locale} cities={cities} mine={myCities} localCur={myCities[0] ? currencyForCountry(countryOf[myCities[0]]) : null} tab={tools.tab} split={tools.split ?? null} signed={Boolean(signed)}
+        onClose={() => { setTools(null); if (/^#(split|tools)/.test(window.location.hash)) history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); }} />}
       {deep?.post && signed && <PostSheet t={t} locale={locale} id={deep.post} cities={cities} onClose={closeDeep} />}
       {deep?.tag && signed && <TagSheet t={t} locale={locale} tag={deep.tag} cities={cities} onClose={closeDeep} />}
       {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} onClose={(c) => { setComposing(false); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}

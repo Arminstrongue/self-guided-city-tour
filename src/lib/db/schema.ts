@@ -368,7 +368,7 @@ export const accountSettings = pgTable("account_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
-export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined" | "mention";
+export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined" | "mention" | "split";
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),            // quem recebe
@@ -418,3 +418,33 @@ export const messageReactions = pgTable("message_reactions", {
   emoji: text("emoji").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("message_reactions_pair_idx").on(t.messageId, t.email)]);
+
+/* ---------- Dividir despesas com amigos (grupos de viagem) ---------- */
+export const splitGroups = pgTable("split_groups", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  currency: text("currency").notNull(),
+  owner: text("owner").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+});
+export const splitMembers = pgTable("split_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  groupId: uuid("group_id").notNull(),
+  email: text("email"),                       // viajante com conta; null = só nome
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("split_members_group_idx").on(t.groupId), index("split_members_email_idx").on(t.email)]);
+export type SplitShares = Record<string, number>; // membro → cêntimos na moeda do grupo
+export const splitItems = pgTable("split_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  groupId: uuid("group_id").notNull(),
+  kind: text("kind").$type<"expense" | "settle">().notNull(),
+  title: text("title").notNull().default(""),
+  amount: integer("amount").notNull(),        // cêntimos na moeda do grupo
+  origAmount: integer("orig_amount").notNull(),
+  origCurrency: text("orig_currency").notNull(),
+  payer: uuid("payer").notNull(),
+  shares: jsonb("shares").$type<SplitShares>().notNull(),
+  createdBy: text("created_by").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("split_items_group_idx").on(t.groupId, t.createdAt)]);

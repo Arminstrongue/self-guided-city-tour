@@ -10,7 +10,7 @@ import { isOnline, publish } from "./live";
 /** Tipo de notificação → preferência que a controla. */
 const PREF: Record<string, keyof schema.NotifPrefs> = {
   like: "like", comment: "comment", follow: "follow", request: "follow", accepted: "follow",
-  message: "message", story_reply: "story_reply", video_ready: "video", invite_joined: "follow", mention: "comment"
+  message: "message", story_reply: "story_reply", video_ready: "video", invite_joined: "follow", mention: "comment", split: "message"
 };
 
 /* ---------- Definições da conta ---------- */
@@ -65,9 +65,9 @@ export async function sendPush(email: string, p: { title: string; body: string; 
 /* ---------- Textos (o push vai na língua do site, com fallback em inglês) ---------- */
 const TXT: Record<string, Record<string, string>> = {
   en: { like: "{n} liked your post", like_story: "{n} liked your story", comment: "{n} commented: {x}", follow: "{n} started following you", request: "{n} wants to follow you",
-    accepted: "{n} accepted your follow request", story_reply: "{n} replied to your story: {x}", video_ready: "Your video is ready to watch", invite_joined: "{n} joined from your invite", mention: "{n} mentioned you: {x}", message: "{x}" },
+    accepted: "{n} accepted your follow request", story_reply: "{n} replied to your story: {x}", video_ready: "Your video is ready to watch", invite_joined: "{n} joined from your invite", mention: "{n} mentioned you: {x}", split: "{n} added you to split costs: {x}", message: "{x}" },
   pt: { like: "{n} gostou da sua publicação", like_story: "{n} gostou da sua história", comment: "{n} comentou: {x}", follow: "{n} começou a segui-lo", request: "{n} quer segui-lo",
-    accepted: "{n} aceitou o seu pedido", story_reply: "{n} respondeu à sua história: {x}", video_ready: "O seu vídeo está pronto", invite_joined: "{n} entrou com o seu convite", mention: "{n} mencionou-o: {x}", message: "{x}" }
+    accepted: "{n} aceitou o seu pedido", story_reply: "{n} respondeu à sua história: {x}", video_ready: "O seu vídeo está pronto", invite_joined: "{n} entrou com o seu convite", mention: "{n} mencionou-o: {x}", split: "{n} juntou-o às despesas: {x}", message: "{x}" }
 };
 export const notifText = (type: string, name: string, x: string, lang = "en") =>
   ((TXT[lang] ?? TXT.en)[type] ?? TXT.en[type] ?? "").replace("{n}", name).replace("{x}", x);
@@ -101,6 +101,7 @@ export async function notify(to: string, actor: string, type: schema.Notificatio
   const body = notifText(type === "like" && o.storyLike ? "like_story" : type, name, text, lang);
   const url = type === "message" || type === "story_reply" ? `/${lang}/wallet#chat:${a?.handle ?? ""}`
     : type === "follow" || type === "request" || type === "accepted" || type === "invite_joined" ? `/${lang}/u/${a?.handle ?? ""}`
+    : type === "split" ? `/${lang}/wallet#split:${o.postId ?? ""}`
     : `/${lang}/wallet#notifs`;
   await sendPush(to, { title: type === "message" ? name : "Self Guided City Tour", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
 }
@@ -116,7 +117,8 @@ export async function listNotifs(email: string) {
   return rows.filter((r) => r.a).map(({ n, a, p }) => ({
     id: n.id, type: n.type, text: n.text, at: n.createdAt.toISOString(), read: Boolean(n.readAt),
     actor: { handle: a!.handle, name: a!.name, bio: a!.bio, photo: a!.photo, isPrivate: a!.isPrivate },
-    post: p?.id ? { id: p.id, photo: p.photo, kind: p.kind } : null
+    post: p?.id ? { id: p.id, photo: p.photo, kind: p.kind } : null,
+    split: n.type === "split" ? n.postId : null
   }));
 }
 export async function unreadNotifs(email: string) {
