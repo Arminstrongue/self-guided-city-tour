@@ -11,6 +11,8 @@ import { AddToPlan } from "./Explore";
 import { NewsFeed } from "./NewsFeed";
 import { FeedTab } from "./Feed";
 import { ChatTab, useUnread } from "./Chat";
+import { NotifsSheet } from "./Notifs";
+import { useLiveConnection } from "@/lib/live-client";
 import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
 
 type Mem = Memory & { local?: boolean };
@@ -109,7 +111,10 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
   const prof = social?.profile ?? null;
-  const { unread, refreshUnread } = useUnread(Boolean(prof));
+  const { unread, notifs, refreshUnread } = useUnread(Boolean(prof));
+  useLiveConnection(Boolean(signed));
+  const [notifOpen, setNotifOpen] = useState(false);
+  useEffect(() => { if (window.location.hash === "#notifs") setNotifOpen(true); }, []);
   async function shareProfile() {
     if (!prof) return;
     const url = `${location.origin}/${locale}/u/${prof.handle}`;
@@ -143,9 +148,10 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
         <div className="wl-card-top">
           <span className="wl-brand">👛 {t.wallet}</span>
           <span className="row" style={{ gap: 6 }}>
-            {prof && <button className="wl-ic wl-chat" aria-label={t.chTab} onClick={() => setTab("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
-            <button className="wl-ic" aria-label={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
-            {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
+            {prof && <button className="wl-ic wl-chat" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => setNotifOpen(true)}>🔔{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
+            {prof && <button className="wl-ic wl-chat" aria-label={t.chTab} title={t.chTab} onClick={() => setTab("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
+            <button className="wl-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
+            {signed ? <a className="gp-out wl-acc" href={`/${locale}/wallet/account`}>{t.acShort}</a> : <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
           </span>
         </div>
         {prof ? (
@@ -315,6 +321,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
 
       <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
+      {notifOpen && <NotifsSheet t={t} locale={locale} cities={cities} onRead={() => void refreshUnread()} onClose={() => { setNotifOpen(false); if (window.location.hash === "#notifs") history.replaceState(null, "", window.location.pathname); }} />}
       {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
     </div>
   );

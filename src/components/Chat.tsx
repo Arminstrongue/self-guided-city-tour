@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { Avatar, act, type PublicProfile, type Social } from "./Social";
 import { ago } from "./Feed";
+import { useLive, type LiveEvent } from "@/lib/live-client";
 
 type Msg = { id: string; text: string; ref: { kind: "story"; id: string; text: string } | null; at: string; mine: boolean; read: boolean };
 type Thread = { peer: PublicProfile; canSend: boolean; more: boolean; messages: Msg[]; seenUntil: string | null };
@@ -43,9 +44,13 @@ export function ChatTab({ t, locale, social, onEdit, onRead }: { t: Dict; locale
   // A caixa de entrada atualiza-se a cada 20 s enquanto está visível.
   useEffect(() => {
     if (!social.profile || open) return;
-    const id = setInterval(() => { if (document.visibilityState === "visible") void load(); }, 20_000);
+    const id = setInterval(() => { if (document.visibilityState === "visible") void load(); }, 60_000);
     return () => clearInterval(id);
   }, [load, social.profile, open]);
+  const reload = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useLive(useCallback((ev: LiveEvent) => {
+    if (ev.t === "msg" || ev.t === "unsend" || ev.t === "read") { if (reload.current) clearTimeout(reload.current); reload.current = setTimeout(() => void load(), 500); }
+  }, [load]));
   const list = useMemo(() => {
     const k = q.trim().toLowerCase();
     return (rows ?? []).filter((r) => !k || r.peer.name.toLowerCase().includes(k) || r.peer.handle.includes(k));
@@ -131,10 +136,11 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     return () => { alive = false; };
   }, [handle]);
 
-  // Mensagens novas a cada 4 s (só com a página visível).
-  useEffect(() => {
-    const id = setInterval(async () => {
-      if (document.visibilityState !== "visible") return;
+  const [typingAt, setTypingAt] = useState(0);
+  const [, tick] = useState(0);
+  const sentTyping = useRef(0);
+  // Pede ao servidor as mensagens depois da última (também as marca como lidas).
+  const pull = useCallback(async () => {
       const q = last.current ? `?after=${encodeURIComponent(last.current)}` : "";
       const j: Thread | null = await fetch(`/api/chat/${encodeURIComponent(handle)}${q}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
       if (!j) return;
@@ -145,9 +151,35 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
         if (fresh.length) { last.current = fresh.at(-1)!.at; if (stick.current) scrollEnd(); }
         return { ...cur, canSend: j.canSend, seenUntil: j.seenUntil, messages: fresh.length ? [...cur.messages, ...fresh] : cur.messages };
       });
-    }, 4000);
-    return () => clearInterval(id);
   }, [handle]);
+  // Tempo real: as mensagens chegam logo; o pedido a cada 20 s é só uma rede de segurança.
+  useEffect(() => {
+    const id = setInterval(() => { if (document.visibilityState === "visible") void pull(); }, 20_000);
+    const vis = () => { if (document.visibilityState === "visible") void pull(); };
+    document.addEventListener("visibilitychange", vis);
+    return () => { clearInterval(id); document.removeEventListener("visibilitychange", vis); };
+  }, [pull]);
+  const onLive = useCallback((ev: LiveEvent) => {
+    if (!("peer" in ev) || ev.peer !== handle) return;
+    if (ev.t === "msg") {
+      setTh((cur) => {
+        if (!cur || cur === "none" || cur.messages.some((m) => m.id === ev.m.id)) return cur;
+        return { ...cur, messages: [...cur.messages, ev.m] };
+      });
+      if (!ev.m.mine) { setTypingAt(0); void pull(); } // marca como lida
+      if (stick.current || ev.m.mine) scrollEnd();
+    }
+    if (ev.t === "unsend") setTh((cur) => (cur && cur !== "none" ? { ...cur, messages: cur.messages.filter((m) => m.id !== ev.id) } : cur));
+    if (ev.t === "read") setTh((cur) => (cur && cur !== "none" ? { ...cur, seenUntil: ev.at } : cur));
+    if (ev.t === "typing") { setTypingAt(Date.now()); if (stick.current) scrollEnd(); setTimeout(() => tick((x) => x + 1), 4200); }
+  }, [handle, pull]);
+  useLive(onLive);
+  const isTyping = Date.now() - typingAt < 4000;
+  function typed() {
+    if (Date.now() - sentTyping.current < 3000) return;
+    sentTyping.current = Date.now();
+    void post(handle, { action: "typing" });
+  }
 
   useEffect(() => {
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -162,7 +194,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     const r = await post(handle, { action: "send", text: v });
     setSending(false);
     if (r.ok && r.j?.message) {
-      setTh((cur) => (cur && cur !== "none" ? { ...cur, messages: [...cur.messages, r.j.message] } : cur));
+      setTh((cur) => (cur && cur !== "none" && !cur.messages.some((m) => m.id === r.j.message.id) ? { ...cur, messages: [...cur.messages, r.j.message] } : cur));
       last.current = r.j.message.at; stick.current = true; scrollEnd();
     } else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); }
   }
@@ -224,12 +256,13 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
               </div>
             );
           })}
+          {isTyping && p && <div className="ch-line them"><span className="ch-typing" aria-label={t.chTyping}><i /><i /><i /></span></div>}
         </>}
       </div>
       {th && th !== "none" && (th.canSend ? (
         <form className="ch-say" onSubmit={send}>
           <textarea rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
-            onChange={(e) => { setTxt(e.target.value); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
+            onChange={(e) => { setTxt(e.target.value); if (e.target.value) typed(); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); void send(e as unknown as React.FormEvent); } }} />
           <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}>➤</button>
         </form>
@@ -238,19 +271,23 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   );
 }
 
-/** Selo de mensagens por ler: pergunta ao servidor a cada 30 s (só com a página visível). */
+/** Selos de conversas e notificações por ler: atualizam em tempo real (com um pedido a cada 60 s por segurança). */
 export function useUnread(enabled: boolean) {
-  const [n, setN] = useState(0);
-  const check = useCallback(() => fetch("/api/chat/unread", { cache: "no-store" }).then((r) => r.json()).then((j) => setN(j.n ?? 0)).catch(() => null), []);
+  const [n, setN] = useState({ chats: 0, notifs: 0 });
+  const check = useCallback(() => fetch("/api/me/notifications?count=1", { cache: "no-store" }).then((r) => r.json()).then((j) => setN({ chats: j.chats ?? 0, notifs: j.n ?? 0 })).catch(() => null), []);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useLive(useCallback((ev: LiveEvent) => {
+    if (ev.t === "msg" || ev.t === "notif" || ev.t === "read") { if (timer.current) clearTimeout(timer.current); timer.current = setTimeout(() => void check(), 400); }
+  }, [check]));
   useEffect(() => {
     if (!enabled) return;
     void check();
-    const id = setInterval(() => { if (document.visibilityState === "visible") void check(); }, 30_000);
+    const id = setInterval(() => { if (document.visibilityState === "visible") void check(); }, 60_000);
     const vis = () => { if (document.visibilityState === "visible") void check(); };
     document.addEventListener("visibilitychange", vis);
     return () => { clearInterval(id); document.removeEventListener("visibilitychange", vis); };
   }, [enabled, check]);
-  return { unread: n, refreshUnread: check };
+  return { unread: n.chats, notifs: n.notifs, refreshUnread: check };
 }
 
 /** Responder a uma história (dentro do visualizador). */

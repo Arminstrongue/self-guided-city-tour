@@ -9,6 +9,7 @@
 import { and, desc, eq, gt, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { myProfile, type PublicProfile } from "./social";
+import { dropPostNotifs, notify } from "./notify";
 
 export const STORY_HOURS = 24;
 export const PAGE = 12;
@@ -196,8 +197,13 @@ export async function like(me: string, id: string, on: boolean) {
   const v = await visiblePost(me, id);
   if (!v) return null;
   const d = await db();
-  if (on) await d.insert(schema.postLikes).values({ postId: id, email: me }).onConflictDoNothing();
-  else await d.delete(schema.postLikes).where(and(eq(schema.postLikes.postId, id), eq(schema.postLikes.email, me)));
+  if (on) {
+    const ins = await d.insert(schema.postLikes).values({ postId: id, email: me }).onConflictDoNothing().returning({ p: schema.postLikes.postId });
+    if (ins.length) await notify(v.post.author, me, "like", { postId: id, storyLike: v.post.kind === "story" }).catch(() => null);
+  } else {
+    await d.delete(schema.postLikes).where(and(eq(schema.postLikes.postId, id), eq(schema.postLikes.email, me)));
+    await d.delete(schema.notifications).where(and(eq(schema.notifications.postId, id), eq(schema.notifications.actor, me), eq(schema.notifications.type, "like")));
+  }
   const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.postLikes).where(eq(schema.postLikes.postId, id));
   return { likes: n, liked: on };
 }
@@ -225,6 +231,7 @@ export async function addComment(me: string, id: string, text: string) {
   if (!canComment(me, v.post.author, v.circle)) return { error: "not_allowed" as const };
   const d = await db();
   const [r] = await d.insert(schema.postComments).values({ postId: id, author: me, text: text.trim() }).returning({ id: schema.postComments.id });
+  await notify(v.post.author, me, "comment", { postId: id, text: text.trim() }).catch(() => null);
   return { id: r.id };
 }
 
@@ -245,6 +252,7 @@ export async function removePost(id: string, onlyAuthor?: string) {
   if (!gone.length) return false;
   await d.delete(schema.postLikes).where(eq(schema.postLikes.postId, id));
   await d.delete(schema.postComments).where(eq(schema.postComments.postId, id));
+  await dropPostNotifs([id]);
   return true;
 }
 
@@ -263,6 +271,7 @@ export async function purgeUser(email: string) {
     await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, mine));
     await d.delete(schema.postComments).where(inArray(schema.postComments.postId, mine));
     await d.delete(schema.posts).where(inArray(schema.posts.id, mine));
+    await dropPostNotifs(mine);
   }
   await d.delete(schema.postLikes).where(eq(schema.postLikes.email, email));
   await d.delete(schema.postComments).where(eq(schema.postComments.author, email));

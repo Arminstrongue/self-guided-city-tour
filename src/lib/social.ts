@@ -4,6 +4,7 @@
  */
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
+import { notify } from "./notify";
 
 export const HANDLE_RE = /^[a-z0-9._]{3,24}$/;
 const RESERVED = new Set(["admin", "support", "help", "selfguided", "selfguidedcitytour", "official", "staff", "guide", "guides", "wallet", "api"]);
@@ -45,6 +46,7 @@ export async function deleteProfile(email: string) {
   const d = await db();
   await (await import("./posts")).purgeUser(email);
   await (await import("./chat")).purgeChats(email);
+  await (await import("./notify")).purgeNotifs(email);
   await d.delete(schema.follows).where(or(eq(schema.follows.follower, email), eq(schema.follows.followee, email)));
   await d.delete(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, email));
 }
@@ -103,7 +105,8 @@ export async function follow(me: string, handle: string) {
   if (!(await myProfile(me))) return "no_profile" as const;
   const d = await db();
   const status = p.isPrivate ? "pending" : "accepted";
-  await d.insert(schema.follows).values({ follower: me, followee: p.email, status }).onConflictDoNothing();
+  const ins = await d.insert(schema.follows).values({ follower: me, followee: p.email, status }).onConflictDoNothing().returning({ f: schema.follows.follower });
+  if (ins.length) await notify(p.email, me, status === "pending" ? "request" : "follow").catch(() => null);
   return status;
 }
 export async function unfollow(me: string, handle: string) {
@@ -118,7 +121,10 @@ export async function answerRequest(me: string, handle: string, accept: boolean)
   if (!p) return;
   const d = await db();
   const where = and(eq(schema.follows.follower, p.email), eq(schema.follows.followee, me));
-  if (accept) await d.update(schema.follows).set({ status: "accepted" }).where(where);
+  if (accept) {
+    const up = await d.update(schema.follows).set({ status: "accepted" }).where(and(where, eq(schema.follows.status, "pending"))).returning({ f: schema.follows.follower });
+    if (up.length) await notify(p.email, me, "accepted").catch(() => null);
+  }
   else await d.delete(schema.follows).where(where);
 }
 

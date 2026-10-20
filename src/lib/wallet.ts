@@ -6,14 +6,29 @@
 import { cookies } from "next/headers";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "./db";
-import { ACCESS_COOKIE, createAccessToken, readAccessToken } from "./access-token";
+import { ACCESS_COOKIE, createAccessToken, readAccessToken, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
 import { sendEmail } from "./email";
 import { env } from "./env";
 
+declare global { var __sgctRevoked: Map<string, { after: number; at: number }> | undefined } // eslint-disable-line no-var
+/** Data a partir da qual as sessões valem (cache de 30 s por processo). */
+async function sessionsAfter(email: string) {
+  const m = (globalThis.__sgctRevoked ??= new Map());
+  const c = m.get(email);
+  if (c && Date.now() - c.at < 30_000) return c.after;
+  const d = await db();
+  const [s] = await d.select({ a: schema.accountSettings.sessionsAfter }).from(schema.accountSettings).where(eq(schema.accountSettings.email, email)).limit(1).catch(() => []);
+  const after = s?.a ? Math.floor(s.a.getTime() / 1000) : 0;
+  m.set(email, { after, at: Date.now() });
+  return after;
+}
+export function forgetSessionCache(email: string) { globalThis.__sgctRevoked?.delete(email); }
+
 export async function currentTraveller(): Promise<string | null> {
-  const fromCookie = readAccessToken(cookies().get(ACCESS_COOKIE)?.value);
-  return fromCookie ?? (await sessionEmail().catch(() => null));
+  const tok = readAccessTokenFull(cookies().get(ACCESS_COOKIE)?.value);
+  if (tok) return tok.iat >= (await sessionsAfter(tok.email)) ? tok.email : null;
+  return await sessionEmail().catch(() => null);
 }
 
 export const MAX_MEMORIES = 500;

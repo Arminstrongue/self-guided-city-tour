@@ -8,6 +8,10 @@ export const env = {
   resendKey: process.env.RESEND_API_KEY ?? "",
   replyTo: process.env.EMAIL_REPLY_TO ?? process.env.COMPANY_EMAIL ?? "",
   emailFrom: process.env.EMAIL_FROM ?? "Self Guided City Tour <hello@selfguidedcitytour.com>",
+  vapidPublic: process.env.VAPID_PUBLIC_KEY ?? "",
+  vapidPrivate: process.env.VAPID_PRIVATE_KEY ?? "",
+  vapidSubject: process.env.VAPID_SUBJECT ?? "mailto:hello@selfguidedcitytour.com",
+  mediaDir: process.env.MEDIA_DIR ?? "./.data/media",
   adminEmails: (process.env.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
 };
 export const isProd = process.env.NODE_ENV === "production";

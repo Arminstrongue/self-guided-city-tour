@@ -349,3 +349,40 @@ export const chatCleared = pgTable("chat_cleared", {
   peer: text("peer").notNull(),
   before: timestamp("before", { withTimezone: true }).notNull()
 }, (t) => [uniqueIndex("chat_cleared_pair_idx").on(t.email, t.peer)]);
+
+/* ---------- Conta: privacidade das mensagens, notificações e sessões ---------- */
+export type NotifPrefs = Partial<Record<"like" | "comment" | "follow" | "message" | "story_reply" | "video", boolean>>;
+export const accountSettings = pgTable("account_settings", {
+  email: text("email").primaryKey(),
+  dmPolicy: text("dm_policy").$type<"circle" | "following" | "none">().notNull().default("circle"),
+  notif: jsonb("notif").$type<NotifPrefs>().notNull().default({}),
+  lang: text("lang").notNull().default("en"),                           // língua do push
+  sessionsAfter: timestamp("sessions_after", { withTimezone: true }),   // sessões anteriores deixam de valer
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+});
+
+export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined";
+export const notifications = pgTable("notifications", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),            // quem recebe
+  actor: text("actor").notNull(),            // quem fez
+  type: text("type").$type<NotificationType>().notNull(),
+  postId: uuid("post_id"),
+  text: text("text").notNull().default(""),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  readAt: timestamp("read_at", { withTimezone: true })
+}, (t) => [index("notifications_email_idx").on(t.email, t.createdAt)]);
+
+export const pushSubs = pgTable("push_subs", {
+  endpoint: text("endpoint").primaryKey(),
+  email: text("email").notNull(),
+  p256dh: text("p256dh").notNull(),
+  auth: text("auth").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("push_subs_email_idx").on(t.email)]);
+
+/** Quem tem a app aberta agora (para não enviar push a quem já está a ver). */
+export const livePresence = pgTable("live_presence", {
+  email: text("email").primaryKey(),
+  at: timestamp("at", { withTimezone: true }).notNull()
+});

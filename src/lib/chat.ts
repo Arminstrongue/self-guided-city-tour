@@ -6,6 +6,8 @@
 import { and, desc, eq, gt, inArray, isNull, lt, ne, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { isBlocked, profileByHandle, type PublicProfile } from "./social";
+import { publish } from "./live";
+import { notify, settingsOf } from "./notify";
 
 export const MAX_TEXT = 1000;
 const pairOf = (a: string, b: string) => [a, b].sort().join("|");
@@ -29,7 +31,16 @@ export async function canChat(me: string, other: string) {
       or(and(eq(schema.follows.follower, me), eq(schema.follows.followee, other)), and(eq(schema.follows.follower, other), eq(schema.follows.followee, me))))).limit(1)
   ]);
   if (!mine.length || !f.length) return false;
-  return !(await isBlocked(me, other));
+  if (await isBlocked(me, other)) return false;
+  // Preferência de quem recebe: todos do círculo, só quem ele segue, ou ninguém.
+  const { dmPolicy } = await settingsOf(other);
+  if (dmPolicy === "none") return false;
+  if (dmPolicy === "following") {
+    const g = await d.select({ x: schema.follows.follower }).from(schema.follows)
+      .where(and(eq(schema.follows.follower, other), eq(schema.follows.followee, me), eq(schema.follows.status, "accepted"))).limit(1);
+    return g.length > 0;
+  }
+  return true;
 }
 
 async function clearedBefore(me: string, peer: string) {
@@ -98,7 +109,8 @@ export async function thread(me: string, handle: string, opts: { after?: string 
   const more = !after && rows.length > 50;
   const list = rows.slice(0, 50).reverse();
   const now = new Date();
-  await d.update(schema.messages).set({ readAt: now }).where(and(eq(schema.messages.pair, pair), eq(schema.messages.recipient, me), isNull(schema.messages.readAt)));
+  const readNow = await d.update(schema.messages).set({ readAt: now }).where(and(eq(schema.messages.pair, pair), eq(schema.messages.recipient, me), isNull(schema.messages.readAt))).returning({ id: schema.messages.id });
+  if (readNow.length) { const h = await handleOf(me); if (h) await publish(p.email, { t: "read", peer: h, at: now.toISOString() }); }
   // Até onde o outro já leu (para o "Visto").
   const [seen] = await d.select({ at: schema.messages.createdAt }).from(schema.messages)
     .where(and(eq(schema.messages.pair, pair), eq(schema.messages.sender, me), sql`${schema.messages.readAt} is not null`))
@@ -117,6 +129,11 @@ export async function send(me: string, handle: string, text: string, ref: string
   if (!t && !ref) return { error: "empty" as const };
   const d = await db();
   const [m] = await d.insert(schema.messages).values({ pair: pairOf(me, p.email), sender: me, recipient: p.email, text: t, ref }).returning();
+  // Entrega instantânea: ao destinatário e aos outros separadores/dispositivos de quem enviou.
+  const mine = await handleOf(me);
+  if (mine) await publish(p.email, { t: "msg", peer: mine, m: toMsg(p.email, m) });
+  await publish(me, { t: "msg", peer: p.handle, m: toMsg(me, m) });
+  await notify(p.email, me, ref ? "story_reply" : "message", { text: t || "↩︎" }).catch(() => null);
   return { message: toMsg(me, m) };
 }
 
@@ -135,7 +152,25 @@ export async function replyToStory(me: string, storyId: string, text: string) {
 export async function unsend(me: string, id: string) {
   if (!/^[0-9a-f-]{36}$/.test(id)) return;
   const d = await db();
-  await d.delete(schema.messages).where(and(eq(schema.messages.id, id), eq(schema.messages.sender, me)));
+  const [m] = await d.delete(schema.messages).where(and(eq(schema.messages.id, id), eq(schema.messages.sender, me))).returning();
+  if (!m) return;
+  const [mine, peer] = await Promise.all([handleOf(me), handleOf(m.recipient)]);
+  if (mine) await publish(m.recipient, { t: "unsend", peer: mine, id });
+  if (peer) await publish(me, { t: "unsend", peer, id });
+}
+
+/** "A escrever…": avisa o outro viajante (sem guardar nada). */
+export async function typing(me: string, handle: string) {
+  const p = await profileByHandle(handle);
+  if (!p || !(await canChat(me, p.email))) return;
+  const mine = await handleOf(me);
+  if (mine) await publish(p.email, { t: "typing", peer: mine });
+}
+
+async function handleOf(email: string) {
+  const d = await db();
+  const [r] = await d.select({ h: schema.travellerProfiles.handle }).from(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, email)).limit(1);
+  return r?.h ?? null;
 }
 
 /** Apagar a conversa só para mim. */

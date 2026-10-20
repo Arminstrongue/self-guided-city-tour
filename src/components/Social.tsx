@@ -184,6 +184,7 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
     <div className="sheet-bg" onClick={() => onClose(false)}>
       <div className="sheet stack sc-set" style={{ gap: 18 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={() => onClose(false)} label={t.close} />
+        <a className="ac-link" href={`/${locale}/wallet/account`}><span aria-hidden="true">👤</span><span className="stack" style={{ gap: 0 }}><b>{t.acTitle}</b><small className="hint">{t.acLinkSub}</small></span><span aria-hidden="true">›</span></a>
         <section className="stack" style={{ gap: 10 }}>
           <b className="sc-h">🎨 {t.scAppearance}</b>
           <div className="sc-seg">{(["auto", "light", "dark"] as Theme[]).map((x) => <button key={x} className={theme === x ? "on" : ""} onClick={() => setT(x, accent)}>{x === "auto" ? `⚙︎ ${t.scAuto}` : x === "light" ? `☀️ ${t.scDay}` : `🌙 ${t.scNight}`}</button>)}</div>

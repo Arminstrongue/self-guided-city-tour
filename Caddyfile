@@ -1,5 +1,7 @@
 {$DOMAIN} {
-	encode zstd gzip
+	# Sem compressão no tempo real (SSE), para os eventos saírem logo.
+	@compress not path /api/live
+	encode @compress zstd gzip
 	# Várias réplicas da app: o Caddy descobre-as por DNS e distribui os pedidos.
 	reverse_proxy {
 		dynamic a app 3000
