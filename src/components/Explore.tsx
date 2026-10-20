@@ -21,7 +21,10 @@ const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.o
 const KEY = "sgct:hobbies";
 
 function loadHobbies(): Hobby[] { try { const v = JSON.parse(localStorage.getItem(KEY) ?? "[]"); return Array.isArray(v) ? v.filter((h) => (HOBBIES as readonly string[]).includes(h)) : []; } catch { return []; } }
-const score = (h: Hobby[], mine: Hobby[]) => h.filter((x) => mine.includes(x)).length;
+/** "Ver menos" escolhido em "O seu algoritmo" (carteira): baixa a posição desses interesses. */
+let LESS: Hobby[] = [];
+try { if (typeof window !== "undefined") LESS = JSON.parse(localStorage.getItem("sgct:less") ?? "[]"); } catch { /* ignorar */ }
+const score = (h: Hobby[], mine: Hobby[]) => h.filter((x) => mine.includes(x)).length - h.filter((x) => LESS.includes(x)).length * 1.5;
 /** Popularidade (Google): um lugar 4,7 com milhares de avaliações "aproxima-se" até 3 km. */
 const pop = (p: Place) => (p.rating ? Math.max(0, p.rating - 4) * 4000 * Math.min(1, (p.reviews ?? 0) / 800) : 0);
 const tiktok = (q: string) => `https://www.tiktok.com/search?q=${encodeURIComponent(q)}`;

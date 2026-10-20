@@ -9,6 +9,7 @@ import { COUNTRY_CODES, flag } from "@/data/countries";
 import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
 import { NewsFeed } from "./NewsFeed";
+import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
 
 type Mem = Memory & { local?: boolean };
 
@@ -18,8 +19,8 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "passes" | "plans" | "wish" | "places" | "memories";
-const TABS: Tab[] = ["home", "passes", "plans", "wish", "places", "memories"];
+type Tab = "home" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
+const TABS: Tab[] = ["home", "people", "passes", "plans", "wish", "places", "memories"];
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
 
 /** Cor do bilhete de cada cidade (estável). */
@@ -33,6 +34,11 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const [tab, setTabState] = useState<Tab>("home");
   const [wish, setWish] = useState<Wish[] | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [social, setSocial] = useState<Social | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [settings, setSettings] = useState(false);
+  const [shared, setShared] = useState(false);
+  const refreshSocial = () => void loadSocial().then(setSocial);
 
   async function load() {
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
@@ -42,6 +48,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       setLocal(await listMemories());
     } else { setW("anon"); setLocal((await listMemories()).map((m) => ({ ...m, local: true }))); }
     void loadWish().then((x) => setWish(x.list));
+    if (r?.ok) refreshSocial();
   }
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
@@ -93,9 +100,15 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
   const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
-  const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...free])].filter(Boolean), [active, signed, wish, free]);
-  const counts: Record<Tab, number | null> = { home: null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
+  const prof = social?.profile ?? null;
+  async function shareProfile() {
+    if (!prof) return;
+    const url = `${location.origin}/${locale}/u/${prof.handle}`;
+    try { if (navigator.share) await navigator.share({ title: prof.name, url }); else { await navigator.clipboard.writeText(url); setShared(true); setTimeout(() => setShared(false), 2000); } } catch { /* cancelado */ }
+  }
+  const counts: Record<Tab, number | null> = { home: null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -121,11 +134,33 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       <section className="wl-card">
         <div className="wl-card-top">
           <span className="wl-brand">👛 {t.wallet}</span>
-          {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <span className="wl-guest">{t.wGuest}</span>}
+          <span className="row" style={{ gap: 6 }}>
+            <button className="wl-ic" aria-label={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
+            {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <span className="wl-guest">{t.wGuest}</span>}
+          </span>
         </div>
+        {prof ? (
+          <div className="wl-me">
+            <button className="wl-me-av" onClick={() => setEditing(true)} aria-label={t.scEdit}><Avatar p={prof} size={72} /></button>
+            <div className="stack" style={{ gap: 2, minWidth: 0 }}>
+              <b className="wl-me-n">{prof.name}</b>
+              <span className="wl-who">@{prof.handle}{prof.isPrivate ? " 🔒" : ""}</span>
+              <span className="wl-me-c"><button onClick={() => setTab("people")}><b className="num">{social!.count.followers}</b> {social!.count.followers === 1 ? t.scFollower : t.scFollowers}</button><button onClick={() => setTab("people")}><b className="num">{social!.count.following}</b> {t.scFollowingN}</button></span>
+            </div>
+          </div>
+        ) : null}
+        {prof?.bio && <p className="wl-me-bio">{prof.bio}</p>}
+        {prof ? (
+          <div className="wl-mini-stats">
+            <span className="wl-lvl">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
+            {([["places", world.cities, t.wStatCities], ["places", world.countries, t.wStatCountries], ["memories", memories.length, t.wStatMem], ["wish", wish?.length ?? 0, t.wStatWish]] as [Tab, number, string][]).map(([k, n, l], i) => (
+              <button key={i} onClick={() => setTab(k)}><b className="num">{n}</b> {l.toLowerCase()}</button>
+            ))}
+          </div>
+        ) : <>
         <div className="wl-level">
-          <span className="wl-level-b">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
-          <span className="wl-who">{signed ? signed.email : t.walletSub}</span>
+          <span className="wl-level-b" style={prof ? { fontSize: 18 } : undefined}>{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
+          {!prof && <span className="wl-who">{signed ? signed.email : t.walletSub}</span>}
         </div>
         <div className="wl-prog" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
         <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
@@ -134,7 +169,13 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
             <button key={i} className="wl-stat press" onClick={() => setTab(k)}><b className="num">{n}</b><span>{l}</span></button>
           ))}
         </div>
-        {stamps.length > 0 && <div className="dy-stamps wl-stamps">{stamps.slice(0, 8).map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
+        </>}
+        {signed && <div className="wl-me-acts">
+          <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
+          {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
+          <button aria-label={t.scFind} onClick={() => setTab("people")}>👤+</button>
+        </div>}
+                {!prof && stamps.length > 0 && <div className="dy-stamps wl-stamps">{stamps.slice(0, 8).map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
       </section>
 
       {synced > 0 && <p className="note">✓ {fmt(t.wSynced, { n: synced })}</p>}
@@ -201,13 +242,9 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           </section>
         )}
 
-        {signed && (
-          <section className="card stack" style={{ gap: 10, padding: 16 }}>
-            <b>{t.wInterests}</b>
-            <div className="ex-chips">{HOBBIES.map((h) => <button key={h} className={signed.hobbies.includes(h) ? "on" : ""} aria-pressed={signed.hobbies.includes(h)} onClick={() => void setHobby(h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
-          </section>
-        )}
       </>}
+
+      {tab === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 
       {tab === "passes" && <>
         <section className="stack" style={{ gap: 10 }}>
@@ -262,6 +299,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       )}
 
       <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
+      {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
+      {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
     </div>
   );
 }

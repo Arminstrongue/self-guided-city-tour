@@ -259,3 +259,43 @@ export const guideReviews = pgTable("guide_reviews", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("guide_reviews_booking_idx").on(t.bookingId), index("guide_reviews_guide_idx").on(t.guideId)]);
 export type GuideReview = typeof guideReviews.$inferSelect;
+
+/* ---------- Rede social da carteira: perfis, seguidores, bloqueios e denúncias ---------- */
+export const travellerProfiles = pgTable("traveller_profiles", {
+  email: text("email").primaryKey(),
+  handle: text("handle").notNull(),
+  name: text("name").notNull(),
+  bio: text("bio").notNull().default(""),
+  photo: text("photo"), // data URL JPEG reduzida (≤ 100 KB)
+  isPrivate: boolean("is_private").notNull().default(true),
+  theme: text("theme").notNull().default("auto"),
+  accent: text("accent").notNull().default("blue"),
+  cities: jsonb("cities").$type<string[]>().notNull().default([]),   // cidades que segue
+  lessOf: jsonb("less_of").$type<string[]>().notNull().default([]),  // interesses a ver menos
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("profiles_handle_idx").on(t.handle)]);
+export type TravellerProfile = typeof travellerProfiles.$inferSelect;
+
+export const follows = pgTable("follows", {
+  follower: text("follower").notNull(),
+  followee: text("followee").notNull(),
+  status: text("status").$type<"pending" | "accepted">().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("follows_pair_idx").on(t.follower, t.followee), index("follows_followee_idx").on(t.followee, t.status)]);
+
+export const blocks = pgTable("blocks", {
+  blocker: text("blocker").notNull(),
+  blocked: text("blocked").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("blocks_pair_idx").on(t.blocker, t.blocked)]);
+
+export const reports = pgTable("reports", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  reporter: text("reporter").notNull(),
+  target: text("target").notNull(),       // email do perfil denunciado
+  reason: text("reason").notNull(),
+  note: text("note").notNull().default(""),
+  status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("reports_status_idx").on(t.status, t.createdAt)]);

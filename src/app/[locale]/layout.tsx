@@ -25,7 +25,11 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   return (
-    <html lang={params.locale} dir={RTL.includes(params.locale) ? "rtl" : "ltr"}>
+    <html lang={params.locale} dir={RTL.includes(params.locale) ? "rtl" : "ltr"} suppressHydrationWarning>
+      <head>
+        {/* Tema (dia/noite) e cor escolhidos na carteira, aplicados antes de pintar para não piscar. */}
+        <script dangerouslySetInnerHTML={{ __html: `try{var d=document.documentElement,t=localStorage.getItem("sgct:theme"),a=localStorage.getItem("sgct:accent");if(t==="light"||t==="dark")d.dataset.theme=t;if(a&&a!=="blue")d.dataset.accent=a}catch(e){}` }} />
+      </head>
       <body>
         <ServiceWorker />
         <NativeChrome />

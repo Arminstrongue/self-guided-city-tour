@@ -41,6 +41,21 @@ async function setAgentStatus(form: FormData) {
   revalidatePath("/[locale]/admin", "page");
 }
 
+async function handleReport(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const d = await db();
+  const id = String(form.get("id"));
+  const [r] = await d.select().from(schema.reports).where(sql`${schema.reports.id} = ${id}`).limit(1);
+  if (!r) return;
+  if (form.get("action") === "remove") {
+    await d.delete(schema.follows).where(sql`${schema.follows.follower} = ${r.target} or ${schema.follows.followee} = ${r.target}`);
+    await d.delete(schema.travellerProfiles).where(sql`${schema.travellerProfiles.email} = ${r.target}`);
+  }
+  await d.update(schema.reports).set({ status: form.get("action") === "remove" ? "removed" : "dismissed" }).where(sql`${schema.reports.target} = ${r.target} and ${schema.reports.status} = 'open'`);
+  revalidatePath("/[locale]/admin", "page");
+}
+
 async function markAgentPaid(form: FormData) {
   "use server";
   if (!(await isAdmin())) return;
@@ -125,7 +140,10 @@ export default async function Admin({ params, searchParams }: { params: { locale
   const pendingMerchants = merchants.filter((m) => m.status === "pending");
   const pendingAgents = agents.filter((a) => a.status === "pending");
   const openReq = gBookings.reduce((a, b) => a + b.open, 0);
-  const todo = pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
+  const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio })
+    .from(schema.reports).leftJoin(schema.travellerProfiles, sql`${schema.travellerProfiles.email} = ${schema.reports.target}`)
+    .where(sql`${schema.reports.status} = 'open'`).orderBy(sql`${schema.reports.createdAt} desc`).limit(50);
+  const todo = openReports.length + pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Europe/Lisbon" }).format(new Date()));
   const hello = hour < 6 ? "Boa noite" : hour < 13 ? "Bom dia" : hour < 20 ? "Boa tarde" : "Boa noite";
   const today = new Intl.DateTimeFormat("pt-PT", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Lisbon" }).format(new Date());
@@ -172,6 +190,16 @@ export default async function Admin({ params, searchParams }: { params: { locale
         <section className="stack" style={{ gap: 12 }} id="todo">
           <h2 className="gp-h2">A tratar agora{todo > 0 && <span className="gp-count">{todo}</span>}</h2>
           {todo === 0 && <Empty icon="✅" text="Nada pendente. Novos guias, parceiros e comissões aparecem aqui." />}
+          {openReports.map(({ r, handle, name, bio }) => (
+            <div key={r.id} className="card ad-line">
+              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && <span className="hint">“{r.note}”</span>}</div>
+              <div className="row" style={{ gap: 6 }}>
+                {handle && <a className="btn ghost press" href={`/pt/u/${handle}`} target="_blank" rel="noreferrer" style={{ width: "auto" }}>Ver</a>}
+                <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="dismiss" /><button className="btn ghost press">Arquivar</button></form>
+                <form action={handleReport}><input type="hidden" name="id" value={r.id} /><input type="hidden" name="action" value="remove" /><button className="btn press danger">Remover perfil</button></form>
+              </div>
+            </div>
+          ))}
           {pendingGuides.map((g) => (
             <div key={g.id} className="card ad-review">
               <div className="ad-review-head">
