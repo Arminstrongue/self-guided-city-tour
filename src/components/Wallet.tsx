@@ -12,7 +12,8 @@ import { SearchPick } from "./SearchPick";
 import { CitySheet } from "./CitySheet";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
-import { FeedTab } from "./Feed";
+import { Composer, FeedTab } from "./Feed";
+import { signIn } from "next-auth/react";
 import { VideosTab } from "./Reels";
 import { ChatTab, useUnread } from "./Chat";
 import { NotifsSheet } from "./Notifs";
@@ -28,14 +29,21 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "feed" | "videos" | "chat" | "people" | "passes" | "plans" | "wish" | "places" | "memories";
-const TABS: Tab[] = ["home", "feed", "videos", "chat", "people", "passes", "plans", "wish", "places", "memories"];
+type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "passes" | "plans" | "wish" | "places" | "memories";
+type Section = "home" | "explore" | "videos" | "chat" | "people" | "profile";
+const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "passes", "plans", "wish", "places", "memories"];
+const SUB: Tab[] = ["passes", "plans", "wish", "places", "memories"];
+/** Vibração curta ao tocar (Android); no iPhone não faz nada. */
+const buzz = () => { try { navigator.vibrate?.(8); } catch { /* ignorar */ } };
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
 
 /** Cor do bilhete de cada cidade (estável). */
 function hue(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
 
-export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string> }) {
+export function WalletView({ t, locale, cities, free, countryOf, providers = [] }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; providers?: { id: string; name: string }[] }) {
+  const [composing, setComposing] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [pulling, setPulling] = useState(0);
   const [w, setW] = useState<Wallet | null | "anon">(null);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
@@ -64,11 +72,11 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
   useEffect(() => {
-    const read = () => { const h = window.location.hash.slice(1).split(":")[0] as Tab; setTabState(TABS.includes(h) ? h : "home"); };
+    const read = () => { const raw = window.location.hash.slice(1).split(":")[0]; const h = (raw === "feed" ? "home" : raw) as Tab; setTabState(TABS.includes(h) ? h : "home"); };
     read(); window.addEventListener("popstate", read);
     return () => window.removeEventListener("popstate", read);
   }, []);
-  const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: Math.min(window.scrollY, (document.getElementById("wl-tabs")?.offsetTop ?? 0) - 64), behavior: "smooth" }); };
+  const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: 0 }); };
 
   const signed = w && w !== "anon" ? w : null;
   // Primeira vez com sessão e sem interesses: "Escolha o que gosta".
@@ -143,8 +151,17 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
     const url = `${location.origin}/${locale}/u/${prof.handle}`;
     try { if (navigator.share) await navigator.share({ title: prof.name, url }); else { await navigator.clipboard.writeText(url); setShared(true); setTimeout(() => setShared(false), 2000); } } catch { /* cancelado */ }
   }
-  const counts: Record<Tab, number | null> = { home: null, feed: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", feed: "📸", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  // Puxar para atualizar (no topo da página).
+  useEffect(() => {
+    let y0: number | null = null, dy = 0;
+    const start = (e: TouchEvent) => { y0 = window.scrollY <= 0 && !document.querySelector(".sheet-bg,.rl,.ch-view,.ob") ? e.touches[0].clientY : null; dy = 0; };
+    const move = (e: TouchEvent) => { if (y0 === null) return; dy = e.touches[0].clientY - y0; setPulling(dy > 8 ? dy * 0.5 : 0); };
+    const end = () => { if (y0 !== null && dy * 0.5 > 60) { buzz(); void load(); setRefreshKey((k) => k + 1); } y0 = null; setPulling(0); };
+    window.addEventListener("touchstart", start, { passive: true }); window.addEventListener("touchmove", move, { passive: true }); window.addEventListener("touchend", end);
+    return () => { window.removeEventListener("touchstart", start); window.removeEventListener("touchmove", move); window.removeEventListener("touchend", end); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", explore: "🔍", profile: "👤", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -164,77 +181,41 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
     ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wFree}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
   ].slice(0, limit);
 
-  return (
-    <div className="stack wl" style={{ gap: 16 }}>
-      {/* Cartão de membro */}
-      <section className="wl-card">
-        <div className="wl-card-top">
-          <span className="wl-brand">👛 {t.wallet}</span>
-          <span className="row" style={{ gap: 6 }}>
-            {prof && <button className="wl-ic wl-chat" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => setNotifOpen(true)}>🔔{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
-            {prof && <button className="wl-ic wl-chat" aria-label={t.chTab} title={t.chTab} onClick={() => setTab("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
-            <button className="wl-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
-            {signed ? <a className="gp-out wl-acc" href={`/${locale}/wallet/account`}>{t.acShort}</a> : <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
-          </span>
-        </div>
-        {prof ? (
-          <div className="wl-me">
-            <button className="wl-me-av" onClick={() => setEditing(true)} aria-label={t.scEdit}><Avatar p={prof} size={72} /></button>
-            <div className="stack" style={{ gap: 2, minWidth: 0 }}>
-              <b className="wl-me-n">{prof.name}</b>
-              <span className="wl-who">@{prof.handle}{prof.isPrivate ? " 🔒" : ""}</span>
-              <span className="wl-me-c"><button onClick={() => setTab("people")}><b className="num">{social!.count.followers}</b> {social!.count.followers === 1 ? t.scFollower : t.scFollowers}</button><button onClick={() => setTab("people")}><b className="num">{social!.count.following}</b> {t.scFollowingN}</button></span>
-            </div>
-          </div>
-        ) : null}
-        {prof?.bio && <p className="wl-me-bio">{prof.bio}</p>}
-        {prof ? (
-          <div className="wl-mini-stats">
-            <span className="wl-lvl">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
-            {([["places", world.cities, t.wStatCities], ["places", world.countries, t.wStatCountries], ["memories", memories.length, t.wStatMem], ["wish", wish?.length ?? 0, t.wStatWish]] as [Tab, number, string][]).map(([k, n, l], i) => (
-              <button key={i} onClick={() => setTab(k)}><b className="num">{n}</b> {l.toLowerCase()}</button>
-            ))}
-          </div>
-        ) : <>
-        <div className="wl-level">
-          <span className="wl-level-b" style={prof ? { fontSize: 18 } : undefined}>{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
-          {!prof && <span className="wl-who">{signed ? signed.email : t.walletSub}</span>}
-        </div>
-        <div className="wl-prog" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
-        <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
-        <div className="wl-stats">
-          {([["places", world.cities, t.wStatCities], ["places", world.countries, t.wStatCountries], ["memories", memories.length, t.wStatMem], ["wish", wish?.length ?? 0, t.wStatWish]] as [Tab, number, string][]).map(([k, n, l], i) => (
-            <button key={i} className="wl-stat press" onClick={() => setTab(k)}><b className="num">{n}</b><span>{l}</span></button>
-          ))}
-        </div>
-        </>}
-        {w === "anon" && <button className="btn press wl-in-cta" onClick={goSignIn}>🔐 {t.wSignIn}</button>}
-        {signed && <div className="wl-me-acts">
-          <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
-          {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
-          <button aria-label={t.scFind} title={t.scFind} onClick={() => setTab("people")}>👤+</button>
-          {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
-        </div>}
-                {!prof && stamps.length > 0 && <div className="dy-stamps wl-stamps">{stamps.slice(0, 8).map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
-      </section>
+  const section: Section = tab === "chat" || tab === "people" || tab === "explore" || tab === "videos" ? tab : SUB.includes(tab) || tab === "profile" ? "profile" : "home";
+  const sub: Tab = SUB.includes(tab) ? tab : "passes";
+  const go = (x: Tab) => { buzz(); setTab(x); };
+  const create = () => { buzz(); if (!signed) return goSignIn(); if (!prof) return setEditing(true); setComposing(true); };
+  const title = section === "home" ? null : section === "profile" ? (prof ? `@${prof.handle}` : t.wallet) : section === "explore" ? t.nvExplore : section === "chat" ? t.chTab : section === "people" ? t.wTabs.people : t.rlTitle;
+  const profileSubs: Tab[] = ["passes", "plans", "wish", "places", "memories"];
 
+  return (
+    <div className="stack wl wl-app" style={{ gap: 14 }}>
+      {/* Barra de cima: título + notificações e mensagens (como no Instagram) */}
+      <div className="wl-bar">
+        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand">👛 {t.wallet}</b>}
+        <span className="row" style={{ gap: 4 }}>
+          {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>}
+          {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}>☰</a>}
+          {prof && <button className="wl-bar-ic" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => { buzz(); setNotifOpen(true); }}>🔔{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
+          {prof && <button className="wl-bar-ic" aria-label={t.chTab} title={t.chTab} onClick={() => go("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
+          {!signed && w !== null && <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
+        </span>
+      </div>
+      {pulling > 0 && <div className="wl-ptr" style={{ height: Math.min(pulling, 70) }}><span className={pulling > 60 ? "go" : ""}>↻</span></div>}
       {synced > 0 && <p className="note">✓ {fmt(t.wSynced, { n: synced })}</p>}
 
-      {/* Separadores */}
-      {tab !== "home" && <div className="wl-winbar"><button onClick={() => history.back()} aria-label={t.navBack} title={t.navBack}>←</button><button onClick={() => history.forward()} aria-label={t.navFwd} title={t.navFwd}>→</button><button onClick={() => setTab("home")} aria-label={t.close} title={t.close}>✕</button></div>}
-      <nav className="wl-tabs" id="wl-tabs" role="tablist">
-        {TABS.map((k) => (
-          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
-            <span aria-hidden="true">{icon[k]}</span> {t.wTabs[k]}{counts[k] ? <small className="num">{counts[k]}</small> : null}
-          </button>
-        ))}
-      </nav>
-
-      {tab === "home" && <>
+      {/* ---------- Início: o que vem a seguir + histórias + feed ---------- */}
+      {section === "home" && <>
+        {w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
         {w === "anon" && (
           <section className="card stack wl-sign">
-            <b style={{ fontSize: 18 }}>🔐 {t.wSignTitle}</b>
+            <b style={{ fontSize: 17 }}>🔐 {t.wSignTitle}</b>
             <ul className="wl-benefits">{t.wBenefits.map((b) => <li key={b}>✓ {b}</li>)}</ul>
+            {providers.length > 0 && <div className="wl-oauth">{providers.map((p) => (
+              <button key={p.id} type="button" className={`wl-oauth-b ${p.id}`} onClick={() => void signIn(p.id, { callbackUrl: `/api/me/oauth?next=${encodeURIComponent(`/${locale}/wallet${retCity ? `?signin=1&city=${retCity}` : ""}`)}` })}>
+                <span aria-hidden="true">{p.id === "google" ? "G" : p.id === "apple" ? "" : "f"}</span>{fmt(t.nvContinue, { p: p.name })}
+              </button>
+            ))}<span className="wl-or">{t.nvOr}</span></div>}
             {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
               <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
                 e.preventDefault();
@@ -248,105 +229,145 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           </section>
         )}
 
-        {/* A seguir */}
-        <section className="stack" style={{ gap: 10 }}>
-          <h2 className="gp-h2">⚡ {t.wNextUp}</h2>
-          {active[0] ? passCards(1) : nextBooking ? (
-            <a href={`/${locale}/g/${nextBooking.guideId}`} className="card wl-next press"><span className="wl-next-ic">🧑‍💼</span><span className="stack" style={{ gap: 2 }}><b>{nextBooking.guide}</b><span className="hint">📅 {dt.format(new Date(nextBooking.startAt))} · {cities[nextBooking.city] ?? nextBooking.city}</span></span><b className="wl-open">→</b></a>
-          ) : nextPlan ? (
-            <a href={`/${locale}/plan/${nextPlan.id}`} className="card wl-next press"><span className="wl-next-ic">🗺</span><span className="stack" style={{ gap: 2 }}><b>{nextPlan.title}</b><span className="hint">📍 {nextPlan.cityName} · {d.format(new Date(`${nextPlan.startDate}T12:00:00`))}</span></span><b className="wl-open">→</b></a>
-          ) : free[0] && cities[free[0]] ? passCards(1).slice(-1) : null}
-        </section>
-
+        {/* A seguir (passe ativo, guia, plano) */}
+        {(active[0] || nextBooking || nextPlan || (free[0] && cities[free[0]])) && (
+          <section className="stack" style={{ gap: 8 }}>
+            <h2 className="gp-h2 sm">⚡ {t.wNextUp}</h2>
+            {active[0] ? passCards(1) : nextBooking ? (
+              <a href={`/${locale}/g/${nextBooking.guideId}`} className="card wl-next press"><span className="wl-next-ic">🧑‍💼</span><span className="stack" style={{ gap: 2 }}><b>{nextBooking.guide}</b><span className="hint">📅 {dt.format(new Date(nextBooking.startAt))} · {cities[nextBooking.city] ?? nextBooking.city}</span></span><b className="wl-open">→</b></a>
+            ) : nextPlan ? (
+              <a href={`/${locale}/plan/${nextPlan.id}`} className="card wl-next press"><span className="wl-next-ic">🗺</span><span className="stack" style={{ gap: 2 }}><b>{nextPlan.title}</b><span className="hint">📍 {nextPlan.cityName} · {d.format(new Date(`${nextPlan.startDate}T12:00:00`))}</span></span><b className="wl-open">→</b></a>
+            ) : passCards(1).slice(-1)}
+          </section>
+        )}
         <div className="wl-quick">
-          <button className="press" onClick={() => setTab("plans")}><span>🗺</span>{t.wQuickPlan}</button>
-          <button className="press" onClick={() => setTab("places")}><span>🌍</span>{t.wQuickCity}</button>
+          <button className="press" onClick={() => go("plans")}><span>🗺</span>{t.wQuickPlan}</button>
+          <button className="press" onClick={() => go("places")}><span>🌍</span>{t.wQuickCity}</button>
           <a className="press" href={`/${locale}#cities`}><span>✨</span>{t.wQuickExplore}</a>
           <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span>{t.evTitle}</a>
         </div>
-
-        {wish && wish.length > 0 && (
-          <section className="stack" style={{ gap: 10 }}>
-            <div className="row-between"><h2 className="gp-h2">❤️ {t.wlWishTitle}</h2><button className="link-btn" onClick={() => setTab("wish")}>{t.wSeeAll} →</button></div>
-            <div className="wl-strip">{wish.slice(0, 8).map((x) => (
-              <a key={wishKey(x)} className="wl-mini press" href={`/${locale}/c/${x.city}#explore`}><span className="wl-mini-ic">{x.icon ?? "📍"}</span><b>{x.title}</b><small>{cities[x.city] ?? x.cityName}</small></a>
-            ))}</div>
-          </section>
-        )}
-
-        {memories.length > 0 && (
-          <section className="stack" style={{ gap: 10 }}>
-            <div className="row-between"><h2 className="gp-h2">📔 {t.wMemories}</h2><button className="link-btn" onClick={() => setTab("memories")}>{t.wSeeAll} →</button></div>
-            <div className="wl-strip">{memories.slice(0, 10).map((x) => (
-              <button key={x.id} className="wl-mem press" onClick={() => setTab("memories")} style={x.photo ? { backgroundImage: `url(${x.photo})` } : undefined}><span><b>{x.title}</b><small>{x.cityName}</small></span></button>
-            ))}</div>
-          </section>
-        )}
-
+        {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
+        <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
       </>}
 
-      {tab === "feed" && (social ? <FeedTab t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+      {/* ---------- Explorar: pessoas, cidades e o que há ---------- */}
+      {section === "explore" && <>
+        <div className="nv-cities">
+          <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span><b>{t.evTitle}</b></a>
+          {Object.entries(cities).sort((a, b) => Number(myCities.includes(b[0])) - Number(myCities.includes(a[0])) || a[1].localeCompare(b[1])).map(([id, n]) => (
+            <a key={id} className="nv-city" href={`#feed:${id}`}><span>{flag(countryOf[id] ?? "")}</span><b>{n}</b></a>
+          ))}
+        </div>
+        {social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
+        {social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={goSignIn} />}
+      </>}
 
-      {tab === "videos" && (signed ? <VideosTab t={t} locale={locale} social={social} cities={cities} onEdit={() => setEditing(true)} onClose={() => setTab("feed")} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+      {section === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={goSignIn} />)}
 
-      {tab === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+      {section === "videos" && (signed ? <VideosTab t={t} locale={locale} social={social} cities={cities} onEdit={() => setEditing(true)} onClose={() => setTab("home")} /> : <SignNudge t={t} onClick={goSignIn} />)}
 
-      {tab === "people" && social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
-      {tab === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+      {section === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={goSignIn} />)}
 
-      {tab === "passes" && <>
-        <section className="stack" style={{ gap: 10 }}>
-          {passCards()}
-          {signed && passes.length === 0 && <a className="btn ghost press" href={`/${locale}#cities`}>{t.wBuy}</a>}
-          {!signed && <button className="btn ghost press" onClick={() => setTab("home")}>🔐 {t.wSignTitle}</button>}
+      {/* ---------- Perfil: cartão + passes, planos, wishlist, cidades, memórias ---------- */}
+      {section === "profile" && <>
+        <section className="wl-card wl-card-sm">
+          {prof ? <>
+            <div className="wl-me">
+              <button className="wl-me-av" onClick={() => setEditing(true)} aria-label={t.scEdit}><Avatar p={prof} size={68} /></button>
+              <div className="wl-me-nums">
+                <button onClick={() => go("places")}><b className="num">{world.cities}</b><small>{t.wStatCities}</small></button>
+                <button onClick={() => go("people")}><b className="num">{social!.count.followers}</b><small>{social!.count.followers === 1 ? t.scFollower : t.scFollowers}</small></button>
+                <button onClick={() => go("people")}><b className="num">{social!.count.following}</b><small>{t.scFollowingN}</small></button>
+              </div>
+            </div>
+            <div className="stack" style={{ gap: 2 }}>
+              <b className="wl-me-n">{prof.name}{prof.isPrivate ? " 🔒" : ""}</b>
+              {prof.bio && <p className="wl-me-bio">{prof.bio}</p>}
+              <span className="wl-mini-stats"><span className="wl-lvl">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span><span>{world.countries} {t.wStatCountries.toLowerCase()}</span><span>{memories.length} {t.wStatMem.toLowerCase()}</span></span>
+            </div>
+          </> : <>
+            <div className="wl-level">
+              <span className="wl-level-b">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
+              <span className="wl-who">{signed ? signed.email : t.walletSub}</span>
+            </div>
+            <div className="wl-prog" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
+            <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
+            {w === "anon" && <button className="btn press wl-in-cta" onClick={goSignIn}>🔐 {t.wSignIn}</button>}
+          </>}
+          {signed && <div className="wl-me-acts">
+            <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
+            {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
+            {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
+          </div>}
         </section>
-        {signed && signed.bookings.length > 0 && (
+        <nav className="wl-seg" role="tablist">
+          {profileSubs.map((k) => (
+            <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
+              <span aria-hidden="true">{icon[k]}</span><small>{t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
+            </button>
+          ))}
+        </nav>
+
+        {sub === "passes" && <>
           <section className="stack" style={{ gap: 10 }}>
-            <h2 className="gp-h2">🧑‍💼 {t.wBookings}</h2>
-            {signed.bookings.map((b) => (
-              <a key={b.id} href={`/${locale}/g/${b.guideId}`} className="card bk" style={{ textDecoration: "none", color: "inherit" }}>
-                <div className="row-between"><b style={{ fontSize: 17 }}>{b.guide}</b><span className={`chip st-${b.status}`}>{t.gpBs[b.status as keyof typeof t.gpBs] ?? b.status}</span></div>
-                <span className="bk-when">📅 {dt.format(new Date(b.startAt))} · {b.hours} h · {b.people} 👤 · {cities[b.city] ?? b.city}</span>
-                {"guidePhone" in b && b.guidePhone && <span className="hint">📞 {t.wGuideContact}: {b.guidePhone}</span>}
-                {"meeting" in b && b.meeting && <span className="hint">📍 {t.wMeet}: {b.meeting}</span>}
-              </a>
-            ))}
+            {passCards()}
+            {signed && passes.length === 0 && <a className="btn ghost press" href={`/${locale}#cities`}>{t.wBuy}</a>}
+            {!signed && <button className="btn ghost press" onClick={goSignIn}>🔐 {t.wSignTitle}</button>}
           </section>
-        )}
-      </>}
-
-      {tab === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
-
-      {tab === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
-
-      {tab === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
-
-      {tab === "memories" && (
-        <section className="stack" style={{ gap: 10 }}>
-          {memories.length === 0 && w !== null && <div className="card gp-empty"><span aria-hidden="true">📔</span><b>{t.diaryEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
-          <div className="wl-mems">
-            {memories.map((x) => (
-              <article key={x.id} className="card dy-item">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {x.photo && <img src={x.photo} alt="" loading="lazy" />}
-                <div className="stack" style={{ gap: 4, padding: 14 }}>
-                  <span className="label" style={{ color: "var(--cobalt)" }}>📍 {x.cityName}{x.local ? ` · ${t.wLocalOnly}` : ""}</span>
-                  <b>{x.title}</b>
-                  <span className="hint">{d.format(new Date(x.at))}</span>
-                  {x.note && <p style={{ margin: 0 }}>{x.note}</p>}
-                  <div className="ex-acts">
-                    <button onClick={() => void share(x)}>↗ {t.diaryShare}</button>
-                    <a href="https://www.tiktok.com/upload" target="_blank" rel="noreferrer">♪ TikTok</a>
-                    <button onClick={() => void remove(x)}>🗑 {t.diaryDelete}</button>
+          {signed && signed.bookings.length > 0 && (
+            <section className="stack" style={{ gap: 10 }}>
+              <h2 className="gp-h2 sm">🧑‍💼 {t.wBookings}</h2>
+              {signed.bookings.map((b) => (
+                <a key={b.id} href={`/${locale}/g/${b.guideId}`} className="card bk" style={{ textDecoration: "none", color: "inherit" }}>
+                  <div className="row-between"><b style={{ fontSize: 16 }}>{b.guide}</b><span className={`chip st-${b.status}`}>{t.gpBs[b.status as keyof typeof t.gpBs] ?? b.status}</span></div>
+                  <span className="bk-when">📅 {dt.format(new Date(b.startAt))} · {b.hours} h · {b.people} 👤 · {cities[b.city] ?? b.city}</span>
+                  {"guidePhone" in b && b.guidePhone && <span className="hint">📞 {t.wGuideContact}: {b.guidePhone}</span>}
+                  {"meeting" in b && b.meeting && <span className="hint">📍 {t.wMeet}: {b.meeting}</span>}
+                </a>
+              ))}
+            </section>
+          )}
+        </>}
+        {sub === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={goSignIn} />)}
+        {sub === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
+        {sub === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : <SignNudge t={t} onClick={goSignIn} />)}
+        {sub === "memories" && (
+          <section className="stack" style={{ gap: 10 }}>
+            {memories.length === 0 && w !== null && <div className="card gp-empty"><span aria-hidden="true">📔</span><b>{t.diaryEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
+            <div className="wl-mems">
+              {memories.map((x) => (
+                <article key={x.id} className="card dy-item">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {x.photo && <img src={x.photo} alt="" loading="lazy" />}
+                  <div className="stack" style={{ gap: 4, padding: 14 }}>
+                    <span className="label" style={{ color: "var(--cobalt)" }}>📍 {x.cityName}{x.local ? ` · ${t.wLocalOnly}` : ""}</span>
+                    <b>{x.title}</b>
+                    <span className="hint">{d.format(new Date(x.at))}</span>
+                    {x.note && <p style={{ margin: 0 }}>{x.note}</p>}
+                    <div className="ex-acts">
+                      <button onClick={() => void share(x)}>↗ {t.diaryShare}</button>
+                      <button onClick={() => void remove(x)}>🗑 {t.diaryDelete}</button>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </section>
-      )}
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+      </>}
 
-      <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
+      {/* ---------- Barra de baixo ---------- */}
+      <nav className="nv" aria-label={t.wallet}>
+        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvHome}><span>{section === "home" ? "🏠" : "⌂"}</span><small>{t.nvHome}</small></button>
+        <button className={section === "explore" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span>🔍</span><small>{t.nvExplore}</small></button>
+        <button className="nv-plus" onClick={create} aria-label={t.pfNew}><span>＋</span></button>
+        <button className={section === "videos" ? "on" : ""} onClick={() => go("videos")} aria-label={t.rlTitle}><span>🎬</span><small>{t.rlTitle}</small></button>
+        <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
+          <span>{prof ? <Avatar p={prof} size={24} /> : "👤"}</span><small>{t.nvProfile}</small>
+        </button>
+      </nav>
+
+      {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} onClose={(c) => { setComposing(false); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
       {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}
       {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
