@@ -896,3 +896,4 @@ html,body{overflow-x:clip}
 .ag-m-acts a,.ag-m-acts button{font:inherit;font-weight:600;color:var(--cobalt);background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
 .ag-sheet{padding:0;overflow:hidden auto}
 .ag-cover{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.ag-runs{font-size:12px;font-weight:600;color:var(--muted)}

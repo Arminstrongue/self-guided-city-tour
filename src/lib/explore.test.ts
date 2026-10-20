@@ -76,3 +76,13 @@ test("teto diário do Google", () => {
   assert.deepEqual([takeGoogle("photo"), takeGoogle("photo"), takeGoogle("photo"), takeGoogle("photo")], [true, true, true, false]);
   assert.equal(takeGoogle("search"), true);
 });
+
+import { collapseRuns } from "./events";
+test("Ticketmaster: sessões do mesmo evento juntam-se numa entrada com a última data", () => {
+  const e = (id: string, name: string, d: string, venue = "V") => ({ id, name, url: "u", start: `${d}T10:00:00`, localDate: d, localTime: "10:00", kind: "other" as const, venue, lat: null, lng: null, image: null, priceMin: null, currency: null });
+  const out = collapseRuns([e("1", "Frameless", "2026-10-20"), e("2", "Frameless", "2026-10-21"), e("3", "Frameless", "2026-10-25"), e("4", "Gig", "2026-10-21"), e("5", "Frameless", "2026-10-22", "Other")]);
+  assert.equal(out.length, 3);
+  const f = out.find((x) => x.id === "1")!;
+  assert.equal(f.until, "2026-10-25"); assert.equal(f.runs, 3);
+  assert.equal(out.find((x) => x.id === "4")!.until, undefined);
+});

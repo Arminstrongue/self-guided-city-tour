@@ -18,7 +18,7 @@ export async function GET(req: Request) {
   const lang = isLocale(l) ? l : "en";
   // Google Places quando há chave (fotos, avaliações, horário); OpenStreetMap como reserva.
   const google = googleExploreEnabled();
-  const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city))]);
+  const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city), 30)]);
   const places = gp ?? (await placesFor(city, lang));
   return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=3600" } });
 }

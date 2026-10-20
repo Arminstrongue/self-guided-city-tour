@@ -39,10 +39,12 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
 
   const today = localDay(tz), tomorrow = localDay(tz, 1);
   const weekend = useMemo(() => Array.from({ length: 7 }, (_, i) => localDay(tz, i)).filter((d) => [5, 6, 0].includes(new Date(`${d}T12:00:00Z`).getUTCDay())), [tz]);
-  const list = (events ?? []).filter((e) => (kind === "all" || e.kind === kind) && (range === "all" || (range === "today" ? e.localDate === today : range === "tomorrow" ? e.localDate === tomorrow : weekend.includes(e.localDate))));
+  const on = (e: CityEvent, d: string) => e.localDate === d || (Boolean(e.until) && e.localDate <= d && d <= e.until!);
+  const list = (events ?? []).filter((e) => (kind === "all" || e.kind === kind) && (range === "all" || (range === "today" ? on(e, today) : range === "tomorrow" ? on(e, tomorrow) : weekend.some((d) => on(e, d)))));
   const days = useMemo(() => { const m = new Map<string, CityEvent[]>(); for (const e of list) m.set(e.localDate, [...(m.get(e.localDate) ?? []), e]); return [...m.entries()]; }, [list]);
   const kinds = KINDS.filter((k) => (events ?? []).some((e) => e.kind === k));
   const dayFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "long", day: "numeric", month: "long" });
+  const shortFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short" });
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: c, maximumFractionDigits: 0 }).format(n); } catch { return `${n} ${c}`; } };
   const wished = (title: string) => wish.some((x) => wishKey(x) === wishKey({ city: cityId, title }));
   function heart(e: CityEvent) {
@@ -90,6 +92,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
                 <span className="label" style={{ color: "var(--cobalt)" }}>{KIND_ICON[e.kind]} {t.evKind[e.kind]}{e.localTime ? ` · ${e.localTime}` : ""}</span>
                 <b className="ex-ev-t">{e.name}</b>
                 <span className="hint ad-ellip">{e.venue ?? ""}{e.priceMin && e.currency ? ` · ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : ""}</span>
+                {e.until && <span className="ag-runs">🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${e.until}T12:00:00`)), n: e.runs ?? 2 })}</span>}
               </span>
               {wished(e.name) && <span aria-hidden="true">❤️</span>}
             </button>
@@ -125,6 +128,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               <span className="label" style={{ color: "var(--cobalt)" }}>{KIND_ICON[open.kind]} {t.evKind[open.kind]}</span>
               <b style={{ fontSize: 20, lineHeight: 1.25 }}>{open.name}</b>
               <span>📅 {dayFmt.format(new Date(`${open.localDate}T12:00:00`))}{open.localTime ? ` · ${open.localTime}` : ""}</span>
+              {open.until && <span>🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${open.until}T12:00:00`)), n: open.runs ?? 2 })}</span>}
               {open.venue && <span>📍 {open.venue}</span>}
               {open.priceMin && open.currency && <span>🎟 {fmt(t.exFrom, { p: money(open.priceMin, open.currency) })}</span>}
               <div className="grid2" style={{ marginTop: 6 }}>
