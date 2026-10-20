@@ -81,3 +81,24 @@ test("estado do voo (AeroDataBox)", () => {
   assert.equal(s.estimated, "2030-05-01T18:50:00.000Z");
   assert.equal(parseFlights([], "X"), null);
 });
+
+test("Médio Oriente: regras de entrada por país", () => {
+  const c = (id: string) => getCity(id)!;
+  assert.equal(checkEntry(c("dxb"), "PT").verdict, "free-pass");
+  assert.equal(checkEntry(c("dxb"), "AE").verdict, "free");
+  assert.equal(checkEntry(c("dxb"), "IN").verdict, "visa");
+  assert.equal(checkEntry(c("dxb"), "IN").hint, "ae-permit");
+  assert.equal(checkEntry(c("doh"), "GB").verdict, "free-pass");
+  assert.equal(checkEntry(c("ruh"), "FR").verdict, "evisa-me");
+  assert.equal(checkEntry(c("ruh"), "FR").hint, "sa-stopover");
+  assert.equal(checkEntry(c("jed"), "AE").verdict, "free-pass");
+  assert.equal(checkEntry(c("ruh"), "AO").hint, "sa-visa");
+  assert.equal(checkEntry(c("cai"), "DE").verdict, "voa");
+  assert.equal(checkEntry(c("cai"), "DE").fee, "25 USD");
+  assert.equal(checkEntry(c("amm"), "US").verdict, "voa");
+  assert.equal(checkEntry(c("amm"), "NG").verdict, "visa");
+  assert.equal(checkEntry(c("amm"), "SA").verdict, "free-pass");
+  assert.equal(checkEntry(c("mct"), "BR").verdict, "free-pass");
+  assert.equal(checkEntry(c("mct"), "AO").verdict, "unknown");
+  assert.equal(checkEntry(c("mct"), "AO", true).verdict, "free");
+});

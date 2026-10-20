@@ -34,11 +34,12 @@ export function planRoute(city: City, withExtension: boolean, maxStops?: number)
   // a primeira paragem tem leg de 0 min (já está no fim da ligação ao aeroporto)
   minutes += stops[0]?.leg.min ?? 0;
 
-  const singles = rides * city.single + city.card + fixed;
+  const card = rides > 0 ? city.card : 0; // cartão só é preciso se houver viagens com a tarifa da cidade
+  const singles = rides * city.single + card + fixed;
   let alt: number | null = null;
   const a = city.alt;
-  if (a?.type === "pass") alt = a.price + (a.includesAirport ? 0 : city.card + fixed);
-  if (a?.type === "pack") alt = Math.ceil(rides / a.n) * a.price + city.card + fixed;
+  if (a?.type === "pass") alt = a.price + (a.includesAirport ? 0 : card + fixed);
+  if (a?.type === "pack") alt = Math.ceil(rides / a.n) * a.price + card + fixed;
   if (a?.type === "cap") alt = Math.min(rides * city.single, a.price) + fixed;
   const best = alt === null || singles <= alt ? "singles" : "alt";
   return {

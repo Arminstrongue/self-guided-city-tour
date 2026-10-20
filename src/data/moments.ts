@@ -122,6 +122,70 @@ export const MOMENTS: Record<string, Moment[]> = {
     m("kadikoy", "🌙", "night", ["food", "night"], 40.9905, 29.0262, ["Noite em Kadıköy", "O lado asiático: mercado, meyhanes e cafés cheios de estudantes."], ["Evening in Kadıköy", "The Asian side: market, meyhanes and student cafés."]),
     m("bazar", "🛍", "day", ["shopping", "history"], 41.0107, 28.9681, ["Grande Bazar", "Mais de 4 mil lojas debaixo de abóbadas pintadas. Negocie com um sorriso."], ["Grand Bazaar", "Over 4,000 shops under painted vaults. Bargain with a smile."]),
     m("gulhane", "🧸", "day", ["family", "nature"], 41.013, 28.981, ["Parque Gülhane", "Jardins do antigo palácio, com chá e vista para o Bósforo."], ["Gülhane Park", "The old palace gardens, with tea and Bosphorus views."])
+  ],
+  dxb: [
+    m("fountain", "⛲", "night", ["photo", "family", "music"], 25.1955, 55.2758, ["Espetáculo da Fonte do Dubai", "À noite, a cada 30 minutos, a fonte dança ao som de música aos pés do Burj Khalifa. Grátis; veja da ponte de Souk Al Bahar."], ["Dubai Fountain show", "Every 30 minutes in the evening the fountain dances to music at the foot of the Burj Khalifa. Free; watch from the Souk Al Bahar bridge."]),
+    m("abra-sunset", "🌅", "sunset", ["photo", "history"], 25.2630, 55.2970, ["Pôr do sol de abra no Creek", "Um barco de madeira por 1 AED entre Bur Dubai e Deira, com as luzes dos souks a acender."], ["Sunset abra on the Creek", "A wooden boat for 1 AED between Bur Dubai and Deira, as the souk lights come on."]),
+    m("desert", "🐪", "day", ["nature", "photo"], 24.9900, 55.6000, ["Deserto ao fim da tarde", "Dunas vermelhas a 45 minutos da cidade: safari em 4x4, camelos e jantar beduíno. Reserve com operador licenciado."], ["Desert in the late afternoon", "Red dunes 45 minutes from the city: 4x4 safari, camels and a Bedouin dinner. Book a licensed operator."]),
+    m("arabian-tea", "🍵", "day", ["food", "history"], 25.2637, 55.2995, ["Pequeno-almoço emirati em Al Fahidi", "Chá com cardamomo, luqaimat (bolinhos com tâmara) e balaleet num pátio de casa antiga."], ["Emirati breakfast in Al Fahidi", "Cardamom tea, luqaimat (date-syrup dumplings) and balaleet in an old house courtyard."]),
+    m("jbr-beach", "🏖", "morning", ["nature", "family"], 25.0790, 55.1340, ["Praia de manhã em JBR", "Água morna e areia fina com o skyline atrás, antes do calor apertar."], ["Morning at JBR beach", "Warm water and fine sand with the skyline behind, before the heat builds."]),
+    m("mall-aquarium", "🧸", "day", ["family"], 25.1975, 55.2796, ["Aquário do Dubai Mall", "O tanque gigante vê-se de graça do corredor do centro comercial; o túnel é pago."], ["Dubai Mall Aquarium", "The giant tank is free to see from the mall corridor; the tunnel is paid."])
+  ],
+  auh: [
+    m("mosque-dusk", "🌅", "sunset", ["photo", "history"], 24.4128, 54.4750, ["A Grande Mesquita ao anoitecer", "O mármore branco muda de cor com a luz e os espelhos de água refletem as cúpulas. Reserve a entrada gratuita."], ["The Grand Mosque at dusk", "The white marble changes colour with the light and the pools reflect the domes. Book the free entry."]),
+    m("corniche-bike", "🚲", "morning", ["sport", "nature"], 24.4780, 54.3330, ["Corniche de bicicleta", "Bicicletas partilhadas ao longo de 8 km de praia e jardins, de manhã cedo."], ["Corniche by bike", "Shared bikes along 8 km of beach and gardens, early in the morning."]),
+    m("mangroves", "🛶", "morning", ["nature", "photo"], 24.4500, 54.4000, ["Caiaque nos mangais", "Remar entre mangais no Parque Nacional de Eastern Mangroves, com garças e caranguejos."], ["Kayak the mangroves", "Paddle through the mangroves of Eastern Mangroves National Park, with herons and crabs."]),
+    m("louvre-light", "🎨", "day", ["art", "photo"], 24.5337, 54.3983, ["Chuva de luz no Louvre", "A luz que passa pela cúpula rendada e o mar à volta das galerias."], ["Rain of light at the Louvre", "Sunlight filtering through the lace dome and the sea around the galleries."]),
+    m("mina-market", "🧺", "morning", ["food", "shopping"], 24.5230, 54.3800, ["Mercado do peixe de Mina Zayed", "Peixe do Golfo, tâmaras e especiarias; escolha o peixe e grelham-no ali."], ["Mina Zayed fish market", "Gulf fish, dates and spices; pick a fish and they'll grill it on the spot."]),
+    m("yas", "🎢", "day", ["family", "sport"], 24.4840, 54.6070, ["Yas Island", "Ferrari World, Warner Bros. World e o circuito de F1, perto do aeroporto."], ["Yas Island", "Ferrari World, Warner Bros. World and the F1 circuit, close to the airport."])
+  ],
+  doh: [
+    m("souq-night", "🌙", "night", ["food", "shopping", "night"], 25.2867, 51.5330, ["Noite no Souq Waqif", "Esplanadas com shisha, grelhados e o mercado dos falcões iluminado."], ["Evening at Souq Waqif", "Shisha terraces, grills and the lit-up falcon market."]),
+    m("mia-sunset", "🌅", "sunset", ["photo"], 25.2955, 51.5390, ["Pôr do sol no MIA Park", "As torres de West Bay acendem-se do outro lado da baía."], ["Sunset at MIA Park", "West Bay's towers light up across the bay."]),
+    m("dhow", "⛵", "sunset", ["photo", "history"], 25.2960, 51.5300, ["Passeio de dhow", "Uma volta de barco de madeira pela baía de Doha, com os barqueiros da Corniche."], ["Dhow cruise", "A wooden boat ride around Doha Bay with the Corniche boatmen."]),
+    m("karak", "☕", "day", ["food"], 25.2867, 51.5330, ["Karak e chapati", "Chá com leite e especiarias, a bebida da cidade, com pão chapati quente."], ["Karak and chapati", "Spiced milky tea, the city's drink, with hot chapati bread."]),
+    m("katara-beach", "🏖", "morning", ["nature", "family"], 25.3600, 51.5260, ["Praia de Katara", "Praia calma no bairro cultural, com desportos náuticos."], ["Katara beach", "A calm beach in the cultural village, with water sports."]),
+    m("3-2-1", "⚽", "day", ["sport", "family"], 25.2620, 51.4500, ["Museu Olímpico 3-2-1", "Museu interativo do desporto junto ao Estádio Internacional Khalifa."], ["3-2-1 Olympic Museum", "An interactive sports museum next to Khalifa International Stadium."])
+  ],
+  ruh: [
+    m("bujairi-night", "🌙", "night", ["food", "history", "night"], 24.7360, 46.5770, ["Jantar em Bujairi Terrace", "Restaurantes com vista para as ruínas iluminadas de At-Turaif."], ["Dinner at Bujairi Terrace", "Restaurants overlooking the floodlit ruins of At-Turaif."]),
+    m("skybridge", "🌅", "sunset", ["photo"], 24.7113, 46.6744, ["Pôr do sol na Sky Bridge", "A 300 m de altura, a cidade inteira a ficar dourada."], ["Sunset on the Sky Bridge", "300 m up, the whole city turning gold."]),
+    m("wadi-hanifah", "🌴", "sunset", ["nature", "sport"], 24.6600, 46.6000, ["Wadi Hanifah", "O vale verde que atravessa a cidade, com trilhos, palmeiras e lagos, perto de Diriyah."], ["Wadi Hanifah", "The green valley crossing the city, with trails, palm trees and lakes, near Diriyah."]),
+    m("souq-zal", "🧺", "day", ["shopping", "history"], 24.6310, 46.7160, ["Souq Al Zal", "Tapetes, bisht, incenso e antiguidades; leilões ao fim da tarde."], ["Souq Al Zal", "Rugs, bisht cloaks, incense and antiques; auctions in the late afternoon."]),
+    m("kabsa", "🍛", "day", ["food"], 24.6900, 46.6850, ["Kabsa e café árabe", "O prato nacional de arroz com especiarias e carne, e café com cardamomo e tâmaras."], ["Kabsa and Arabic coffee", "The national dish of spiced rice and meat, with cardamom coffee and dates."]),
+    m("boulevard", "🎡", "night", ["family", "night", "music"], 24.7700, 46.6000, ["Boulevard City", "Zona de espetáculos, restaurantes e luzes, cheia na época da Riyadh Season."], ["Boulevard City", "Shows, restaurants and lights, packed during Riyadh Season."])
+  ],
+  jed: [
+    m("balad-night", "🌙", "night", ["history", "photo"], 21.4847, 39.1870, ["Al-Balad à noite", "As casas de coral iluminadas e os cafés de rua quando o calor baixa."], ["Al-Balad at night", "Floodlit coral houses and street cafés once the heat drops."]),
+    m("fountain-night", "⛲", "night", ["photo", "family"], 21.5133, 39.1530, ["Fonte do Rei Fahd", "O jato mais alto do mundo, iluminado sobre o Mar Vermelho."], ["King Fahd's Fountain", "The world's tallest jet, lit up over the Red Sea."]),
+    m("redsea-sunset", "🌅", "sunset", ["photo", "nature"], 21.5536, 39.1313, ["Pôr do sol na mesquita flutuante", "O sol a cair no Mar Vermelho atrás da mesquita Al Rahma."], ["Sunset at the floating mosque", "The sun dropping into the Red Sea behind Al Rahma Mosque."]),
+    m("fish-market", "🐟", "morning", ["food"], 21.4900, 39.1700, ["Mercado do peixe", "O Bangala: peixe do Mar Vermelho de manhã cedo, com restaurantes que o grelham."], ["Fish market", "The Bangala: Red Sea fish early in the morning, with restaurants that grill it."]),
+    m("snorkel", "🤿", "morning", ["nature", "sport"], 21.7500, 39.0900, ["Recife no Mar Vermelho", "Corais e peixes a poucos metros da costa norte, em clubes de praia."], ["Red Sea reef", "Coral and fish a few metres off the north coast, at beach clubs."]),
+    m("art-promenade", "🎨", "day", ["art"], 21.5200, 39.1500, ["Esculturas da Corniche", "Obras de Henry Moore, Joan Miró e outros, ao ar livre ao longo do mar."], ["Corniche sculptures", "Works by Henry Moore, Joan Miró and others, outdoors along the sea."])
+  ],
+  cai: [
+    m("pyramids-sunrise", "☀️", "morning", ["photo", "history"], 29.9792, 31.1342, ["Pirâmides à abertura", "Chegue às 7h: menos calor, menos gente e a melhor luz no planalto."], ["Pyramids at opening time", "Arrive at 7 am: less heat, fewer people and the best light on the plateau."]),
+    m("nile-felucca", "⛵", "sunset", ["photo", "nature"], 30.0400, 31.2280, ["Felucca no Nilo", "Uma hora de barco à vela ao pôr do sol, a partir da Corniche. Combine o preço antes."], ["Felucca on the Nile", "An hour on a sailing boat at sunset from the Corniche. Agree the price first."]),
+    m("fishawy", "☕", "night", ["food", "history", "night"], 30.0477, 31.2623, ["Chá no El Fishawy", "O café aberto há mais de 200 anos no Khan el-Khalili: chá de menta e karkadé."], ["Tea at El Fishawy", "The café open for over 200 years in Khan el-Khalili: mint tea and karkadé."]),
+    m("koshari", "🍲", "day", ["food"], 30.0500, 31.2400, ["Koshari na baixa", "Arroz, lentilhas, massa e molho de tomate picante: o prato de rua do Cairo."], ["Koshari downtown", "Rice, lentils, pasta and spicy tomato sauce: Cairo's street dish."]),
+    m("azhar-park", "🌳", "sunset", ["nature", "family", "photo"], 30.0400, 31.2650, ["Parque Al-Azhar", "Jardins no alto, com vista para os minaretes e a Cidadela ao pôr do sol."], ["Al-Azhar Park", "Hilltop gardens with views of the minarets and the Citadel at sunset."]),
+    m("tanoura", "💃", "night", ["music", "art"], 30.0460, 31.2620, ["Espetáculo de tanoura", "Dança sufi rodopiante no Palácio de Al-Ghouri (algumas noites por semana)."], ["Tanoura show", "Whirling Sufi dance at Al-Ghouri Palace (some evenings each week)."])
+  ],
+  amm: [
+    m("citadel-sunset", "🌅", "sunset", ["photo", "history"], 31.9547, 35.9343, ["Pôr do sol na Cidadela", "A cidade branca a ficar rosada e o chamamento para a oração a ecoar pelas colinas."], ["Sunset at the Citadel", "The white city turning pink and the call to prayer echoing across the hills."]),
+    m("hashem", "🧆", "day", ["food"], 31.9520, 35.9330, ["Falafel no Hashem", "O restaurante de rua mais famoso da baixa: falafel, homus e chá de menta."], ["Falafel at Hashem", "Downtown's most famous street restaurant: falafel, hummus and mint tea."]),
+    m("knafeh", "🍰", "night", ["food", "night"], 31.9515, 35.9335, ["Knafeh na Habibah", "Doce quente de queijo e calda, comido de pé na rua."], ["Knafeh at Habibah", "Hot cheese-and-syrup pastry, eaten standing in the street."]),
+    m("rainbow-night", "🌙", "night", ["night", "music"], 31.9497, 35.9245, ["Noite na Rainbow Street", "Terraços, cafés e música nos telhados de Jabal Amman."], ["Evening on Rainbow Street", "Terraces, cafés and rooftop music in Jabal Amman."]),
+    m("weibdeh", "🎨", "day", ["art", "history"], 31.9590, 35.9270, ["Jabal al-Weibdeh e Darat al Funun", "O bairro dos artistas: casas antigas de pedra, galerias e cafés com vista para a Cidadela."], ["Jabal al-Weibdeh and Darat al Funun", "The artists' quarter: old stone houses, galleries and cafés facing the Citadel."]),
+    m("souk-jara", "🧺", "weekend", ["shopping", "art"], 31.9495, 35.9255, ["Souk Jara (verão, sexta)", "Mercado de artesanato e comida de rua em Jabal Amman às sextas-feiras."], ["Souk Jara (summer Fridays)", "A craft and street-food market in Jabal Amman on Fridays."])
+  ],
+  mct: [
+    m("mutrah-sunset", "🌅", "sunset", ["photo"], 23.6158, 58.5636, ["Pôr do sol na Corniche de Mutrah", "Os barcos, as montanhas escuras e o incenso no ar quando o souk reabre."], ["Sunset on Mutrah Corniche", "The boats, the dark mountains and incense in the air as the souk reopens."]),
+    m("frankincense", "🪔", "day", ["shopping", "history"], 23.6158, 58.5636, ["Incenso no souk", "Resina de olíbano de Dhofar, queimadores e prata omani no souk coberto."], ["Frankincense in the souk", "Dhofar frankincense resin, burners and Omani silver in the covered souk."]),
+    m("halwa", "🍬", "day", ["food"], 23.6150, 58.5640, ["Halwa omani e kahwa", "O doce de açafrão e água de rosas com café de cardamomo: a hospitalidade omani."], ["Omani halwa and kahwa", "The saffron and rosewater sweet with cardamom coffee: Omani hospitality."]),
+    m("dolphins", "🐬", "morning", ["nature", "family"], 23.5900, 58.6100, ["Golfinhos ao amanhecer", "Barcos saem da marina de Mascate para ver golfinhos de manhã cedo."], ["Dolphins at dawn", "Boats leave Muscat marina early to watch dolphins."]),
+    m("qurum-beach", "🏖", "morning", ["nature", "sport"], 23.6200, 58.4800, ["Praia de Qurum", "Areia larga e passeio, perto da ópera; ótimo de manhã ou ao fim da tarde."], ["Qurum beach", "A wide beach and promenade near the opera; great early or late in the day."]),
+    m("riyam", "📸", "day", ["photo", "history"], 23.6140, 58.5850, ["Miradouro de Riyam", "O queimador de incenso gigante no alto e a vista sobre Mutrah e a baía."], ["Riyam viewpoint", "The giant incense burner on the hill and the view over Mutrah and the bay."])
   ]
 };
 
@@ -131,5 +195,8 @@ export const AGENDA: Record<string, string> = {
   bcn: "https://www.timeout.com/barcelona/things-to-do", par: "https://www.timeout.com/paris/en/things-to-do", lon: "https://www.timeout.com/london/things-to-do",
   rom: "https://www.timeout.com/rome/things-to-do", ams: "https://www.timeout.com/amsterdam/things-to-do", edi: "https://www.timeout.com/edinburgh/things-to-do",
   man: "https://www.timeout.com/manchester/things-to-do", gla: "https://www.timeout.com/glasgow/things-to-do", liv: "https://www.timeout.com/liverpool/things-to-do",
-  bir: "https://www.timeout.com/birmingham/things-to-do", ist: "https://www.timeout.com/istanbul/things-to-do"
+  bir: "https://www.timeout.com/birmingham/things-to-do", ist: "https://www.timeout.com/istanbul/things-to-do",
+  dxb: "https://www.timeoutdubai.com/things-to-do", auh: "https://www.timeoutabudhabi.com/things-to-do", doh: "https://www.timeoutdoha.com/things-to-do",
+  ruh: "https://www.timeoutriyadh.com/things-to-do", jed: "https://www.visitsaudi.com/en/jeddah", cai: "https://www.cairo360.com",
+  amm: "https://www.visitjordan.com", mct: "https://www.experienceoman.om"
 };

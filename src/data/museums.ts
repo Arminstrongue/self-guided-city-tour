@@ -89,6 +89,36 @@ export const MUSEUMS: Record<string, Museum[]> = {
     { id: "galata-m", n: "Torre de Gálata", lat: 41.0256, lng: 28.9742, price: 1525, h: [[ALL, "08:30", "23:00"]], url: "https://muze.gov.tr", pt: "30 € para estrangeiros; pausa por volta das 17:45–19:00. Fila menor de manhã cedo.", en: "€30 for foreigners; break around 17:45–19:00. Shorter queues early morning." },
     { id: "dolmabahce", n: "Palácio de Dolmabahçe", lat: 41.0391, lng: 29.0001, price: 2000, h: [[[0, 2, 3, 4, 5, 6], "09:00", "17:00"]], url: "https://www.millisaraylar.gov.tr", pt: "Fechado à segunda. Perto de Taksim, à beira do Bósforo.", en: "Closed Mondays. Near Taksim, on the Bosphorus." }
   ],
+  dxb: [
+    { id: "at-the-top", n: "Burj Khalifa — At the Top", lat: 25.1972, lng: 55.2744, price: 169, h: [[ALL, "10:00", "23:00"]], book: true, url: "https://www.burjkhalifa.ae", pt: "Preço base dos pisos 124–125 fora das horas de pôr do sol; ao pôr do sol custa mais. Reserve online.", en: "Base price for levels 124–125 outside sunset hours; sunset slots cost more. Book online." },
+    { id: "motf", n: "Museu do Futuro", lat: 25.2192, lng: 55.2820, price: 149, h: [[ALL, "10:00", "21:30"]], book: true, url: "https://museumofthefuture.ae", pt: "Bilhetes com hora marcada; esgota com frequência.", en: "Timed tickets; often sells out." }
+  ],
+  auh: [
+    { id: "szgm", n: "Mesquita Sheikh Zayed", lat: 24.4128, lng: 54.4750, price: 0, h: [[[0, 1, 2, 3, 4, 6], "09:00", "22:00"], [[5], "16:30", "22:00"]], book: true, url: "https://www.szgmc.gov.ae", pt: "Gratuita com reserva online. Sexta só à tarde. Roupa que cubra braços e pernas.", en: "Free with online booking. Fridays afternoon only. Clothes covering arms and legs." },
+    { id: "qaw", n: "Qasr Al Watan", lat: 24.4625, lng: 54.3058, price: 65, h: [[ALL, "10:00", "18:30"]], url: "https://www.qasralwatan.ae", pt: "Palácio e jardins; espetáculo de luz à noite com bilhete à parte.", en: "Palace and gardens; evening light show on a separate ticket." },
+    { id: "louvre", n: "Louvre Abu Dhabi", lat: 24.5337, lng: 54.3983, price: 63, h: [[[0, 2, 3, 4], "10:00", "18:30"], [[5, 6], "10:00", "20:30"]], url: "https://www.louvreabudhabi.ae", pt: "Fechado à segunda.", en: "Closed Mondays." }
+  ],
+  doh: [
+    { id: "nmoq-m", n: "Museu Nacional do Catar", lat: 25.2881, lng: 51.5480, price: 50, h: [[[0, 1, 2, 3, 4, 6], "09:00", "19:00"], [[5], "13:30", "19:00"]], url: "https://qm.org.qa", pt: "Sexta só à tarde. Gratuito para residentes.", en: "Friday afternoons only. Free for residents." },
+    { id: "mia-m", n: "Museu de Arte Islâmica", lat: 25.2955, lng: 51.5390, price: 50, h: [[[0, 1, 2, 3, 4, 6], "09:00", "19:00"], [[5], "13:30", "19:00"]], url: "https://qm.org.qa", pt: "O parque MIA é gratuito e aberto até tarde.", en: "MIA Park is free and open late." }
+  ],
+  ruh: [
+    { id: "masmak-m", n: "Forte Al Masmak", lat: 24.6312, lng: 46.7134, price: 0, h: [[[0, 1, 2, 3, 4, 6], "08:00", "21:00"], [[5], "16:00", "21:00"]], url: "https://www.visitsaudi.com", pt: "Entrada gratuita. Horário de sexta reduzido; confirme no local.", en: "Free entry. Shorter hours on Fridays; check locally." },
+    { id: "turaif", n: "At-Turaif (Diriyah)", lat: 24.7338, lng: 46.5727, price: 100, h: [[ALL, "10:00", "24:00"]], book: true, url: "https://www.diriyah.sa", pt: "Bilhete com hora marcada no site de Diriyah; o preço varia com a época.", en: "Timed tickets on the Diriyah website; price varies by season." }
+  ],
+  cai: [
+    { id: "gem-m", n: "Grande Museu Egípcio", lat: 29.9947, lng: 31.1197, price: 1700, h: [[[0, 1, 2, 4, 5], "09:00", "18:00"], [[3, 6], "09:00", "21:00"]], book: true, url: "https://visit-gem.com", pt: "Preço para estrangeiros; reserve online. Fecha mais tarde à quarta e ao sábado.", en: "Foreigner price; book online. Open later on Wednesdays and Saturdays." },
+    { id: "giza", n: "Planalto de Gizé (pirâmides)", lat: 29.9792, lng: 31.1342, price: 700, h: [[ALL, "07:00", "17:00"]], url: "https://egymonuments.gov.eg", pt: "Entrar dentro de uma pirâmide e o autocarro interno são bilhetes à parte. Só cartão em muitas bilheteiras.", en: "Going inside a pyramid and the internal bus are extra tickets. Card-only at many ticket desks." },
+    { id: "egm", n: "Museu Egípcio (Tahrir)", lat: 30.0478, lng: 31.2336, price: 550, h: [[ALL, "09:00", "17:00"]], url: "https://egymonuments.gov.eg", pt: "Preço para estrangeiros.", en: "Foreigner price." }
+  ],
+  amm: [
+    { id: "citadel-m", n: "Cidadela de Amã", lat: 31.9547, lng: 35.9343, price: 3, h: [[ALL, "08:00", "17:00"]], url: "https://www.jordanpass.jo", pt: "Incluída no Jordan Pass. Fecha mais tarde no verão.", en: "Included in the Jordan Pass. Closes later in summer." },
+    { id: "theatre-m", n: "Teatro Romano", lat: 31.9517, lng: 35.9394, price: 2, h: [[ALL, "08:00", "17:00"]], url: "https://www.jordanpass.jo", pt: "Incluído no Jordan Pass, com dois pequenos museus de folclore.", en: "Included in the Jordan Pass, with two small folklore museums." }
+  ],
+  mct: [
+    { id: "sqgm-m", n: "Grande Mesquita Sultan Qaboos", lat: 23.5840, lng: 58.3890, price: 0, h: [[[0, 1, 2, 3, 4, 6], "08:00", "11:00"]], url: "https://www.experienceoman.om", pt: "Gratuita. Visitantes só de sábado a quinta de manhã; roupa que cubra braços e pernas, mulheres com lenço.", en: "Free. Visitors only Saturday to Thursday mornings; clothes covering arms and legs, women with a headscarf." },
+    { id: "nmo-m", n: "Museu Nacional de Omã", lat: 23.6143, lng: 58.5915, price: 5, h: [[[0, 1, 2, 3, 4, 6], "10:00", "17:00"]], url: "https://www.nm.gov.om", pt: "Confirme o horário de sexta no site.", en: "Check Friday hours on the website." }
+  ],
   bir: [
     { id: "thinktank", n: "Thinktank Science Museum", lat: 52.4826, lng: -1.8862, price: 16, h: [[ALL, "10:00", "17:00"]], url: "https://www.birminghammuseums.org.uk", pt: "Museu de ciência interativo em Eastside.", en: "Hands-on science museum in Eastside." },
     { id: "barber", n: "Barber Institute of Fine Arts", lat: 52.4508, lng: -1.9293, price: 0, h: [[[1, 2, 3, 4, 5], "10:00", "17:00"], [[0, 6], "11:00", "17:00"]], url: "https://barber.org.uk", pt: "Gratuito: Monet, Van Gogh e Rubens na universidade.", en: "Free: Monet, Van Gogh and Rubens at the university." },

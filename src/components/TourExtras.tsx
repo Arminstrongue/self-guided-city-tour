@@ -1,4 +1,5 @@
 "use client";
+import { lineText } from "@/data/stop-names";
 /** Peças do roteiro: escolher o roteiro pelo tempo, GPS e regresso, voo em direto, meteorologia, áudio e guia prático. */
 import { useEffect, useRef, useState } from "react";
 import type { City, Stop } from "@/data/cities";
@@ -80,7 +81,7 @@ export function BackNow({ city, cityName, flightAt, pos, geoState, onGeo, next, 
       {geoState === "denied" && <p className="hint">{t.gpsDenied}</p>}
       <b>✈ {t.backNow}</b>
       {est !== null && <p>{fmt(t.backEst, { m: est })} {leaveAt && (late ? <b className="bad-txt">{t.backLate}</b> : fmt(t.backLeave, { t: hm(leaveAt) }))}</p>}
-      <p className="hint">{fmt(t.backLine, { l: city.ret.core.line ?? "" })}</p>
+      <p className="hint">{fmt(t.backLine, { l: lineText(city.ret.core.line, locale) })}</p>
       {dir && <ExtLink className="btn tram" href={dir}>{t.backGo}</ExtLink>}
     </div>
   );

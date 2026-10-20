@@ -50,11 +50,12 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
   function save(k: string, v: string) { try { localStorage.setItem(k, v); } catch { /* ignorar */ } }
 
   const msg: Record<EntryVerdict, string> = {
-    free: t.vFree, "free-ees": t.vFreeEes, etias: t.vEtias, eta: t.vEta, evisa: t.vEvisa, visa: t.vVisa, unknown: t.vUnknown
+    free: t.vFree, "free-ees": t.vFreeEes, etias: t.vEtias, eta: t.vEta, evisa: t.vEvisa, visa: t.vVisa, unknown: t.vUnknown,
+    "free-pass": t.vFreePass, voa: t.vVoa, "evisa-me": t.vEvisaMe
   };
-  const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" || v === "evisa" ? "warn" : "ok");
+  const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" || v === "evisa" || v === "evisa-me" || v === "voa" ? "warn" : "ok");
   const zone = zoneOf(city);
-  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : t.zoneSchengen;
+  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : zone === "schengen" ? t.zoneSchengen : t.zoneMe[zone];
 
   if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle}</button>;
 
@@ -76,7 +77,8 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
       {!timesOk && arr && dep && <p className="err">{t.errTimes}</p>}
       {res && (
         <div className={`verdict-box ${tone(res.entry.verdict)}`} role="status">
-          <p><b>{msg[res.entry.verdict]}</b></p>
+          <p><b>{fmt(msg[res.entry.verdict], { fee: res.entry.fee ?? "", site: res.entry.site ?? "", zone: zoneName })}</b></p>
+          {res.entry.hint && <p className="hint">{t.entryHint[res.entry.hint]}</p>}
           {res.entry.zone === "schengen" && !ETIAS_LIVE && res.entry.verdict === "free-ees" && !permit && <p className="hint">{t.etiasSoon}</p>}
           {res.entry.transitVisa && <p className="hint">{t.atv}</p>}
           {res.entry.verdict !== "visa" && (

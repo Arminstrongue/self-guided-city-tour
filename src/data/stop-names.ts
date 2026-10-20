@@ -22,10 +22,36 @@ const EN: Record<string, string> = {
   bullring: "Bullring & St Martin's", "gas-street": "Brindleyplace & Gas Street Basin", cadbury: "Cadbury World & Bournville",
   taksim: "Taksim Square", istiklal: "İstiklal Avenue", galata: "Galata Tower", "galata-bridge": "Galata Bridge",
   spice: "Spice Bazaar", "hagia-sophia": "Hagia Sophia", "blue-mosque": "Blue Mosque & Hippodrome",
-  cistern: "Basilica Cistern", "grand-bazaar": "Grand Bazaar", topkapi: "Topkapı Palace", uskudar: "Bosphorus ferry & Üsküdar"
+  cistern: "Basilica Cistern", "grand-bazaar": "Grand Bazaar", topkapi: "Topkapı Palace", uskudar: "Bosphorus ferry & Üsküdar",
+  // Médio Oriente
+  "abra": "Creek abra & Spice Souk", "gold-souk": "Gold Souk", "museum-future": "Museum of the Future", "burj-khalifa": "Burj Khalifa, Dubai Mall & Fountain",
+  marina: "Dubai Marina & JBR Beach", "grand-mosque": "Sheikh Zayed Grand Mosque", "emirates-palace": "Emirates Palace & Etihad Towers",
+  "corniche-auh": "Abu Dhabi Corniche", "nmoq": "National Museum of Qatar", mia: "Museum of Islamic Art & MIA Park", "corniche-doh": "Corniche & dhows",
+  katara: "Katara Cultural Village", kafd: "KAFD (Financial District)", kingdom: "Kingdom Centre & Sky Bridge", masmak: "Al Masmak Fort & Souq Al Zal",
+  "national-museum-ruh": "National Museum of Saudi Arabia", murabba: "Murabba Palace", diriyah: "Diriyah: At-Turaif & Bujairi",
+  "al-balad": "Al-Balad & Nassif House", matbouli: "Matbouli House", "corniche-jed": "Corniche & King Fahd's Fountain", "al-rahma": "Al Rahma «Floating» Mosque",
+  gem: "Grand Egyptian Museum (GEM)", pyramids: "Pyramids of Giza", sphinx: "Sphinx & Valley Temple", "egyptian-museum": "Egyptian Museum (Tahrir)",
+  khan: "Khan el-Khalili & Al-Muizz Street", "citadel-cai": "Saladin Citadel & Muhammad Ali Mosque", citadel: "Amman Citadel", "roman-theatre": "Roman Theatre",
+  "downtown-amm": "Downtown (Al-Balad) & souks", "abdullah-mosque": "King Abdullah I Mosque", "grand-mosque-mct": "Sultan Qaboos Grand Mosque",
+  mutrah: "Mutrah Corniche & Souq", "al-alam": "Al Alam Palace & Old Muscat", "national-museum-om": "National Museum of Oman"
 };
 
 export function stopName(s: { id: string; n: string }, locale: string): string {
   if (locale === "pt") return s.n;
   return EN[s.id] ?? s.n.replace(/ e /g, " & ");
+}
+
+/** Indicações de linhas e percursos (escritas em português em cities.ts) em inglês para os outros idiomas. */
+const LINE_EN: [RegExp, string][] = [
+  [/A pé até /g, "Walk to "], [/ferry para /g, "ferry to "], [/Abra \(barco tradicional\)/g, "Abra (traditional boat)"], [/em dinheiro/g, "cash"],
+  [/Linha Vermelha/g, "Red Line"], [/Linha Verde/g, "Green Line"], [/Linha Azul/g, "Blue Line"], [/Linha Amarela/g, "Yellow Line"], [/Linha Dourada/g, "Gold Line"],
+  [/Metro Vermelha/g, "Metro Red"], [/\bVermelha\b/g, "Red"], [/\bVerde\b/g, "Green"], [/\bAzul\b/g, "Blue"], [/Aeroporto/g, "Airport"],
+  [/Autocarro/g, "Bus"], [/autocarro/g, "bus"], [/Comboio/g, "Train"], [/Elétrico/g, "Tram"], [/Escadas a descer/g, "Steps down"], [/A subir/g, "Uphill"],
+  [/Beira-rio/g, "Riverside"], [/Pela Corniche/g, "Along the Corniche"], [/Pelo parque/g, "Through the park"], [/Pelo planalto/g, "Across the plateau"],
+  [/Tabuleiro inferior/g, "Lower deck"], [/Tabuleiro superior/g, "Upper deck"], [/Passeio marítimo/g, "Seafront"], [/7\.º Círculo/g, "7th Circle"],
+  [/Táxi/g, "Taxi"], [/táxi/g, "taxi"], [/ até /g, " to "]
+];
+export function lineText(line: string | undefined, locale: string): string {
+  if (!line || locale === "pt") return line ?? "";
+  return LINE_EN.reduce((s, [re, to]) => s.replace(re, to), line);
 }

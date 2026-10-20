@@ -4,7 +4,7 @@ import type { Alt, City, Leg, Mode, Stop } from "@/data/cities";
 import { planRoute } from "@/lib/route-cost";
 
 type Props = { initial: City; isNew: boolean; edited: boolean; active: boolean; locale: string };
-const MODES: [Mode, string][] = [["walk", "A pé"], ["metro", "Metro"], ["tram", "Elétrico"], ["bus", "Autocarro"], ["train", "Comboio"], ["ferry", "Ferry / barco"]];
+const MODES: [Mode, string][] = [["walk", "A pé"], ["metro", "Metro"], ["tram", "Elétrico"], ["bus", "Autocarro"], ["train", "Comboio"], ["ferry", "Ferry / barco"], ["car", "Táxi / Uber"]];
 const LANGS = ["pt", "en", "es", "fr", "de"] as const;
 
 const num = (v: string) => (v === "" ? undefined : Number(v.replace(",", ".")));

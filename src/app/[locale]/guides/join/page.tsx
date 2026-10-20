@@ -3,6 +3,7 @@ import { GuideForm, GuideRelink } from "@/components/Guides";
 import { requestCurrency } from "@/lib/fx";
 import { loadCities } from "@/lib/content";
 import { cityName } from "@/data/cities";
+import { guideCityOk } from "@/lib/guide-input";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export const dynamic = "force-dynamic";
 /** Candidatura de guia (fica pendente até aprovação no admin). */
 export default async function GuideJoin({ params, searchParams }: { params: { locale: Locale }; searchParams: { expired?: string; city?: string } }) {
   const t = getDict(params.locale);
-  const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) })).sort((a, b) => a.name.localeCompare(b.name));
+  const cities = (await loadCities()).filter((c) => guideCityOk(c.id)).map((c) => ({ id: c.id, name: cityName(c, params.locale) })).sort((a, b) => a.name.localeCompare(b.name));
   const first = searchParams.city && cities.some((c) => c.id === searchParams.city) ? searchParams.city : cities[0]?.id;
   return (
     <main className="app">

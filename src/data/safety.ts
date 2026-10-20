@@ -8,7 +8,7 @@ import type { Locale } from "@/i18n/dictionaries";
 export type AlertKey =
   | "pickpocket" | "snatch" | "petition" | "bracelet" | "rose" | "cups" | "ring" | "stain" | "drugs"
   | "couvert" | "menu" | "taxi" | "bar" | "shoeshine" | "shop" | "photo" | "helpers" | "atm"
-  | "fakepolice" | "lefttraffic" | "bikelane";
+  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law";
 
 export type NumK = "sos" | "police" | "ambulance" | "fire" | "health" | "nonurgent";
 export type CountrySafety = { nums: { k: NumK; n: string }[]; help: { lang: string; text: string }; pharmacy: string };
@@ -21,7 +21,8 @@ const HELP = {
   it: { lang: "it-IT", text: "Aiuto! Ho bisogno di aiuto. Per favore, chiami la polizia o un'ambulanza." },
   nl: { lang: "nl-NL", text: "Help! Ik heb hulp nodig. Bel alstublieft de politie of een ambulance." },
   tr: { lang: "tr-TR", text: "İmdat! Yardıma ihtiyacım var. Lütfen polisi ya da ambulansı arayın." },
-  en: { lang: "en-GB", text: "Help! I need help. Please call the police or an ambulance." }
+  en: { lang: "en-GB", text: "Help! I need help. Please call the police or an ambulance." },
+  ar: { lang: "ar", text: "النجدة! أحتاج إلى مساعدة. من فضلك اتصل بالشرطة أو الإسعاف." }
 };
 
 export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
@@ -31,7 +32,13 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   IT: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "113" }, { k: "ambulance", n: "118" }, { k: "fire", n: "115" }], help: HELP.it, pharmacy: "Farmacia ✚" },
   NL: { nums: [{ k: "sos", n: "112" }, { k: "nonurgent", n: "0900 8844" }], help: HELP.nl, pharmacy: "Apotheek ✚" },
   TR: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "155" }], help: HELP.tr, pharmacy: "Eczane (E)" },
-  GB: { nums: [{ k: "sos", n: "999" }, { k: "nonurgent", n: "101" }, { k: "health", n: "111" }], help: HELP.en, pharmacy: "Pharmacy / Chemist" }
+  GB: { nums: [{ k: "sos", n: "999" }, { k: "nonurgent", n: "101" }, { k: "health", n: "111" }], help: HELP.en, pharmacy: "Pharmacy / Chemist" },
+  AE: { nums: [{ k: "police", n: "999" }, { k: "ambulance", n: "998" }, { k: "fire", n: "997" }, { k: "nonurgent", n: "901" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  QA: { nums: [{ k: "sos", n: "999" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  SA: { nums: [{ k: "sos", n: "911" }, { k: "police", n: "999" }, { k: "ambulance", n: "997" }, { k: "fire", n: "998" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  EG: { nums: [{ k: "police", n: "122" }, { k: "ambulance", n: "123" }, { k: "fire", n: "180" }, { k: "nonurgent", n: "126" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  JO: { nums: [{ k: "sos", n: "911" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  OM: { nums: [{ k: "sos", n: "9999" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" }
 };
 
 const UK: AlertKey[] = ["lefttraffic", "pickpocket", "snatch"];
@@ -50,7 +57,15 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   man: { alerts: UK, hot: ["Piccadilly Gardens", "Arndale", "Piccadilly station"], night: ["Piccadilly Gardens"] },
   gla: { alerts: UK, hot: ["Buchanan Street", "Central Station", "Argyle Street"], night: ["Argyle Street", "Trongate"] },
   liv: { alerts: UK, hot: ["Lime Street", "Mathew Street", "Albert Dock"], night: ["Concert Square"] },
-  bir: { alerts: UK, hot: ["New Street", "Bullring", "Broad Street"], night: ["Broad Street"] }
+  bir: { alerts: UK, hot: ["New Street", "Bullring", "Broad Street"], night: ["Broad Street"] },
+  dxb: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Gold Souk", "Spice Souk", "Dubai Mall"], night: [], tp: "Dubai Police · 901 · app Dubai Police" },
+  auh: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Sheikh Zayed Grand Mosque", "Corniche"], night: [] },
+  doh: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Souq Waqif", "Corniche"], night: [] },
+  ruh: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Al Zal Souq", "Batha"], night: [] },
+  jed: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Al-Balad", "Souq Al Alawi"], night: [] },
+  cai: { alerts: ["camel", "shop", "helpers", "taxi", "heat", "pickpocket"], hot: ["Giza plateau", "Khan el-Khalili", "Tahrir Square", "Metro"], night: [], tp: "Tourist Police · 126" },
+  amm: { alerts: ["taxi", "dress", "shop", "pickpocket"], hot: ["Downtown (Al-Balad)", "Roman Theatre"], night: [] },
+  mct: { alerts: ["heat", "dress", "law", "taxi"], hot: ["Mutrah Souq", "Corniche"], night: [] }
 };
 
 type T = [string, string];
@@ -274,6 +289,50 @@ export const ALERT_TEXT: Record<AlertKey, Record<Locale, T>> = {
     zh: ["靠左行驶", "过马路时先看右边。许多人行横道上漆有“LOOK RIGHT”。"],
     ar: ["القيادة على اليسار", "عند العبور انظر إلى اليمين أولاً. عبارة «LOOK RIGHT» مرسومة عند كثير من المعابر."],
     ja: ["左側通行", "道を渡るときはまず右を確認。多くの横断歩道に「LOOK RIGHT」と書かれています。"]
+  },
+  heat: {
+    pt: ["Calor extremo", "De maio a setembro passa dos 40 °C. Beba água a toda a hora, use chapéu e protetor, ande à sombra e faça as visitas ao ar livre cedo ou ao fim da tarde."],
+    en: ["Extreme heat", "From May to September it tops 40 °C. Drink water constantly, wear a hat and sunscreen, stay in the shade and do outdoor visits early or late in the day."],
+    es: ["Calor extremo", "De mayo a septiembre supera los 40 °C. Bebe agua sin parar, usa sombrero y protector, ve por la sombra y haz las visitas al aire libre temprano o al atardecer."],
+    fr: ["Chaleur extrême", "De mai à septembre, on dépasse 40 °C. Buvez sans cesse, chapeau et crème solaire, marchez à l'ombre et faites les visites en plein air tôt ou en fin de journée."],
+    de: ["Extreme Hitze", "Von Mai bis September über 40 °C. Ständig trinken, Hut und Sonnenschutz, im Schatten gehen und Besichtigungen im Freien früh oder spät am Tag machen."],
+    it: ["Caldo estremo", "Da maggio a settembre si superano i 40 °C. Bevi di continuo, cappello e crema solare, cammina all'ombra e fai le visite all'aperto presto o a fine giornata."],
+    zh: ["极端高温", "5月至9月气温超过40°C。随时补水，戴帽子、涂防晒，走阴凉处，户外参观安排在清晨或傍晚。"],
+    ar: ["حرّ شديد", "من مايو إلى سبتمبر تتجاوز الحرارة 40 درجة. اشرب الماء باستمرار، والبس قبعة وواقياً من الشمس، وامشِ في الظل، وزر الأماكن المفتوحة صباحاً أو مساءً."],
+    ja: ["猛暑", "5月から9月は40°Cを超えます。こまめに水分をとり、帽子と日焼け止めを使い、日陰を歩き、屋外の見学は朝か夕方に。"]
+  },
+  dress: {
+    pt: ["Roupa e respeito", "Em mesquitas, souks e edifícios públicos cubra ombros e joelhos; nas mesquitas as mulheres cobrem o cabelo. Fora das praias, evite roupa muito curta ou transparente."],
+    en: ["Dress and respect", "In mosques, souks and public buildings cover shoulders and knees; in mosques women cover their hair. Away from beaches, avoid very short or see-through clothes."],
+    es: ["Ropa y respeto", "En mezquitas, zocos y edificios públicos cubre hombros y rodillas; en las mezquitas las mujeres se cubren el pelo. Fuera de la playa, evita ropa muy corta o transparente."],
+    fr: ["Tenue et respect", "Dans les mosquées, souks et bâtiments publics, couvrez épaules et genoux ; dans les mosquées, les femmes couvrent leurs cheveux. Hors des plages, évitez les tenues très courtes ou transparentes."],
+    de: ["Kleidung und Respekt", "In Moscheen, Souks und öffentlichen Gebäuden Schultern und Knie bedecken; in Moscheen bedecken Frauen das Haar. Abseits der Strände keine sehr kurze oder durchsichtige Kleidung."],
+    it: ["Abbigliamento e rispetto", "In moschee, suq ed edifici pubblici copri spalle e ginocchia; nelle moschee le donne coprono i capelli. Lontano dalle spiagge evita abiti molto corti o trasparenti."],
+    zh: ["着装与尊重", "在清真寺、集市和公共建筑内请遮住肩膀和膝盖；女性进入清真寺需遮盖头发。海滩以外避免过短或透明的衣服。"],
+    ar: ["اللباس والاحترام", "في المساجد والأسواق والمباني العامة غطِّ الكتفين والركبتين، وتغطي النساء الشعر في المساجد. بعيداً عن الشواطئ تجنّب الملابس القصيرة جداً أو الشفافة."],
+    ja: ["服装とマナー", "モスク、スーク、公共の建物では肩と膝を隠し、モスクでは女性は髪を覆います。ビーチ以外では短すぎる服や透ける服は避けて。"]
+  },
+  camel: {
+    pt: ["Camelos e «guias» nas pirâmides", "Oferecem passeios de camelo ou cavalo «baratos» e depois exigem muito mais para o deixar descer. Combine o preço total por escrito, ou recuse com firmeza e use o autocarro do planalto."],
+    en: ["Camels and «guides» at the pyramids", "They offer «cheap» camel or horse rides, then demand far more to let you off. Agree the full price in writing, or refuse firmly and use the plateau bus."],
+    es: ["Camellos y «guías» en las pirámides", "Ofrecen paseos «baratos» en camello o caballo y luego exigen mucho más para dejarte bajar. Pacta el precio total por escrito, o rechaza con firmeza y usa el autobús del recinto."],
+    fr: ["Chameaux et « guides » aux pyramides", "On vous propose une balade « pas chère » à dos de chameau ou de cheval, puis on exige bien plus pour vous laisser descendre. Fixez le prix total par écrit, ou refusez fermement et prenez le bus du site."],
+    de: ["Kamele und „Führer“ an den Pyramiden", "Man bietet „billige“ Kamel- oder Pferderitte an und verlangt dann viel mehr fürs Absteigen. Gesamtpreis schriftlich vereinbaren oder bestimmt ablehnen und den Bus auf dem Plateau nehmen."],
+    it: ["Cammelli e «guide» alle piramidi", "Offrono giri «economici» in cammello o cavallo e poi pretendono molto di più per farti scendere. Concorda il prezzo totale per iscritto, o rifiuta con decisione e usa il bus dell'area."],
+    zh: ["金字塔的骆驼和“导游”", "有人提供“便宜”的骑骆驼或骑马，之后索要高价才让你下来。请书面确定总价，或坚决拒绝并乘坐景区巴士。"],
+    ar: ["الجمال و«المرشدون» عند الأهرامات", "يعرضون جولة «رخيصة» على جمل أو حصان ثم يطلبون أكثر بكثير لإنزالك. اتفق على السعر الكامل كتابةً، أو ارفض بحزم واستخدم حافلة الهضبة."],
+    ja: ["ピラミッドのラクダと「ガイド」", "「安い」ラクダや馬の乗り物を勧め、降ろす際に高額を要求します。総額を書面で決めるか、きっぱり断って敷地内バスを使って。"]
+  },
+  law: {
+    pt: ["Leis rigorosas", "Sem demonstrações de afeto em público, sem álcool na rua e tolerância zero com drogas (alguns medicamentos com codeína precisam de autorização). Não fotografe pessoas sem pedir nem edifícios oficiais."],
+    en: ["Strict laws", "No public displays of affection, no alcohol in the street and zero tolerance for drugs (some codeine medicines need a permit). Don't photograph people without asking, or government buildings."],
+    es: ["Leyes estrictas", "Nada de muestras de afecto en público ni alcohol en la calle, y tolerancia cero con las drogas (algunos medicamentos con codeína requieren permiso). No fotografíes a personas sin pedirlo ni edificios oficiales."],
+    fr: ["Lois strictes", "Pas de démonstrations d'affection en public, pas d'alcool dans la rue et tolérance zéro pour la drogue (certains médicaments à la codéine exigent une autorisation). Ne photographiez pas les gens sans demander, ni les bâtiments officiels."],
+    de: ["Strenge Gesetze", "Keine Zärtlichkeiten in der Öffentlichkeit, kein Alkohol auf der Straße und null Toleranz bei Drogen (manche Medikamente mit Codein brauchen eine Genehmigung). Menschen nur mit Erlaubnis fotografieren, Regierungsgebäude gar nicht."],
+    it: ["Leggi severe", "Niente effusioni in pubblico, niente alcol per strada e tolleranza zero sulle droghe (alcuni farmaci con codeina richiedono un permesso). Non fotografare persone senza chiedere né edifici governativi."],
+    zh: ["法律严格", "禁止在公共场合亲密举动，禁止在街上饮酒，对毒品零容忍（部分含可待因的药物需许可）。未经允许不要拍人，也不要拍政府建筑。"],
+    ar: ["قوانين صارمة", "لا مظاهر عاطفية في الأماكن العامة، ولا كحول في الشارع، وعدم تسامح مطلق مع المخدرات (بعض الأدوية التي تحتوي الكودايين تحتاج إذناً). لا تصوّر الناس دون استئذان ولا المباني الحكومية."],
+    ja: ["厳しい法律", "人前での愛情表現や路上での飲酒は禁止、薬物は一切容認されません（コデイン入りの薬は許可が必要な場合あり）。人を無断で撮影したり、政府の建物を撮ったりしないで。"]
   },
   bikelane: {
     pt: ["Ciclovias", "As faixas vermelhas são das bicicletas e elas não abrandam. Olhe para os dois lados antes de sair do passeio."],

@@ -4,10 +4,11 @@
  * aproximado na moeda de cada viajante, para ele perceber quanto vai pagar.
  */
 
-/** Moedas com taxa diária do Banco Central Europeu (mais o euro). */
+/** Moedas com taxa diária do Banco Central Europeu (mais o euro) e moedas do Médio Oriente (indexadas ao dólar; libra egípcia com valor de referência). */
 export const CURRENCIES = [
   "EUR", "GBP", "USD", "CHF", "CAD", "AUD", "NZD", "BRL", "MXN", "JPY", "CNY", "HKD", "SGD", "KRW", "INR",
-  "IDR", "MYR", "PHP", "THB", "ILS", "TRY", "ZAR", "SEK", "NOK", "DKK", "ISK", "PLN", "CZK", "HUF", "RON"
+  "IDR", "MYR", "PHP", "THB", "ILS", "TRY", "ZAR", "SEK", "NOK", "DKK", "ISK", "PLN", "CZK", "HUF", "RON",
+  "AED", "QAR", "SAR", "OMR", "JOD", "EGP"
 ] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const isCurrency = (v: unknown): v is Currency => typeof v === "string" && (CURRENCIES as readonly string[]).includes(v);
@@ -27,7 +28,7 @@ const BY_COUNTRY: Record<string, Currency> = {
   SG: "SGD", KR: "KRW", IN: "INR", ID: "IDR", MY: "MYR", PH: "PHP", TH: "THB", IL: "ILS", TR: "TRY", ZA: "ZAR",
   SE: "SEK", NO: "NOK", DK: "DKK", FO: "DKK", GL: "DKK", IS: "ISK", PL: "PLN", CZ: "CZK", HU: "HUF", RO: "RON",
   // Mercados onde o dólar é a referência habitual de quem viaja.
-  AO: "USD", MZ: "USD", CV: "EUR", AE: "USD", SA: "USD", QA: "USD", KW: "USD", BH: "USD", OM: "USD", EG: "USD", NG: "USD",
+  AO: "USD", MZ: "USD", CV: "EUR", AE: "AED", SA: "SAR", QA: "QAR", KW: "USD", BH: "USD", OM: "OMR", JO: "JOD", EG: "EGP", NG: "USD",
   KE: "USD", GH: "USD", AR: "USD", CL: "USD", CO: "USD", PE: "USD", UY: "USD", TW: "USD", VN: "USD", PK: "USD"
 };
 for (const c of EURO) BY_COUNTRY[c] = "EUR";

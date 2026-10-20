@@ -6,7 +6,7 @@ import { CITIES, type City } from "@/data/cities";
 /** Validação do conteúdo de uma cidade editado no painel. Limites de preço largos para moedas como a lira turca. */
 const MONEY = 100_000;
 const Leg = z.object({
-  m: z.enum(["walk", "metro", "tram", "bus", "train", "ferry"]),
+  m: z.enum(["walk", "metro", "tram", "bus", "train", "ferry", "car"]),
   min: z.number().int().min(0).max(240),
   line: z.string().max(120).optional().default(""),
   r: z.number().int().min(0).max(10).optional(),
@@ -30,7 +30,7 @@ const Alt = z.union([
 export const CitySchema = z.object({
   id: z.string().regex(/^[a-z]{2,5}$/),
   n: z.object({ pt: z.string().min(2), en: z.string().min(2), es: z.string().min(2), fr: z.string().min(2), de: z.string().min(2) }),
-  cur: z.enum(["EUR", "GBP", "TRY"]),
+  cur: z.enum(["EUR", "GBP", "TRY", "AED", "QAR", "SAR", "EGP", "JOD", "OMR"]),
   single: z.number().min(0).max(MONEY), card: z.number().min(0).max(MONEY), cardName: z.string().max(40),
   alt: Alt.nullable(),
   air: Leg, ret: z.object({ core: Leg, extra: Leg }),

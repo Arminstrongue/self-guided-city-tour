@@ -87,6 +87,45 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("day", "🎫", "nBus dia", "nBus day", 5, "day"), T("train", "🚆", "Comboio regional", "Regional train", 3.5, "trip"),
     T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 10, "ride"), T("uber", "🚗", "Uber", "Uber", 9, "ride")
   ],
+  dxb: [
+    T("metro", "🚇", "Metro (Nol Silver, 2 zonas)", "Metro (Nol Silver, 2 zones)", 5, "trip"), T("tram", "🚋", "Elétrico do Dubai (Marina)", "Dubai Tram (Marina)", 3, "trip"),
+    T("bus", "🚌", "Autocarro RTA", "RTA bus", 3, "trip"), T("abra", "⛵", "Abra no Creek (dinheiro)", "Creek abra (cash)", 1, "trip"),
+    T("ferry", "⛴", "Ferry do Dubai", "Dubai Ferry", 50, "trip"), T("taxi", "🚕", "Táxi RTA no centro", "RTA taxi in the centre", 30, "ride"),
+    T("uber", "🚗", "Uber / Careem", "Uber / Careem", 35, "ride")
+  ],
+  auh: [
+    T("bus", "🚌", "Autocarro (Hafilat)", "Bus (Hafilat)", 4, "trip"), T("airbus", "🚌", "Autocarro do aeroporto A1/A2", "Airport bus A1/A2", 4, "trip"),
+    T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 25, "ride"), T("uber", "🚗", "Uber / Careem", "Uber / Careem", 30, "ride"),
+    T("bike", "🚲", "Bicicleta partilhada (Corniche)", "Shared bike (Corniche)", 20, "day")
+  ],
+  doh: [
+    T("metro", "🚇", "Metro (Standard)", "Metro (Standard)", 2, "trip"), T("tram", "🚋", "Elétrico de Lusail / Msheireb", "Lusail / Msheireb tram", 2, "trip"),
+    T("bus", "🚌", "Autocarro Karwa", "Karwa bus", 3, "trip"), T("taxi", "🚕", "Táxi Karwa", "Karwa taxi", 25, "ride"),
+    T("uber", "🚗", "Uber / Careem", "Uber / Careem", 25, "ride"), T("dhow", "⛵", "Passeio de dhow (Corniche)", "Dhow ride (Corniche)", 30, "trip")
+  ],
+  ruh: [
+    T("metro", "🚇", "Metro (bilhete 2 h)", "Metro (2-hour ticket)", 4, "trip"), T("metro3", "🎟", "Metro, passe de 3 dias", "Metro, 3-day pass", 20, "day"),
+    T("bus", "🚌", "Autocarro Riyadh Bus", "Riyadh Bus", 4, "trip"), T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 35, "ride"),
+    T("uber", "🚗", "Uber / Careem", "Uber / Careem", 30, "ride")
+  ],
+  jed: [
+    T("bus", "🚌", "Autocarro Jeddah Bus", "Jeddah Bus", 4, "trip"), T("train", "🚆", "Comboio Haramain (aeroporto ↔ Sulaymaniyah)", "Haramain train (airport ↔ Sulaymaniyah)", 70, "trip"),
+    T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 30, "ride"), T("uber", "🚗", "Uber / Careem", "Uber / Careem", 25, "ride")
+  ],
+  cai: [
+    T("metro", "🚇", "Metro (até 9 estações)", "Metro (up to 9 stations)", 10, "trip"), T("metro16", "🚇", "Metro (até 16 estações)", "Metro (up to 16 stations)", 12, "trip"),
+    T("bus", "🚌", "Autocarro CTA / micro-autocarro", "CTA bus / minibus", 10, "trip"), T("felucca", "⛵", "Felucca no Nilo (1 hora)", "Nile felucca (1 hour)", 300, "trip"),
+    T("taxi", "🚕", "Táxi branco (com taxímetro)", "White taxi (metered)", 100, "ride"), T("uber", "🚗", "Uber / Careem", "Uber / Careem", 120, "ride")
+  ],
+  amm: [
+    T("airbus", "🚌", "Sariyah Airport Express", "Sariyah Airport Express", 3.3, "trip"), T("brt", "🚌", "BRT de Amã", "Amman BRT", 0.5, "trip"),
+    T("service", "🚐", "Táxi partilhado (service)", "Shared taxi (service)", 0.5, "trip"), T("taxi", "🚕", "Táxi amarelo (taxímetro)", "Yellow taxi (metered)", 3, "ride"),
+    T("uber", "🚗", "Careem / Uber", "Careem / Uber", 3, "ride")
+  ],
+  mct: [
+    T("bus", "🚌", "Autocarro Mwasalat", "Mwasalat bus", 0.5, "trip"), T("taxi", "🚕", "Táxi laranja-e-branco (combinar)", "Orange-and-white taxi (agree fare)", 5, "ride"),
+    T("otaxi", "🚗", "Otaxi / Careem", "Otaxi / Careem", 4, "ride"), T("boat", "⛴", "Barco para ver golfinhos", "Dolphin-watching boat", 20, "trip")
+  ],
   ist: [
     T("metro", "🚇", "Metro/elétrico (Istanbulkart)", "Metro/tram (Istanbulkart)", 42, "trip"), T("bus", "🚌", "Autocarro IETT", "IETT bus", 42, "trip"),
     T("ferry", "⛴", "Ferry no Bósforo (Şehir Hatları)", "Bosphorus ferry (Şehir Hatları)", 42, "trip"), T("marmaray", "🚆", "Marmaray (sob o Bósforo)", "Marmaray (under the Bosphorus)", 42, "trip"),

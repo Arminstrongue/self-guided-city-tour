@@ -4,7 +4,7 @@
  * leg: ligação desde a paragem anterior (a primeira paragem liga ao aeroporto via `air`).
  *   r = viagens pagas com a tarifa da cidade · f = bilhete fixo (ligação ao aeroporto, não coberto por passes)
  */
-export type Mode = "walk" | "metro" | "tram" | "bus" | "train" | "ferry";
+export type Mode = "walk" | "metro" | "tram" | "bus" | "train" | "ferry" | "car";
 export type Leg = { m: Mode; min: number; line?: string; r?: number; f?: number };
 export type Alt =
   | { type: "pass"; price: number; name: string; includesAirport?: boolean }
@@ -22,16 +22,20 @@ export type Stop = {
   cl?: number[];      // dias da semana em que o interior está fechado (0 = domingo)
 };
 export type City = {
-  id: string; n: Record<string, string>; cur: "EUR" | "GBP" | "TRY";
+  id: string; n: Record<string, string>; cur: CityCur;
   single: number; card: number; cardName: string; alt: Alt | null;
   air: Leg; ret: { core: Leg; extra: Leg }; stops: Stop[];
   ap?: Airport;       // aeroporto principal
   tz?: string;        // fuso horário (IANA)
 };
+export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
-/** Zona de fronteira: Reino Unido e Turquia têm regras de entrada próprias; o resto é espaço Schengen. */
-export type Zone = "uk" | "schengen" | "tr";
-export const zoneOf = (c: City): Zone => (c.cur === "GBP" ? "uk" : c.cur === "TRY" ? "tr" : "schengen");
+/** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
+export type Zone = "uk" | "schengen" | "tr" | "ae" | "qa" | "sa" | "eg" | "jo" | "om";
+const CUR_ZONE: Partial<Record<CityCur, Zone>> = { GBP: "uk", TRY: "tr", AED: "ae", QAR: "qa", SAR: "sa", EGP: "eg", JOD: "jo", OMR: "om" };
+export const zoneOf = (c: City): Zone => CUR_ZONE[c.cur] ?? "schengen";
+
+import { ME_CITIES, ME_NAMES } from "./cities-me";
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -285,7 +289,8 @@ export const CITIES: City[] = [
       { id: "topkapi", n: "Palácio de Topkapı", a: "Sultanahmet", lat: 41.0115, lng: 28.9834, v: 60, x: true, top: true, o: true, cl: [2], leg: { m: "tram", min: 12, line: "T1 Beyazıt → Gülhane", r: 1 }, pt: "O palácio dos sultões otomanos, com pátios sobre o Bósforo. Pago; fechado à terça.", en: "The Ottoman sultans' palace, with courtyards over the Bosphorus. Paid; closed Tuesdays." },
       { id: "uskudar", n: "Ferry no Bósforo e Üsküdar", a: "Üsküdar (Ásia)", lat: 41.027, lng: 29.0135, v: 40, x: true, top: true, leg: { m: "ferry", min: 35, line: "A pé até Eminönü → ferry para Üsküdar", r: 1 }, pt: "A travessia mais barata do Bósforo, da Europa para a Ásia, com vista para a cidade e a Torre da Donzela.", en: "The cheapest Bosphorus crossing, Europe to Asia, with city views and the Maiden's Tower." }
     ]
-  }
+  },
+  ...ME_CITIES
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
@@ -303,7 +308,8 @@ export function getCity(id: string): City | undefined {
 /** País de cada cidade (código ISO), para agrupar na escolha da cidade. */
 export const COUNTRY: Record<string, string> = {
   lis: "PT", opo: "PT", mad: "ES", bcn: "ES", par: "FR", rom: "IT", ams: "NL", ist: "TR",
-  lon: "GB", edi: "GB", man: "GB", gla: "GB", liv: "GB", bir: "GB"
+  lon: "GB", edi: "GB", man: "GB", gla: "GB", liv: "GB", bir: "GB",
+  dxb: "AE", auh: "AE", doh: "QA", ruh: "SA", jed: "SA", cai: "EG", amm: "JO", mct: "OM"
 };
 
 /** Nomes nos idiomas acrescentados depois (IT, ZH, AR, JA). */
@@ -321,7 +327,8 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   gla: { it: "Glasgow", zh: "格拉斯哥", ar: "غلاسكو", ja: "グラスゴー" },
   liv: { it: "Liverpool", zh: "利物浦", ar: "ليفربول", ja: "リバプール" },
   bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" },
-  ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" }
+  ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
+  ...ME_NAMES
 };
 
 export function cityName(c: City, locale: string): string {

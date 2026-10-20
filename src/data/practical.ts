@@ -19,6 +19,18 @@ const UK_PLUG: Tip = { k: "plug", pt: "Tomadas tipo G, 230 V: precisa de adaptad
 const ukSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Trânsito pela esquerda: olhe para a direita ao atravessar. ${pt}`, en: `Traffic drives on the left: look right when crossing. ${en}` });
 const uk = (safety: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency: "999 / 112", tips: [BAG, UK_SIM, UK_PAY, UK_TIP, UK_WATER, safety, UK_PLUG, TOILET, ...extra], food });
 
+/* ---------- Médio Oriente ---------- */
+const ME_SIM: Tip = { k: "sim", pt: "Fora do roaming da UE: use um eSIM de dados ou o Wi‑Fi grátis do aeroporto, dos centros comerciais e do metro.", en: "Outside EU roaming: use a data eSIM or the free Wi‑Fi at the airport, malls and metro." };
+const G_PLUG: Tip = { k: "plug", pt: "Tomadas tipo G (britânicas), 230 V: leve adaptador.", en: "Type G (British) sockets, 230 V: bring an adapter." };
+const G_TOILET: Tip = { k: "toilet", pt: "Casas de banho limpas e gratuitas em centros comerciais, estações de metro e mesquitas (zona de abluções à parte).", en: "Clean, free toilets in malls, metro stations and by mosques (separate ablution areas)." };
+const ME_DRESS: Tip = { k: "dress", pt: "Ombros e joelhos cobertos em mesquitas, souks e edifícios públicos; as mulheres cobrem o cabelo nas mesquitas (muitas emprestam abaya e lenço). Descalce-se à entrada.", en: "Cover shoulders and knees in mosques, souks and public buildings; women cover their hair in mosques (many lend an abaya and scarf). Take shoes off at the door." };
+const RAMADAN = " Durante o Ramadão não coma, beba nem fume em público durante o dia; muitos sítios mudam de horário.";
+const RAMADAN_EN = " During Ramadan don't eat, drink or smoke in public in daytime; many places change hours.";
+const gulfSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Cidade muito segura. Beba muita água e evite andar ao sol entre as 11h e as 16h no verão.${RAMADAN} ${pt}`, en: `A very safe city. Drink plenty of water and avoid walking in the sun between 11:00 and 16:00 in summer.${RAMADAN_EN} ${en}` });
+const GULF_PAY: Tip = { k: "pay", pt: "Cartão e contactless aceites quase em todo o lado, incluindo táxis e metro. Leve algum dinheiro para souks e barcos.", en: "Cards and contactless work almost everywhere, including taxis and the metro. Carry a little cash for souks and boats." };
+const GULF_WATER: Tip = { k: "water", pt: "A água da torneira é dessalinizada e segura, mas quase todos bebem engarrafada; é barata em qualquer loja.", en: "Tap water is desalinated and safe, but most people drink bottled; it's cheap in any shop." };
+const meBag = (pt: string, en: string): Tip => ({ k: "bag", pt: `${BAG.pt} ${pt}`.trim(), en: `${BAG.en} ${en}`.trim() });
+
 export const PRACTICAL: Record<string, Practical> = {
   ist: { emergency: "112", tips: [
     { k: "bag", pt: `${BAG.pt} Voa com a Turkish Airlines? Pergunte no balcão Touristanbul do aeroporto se a visita gratuita para passageiros em trânsito cabe no seu horário.`, en: `${BAG.en} Flying Turkish Airlines? Ask at the airport's Touristanbul desk whether the free transit tour fits your schedule.` },
@@ -149,5 +161,87 @@ export const PRACTICAL: Record<string, Practical> = {
       { n: "Kroket", p: 3, pt: "Croquete quente, em snack-bars e máquinas de parede.", en: "Hot croquette from snack bars and wall vending machines." },
       { n: "Haring", p: 4, pt: "Arenque cru com cebola, nas bancas de peixe.", en: "Raw herring with onion, from fish stalls." },
       { n: "Stroopwafel", p: 3, pt: "Bolacha de caramelo feita na hora.", en: "Freshly made caramel waffle." }
+    ] },
+  dxb: { emergency: "999 (polícia) · 998 (ambulância)", tips: [
+    meBag("No DXB há depósito de bagagem nos terminais 1 e 3.", "DXB has left-luggage desks in Terminals 1 and 3."), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "Muitos restaurantes já incluem serviço; senão, 10% é o habitual. Arredonde nos táxis.", en: "Many restaurants include service; otherwise 10% is usual. Round up in taxis." },
+    GULF_WATER, ME_DRESS, gulfSafety("No metro há carruagem só para mulheres e crianças e a classe Gold: não entre por engano, há multa.", "The metro has a women-and-children carriage and Gold Class: don't board by mistake, there are fines."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Shawarma", p: 10, pt: "Em pão árabe, nas bancas de Deira e Karama.", en: "In flatbread from the stalls of Deira and Karama." },
+      { n: "Luqaimat", p: 15, pt: "Bolinhos fritos com xarope de tâmara, o doce emirati.", en: "Fried dumplings with date syrup, the Emirati sweet." },
+      { n: "Karak chai", p: 2, pt: "Chá com leite e especiarias nas cafetarias de bairro.", en: "Spiced milky tea from neighbourhood cafeterias." },
+      { n: "Machboos", p: 45, pt: "Arroz com especiarias e frango ou cordeiro, o prato emirati.", en: "Spiced rice with chicken or lamb, the Emirati classic." }
+    ] },
+  auh: { emergency: "999 (polícia) · 998 (ambulância)", tips: [
+    meBag("", ""), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "10% em restaurantes se o serviço não estiver incluído.", en: "10% in restaurants if service isn't included." },
+    GULF_WATER, ME_DRESS, gulfSafety("As distâncias são grandes: use táxi ou app entre paragens; o autocarro custa 2–5 AED com cartão Hafilat.", "Distances are big: use taxis or apps between stops; buses cost AED 2–5 with a Hafilat card."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Shawarma", p: 10, pt: "O lanche de rua de todos.", en: "Everyone's street snack." },
+      { n: "Harees", p: 35, pt: "Trigo e carne cozidos lentamente, prato tradicional emirati.", en: "Slow-cooked wheat and meat, a traditional Emirati dish." },
+      { n: "Tâmaras e gahwa", p: 0, pt: "Café com cardamomo e tâmaras, oferecidos em muitos sítios.", en: "Cardamom coffee and dates, offered in many places." }
+    ] },
+  doh: { emergency: "999", tips: [
+    meBag("O HIA tem depósito de bagagem e o serviço Discover Qatar para passeios de escala.", "HIA has left luggage and the Discover Qatar desk for layover tours."), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "Serviço muitas vezes incluído; senão 10%.", en: "Service often included; otherwise 10%." },
+    GULF_WATER, ME_DRESS, gulfSafety("O metro tem classe Gold e família: compre o cartão standard.", "The metro has Gold and Family classes: buy the Standard card."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Machboos", p: 40, pt: "Arroz com especiarias e carne, o prato nacional.", en: "Spiced rice with meat, the national dish." },
+      { n: "Karak", p: 2, pt: "Chá com leite e cardamomo, a bebida da cidade.", en: "Milky cardamom tea, the city's drink." },
+      { n: "Balaleet", p: 25, pt: "Aletria doce com açafrão e omelete, ao pequeno-almoço.", en: "Sweet saffron vermicelli with an omelette, for breakfast." }
+    ] },
+  ruh: { emergency: "911 · 999 (polícia) · 997 (ambulância)", tips: [
+    meBag("", ""), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "Opcional: 10% em restaurantes, arredondar nos táxis.", en: "Optional: 10% in restaurants, round up in taxis." },
+    GULF_WATER, ME_DRESS, gulfSafety("O fim de semana é sexta e sábado; à sexta muitas lojas só abrem depois da oração do meio-dia. Durante as orações, lojas fecham alguns minutos.", "The weekend is Friday and Saturday; on Fridays many shops open only after midday prayers. Shops close for a few minutes at prayer times."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Kabsa", p: 35, pt: "Arroz com especiarias e frango ou cordeiro, o prato nacional.", en: "Spiced rice with chicken or lamb, the national dish." },
+      { n: "Café árabe e tâmaras", p: 10, pt: "Gahwa com cardamomo, servida em chávenas pequenas.", en: "Cardamom gahwa served in small cups." },
+      { n: "Mutabbaq", p: 12, pt: "Massa folhada recheada de carne ou banana, nas bancas de rua.", en: "Stuffed pastry with meat or banana, from street stalls." }
+    ] },
+  jed: { emergency: "911 · 999 (polícia) · 997 (ambulância)", tips: [
+    meBag("", ""), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "Opcional: 10% em restaurantes.", en: "Optional: 10% in restaurants." },
+    GULF_WATER, ME_DRESS, gulfSafety("Meca está fechada a não muçulmanos: os postos de controlo na estrada não deixam passar.", "Makkah is closed to non-Muslims: road checkpoints won't let you through."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Mutabbaq", p: 10, pt: "Massa folhada recheada, clássico de Al-Balad.", en: "Stuffed pastry, an Al-Balad classic." },
+      { n: "Saleeg", p: 30, pt: "Arroz cremoso com caldo e frango, do Hejaz.", en: "Creamy rice with broth and chicken, from the Hejaz." },
+      { n: "Peixe do Mar Vermelho", p: 50, pt: "Escolhido no mercado e grelhado na hora.", en: "Chosen at the market and grilled to order." }
+    ] },
+  cai: { emergency: "122 (polícia) · 123 (ambulância) · 126 (polícia turística)", tips: [
+    meBag("", ""), ME_SIM,
+    { k: "pay", pt: "Leve libras egípcias em dinheiro para entradas pequenas, gorjetas e mercados; muitos museus já só aceitam cartão. O visto à chegada paga-se em dólares, euros ou libras.", en: "Carry Egyptian pounds in cash for small fees, tips and markets; many museums now take cards only. The visa on arrival is paid in dollars, euros or pounds." },
+    { k: "tip", pt: "A gorjeta (baksheesh) é esperada: 10–15% em restaurantes e notas pequenas para quem ajuda.", en: "Tipping (baksheesh) is expected: 10–15% in restaurants and small notes for anyone who helps." },
+    { k: "water", pt: "Beba só água engarrafada e evite gelo e saladas cruas na rua.", en: "Drink only bottled water and avoid ice and raw salads from street stalls." },
+    ME_DRESS,
+    { k: "safety", pt: "Use Uber ou Careem (preço fechado). O trânsito é intenso: conte sempre com atrasos e atravesse a rua com locais. Recuse \"guias\" e lojas de papiro oferecidos na rua.", en: "Use Uber or Careem (fixed price). Traffic is heavy: always allow for delays and cross the street with locals. Turn down street \"guides\" and papyrus shops." },
+    { k: "plug", pt: "Tomadas tipo C/F, 220 V.", en: "Type C/F sockets, 220 V." },
+    { k: "toilet", pt: "Nos museus e cafés; leve lenços e notas pequenas para o funcionário.", en: "In museums and cafés; carry tissues and small notes for the attendant." }],
+    food: [
+      { n: "Koshari", p: 60, pt: "Arroz, lentilhas, massa e molho picante, em casas como o Abou Tarek.", en: "Rice, lentils, pasta and spicy sauce, at places like Abou Tarek." },
+      { n: "Ful e ta'meya", p: 30, pt: "Favas estufadas e falafel de fava em pão baladi, ao pequeno-almoço.", en: "Stewed fava beans and fava falafel in baladi bread, for breakfast." },
+      { n: "Chá de menta", p: 25, pt: "Nos cafés ahwa, com shisha opcional.", en: "In ahwa cafés, shisha optional." }
+    ] },
+  amm: { emergency: "911", tips: [
+    meBag("", ""), ME_SIM,
+    { k: "pay", pt: "Cartão nos hotéis e restaurantes maiores; dinheiro (dinares) na baixa, táxis e bancas.", en: "Cards in hotels and bigger restaurants; cash (dinars) downtown, in taxis and at stalls." },
+    { k: "tip", pt: "10% em restaurantes; arredondar nos táxis.", en: "10% in restaurants; round up in taxis." },
+    { k: "water", pt: "Prefira água engarrafada.", en: "Prefer bottled water." },
+    ME_DRESS,
+    { k: "safety", pt: `Cidade de colinas e escadas: calçado confortável. Nos táxis amarelos peça o taxímetro ou use Careem. Petra fica a 3 h: só numa paragem longa.${RAMADAN}`, en: `A city of hills and stairs: wear comfortable shoes. In yellow taxis ask for the meter or use Careem. Petra is 3 h away: only on a long stopover.${RAMADAN_EN}` },
+    { k: "plug", pt: "Tomadas tipo C/D/F/G, 230 V: leve adaptador universal.", en: "Type C/D/F/G sockets, 230 V: bring a universal adapter." }, TOILET],
+    food: [
+      { n: "Falafel e homus", p: 1.5, pt: "No Hashem, na baixa, aberto quase 24 horas.", en: "At Hashem downtown, open almost round the clock." },
+      { n: "Knafeh", p: 1.5, pt: "Doce de queijo quente com calda, na Habibah.", en: "Hot cheese pastry with syrup, at Habibah." },
+      { n: "Mansaf", p: 8, pt: "Cordeiro com molho de iogurte jameed e arroz, o prato nacional.", en: "Lamb in jameed yoghurt sauce with rice, the national dish." }
+    ] },
+  mct: { emergency: "9999", tips: [
+    meBag("", ""), ME_SIM, GULF_PAY,
+    { k: "tip", pt: "Opcional: 10% em restaurantes.", en: "Optional: 10% in restaurants." },
+    GULF_WATER, ME_DRESS, gulfSafety("A Grande Mesquita só recebe visitantes de sábado a quinta, das 8h às 11h: comece por lá. Os táxis laranja-e-branco não têm taxímetro: combine o preço ou use Otaxi.", "The Grand Mosque only admits visitors Saturday to Thursday, 8:00–11:00: start there. Orange-and-white taxis have no meter: agree the fare or use Otaxi."), G_PLUG, G_TOILET],
+    food: [
+      { n: "Shuwa", p: 4, pt: "Cordeiro marinado e assado lentamente em forno subterrâneo.", en: "Marinated lamb slow-cooked in an underground oven." },
+      { n: "Halwa omani", p: 2, pt: "Doce de açafrão, cardamomo e água de rosas.", en: "Saffron, cardamom and rosewater sweet." },
+      { n: "Kahwa", p: 0.5, pt: "Café omani com cardamomo, servido com tâmaras.", en: "Omani cardamom coffee, served with dates." }
     ] }
 };

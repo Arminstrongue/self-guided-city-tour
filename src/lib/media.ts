@@ -73,7 +73,9 @@ export const CITY_COVER: Record<string, string> = {
   lis: "Belém Tower", opo: "Dom Luís I Bridge", mad: "Royal Palace of Madrid", bcn: "Sagrada Família",
   par: "Eiffel Tower", rom: "Colosseum", ams: "Canals of Amsterdam", lon: "Palace of Westminster",
   edi: "Edinburgh Castle", man: "Manchester Town Hall", gla: "Glasgow City Chambers", liv: "Royal Liver Building",
-  bir: "Library of Birmingham", ist: "Hagia Sophia"
+  bir: "Library of Birmingham", ist: "Hagia Sophia",
+  dxb: "Burj Khalifa", auh: "Sheikh Zayed Grand Mosque", doh: "Museum of Islamic Art, Doha", ruh: "Kingdom Centre",
+  jed: "Al-Balad, Jeddah", cai: "Giza pyramid complex", amm: "Amman Citadel", mct: "Sultan Qaboos Grand Mosque"
 };
 
 /* ---------- Wikimedia ---------- */

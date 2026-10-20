@@ -12,7 +12,7 @@ import { CurrencyPicker } from "./CurrencyPicker";
 import { ExtLink } from "./ExtLink";
 import { MapView, type Focus } from "./MapView";
 import { DayPlan, MuseumsTab } from "./Museums";
-import { stopName } from "@/data/stop-names";
+import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./Safety";
@@ -100,7 +100,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         {l.m === "walk"
           ? <span className="chip walk">{t.walk} · {t.free.toLowerCase()}</span>
           : <span className="chip paid num">{t[l.m]} · {money(cost)}</span>}
-        <span>{l.line ? `${l.line} · ` : ""}<span className="num">{l.min} min</span></span>
+        <span>{l.line ? `${lineText(l.line, locale)} · ` : ""}<span className="num">{l.min} min</span></span>
       </div>
     );
   };
@@ -303,7 +303,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               ) : <div className="opt"><span className="tag n">—</span><small>{t.only}</small></div>}
             </div>
             <div className="card rows" style={{ paddingBlock: 6 }}>
-              <div><span>{t.fixedLeg}: {city.air.line}</span><span className="num">{money(plan.fixed)}</span></div>
+              <div><span>{t.fixedLeg}: {lineText(city.air.line, locale)}</span><span className="num">{money(plan.fixed)}</span></div>
               <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
             </div>

@@ -1,8 +1,12 @@
 import { z } from "zod";
 import { LOCALES } from "@/i18n/dictionaries";
-import { CITIES } from "@/data/cities";
+import { CITIES, COUNTRY } from "@/data/cities";
 import { GUIDE_LANGS } from "./guides";
 import { GUIDE_MAX_HOURLY, GUIDE_MIN_HOURLY } from "./pricing";
+
+/** Países onde os guias podem receber pagamentos pela Stripe Connect (Turquia, Catar, Arábia Saudita, Egito, Jordânia e Omã ainda não). */
+export const GUIDE_PAYOUT_COUNTRIES = ["PT", "ES", "FR", "IT", "NL", "GB", "AE"];
+export const guideCityOk = (id: string) => GUIDE_PAYOUT_COUNTRIES.includes(COUNTRY[id] ?? "");
 
 const photo = z.string().max(110_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).optional().nullable();
 
@@ -38,7 +42,10 @@ export function missingLegal(v: Partial<Record<(typeof LEGAL_FIELDS)[number], st
 }
 
 export const GuideSignup = GuideProfile.extend({ email: z.string().email().max(200), locale: z.enum(LOCALES), terms: z.literal(true), independent: z.literal(true) })
-  .superRefine((v, ctx) => { for (const k of missingLegal(v)) ctx.addIssue({ code: "custom", path: [k], message: "required" }); });
+  .superRefine((v, ctx) => {
+    for (const k of missingLegal(v)) ctx.addIssue({ code: "custom", path: [k], message: "required" });
+    if (!guideCityOk(v.city)) ctx.addIssue({ code: "custom", path: ["city"], message: "payouts_unavailable" });
+  });
 
 export const BookBody = z.object({
   guideId: z.string().uuid(),

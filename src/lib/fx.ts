@@ -11,8 +11,16 @@ const TTL_MS = 6 * 3600e3;
 export const FALLBACK_RATES: Rates = {
   EUR: 1, GBP: 0.86, USD: 1.16, CHF: 0.94, CAD: 1.6, AUD: 1.77, NZD: 1.98, BRL: 6.3, MXN: 21.5, JPY: 172, CNY: 8.3,
   HKD: 9.05, SGD: 1.5, KRW: 1620, INR: 102, IDR: 19000, MYR: 4.9, PHP: 66, THB: 37.5, ILS: 3.9, TRY: 50.8, ZAR: 20.3,
-  SEK: 10.9, NOK: 11.7, DKK: 7.46, ISK: 143, PLN: 4.25, CZK: 24.4, HUF: 390, RON: 5.08
+  SEK: 10.9, NOK: 11.7, DKK: 7.46, ISK: 143, PLN: 4.25, CZK: 24.4, HUF: 390, RON: 5.08,
+  AED: 4.26, QAR: 4.22, SAR: 4.35, OMR: 0.446, JOD: 0.822, EGP: 57.5
 };
+/** Moedas do Golfo e da Jordânia indexadas ao dólar (unidades por 1 USD). O BCE não as publica: derivam-se do dólar. */
+export const USD_PEGS = { AED: 3.6725, QAR: 3.64, SAR: 3.75, OMR: 0.3845, JOD: 0.709 } as const;
+export function withPegs(r: Rates): Rates {
+  const out = { ...r };
+  for (const [k, v] of Object.entries(USD_PEGS)) out[k as keyof Rates] = Math.round(r.USD * v * 10000) / 10000;
+  return out;
+}
 const FALLBACK_DATE = "2026-10-01";
 
 let cache: { at: number; rates: Rates; date: string } | null = null;
@@ -33,7 +41,7 @@ export async function getRates(): Promise<{ rates: Rates; date: string }> {
     if (!res.ok) throw new Error(String(res.status));
     const { rates, date } = parseEcbXml(await res.text());
     if (Object.keys(rates).length < 10) throw new Error("poucas taxas");
-    cache = { at: Date.now(), rates: { ...FALLBACK_RATES, ...rates }, date: date ?? new Date().toISOString().slice(0, 10) };
+    cache = { at: Date.now(), rates: withPegs({ ...FALLBACK_RATES, ...rates }), date: date ?? new Date().toISOString().slice(0, 10) };
   } catch {
     // Tenta outra vez dentro de 10 minutos.
     cache = { at: Date.now() - TTL_MS + 10 * 60e3, rates: cache?.rates ?? FALLBACK_RATES, date: cache?.date ?? FALLBACK_DATE };
