@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { HOBBY_ICON, type Hobby } from "@/lib/explore";
-import { Avatar, FollowBtn, type PublicProfile, type Social } from "./Social";
+import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { Composer, ago, type PostItem } from "./Feed";
 import { EmojiButton, emojiLabels } from "./Emoji";
 
@@ -174,7 +174,7 @@ function Reel({ i, t, locale, p, a, cities, active, near, muted, setMuted, onPat
 
       <div className="rl-info">
         {a && <div className="row" style={{ gap: 8, alignItems: "center" }}>
-          <a href={`/${locale}/u/${a.handle}`} className="rl-handle">@{a.handle}</a>
+          <a href={`/${locale}/u/${a.handle}`} className="rl-handle">@{a.handle}<Verified handle={a.handle} /></a>
           {!p.mine && <FollowBtn t={t} handle={a.handle} rel="none" />}
         </div>}
         {p.text && <p className={`rl-cap ${more ? "open" : ""}`} onClick={() => setMore(!more)}>{p.text}</p>}

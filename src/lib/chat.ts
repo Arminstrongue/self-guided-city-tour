@@ -7,6 +7,7 @@ import { and, desc, eq, gt, inArray, isNull, lt, ne, or, sql } from "drizzle-orm
 import { db, schema } from "./db";
 import { isBlocked, profileByHandle, type PublicProfile } from "./social";
 import { publish } from "./live";
+import { isHateful } from "./moderation";
 import { notify, settingsOf } from "./notify";
 
 export const MAX_TEXT = 1000;
@@ -127,6 +128,7 @@ export async function send(me: string, handle: string, text: string, ref: string
   if (!(await canChat(me, p.email))) return { error: "not_allowed" as const };
   const t = text.trim().slice(0, MAX_TEXT);
   if (!t && !ref) return { error: "empty" as const };
+  if (isHateful(t)) return { error: "offensive" as const };
   const d = await db();
   const [m] = await d.insert(schema.messages).values({ pair: pairOf(me, p.email), sender: me, recipient: p.email, text: t, ref }).returning();
   // Entrega instantânea: ao destinatário e aos outros separadores/dispositivos de quem enviou.

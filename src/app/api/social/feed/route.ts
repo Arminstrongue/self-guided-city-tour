@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentTraveller } from "@/lib/wallet";
 import { feedCity, feedFollowing } from "@/lib/posts";
+import { ensureOfficial } from "@/lib/official";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,6 +10,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
+  void ensureOfficial();
   const u = new URL(req.url);
   const city = u.searchParams.get("city");
   const before = u.searchParams.get("before");

@@ -123,6 +123,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const [sure, setSure] = useState(false);
   const [reported, setReported] = useState(false);
   const [sending, setSending] = useState(false);
+  const [warn, setWarn] = useState("");
   const box = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
   const last = useRef<string | null>(null);
@@ -198,7 +199,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     if (r.ok && r.j?.message) {
       setTh((cur) => (cur && cur !== "none" && !cur.messages.some((m) => m.id === r.j.message.id) ? { ...cur, messages: [...cur.messages, r.j.message] } : cur));
       last.current = r.j.message.at; stick.current = true; scrollEnd();
-    } else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); }
+    } else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); } }
   }
   async function earlier() {
     if (!th || th === "none" || !th.messages.length) return;
@@ -261,6 +262,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
           {isTyping && p && <div className="ch-line them"><span className="ch-typing" aria-label={t.chTyping}><i /><i /><i /></span></div>}
         </>}
       </div>
+      {warn && <p className="err ch-warn">{warn}</p>}
       {th && th !== "none" && (th.canSend ? (
         <form className="ch-say" onSubmit={send}>
           <EmojiButton target={taRef} value={txt} set={setTxt} max={1000} labels={emojiLabels(t)} />

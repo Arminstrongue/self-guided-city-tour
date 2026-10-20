@@ -3,11 +3,11 @@
  * Rede social da carteira (fase 2): feed, histórias de 24 h, publicações com foto, gostos e comentários.
  * Leve: as fotos vêm por URL (com cache) e só carregam quando aparecem no ecrã.
  */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
-import { Avatar, type PublicProfile, type Social } from "./Social";
+import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { StoryReply } from "./Chat";
 import { SearchPick } from "./SearchPick";
 import { EmojiButton, emojiLabels } from "./Emoji";
@@ -188,7 +188,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
       setBusy(""); setPct(null);
       if (x.status >= 200 && x.status < 300) return onClose("video");
       let j: { error?: string } = {}; try { j = JSON.parse(x.responseText); } catch { /* ignorar */ }
-      setErr(j.error === "too_big" || x.status === 413 ? t.rlTooBig : j.error === "busy" || x.status === 429 ? t.rlBusy : t.pfErr);
+      setErr(j.error === "too_big" || x.status === 413 ? t.rlTooBig : j.error === "offensive" ? t.mdOffensive : j.error === "busy" || x.status === 429 ? t.rlBusy : t.pfErr);
     };
     x.onerror = () => { setBusy(""); setPct(null); setErr(t.pfErr); };
     x.send(video.file);
@@ -201,7 +201,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
     const j = await r?.json().catch(() => null);
     setBusy("");
     if (r?.ok) return onClose(kind);
-    setErr(j?.error === "too_many" ? t.pfTooMany : t.pfErr);
+    setErr(j?.error === "too_many" ? t.pfTooMany : j?.error === "offensive" ? t.mdOffensive : t.pfErr);
   }
   return (
     <div className="sheet-bg" onClick={() => onClose(null)}>
@@ -283,7 +283,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
     <article className="card pf-card">
       <header className="pf-head">
         <a href={`/${locale}/u/${author.handle}`} className="pf-who"><Avatar p={author} size={36} />
-          <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}</b>
+          <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}<Verified handle={author.handle} /></b>
             <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
         <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}>⋯</button>
       </header>
@@ -373,6 +373,7 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   );
   const me = social.profile;
   const chips = [...new Set([...me.cities, ...myCities])].filter((c) => cities[c]);
+  const evCity = scope !== "following" ? scope : chips[0] ?? null;
   return (
     <section className="stack pf-feed" style={{ gap: 12 }}>
       <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />
@@ -385,10 +386,15 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
       {picking && <SearchPick placeholder={t.spCity} value={null} onChange={(v) => { if (v) { setScope(v); setPicking(false); } }}
         options={Object.entries(cities).sort((x, y) => x[1].localeCompare(y[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />}
       {page === null && <div className="pf-skel card" aria-hidden="true" />}
-      {page && page.posts.length === 0 && <div className="card gp-empty"><span aria-hidden="true">🌅</span><b>{t.pfEmpty}</b><p className="hint" style={{ margin: 0 }}>{t.pfEmptyF}</p></div>}
-      {page?.posts.map((p) => page.authors[p.handle] && (
-        <PostCard key={p.id} t={t} locale={locale} post={p} author={page.authors[p.handle]} cities={cities}
-          onDeleted={() => setPage({ ...page, posts: page.posts.filter((x) => x.id !== p.id) })} />
+      {page && page.posts.length === 0 && <><div className="card gp-empty"><span aria-hidden="true">🌅</span><b>{t.pfEmpty}</b><p className="hint" style={{ margin: 0 }}>{t.pfEmptyF}</p></div>
+        <SuggestStrip t={t} locale={locale} />{evCity && <EventsStrip t={t} locale={locale} city={evCity} cityName={cities[evCity]} />}</>}
+      {page?.posts.map((p, i) => page.authors[p.handle] && (
+        <Fragment key={p.id}>
+          <PostCard t={t} locale={locale} post={p} author={page.authors[p.handle]} cities={cities}
+            onDeleted={() => setPage({ ...page, posts: page.posts.filter((x) => x.id !== p.id) })} />
+          {i === 1 && scope === "following" && <SuggestStrip t={t} locale={locale} />}
+          {i === 4 && evCity && <EventsStrip t={t} locale={locale} city={evCity} cityName={cities[evCity]} />}
+        </Fragment>
       ))}
       {page?.next && <button className="btn ghost press" disabled={loadingMore} onClick={() => void more()}>{loadingMore ? "…" : t.pfMore}</button>}
       {viewer !== null && <StoryViewer t={t} locale={locale} rings={rings.rings} authors={rings.authors} start={viewer} onSeen={mark} onChanged={loadStories} onClose={() => setViewer(null)} />}
@@ -452,4 +458,46 @@ export function ProfileStories({ t, locale, handle, author, size = 84 }: { t: Di
     <StoryRing p={author} size={size} state={ring.items.every((x) => seen.includes(x.id)) ? "seen" : "new"} onClick={() => setOpen(true)} label={author.name} />
     {open && r && <StoryViewer t={t} locale={locale} rings={r.rings} authors={r.authors} start={0} onSeen={mark} onClose={() => setOpen(false)} />}
   </>;
+}
+
+/* ---------- No meio do feed: viajantes sugeridos e o que há na cidade ---------- */
+type Suggest = PublicProfile & { relation: "none" | "requested" | "following" | "self" | "blocked"; shared: number };
+export function SuggestStrip({ t, locale }: { t: Dict; locale: Locale }) {
+  const [list, setList] = useState<Suggest[] | null>(null);
+  useEffect(() => { fetch("/api/social/search?q=").then((r) => (r.ok ? r.json() : null)).then((j) => setList((j?.people ?? []).filter((p: Suggest) => p.relation === "none").slice(0, 10))).catch(() => setList([])); }, []);
+  if (!list || list.length === 0) return null;
+  return (
+    <section className="fs">
+      <div className="row-between"><b className="fs-h">{t.fsSuggested}</b><a className="link-btn" href={`/${locale}/wallet#explore`}>{t.wSeeAll}</a></div>
+      <div className="fs-row">{list.map((p) => (
+        <div key={p.handle} className="fs-card">
+          <a href={`/${locale}/u/${p.handle}`} className="stack" style={{ alignItems: "center", gap: 4, textDecoration: "none", color: "inherit" }}>
+            <Avatar p={p} size={64} /><b className="ad-ellip">{p.name}<Verified handle={p.handle} /></b><small className="hint ad-ellip">@{p.handle}</small>
+          </a>
+          <FollowBtn t={t} handle={p.handle} rel={p.relation} />
+        </div>
+      ))}</div>
+    </section>
+  );
+}
+
+type Ev = { id: string; name: string; start: string; localDate: string; localTime: string | null; kind: string; venue: string | null; image: string | null; priceMin: number | null; currency: string | null; free?: boolean };
+export function EventsStrip({ t, locale, city, cityName }: { t: Dict; locale: Locale; city: string; cityName: string }) {
+  const [list, setList] = useState<Ev[] | null>(null);
+  useEffect(() => { fetch(`/api/events?city=${city}`).then((r) => (r.ok ? r.json() : null)).then((j) => setList((j?.events ?? []).slice(0, 10))).catch(() => setList([])); }, [city]);
+  if (!list || list.length === 0) return null;
+  const df = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString(locale, { weekday: "short", day: "numeric", month: "short" });
+  const price = (e: Ev) => (e.free ? `🆓 ${t.exFreeEntry}` : e.priceMin ? new Intl.NumberFormat(locale, { style: "currency", currency: e.currency ?? "EUR", maximumFractionDigits: 0 }).format(e.priceMin) : "");
+  return (
+    <section className="fs">
+      <div className="row-between"><b className="fs-h">📅 {fmt(t.fsWhatsOn, { c: cityName })}</b><a className="link-btn" href={`/${locale}/wallet/agenda?city=${city}`}>{t.wSeeAll}</a></div>
+      <div className="fs-row">{list.map((e) => (
+        <a key={e.id} className="fs-ev" href={`/${locale}/wallet/agenda?city=${city}&ev=${encodeURIComponent(e.id)}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {e.image ? <img src={e.image} alt="" loading="lazy" /> : <span className="fs-ev-ph">🎟</span>}
+          <span className="fs-ev-b"><b>{e.name}</b><small>{df(e.localDate)}{e.localTime ? ` · ${e.localTime}` : ""}</small>{price(e) && <i>{price(e)}</i>}</span>
+        </a>
+      ))}</div>
+    </section>
+  );
 }

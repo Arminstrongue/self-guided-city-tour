@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 process.env.DATABASE_URL = "pglite:memory";
+process.env.SGCT_NO_OFFICIAL = "1";
 
 test("rede social: @nome, seguir com pedido, aceitar, pesquisar e bloquear", async () => {
   const { db } = await import("./db");

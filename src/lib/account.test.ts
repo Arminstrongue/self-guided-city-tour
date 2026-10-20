@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 process.env.DATABASE_URL = "pglite:memory";
+process.env.SGCT_NO_OFFICIAL = "1";
 
 test("notificações, privacidade das mensagens, tempo real, exportar e apagar a conta", async () => {
   const { db, schema } = await import("./db");

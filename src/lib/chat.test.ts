@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 process.env.DATABASE_URL = "pglite:memory";
+process.env.SGCT_NO_OFFICIAL = "1";
 
 test("conversas: só seguidores/a seguir, lidas, anular, apagar para mim, resposta a história, bloqueio", async () => {
   const { db } = await import("./db");

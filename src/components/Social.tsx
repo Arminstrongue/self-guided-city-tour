@@ -23,6 +23,9 @@ export async function loadSocial(): Promise<Social | null> {
 export const act = (handle: string, action: string, extra: Record<string, string> = {}) =>
   fetch("/api/social/act", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ handle, action, ...extra }) }).then((r) => r.json()).catch(() => null);
 
+/** Selo azul da conta oficial. */
+export const Verified = ({ handle }: { handle: string }) => (handle === "selfguidedcitytour" ? <span className="vf" title="Official" aria-label="Official">✓</span> : null);
+
 export function Avatar({ p, size = 44 }: { p: { photo: string | null; name: string }; size?: number }) {
   // eslint-disable-next-line @next/next/no-img-element
   return p.photo ? <img className="sc-av" src={p.photo} alt="" style={{ width: size, height: size }} />
@@ -54,7 +57,7 @@ export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyPro
     setBusy(false);
     if (r?.ok) return onClose(true);
     const j = await r?.json().catch(() => null);
-    setErr(j?.error === "taken" ? t.scErrTaken : j?.error === "handle" ? t.scErrHandle : t.scErr);
+    setErr(j?.error === "taken" ? t.scErrTaken : j?.error === "handle" ? t.scErrHandle : j?.error === "offensive" ? t.mdOffensive : t.scErr);
   }
   return (
     <div className="sheet-bg" onClick={() => onClose(false)}>
@@ -105,7 +108,7 @@ export function FollowBtn({ t, handle, rel, onChange }: { t: Dict; handle: strin
 function Row({ t, locale, p, right }: { t: Dict; locale: Locale; p: PublicProfile; right?: React.ReactNode }) {
   return (
     <div className="sc-row">
-      <a className="sc-row-l" href={`/${locale}/u/${p.handle}`}><Avatar p={p} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}{p.isPrivate ? " 🔒" : ""}</b><small className="hint ad-ellip">@{p.handle}</small></span></a>
+      <a className="sc-row-l" href={`/${locale}/u/${p.handle}`}><Avatar p={p} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}<Verified handle={p.handle} />{p.isPrivate ? " 🔒" : ""}</b><small className="hint ad-ellip">@{p.handle}</small></span></a>
       {right ?? null}
       {!right && <span className="hint" style={{ fontSize: 12 }}>{t.scView}</span>}
     </div>

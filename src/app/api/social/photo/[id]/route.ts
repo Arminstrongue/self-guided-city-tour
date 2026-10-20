@@ -9,6 +9,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
   const data = await photoOf(me, params.id);
+  if (data && /^https:\/\/upload\.wikimedia\.org\//.test(data)) return Response.redirect(data, 302); // fotos da conta oficial (Wikimedia)
   const m = data?.match(/^data:(image\/(?:jpeg|webp|png));base64,(.+)$/);
   if (!m) return new Response("not found", { status: 404 });
   return new Response(Buffer.from(m[2], "base64"), {

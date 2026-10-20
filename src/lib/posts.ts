@@ -10,6 +10,8 @@ import { and, desc, eq, gt, inArray, isNull, lt, lte, or, sql } from "drizzle-or
 import { db, schema } from "./db";
 import { myProfile, type PublicProfile } from "./social";
 import { dropPostNotifs, notify } from "./notify";
+import { OFFICIAL_EMAIL } from "./official";
+import { moderate } from "./moderation";
 
 export const STORY_HOURS = 24;
 export const PAGE = 12;
@@ -56,11 +58,14 @@ async function hydrate(me: string, rows: schema.Post[], c: Circle, more = false)
     d.select({ id: schema.postComments.postId, n: sql<number>`count(*)::int` }).from(schema.postComments).where(inArray(schema.postComments.postId, ids)).groupBy(schema.postComments.postId)
   ]) : [[], [], [], []];
   const byEmail = new Map(profs.map((p) => [p.email, p]));
+  // Publicações com 3+ denúncias abertas ficam escondidas (exceto ao autor) até a equipa rever.
+  const flagged = ids.length ? new Set((await d.select({ id: schema.reports.postId, n: sql<number>`count(*)::int` }).from(schema.reports)
+    .where(and(inArray(schema.reports.postId, ids), eq(schema.reports.status, "open"))).groupBy(schema.reports.postId)).filter((r) => r.n >= 3).map((r) => r.id)) : new Set<string | null>();
   const authors: Record<string, PublicProfile> = {};
   const posts: PostItem[] = [];
   for (const r of rows) {
     const a = byEmail.get(r.author);
-    if (!a) continue;
+    if (!a || (flagged.has(r.id) && r.author !== me)) continue;
     authors[a.handle] = pub(a);
     posts.push({
       id: r.id, kind: r.kind, handle: a.handle, text: r.text, photo: Boolean(r.photo), city: r.city, tag: r.tag, bg: r.bg,
@@ -88,6 +93,9 @@ export async function purgeExpired() {
 export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; city: string | null; tag: string | null; bg: string | null };
 export async function createPost(me: string, v: NewPost) {
   if (!(await myProfile(me))) return { error: "no_profile" as const };
+  const mod = moderate(v.text);
+  if (!mod.ok) return { error: "offensive" as const };
+  v = { ...v, text: mod.text };
   if (!v.photo && !v.text.trim()) return { error: "empty" as const };
   const d = await db();
   await purgeExpired();
@@ -107,7 +115,8 @@ const before = (b?: string | null) => (b && !Number.isNaN(Date.parse(b)) ? lt(sc
 /** Feed "A seguir": as minhas publicações e as de quem sigo, das mais recentes para as mais antigas. */
 export async function feedFollowing(me: string, cursor?: string | null): Promise<FeedPage> {
   const c = await circle(me);
-  const authors = [me, ...c.following].filter((e) => !c.blocked.has(e));
+  // A conta oficial entra sempre no feed (dicas das cidades), para ninguém ver o feed vazio.
+  const authors = [...new Set([me, ...c.following, OFFICIAL_EMAIL])].filter((e) => !c.blocked.has(e));
   const d = await db();
   const rows = await d.select().from(schema.posts)
     .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), videoOk(me), before(cursor)))
@@ -196,6 +205,9 @@ export async function videoOf(me: string, id: string) {
 /** Nova publicação em vídeo: fica "a processar" até o ffmpeg terminar. */
 export async function createVideoPost(me: string, v: { text: string; city: string | null; tag: string | null }) {
   if (!(await myProfile(me))) return { error: "no_profile" as const };
+  const mod = moderate(v.text);
+  if (!mod.ok) return { error: "offensive" as const };
+  v = { ...v, text: mod.text };
   const d = await db();
   const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts)
     .where(and(eq(schema.posts.author, me), eq(schema.posts.videoStatus, "processing")));
@@ -281,6 +293,9 @@ export async function addComment(me: string, id: string, text: string) {
   if (!v) return { error: "not_found" as const };
   if (!(await myProfile(me))) return { error: "no_profile" as const };
   if (!canComment(me, v.post.author, v.circle)) return { error: "not_allowed" as const };
+  const mod = moderate(text);
+  if (!mod.ok) return { error: "offensive" as const };
+  text = mod.text;
   const d = await db();
   const [r] = await d.insert(schema.postComments).values({ postId: id, author: me, text: text.trim() }).returning({ id: schema.postComments.id });
   await notify(v.post.author, me, "comment", { postId: id, text: text.trim() }).catch(() => null);

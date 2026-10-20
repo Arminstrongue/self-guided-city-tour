@@ -34,7 +34,9 @@ export async function handleTaken(handle: string, exceptEmail?: string) {
 export async function saveProfile(email: string, v: { handle: string; name: string; bio: string; photo: string | null; isPrivate: boolean; theme?: string; accent?: string; cities?: string[]; lessOf?: string[] }) {
   const d = await db();
   const set = { ...v, updatedAt: new Date() };
+  const isNew = !(await myProfile(email));
   await d.insert(schema.travellerProfiles).values({ email, ...v }).onConflictDoUpdate({ target: schema.travellerProfiles.email, set });
+  if (isNew) await (await import("./official")).followOfficial(email).catch(() => null);
   // Ao passar a público, os pedidos pendentes ficam aceites.
   if (!v.isPrivate) await d.update(schema.follows).set({ status: "accepted" }).where(and(eq(schema.follows.followee, email), eq(schema.follows.status, "pending")));
 }
@@ -158,7 +160,10 @@ export async function search(me: string | null, q: string, myCities: string[] = 
     rows = await d.select().from(schema.travellerProfiles).orderBy(desc(schema.travellerProfiles.updatedAt)).limit(60);
     if (myCities.length) rows.sort((a, b) => b.cities.filter((c) => myCities.includes(c)).length - a.cities.filter((c) => myCities.includes(c)).length);
   }
-  rows = rows.filter((r) => r.email !== me && !blocked.includes(r.email)).slice(0, 20);
+  rows = rows.filter((r) => r.email !== me && !blocked.includes(r.email));
+  // Sugestões: a conta oficial primeiro.
+  if (term.length < 2) rows.sort((a, b) => Number(b.handle === "selfguidedcitytour") - Number(a.handle === "selfguidedcitytour"));
+  rows = rows.slice(0, 20);
   const rels = me ? await d.select().from(schema.follows).where(and(eq(schema.follows.follower, me), inArray(schema.follows.followee, rows.map((r) => r.email).concat("~")))) : [];
   return rows.map((r) => {
     const f = rels.find((x) => x.followee === r.email);

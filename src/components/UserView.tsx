@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { flag } from "@/data/countries";
-import { Avatar, FollowBtn, act, type PublicProfile } from "./Social";
+import { Avatar, FollowBtn, Verified, act, type PublicProfile } from "./Social";
 import { ProfilePosts, ProfileStories } from "./Feed";
 
 type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[]; canMessage?: boolean };
@@ -24,7 +24,7 @@ export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Local
           <div className="row" style={{ gap: 14, flexWrap: "nowrap", minWidth: 0 }}>
             {v.canSee ? <ProfileStories t={t} locale={locale} handle={p.handle} author={p} /> : <Avatar p={p} size={84} />}
             <div className="stack" style={{ gap: 2, minWidth: 0 }}>
-              <b style={{ fontSize: 20 }} className="ad-ellip">{p.name}</b>
+              <b style={{ fontSize: 20 }} className="ad-ellip">{p.name}<Verified handle={p.handle} /></b>
               <span className="hint">@{p.handle}{p.isPrivate ? " 🔒" : ""}</span>
               <span className="wl-me-c" style={{ color: "var(--ink)" }}><span><b className="num">{v.followers}</b> {v.followers === 1 ? t.scFollower : t.scFollowers}</span><span><b className="num">{v.following}</b> {t.scFollowingN}</span></span>
             </div>

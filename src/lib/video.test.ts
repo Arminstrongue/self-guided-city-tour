@@ -5,6 +5,7 @@ import { existsSync, mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 process.env.DATABASE_URL = "pglite:memory";
+process.env.SGCT_NO_OFFICIAL = "1";
 const media = mkdtempSync(path.join(tmpdir(), "sgct-media-"));
 process.env.MEDIA_DIR = media;
 

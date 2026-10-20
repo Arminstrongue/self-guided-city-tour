@@ -40,7 +40,7 @@ export async function POST(req: Request) {
   const m = Meta.safeParse({ text: u.searchParams.get("text") ?? "", city: u.searchParams.get("city") || null, tag: u.searchParams.get("tag") || null });
   if (!m.success || !req.body) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const r = await createVideoPost(me, m.data);
-  if ("error" in r) return NextResponse.json(r, { status: r.error === "no_profile" ? 409 : 429 });
+  if ("error" in r) return NextResponse.json(r, { status: r.error === "no_profile" ? 409 : r.error === "offensive" ? 400 : 429 });
   try {
     await saveUpload(r.id, req.body);
   } catch (e) {

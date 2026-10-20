@@ -1409,3 +1409,21 @@ html,body{overflow-x:clip}
 .nv-cities{display:flex;overflow-x:auto;gap:8px;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none}
 .nv-cities::-webkit-scrollbar{display:none}
 .nv-city{flex:0 0 auto;min-width:96px;min-height:64px;padding:10px 12px}
+.vf{display:inline-grid;place-items:center;width:15px;height:15px;margin-left:4px;border-radius:50%;background:#1d9bf0;color:#fff;font-size:9.5px;font-weight:900;vertical-align:1px;flex:0 0 auto}
+.ch-warn{margin:0;padding:8px 14px;text-align:center;font-size:13px}
+
+/* Sugestões e eventos no meio do feed */
+.fs{display:flex;flex-direction:column;gap:10px;padding:4px 0}
+.fs-h{font-size:15px;letter-spacing:-.01em}
+.fs-row{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none;scroll-snap-type:x mandatory}
+.fs-row::-webkit-scrollbar{display:none}
+.fs-card{flex:0 0 148px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 10px;border-radius:18px;background:var(--surface);border:1px solid var(--line);text-align:center;min-width:0}
+.fs-card b{font-size:13.5px;max-width:128px}
+.fs-card small{font-size:12px;max-width:128px}
+.fs-card .sc-follow{width:100%}
+.fs-ev{flex:0 0 220px;scroll-snap-align:start;border-radius:18px;overflow:hidden;background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;display:flex;flex-direction:column}
+.fs-ev img,.fs-ev-ph{width:100%;height:110px;object-fit:cover;display:grid;place-items:center;font-size:34px;background:var(--surface-2)}
+.fs-ev-b{display:flex;flex-direction:column;gap:2px;padding:10px 12px}
+.fs-ev-b b{font-size:13.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fs-ev-b small{font-size:12px;color:var(--muted)}
+.fs-ev-b i{font-style:normal;font-size:12px;font-weight:700;color:var(--cobalt)}

@@ -7,6 +7,7 @@ import { HOBBIES } from "@/lib/explore";
 import { rateLimit } from "@/lib/rate-limit";
 import { cookies } from "next/headers";
 import { REF_COOKIE, acceptInvite } from "@/lib/invites";
+import { isHateful } from "@/lib/moderation";
 
 export const runtime = "nodejs";
 const photo = z.string().max(140_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).nullable();
@@ -37,7 +38,8 @@ export async function PUT(req: Request) {
   if (!rateLimit(req, "profile", 20)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const v = Full.safeParse(await req.json().catch(() => null));
   if (!v.success) return NextResponse.json({ error: "invalid", fields: v.error.issues.map((i) => i.path[0]) }, { status: 400 });
-  if (!validHandle(v.data.handle)) return NextResponse.json({ error: "handle" }, { status: 400 });
+  if (!validHandle(v.data.handle) || isHateful(v.data.handle)) return NextResponse.json({ error: "handle" }, { status: 400 });
+  if (isHateful(`${v.data.name} ${v.data.bio}`)) return NextResponse.json({ error: "offensive" }, { status: 400 });
   if (await handleTaken(v.data.handle, email)) return NextResponse.json({ error: "taken" }, { status: 409 });
   const { adult: _a, ...data } = v.data;
   const isNew = !(await myProfile(email));
