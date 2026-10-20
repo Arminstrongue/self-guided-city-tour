@@ -975,3 +975,14 @@ html,body{overflow-x:clip}
 .wl-mini-stats button{padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
 .wl-mini-stats b{color:#fff;font-weight:800}
 .wl-lvl{font-weight:700;color:#fff;padding:3px 10px;border-radius:99px;background:rgba(255,255,255,.12)}
+.wl-in{background:#fff;color:#0b1022;border-color:#fff;font-weight:700}
+.wl-in-cta{background:#fff;color:#0b1022}
+.sheet{position:relative}
+.sheet-x{position:absolute;top:10px;right:10px;z-index:3;width:36px;height:36px;border-radius:50%;border:0;background:rgba(0,0,0,.55);color:#fff;font-size:16px;cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(6px)}
+.sheet-x:hover{background:rgba(0,0,0,.75)}
+.win-nav{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:6px;padding:8px 16px;background:color-mix(in srgb,var(--bg,#fff) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line,#e5e7eb)}
+.win-nav button,.win-nav a{width:36px;height:36px;border-radius:50%;border:1px solid var(--line,#e5e7eb);background:var(--card,#fff);color:inherit;font-size:16px;display:grid;place-items:center;cursor:pointer;text-decoration:none}
+.win-nav a{margin-left:auto}
+.win-nav .win-t{margin-left:6px;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-winbar{display:flex;gap:6px;justify-content:flex-end;margin:4px 0 -4px}
+.wl-winbar button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line,#e5e7eb);background:var(--card,#fff);color:inherit;font-size:15px;cursor:pointer}

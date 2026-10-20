@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
+import { WinNav } from "@/components/WinNav";
 import { AgendaView } from "@/components/Agenda";
 import { requestCurrency } from "@/lib/fx";
 import { loadCities } from "@/lib/content";
@@ -19,6 +20,7 @@ export default async function AgendaPage({ params, searchParams }: { params: { l
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
+      <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
       <AgendaView t={t} locale={params.locale} cityId={city.id} cities={cities} moments={moments} tz={tz} openId={searchParams.ev} />
     </main>
   );

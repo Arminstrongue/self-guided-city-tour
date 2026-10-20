@@ -1,4 +1,5 @@
 "use client";
+import { SheetX } from "@/components/WinNav";
 /** Segurança por cidade: SOS, números, partilhar localização, frase de ajuda, burlas e zonas de atenção. */
 import { useEffect, useState } from "react";
 import { ALERT_TEXT, safetyFor } from "@/data/safety";
@@ -115,6 +116,7 @@ export function SosButton(props: { cityId: string; country?: string; cityName: s
       {open && (
         <div className="sheet-bg" onClick={() => setOpen(false)}>
           <div className="sheet" role="dialog" aria-modal="true" aria-label={props.t.safety} onClick={(e) => e.stopPropagation()}>
+            <SheetX onClose={() => setOpen(false)} label={props.t.close} />
             <div className="row-between" style={{ marginBottom: 12 }}>
               <h2 style={{ fontSize: 22 }}>{fmt(props.t.safetyTitle, { city: props.cityName })}</h2>
               <button className="lb-x dark" onClick={() => setOpen(false)} aria-label={props.t.close}>✕</button>

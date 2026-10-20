@@ -1,4 +1,5 @@
 "use client";
+import { SheetX } from "@/components/WinNav";
 /** Agenda da cidade dentro da carteira: eventos dos próximos 30 dias e o que vale sempre a pena, sem sair da app. */
 import { useEffect, useMemo, useState } from "react";
 import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
@@ -124,6 +125,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
       {open && (
         <div className="sheet-bg" onClick={() => setOpen(null)}>
           <div className="sheet ag-sheet" role="dialog" aria-modal="true" onClick={(x) => x.stopPropagation()}>
+            <SheetX onClose={() => setOpen(null)} label={t.close} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {open.image && <img className="ag-cover" src={open.image} alt="" />}
             <div className="stack" style={{ gap: 8, padding: 18 }}>

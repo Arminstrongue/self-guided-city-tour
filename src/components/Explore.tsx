@@ -1,4 +1,5 @@
 "use client";
+import { SheetX } from "@/components/WinNav";
 import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
 /** "O que viver": momentos curados, mapa de diversão (OpenStreetMap), eventos e diário, ordenados pelos interesses do viajante. */
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -414,8 +415,9 @@ export function AddToPlan({ t, locale, cityId, cityName, item, onClose }: { t: D
   }
   return (
     <div className="ex-modal" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="card stack ex-sheet">
-        <b style={{ fontSize: 18 }}>🗺 {item.title}</b>
+      <div className="card stack ex-sheet" style={{ position: "relative" }}>
+        <SheetX onClose={() => onClose()} label={t.close} />
+        <b style={{ fontSize: 18, paddingRight: 40 }}>🗺 {item.title}</b>
         {plans === null && <p className="hint">…</p>}
         {plans === "auth" && <><p>{t.plSignIn}</p><a className="btn press" href={`/${locale}/wallet`}>{t.wallet}</a></>}
         {Array.isArray(plans) && <>

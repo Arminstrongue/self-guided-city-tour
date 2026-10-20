@@ -1,4 +1,5 @@
 "use client";
+import { SheetX } from "@/components/WinNav";
 /**
  * Rede social da carteira (fase 1): perfil, pessoas (pesquisa, pedidos, seguidores), algoritmo e aparência.
  * Tudo leve: só carrega dados quando o viajante abre cada parte.
@@ -58,6 +59,7 @@ export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyPro
   return (
     <div className="sheet-bg" onClick={() => onClose(false)}>
       <form className="sheet stack sc-edit" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} onSubmit={save}>
+        <SheetX onClose={() => onClose(false)} label={t.close} />
         <b style={{ fontSize: 19 }}>{initial ? t.scEdit : t.scCreate}</b>
         <label className="sc-photo">
           <Avatar p={{ photo: v.photo, name: v.name }} size={84} />
@@ -181,6 +183,7 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
   return (
     <div className="sheet-bg" onClick={() => onClose(false)}>
       <div className="sheet stack sc-set" style={{ gap: 18 }} onClick={(e) => e.stopPropagation()}>
+        <SheetX onClose={() => onClose(false)} label={t.close} />
         <section className="stack" style={{ gap: 10 }}>
           <b className="sc-h">🎨 {t.scAppearance}</b>
           <div className="sc-seg">{(["auto", "light", "dark"] as Theme[]).map((x) => <button key={x} className={theme === x ? "on" : ""} onClick={() => setT(x, accent)}>{x === "auto" ? `⚙︎ ${t.scAuto}` : x === "light" ? `☀️ ${t.scDay}` : `🌙 ${t.scNight}`}</button>)}</div>

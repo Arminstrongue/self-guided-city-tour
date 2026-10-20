@@ -38,6 +38,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const [editing, setEditing] = useState(false);
   const [settings, setSettings] = useState(false);
   const [shared, setShared] = useState(false);
+  const goSignIn = () => { setTabState("home"); setTimeout(() => { const e = document.getElementById("wl-email"); e?.scrollIntoView({ behavior: "smooth", block: "center" }); (e as HTMLInputElement | null)?.focus(); }, 50); };
   const refreshSocial = () => void loadSocial().then(setSocial);
 
   async function load() {
@@ -52,8 +53,12 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   }
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
-  useEffect(() => { const h = window.location.hash.slice(1) as Tab; if (TABS.includes(h)) setTabState(h); }, []);
-  const setTab = (x: Tab) => { setTabState(x); try { history.replaceState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: Math.min(window.scrollY, (document.getElementById("wl-tabs")?.offsetTop ?? 0) - 64), behavior: "smooth" }); };
+  useEffect(() => {
+    const read = () => { const h = window.location.hash.slice(1) as Tab; setTabState(TABS.includes(h) ? h : "home"); };
+    read(); window.addEventListener("popstate", read);
+    return () => window.removeEventListener("popstate", read);
+  }, []);
+  const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: Math.min(window.scrollY, (document.getElementById("wl-tabs")?.offsetTop ?? 0) - 64), behavior: "smooth" }); };
 
   const signed = w && w !== "anon" ? w : null;
   const memories: Mem[] = useMemo(() => [...(signed?.memories ?? []), ...local.map((m) => ({ ...m, local: true }))].sort((a, b) => b.at - a.at), [signed, local]);
@@ -136,7 +141,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           <span className="wl-brand">👛 {t.wallet}</span>
           <span className="row" style={{ gap: 6 }}>
             <button className="wl-ic" aria-label={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>
-            {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <span className="wl-guest">{t.wGuest}</span>}
+            {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
           </span>
         </div>
         {prof ? (
@@ -170,6 +175,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           ))}
         </div>
         </>}
+        {w === "anon" && <button className="btn press wl-in-cta" onClick={goSignIn}>🔐 {t.wSignIn}</button>}
         {signed && <div className="wl-me-acts">
           <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
           {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
@@ -181,6 +187,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       {synced > 0 && <p className="note">✓ {fmt(t.wSynced, { n: synced })}</p>}
 
       {/* Separadores */}
+      {tab !== "home" && <div className="wl-winbar"><button onClick={() => history.back()} aria-label={t.navBack} title={t.navBack}>←</button><button onClick={() => history.forward()} aria-label={t.navFwd} title={t.navFwd}>→</button><button onClick={() => setTab("home")} aria-label={t.close} title={t.close}>✕</button></div>}
       <nav className="wl-tabs" id="wl-tabs" role="tablist">
         {TABS.map((k) => (
           <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
@@ -200,7 +207,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
                 const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) }).catch(() => null);
                 const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
               }}>
-                <div className="field" style={{ flex: 1, margin: 0 }}><input type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
+                <div className="field" style={{ flex: 1, margin: 0 }}><input id="wl-email" type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
                 <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }}>{t.wSignBtn}</button>
               </form>
             )}
