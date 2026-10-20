@@ -500,7 +500,8 @@ h1,h2,h3{letter-spacing:-.025em;font-weight:700}
 @media (prefers-reduced-motion: reduce){.rise,.reveal{animation:none}.hero-x .slides img{transition:opacity .3s;transform:none}}
 html,body{overflow-x:clip}
 .hero-x{margin-inline:calc(50% - 50vw)}
-.hero-x .in{padding-inline:max(20px,calc(50vw - 574px))}
+.hero-x .in{padding-inline:max(20px,calc(50vw - 574px));max-width:none}
+.hero-x .in>*{max-width:760px}
 .hero-x .bar.over{padding-inline:max(16px,calc(50vw - 574px))}
 .city-hero .stats{margin-inline:0;padding-inline:0}
 .hero-x .dots{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);margin:0;z-index:2}
