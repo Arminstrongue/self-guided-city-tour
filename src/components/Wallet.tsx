@@ -13,6 +13,7 @@ import { FeedTab } from "./Feed";
 import { VideosTab } from "./Reels";
 import { ChatTab, useUnread } from "./Chat";
 import { NotifsSheet } from "./Notifs";
+import { InviteSheet } from "./Invite";
 import { useLiveConnection } from "@/lib/live-client";
 import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
 
@@ -115,6 +116,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const { unread, notifs, refreshUnread } = useUnread(Boolean(prof));
   useLiveConnection(Boolean(signed));
   const [notifOpen, setNotifOpen] = useState(false);
+  const [inviting, setInviting] = useState(false);
   useEffect(() => { if (window.location.hash === "#notifs") setNotifOpen(true); }, []);
   async function shareProfile() {
     if (!prof) return;
@@ -190,7 +192,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
         {signed && <div className="wl-me-acts">
           <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
           {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
-          <button aria-label={t.scFind} onClick={() => setTab("people")}>👤+</button>
+          <button aria-label={t.scFind} title={t.scFind} onClick={() => setTab("people")}>👤+</button>
+          {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
         </div>}
                 {!prof && stamps.length > 0 && <div className="dy-stamps wl-stamps">{stamps.slice(0, 8).map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
       </section>
@@ -268,6 +271,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
 
       {tab === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 
+      {tab === "people" && social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
       {tab === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
 
       {tab === "passes" && <>
@@ -324,6 +328,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
 
       <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
+      {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
       {notifOpen && <NotifsSheet t={t} locale={locale} cities={cities} onRead={() => void refreshUnread()} onClose={() => { setNotifOpen(false); if (window.location.hash === "#notifs") history.replaceState(null, "", window.location.pathname); }} />}
       {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
     </div>

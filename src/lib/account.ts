@@ -51,6 +51,7 @@ export async function deleteAccount(email: string) {
   await d.delete(schema.travellerMemories).where(eq(schema.travellerMemories.email, email));
   await d.delete(schema.travellerPlans).where(eq(schema.travellerPlans.email, email));
   await d.delete(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, email));
+  await (await import("./invites")).purgeInvites(email);
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })
     .onConflictDoUpdate({ target: schema.accountSettings.email, set: { sessionsAfter: new Date(), notif: {}, dmPolicy: "circle", updatedAt: new Date() } });

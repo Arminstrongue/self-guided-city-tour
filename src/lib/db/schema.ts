@@ -389,3 +389,14 @@ export const livePresence = pgTable("live_presence", {
   email: text("email").primaryKey(),
   at: timestamp("at", { withTimezone: true }).notNull()
 });
+
+/* ---------- Convites (email, SMS, WhatsApp, link). O contacto convidado guarda-se só como hash. ---------- */
+export const invites = pgTable("invites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  inviter: text("inviter").notNull(),
+  channel: text("channel").$type<"email" | "sms" | "whatsapp" | "link">().notNull(),
+  targetHash: text("target_hash"),                 // sha256 do email/telefone normalizado
+  joinedEmail: text("joined_email"),
+  joinedAt: timestamp("joined_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("invites_inviter_idx").on(t.inviter, t.createdAt), index("invites_target_idx").on(t.targetHash)]);

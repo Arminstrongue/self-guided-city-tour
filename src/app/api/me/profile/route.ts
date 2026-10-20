@@ -5,6 +5,8 @@ import { ACCENTS, THEMES, counts, deleteProfile, handleTaken, lists, myProfile, 
 import { CITIES } from "@/data/cities";
 import { HOBBIES } from "@/lib/explore";
 import { rateLimit } from "@/lib/rate-limit";
+import { cookies } from "next/headers";
+import { REF_COOKIE, acceptInvite } from "@/lib/invites";
 
 export const runtime = "nodejs";
 const photo = z.string().max(140_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).nullable();
@@ -38,8 +40,13 @@ export async function PUT(req: Request) {
   if (!validHandle(v.data.handle)) return NextResponse.json({ error: "handle" }, { status: 400 });
   if (await handleTaken(v.data.handle, email)) return NextResponse.json({ error: "taken" }, { status: 409 });
   const { adult: _a, ...data } = v.data;
+  const isNew = !(await myProfile(email));
   await saveProfile(email, data);
-  return NextResponse.json({ ok: true });
+  const res = NextResponse.json({ ok: true });
+  // Entrou por um convite: segue quem o convidou e avisa-o.
+  const ref = cookies().get(REF_COOKIE)?.value;
+  if (isNew && ref) { await acceptInvite(email, ref).catch(() => null); res.cookies.set(REF_COOKIE, "", { maxAge: 0, path: "/" }); }
+  return res;
 }
 
 /** Tema, cor, cidades seguidas e "ver menos" (o algoritmo). */
