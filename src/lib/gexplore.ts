@@ -1,6 +1,6 @@
 /**
  * "Explorar" com o Google Places (API New, Text Search): fotos, avaliações e horário de cada lugar.
- * Só ativo com GOOGLE_PLACES_API_KEY. Uma pesquisa por categoria, em paralelo; cache de 6 h por cidade e idioma
+ * Só ativo com GOOGLE_PLACES_API_KEY. Uma pesquisa por categoria, em paralelo; cache de 24 h por cidade (partilhada por todos os idiomas, para limitar o custo)
  * (as regras da Google não permitem guardar estes dados em base de dados).
  */
 import type { City } from "@/data/cities";
@@ -45,7 +45,7 @@ export function mapGoogle(list: GPlace[], cat: PlaceCat, center: { lat: number; 
 }
 
 const cache = new Map<string, { at: number; places: Place[] }>();
-const TTL = 6 * 3600_000;
+const TTL = 24 * 3600_000;
 
 async function search(cat: PlaceCat, cityName: string, center: { lat: number; lng: number }, lang: string): Promise<Place[]> {
   const { q, far } = Q[cat];
@@ -63,8 +63,8 @@ async function search(cat: PlaceCat, cityName: string, center: { lat: number; ln
   return mapGoogle(j.places ?? [], cat, center);
 }
 
-export async function googlePlacesFor(city: City, lang: string): Promise<Place[] | null> {
-  const key = `${city.id}:${lang}`;
+export async function googlePlacesFor(city: City, _lang: string): Promise<Place[] | null> {
+  const key = city.id, lang = "en"; // nomes dos lugares vêm no idioma local; uma só pesquisa serve todos os idiomas
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.places;
   const center = cityCenter(city);
