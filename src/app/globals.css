@@ -875,3 +875,15 @@ html,body{overflow-x:clip}
 .wl-mem span{display:flex;flex-direction:column;width:100%;padding:10px;text-align:start;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.7))}
 .wl-mem b{font-size:13px;line-height:1.2}.wl-mem small{font-size:11px;opacity:.8}
 .wl-benefits{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--muted)}
+.nf-item{display:flex;gap:12px;padding:14px 16px;align-items:flex-start}
+.nf-item.off{border-color:#f5a623;box-shadow:0 0 0 3px rgba(245,166,35,.12)}
+.nf-av{width:40px;height:40px;border-radius:50%;flex:none;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;object-fit:contain;padding:6px}
+.nf-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--muted)}
+.nf-meta b{color:var(--ink)}
+.nf-ok{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--cobalt);color:#fff;font-size:9px;font-weight:800}
+.nf-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--cobalt-soft);color:var(--cobalt)}
+.nf-t{font-size:16px;font-weight:700;line-height:1.35;color:var(--ink);text-decoration:none}
+.nf-t:hover{color:var(--cobalt)}
+.nf-acts{display:flex;gap:16px;margin-top:2px}
+.nf-acts a,.nf-acts button{font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-decoration:none}
+.nf-acts a:hover,.nf-acts button:hover{color:var(--cobalt)}

@@ -6,8 +6,6 @@ import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { NativeChrome } from "@/components/NativeChrome";
 import { isLocale, getDict, RTL } from "@/i18n/dictionaries";
-import { LiveNews } from "@/components/LiveNews";
-import { CITIES } from "@/data/cities";
 
 export const metadata: Metadata = {
   title: "Self Guided City Tour",
@@ -33,8 +31,6 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <NativeChrome />
         {children}
         <footer className="foot">
-          <LiveNews locale={params.locale} cities={Object.fromEntries(CITIES.map((c) => [c.id, c.n[params.locale] ?? c.n.en]))}
-            t={{ nwTitle: t.nwTitle, nwGeneral: t.nwGeneral, nwOfficial: t.nwOfficial, nwTrusted: t.nwTrusted, nwNone: t.nwNone, nwNote: t.nwNote, nwMore: t.nwMore }} />
           <p>{t.footer}</p>
           <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link> · <Link href={`/${params.locale}/guides/join`}>{t.lGuides}</Link> · <Link href={`/${params.locale}/wallet`}>{t.wallet}</Link></p>
         </footer>

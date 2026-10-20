@@ -6,7 +6,7 @@
  */
 import { CITIES, COUNTRY, type City } from "@/data/cities";
 
-export type NewsItem = { title: string; url: string; source: string; at: number; official?: boolean; trusted?: boolean };
+export type NewsItem = { title: string; url: string; source: string; at: number; site?: string; official?: boolean; trusted?: boolean };
 
 /** Palavras de segurança por idioma (usadas na pesquisa e para filtrar os títulos). */
 const SAFETY: Record<string, string[]> = {
@@ -62,13 +62,19 @@ export function parseRss(xml: string, locale: string, now = Date.now()): NewsIte
   const out: NewsItem[] = [];
   for (const m of xml.matchAll(/<item>([\s\S]*?)<\/item>/g)) {
     const g = (tag: string) => { const r = m[1].match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`)); return r ? decode(r[1]) : ""; };
-    const source = g("source");
+    let source = g("source");
+    const srcUrl = m[1].match(/<source[^>]*url="([^"]+)"/)?.[1];
+    let site: string | undefined;
+    try { site = srcUrl ? new URL(srcUrl).hostname.replace(/^www\./, "") : undefined; } catch { /* ignorar */ }
+    if (/^https?:\/\//.test(source)) { try { source = new URL(source).hostname.replace(/^www\./, ""); } catch { /* ignorar */ } }
     let title = g("title");
-    if (source && title.endsWith(` - ${source}`)) title = title.slice(0, -(source.length + 3));
+    const raw = g("source");
+    if (raw && title.endsWith(` - ${raw}`)) title = title.slice(0, -(raw.length + 3));
     const url = g("link"); const at = Date.parse(g("pubDate"));
     if (!title || !/^https:\/\//.test(url) || !Number.isFinite(at)) continue;
     if (now - at > 72 * 3600_000 || !isSafety(title, locale)) continue;
-    out.push({ title: title.slice(0, 200), url, source: source || new URL(url).hostname, at, ...(TRUSTED.test(source) ? { trusted: true } : {}) });
+    if (!source && site) source = site;
+    out.push({ title: title.slice(0, 200), url, source: source || new URL(url).hostname, at, ...(site ? { site } : {}), ...(TRUSTED.test(source) ? { trusted: true } : {}) });
   }
   const seen = new Set<string>();
   return out.filter((n) => { const k = n.title.toLowerCase().slice(0, 60); return !seen.has(k) && (seen.add(k), true); })
@@ -88,7 +94,7 @@ async function fcdo(cc: string): Promise<NewsItem | null> {
   const j = (await r.json()) as { title?: string; public_updated_at?: string; details?: { change_description?: string } };
   const at = Date.parse(j.public_updated_at ?? "");
   if (!Number.isFinite(at) || Date.now() - at > 14 * 24 * 3600_000) return null; // só avisos recentes
-  return { title: `${j.title ?? slug}: ${(j.details?.change_description ?? "").slice(0, 160)}`, url: `https://www.gov.uk/foreign-travel-advice/${slug}`, source: "GOV.UK (FCDO)", at, official: true, trusted: true };
+  return { title: `${j.title ?? slug}: ${(j.details?.change_description ?? "").slice(0, 160)}`, url: `https://www.gov.uk/foreign-travel-advice/${slug}`, source: "GOV.UK (FCDO)", site: "gov.uk", at, official: true, trusted: true };
 }
 
 const cache = new Map<string, { at: number; items: NewsItem[] }>();

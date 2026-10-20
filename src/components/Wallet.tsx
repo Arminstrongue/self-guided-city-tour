@@ -8,6 +8,7 @@ import type { Wallet } from "@/lib/wallet";
 import { COUNTRY_CODES, flag } from "@/data/countries";
 import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
+import { NewsFeed } from "./NewsFeed";
 
 type Mem = Memory & { local?: boolean };
 
@@ -92,6 +93,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
   const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
+  const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...free])].filter(Boolean), [active, signed, wish, free]);
   const counts: Record<Tab, number | null> = { home: null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
   const icon: Record<Tab, string> = { home: "✦", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
@@ -258,6 +260,8 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           </div>
         </section>
       )}
+
+      <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
     </div>
   );
 }
