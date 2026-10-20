@@ -311,6 +311,7 @@ export const posts = pgTable("posts", {
   city: text("city"),                                     // id da cidade (feed da cidade)
   tag: text("tag"),                                       // interesse (algoritmo)
   bg: text("bg"),                                         // cor de fundo das histórias só com texto
+  extra: jsonb("extra").$type<string[]>(),               // fotos 2..6 (carrossel), data URLs
   video: text("video"),                                   // id do ficheiro de vídeo (MEDIA_DIR/v/<id>.mp4)
   videoStatus: text("video_status").$type<"processing" | "ready" | "failed">(),
   duration: integer("duration"),                          // segundos
@@ -340,7 +341,10 @@ export const messages = pgTable("messages", {
   sender: text("sender").notNull(),
   recipient: text("recipient").notNull(),
   text: text("text").notNull(),
-  ref: text("ref"),                        // resposta a uma história: "story:<id>:<excerto>"
+  ref: text("ref"),                        // "story:<id>:<excerto>" · "post:<id>:<excerto>" · "loc:<lat>,<lng>"
+  photo: text("photo"),                    // foto enviada na conversa (data URL reduzida)
+  audio: text("audio"),                    // nota de voz: "<id>.<ext>" em MEDIA_DIR/a
+  replyTo: uuid("reply_to"),               // resposta a uma mensagem
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   readAt: timestamp("read_at", { withTimezone: true })
 }, (t) => [index("messages_pair_idx").on(t.pair, t.createdAt), index("messages_unread_idx").on(t.recipient, t.readAt)]);
@@ -364,7 +368,7 @@ export const accountSettings = pgTable("account_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
-export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined";
+export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined" | "mention";
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),            // quem recebe
@@ -400,3 +404,17 @@ export const invites = pgTable("invites", {
   joinedAt: timestamp("joined_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("invites_inviter_idx").on(t.inviter, t.createdAt), index("invites_target_idx").on(t.targetHash)]);
+
+/* ---------- Guardados, reações a mensagens ---------- */
+export const postSaves = pgTable("post_saves", {
+  postId: uuid("post_id").notNull(),
+  email: text("email").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("post_saves_pair_idx").on(t.email, t.postId)]);
+
+export const messageReactions = pgTable("message_reactions", {
+  messageId: uuid("message_id").notNull(),
+  email: text("email").notNull(),
+  emoji: text("emoji").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("message_reactions_pair_idx").on(t.messageId, t.email)]);

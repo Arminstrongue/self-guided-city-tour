@@ -5,10 +5,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Foto de uma publicação ou história — só para quem a pode ver. */
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: { id: string } }) {
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
-  const data = await photoOf(me, params.id);
+  const i = Math.max(0, Math.min(5, Number(new URL(req.url).searchParams.get("i") ?? 0) || 0));
+  const data = await photoOf(me, params.id, i);
   if (data && /^https:\/\/upload\.wikimedia\.org\//.test(data)) return Response.redirect(data, 302); // fotos da conta oficial (Wikimedia)
   const m = data?.match(/^data:(image\/(?:jpeg|webp|png));base64,(.+)$/);
   if (!m) return new Response("not found", { status: 404 });

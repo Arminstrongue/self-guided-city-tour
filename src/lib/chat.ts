@@ -14,12 +14,28 @@ export const MAX_TEXT = 1000;
 const pairOf = (a: string, b: string) => [a, b].sort().join("|");
 const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: p.photo, isPrivate: p.isPrivate });
 
-export type ChatMsg = { id: string; text: string; ref: { kind: "story"; id: string; text: string } | null; at: string; mine: boolean; read: boolean };
-const toMsg = (me: string, m: schema.Message): ChatMsg => {
-  let ref: ChatMsg["ref"] = null;
-  const r = m.ref?.match(/^story:([0-9a-f-]{36}):([\s\S]*)$/);
-  if (r) ref = { kind: "story", id: r[1], text: r[2] };
-  return { id: m.id, text: m.text, ref, at: m.createdAt.toISOString(), mine: m.sender === me, read: Boolean(m.readAt) };
+export type ChatRef = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
+export type ChatMsg = {
+  id: string; text: string; ref: ChatRef | null; at: string; mine: boolean; read: boolean;
+  photo: boolean; audio: boolean; reply: { id: string; text: string; mine: boolean } | null; reactions: { e: string; n: number; mine: boolean }[];
+};
+function parseRef(ref: string | null): ChatRef | null {
+  const r = ref?.match(/^(story|post):([0-9a-f-]{36}):([\s\S]*)$/);
+  if (r) return { kind: r[1] as "story" | "post", id: r[2], text: r[3] };
+  const l = ref?.match(/^loc:(-?\d{1,2}(?:\.\d+)?),(-?\d{1,3}(?:\.\d+)?)$/);
+  if (l) return { kind: "loc", lat: Number(l[1]), lng: Number(l[2]) };
+  return null;
+}
+const excerpt = (m: schema.Message) => (m.text || (m.photo ? "📷" : m.audio ? "🎤" : m.ref?.startsWith("loc:") ? "📍" : "↩︎")).slice(0, 80);
+const toMsg = (me: string, m: schema.Message, x: { reply?: schema.Message | null; reactions?: { emoji: string; email: string }[] } = {}): ChatMsg => {
+  const rx = new Map<string, { n: number; mine: boolean }>();
+  for (const r of x.reactions ?? []) { const c = rx.get(r.emoji) ?? { n: 0, mine: false }; rx.set(r.emoji, { n: c.n + 1, mine: c.mine || r.email === me }); }
+  return {
+    id: m.id, text: m.text, ref: parseRef(m.ref), at: m.createdAt.toISOString(), mine: m.sender === me, read: Boolean(m.readAt),
+    photo: Boolean(m.photo), audio: Boolean(m.audio),
+    reply: x.reply ? { id: x.reply.id, text: excerpt(x.reply), mine: x.reply.sender === me } : null,
+    reactions: [...rx.entries()].map(([e, v]) => ({ e, ...v }))
+  };
 };
 
 /** Pode conversar: os dois têm perfil, um segue o outro (aceite) e não há bloqueio. */
@@ -76,7 +92,7 @@ export async function inbox(me: string) {
     if (!p || hidden.has(peer)) return null;
     return {
       peer: pub(p), unread: unread.find((u) => u.s === peer)?.n ?? 0,
-      last: { text: r.ref?.startsWith("story:") && !r.text ? "↩︎" : r.text, at: new Date(r.created_at).toISOString(), mine: r.sender === me, read: Boolean(r.read_at) }
+      last: { text: r.text || (r.ref?.startsWith("loc:") ? "📍" : r.ref?.startsWith("post:") ? "🔗" : r.ref?.startsWith("story:") ? "↩︎" : "📎"), at: new Date(r.created_at).toISOString(), mine: r.sender === me, read: Boolean(r.read_at) }
     };
   }).filter(Boolean) as { peer: PublicProfile; unread: number; last: { text: string; at: string; mine: boolean; read: boolean } }[];
   threads.sort((a, b) => b.last.at.localeCompare(a.last.at));
@@ -116,27 +132,75 @@ export async function thread(me: string, handle: string, opts: { after?: string 
   const [seen] = await d.select({ at: schema.messages.createdAt }).from(schema.messages)
     .where(and(eq(schema.messages.pair, pair), eq(schema.messages.sender, me), sql`${schema.messages.readAt} is not null`))
     .orderBy(desc(schema.messages.createdAt)).limit(1);
+  const ids = list.map((m) => m.id);
+  const replyIds = [...new Set(list.map((m) => m.replyTo).filter((x): x is string => Boolean(x)))];
+  const [replies, reacts] = await Promise.all([
+    replyIds.length ? d.select().from(schema.messages).where(and(inArray(schema.messages.id, replyIds), eq(schema.messages.pair, pair))) : Promise.resolve([]),
+    ids.length ? d.select().from(schema.messageReactions).where(inArray(schema.messageReactions.messageId, ids)) : Promise.resolve([])
+  ]);
   return {
     peer: pub(p), canSend: await canChat(me, p.email), more,
-    messages: list.map((m) => toMsg(me, m)), seenUntil: seen?.at.toISOString() ?? null
+    messages: list.map((m) => toMsg(me, m, { reply: replies.find((x) => x.id === m.replyTo) ?? null, reactions: reacts.filter((x) => x.messageId === m.id) })),
+    seenUntil: seen?.at.toISOString() ?? null
   };
 }
 
-export async function send(me: string, handle: string, text: string, ref: string | null = null) {
+export type SendExtra = { photo?: string | null; audio?: string | null; replyTo?: string | null; id?: string };
+export async function send(me: string, handle: string, text: string, ref: string | null = null, x: SendExtra = {}) {
   const p = await profileByHandle(handle);
   if (!p) return { error: "not_found" as const };
   if (!(await canChat(me, p.email))) return { error: "not_allowed" as const };
   const t = text.trim().slice(0, MAX_TEXT);
-  if (!t && !ref) return { error: "empty" as const };
+  if (!t && !ref && !x.photo && !x.audio) return { error: "empty" as const };
   if (isHateful(t)) return { error: "offensive" as const };
   const d = await db();
-  const [m] = await d.insert(schema.messages).values({ pair: pairOf(me, p.email), sender: me, recipient: p.email, text: t, ref }).returning();
+  const pair = pairOf(me, p.email);
+  const reply = x.replyTo && /^[0-9a-f-]{36}$/.test(x.replyTo)
+    ? (await d.select().from(schema.messages).where(and(eq(schema.messages.id, x.replyTo), eq(schema.messages.pair, pair))).limit(1))[0] ?? null : null;
+  const [m] = await d.insert(schema.messages).values({ ...(x.id ? { id: x.id } : {}), pair, sender: me, recipient: p.email, text: t, ref, photo: x.photo ?? null, audio: x.audio ?? null, replyTo: reply?.id ?? null }).returning();
   // Entrega instantânea: ao destinatário e aos outros separadores/dispositivos de quem enviou.
   const mine = await handleOf(me);
-  if (mine) await publish(p.email, { t: "msg", peer: mine, m: toMsg(p.email, m) });
-  await publish(me, { t: "msg", peer: p.handle, m: toMsg(me, m) });
-  await notify(p.email, me, ref ? "story_reply" : "message", { text: t || "↩︎" }).catch(() => null);
-  return { message: toMsg(me, m) };
+  if (mine) await publish(p.email, { t: "msg", peer: mine, m: toMsg(p.email, m, { reply }) });
+  await publish(me, { t: "msg", peer: p.handle, m: toMsg(me, m, { reply }) });
+  await notify(p.email, me, ref?.startsWith("story:") ? "story_reply" : "message", { text: excerpt(m) }).catch(() => null);
+  return { message: toMsg(me, m, { reply }) };
+}
+
+/** Partilhar uma publicação numa conversa (só se quem envia a puder ver). */
+export async function sharePost(me: string, handle: string, postId: string, text = "") {
+  const { getPost } = await import("./posts");
+  const pg = await getPost(me, postId);
+  const post = pg?.posts[0];
+  if (!post) return { error: "not_found" as const };
+  const ex = `@${post.handle}: ${post.text || (post.video ? "🎬" : post.photos ? "📷" : "")}`.slice(0, 80);
+  return send(me, handle, text, `post:${post.id}:${ex}`);
+}
+
+/** Reagir a uma mensagem (um emoji por pessoa; o mesmo outra vez tira). */
+export async function react(me: string, messageId: string, emoji: string | null) {
+  if (!/^[0-9a-f-]{36}$/.test(messageId)) return null;
+  const d = await db();
+  const [m] = await d.select().from(schema.messages).where(eq(schema.messages.id, messageId)).limit(1);
+  if (!m || (m.sender !== me && m.recipient !== me)) return null;
+  const peer = m.sender === me ? m.recipient : m.sender;
+  if (await isBlocked(me, peer)) return null;
+  if (emoji) await d.insert(schema.messageReactions).values({ messageId, email: me, emoji }).onConflictDoUpdate({ target: [schema.messageReactions.messageId, schema.messageReactions.email], set: { emoji, createdAt: new Date() } });
+  else await d.delete(schema.messageReactions).where(and(eq(schema.messageReactions.messageId, messageId), eq(schema.messageReactions.email, me)));
+  const reactions = await d.select().from(schema.messageReactions).where(eq(schema.messageReactions.messageId, messageId));
+  const [mine, other] = await Promise.all([handleOf(me), handleOf(peer)]);
+  const forMe = toMsg(me, m, { reactions }).reactions, forPeer = toMsg(peer, m, { reactions }).reactions;
+  if (mine) await publish(peer, { t: "react", peer: mine, id: messageId, reactions: forPeer });
+  if (other) await publish(me, { t: "react", peer: other, id: messageId, reactions: forMe });
+  return forMe;
+}
+
+/** Ficheiro de uma mensagem (foto ou voz), só para quem está na conversa. */
+export async function messageMedia(me: string, id: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return null;
+  const d = await db();
+  const [m] = await d.select({ photo: schema.messages.photo, audio: schema.messages.audio, sender: schema.messages.sender, recipient: schema.messages.recipient }).from(schema.messages).where(eq(schema.messages.id, id)).limit(1);
+  if (!m || (m.sender !== me && m.recipient !== me)) return null;
+  return { photo: m.photo, audio: m.audio };
 }
 
 /** Resposta a uma história: só se a história ainda existir e o viajante a puder ver. */
@@ -156,6 +220,8 @@ export async function unsend(me: string, id: string) {
   const d = await db();
   const [m] = await d.delete(schema.messages).where(and(eq(schema.messages.id, id), eq(schema.messages.sender, me))).returning();
   if (!m) return;
+  await d.delete(schema.messageReactions).where(eq(schema.messageReactions.messageId, id));
+  if (m.audio) await (await import("./voice")).deleteVoice([m.audio]);
   const [mine, peer] = await Promise.all([handleOf(me), handleOf(m.recipient)]);
   if (mine) await publish(m.recipient, { t: "unsend", peer: mine, id });
   if (peer) await publish(me, { t: "unsend", peer, id });
@@ -201,6 +267,9 @@ export async function contacts(me: string) {
 /** Ao apagar o perfil: todas as conversas do viajante. */
 export async function purgeChats(email: string) {
   const d = await db();
+  const gone = await d.select({ id: schema.messages.id, audio: schema.messages.audio }).from(schema.messages).where(or(eq(schema.messages.sender, email), eq(schema.messages.recipient, email)));
+  if (gone.length) await d.delete(schema.messageReactions).where(inArray(schema.messageReactions.messageId, gone.map((g) => g.id)));
+  await (await import("./voice")).deleteVoice(gone.map((g) => g.audio).filter((a): a is string => Boolean(a)));
   await d.delete(schema.messages).where(or(eq(schema.messages.sender, email), eq(schema.messages.recipient, email)));
   await d.delete(schema.chatCleared).where(or(eq(schema.chatCleared.email, email), eq(schema.chatCleared.peer, email)));
 }

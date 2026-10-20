@@ -10,6 +10,7 @@ const Body = z.object({
   kind: z.enum(["post", "story"]),
   text: z.string().max(500).default(""),
   photo: z.string().max(480_000).regex(/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/).nullable().default(null),
+  extra: z.array(z.string().max(480_000).regex(/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/)).max(5).default([]),
   city: z.string().regex(/^[a-z]{2,12}$/).nullable().default(null),
   tag: z.enum(HOBBIES as unknown as [string, ...string[]]).nullable().default(null),
   bg: z.enum(STORY_BGS).nullable().default(null)

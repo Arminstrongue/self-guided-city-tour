@@ -8,10 +8,11 @@ import { sql } from "drizzle-orm";
 import { db, schema } from "./db";
 
 export type LiveEvent =
-  | { t: "msg"; peer: string; m: { id: string; text: string; ref: { kind: "story"; id: string; text: string } | null; at: string; mine: boolean; read: boolean } }
+  | { t: "msg"; peer: string; m: import("./chat").ChatMsg }
   | { t: "unsend"; peer: string; id: string }
   | { t: "typing"; peer: string }
   | { t: "read"; peer: string; at: string }
+  | { t: "react"; peer: string; id: string; reactions: { e: string; n: number; mine: boolean }[] }
   | { t: "notif" }
   | { t: "video"; id: string; status: "ready" | "failed" };
 

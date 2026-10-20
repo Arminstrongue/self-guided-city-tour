@@ -9,8 +9,25 @@ import { Avatar, act, type PublicProfile, type Social } from "./Social";
 import { ago } from "./Feed";
 import { useLive, type LiveEvent } from "@/lib/live-client";
 import { EmojiButton, emojiLabels } from "./Emoji";
+import { PostSheet } from "./PostExtras";
 
-type Msg = { id: string; text: string; ref: { kind: "story"; id: string; text: string } | null; at: string; mine: boolean; read: boolean };
+type Ref = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
+type Msg = {
+  id: string; text: string; ref: Ref | null; at: string; mine: boolean; read: boolean;
+  photo?: boolean; audio?: boolean; reply?: { id: string; text: string; mine: boolean } | null; reactions?: { e: string; n: number; mine: boolean }[];
+};
+const REACTS = ["❤️", "😂", "😮", "😢", "👍", "🙏"];
+const media = (id: string, k: "photo" | "audio") => `/api/chat/media/${id}?k=${k}`;
+/** Foto para a conversa: lado maior ≤ 1280 px, JPEG ≤ ~400 KB. */
+async function chatPhoto(file: File) {
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1280 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+  let q = 0.82, d = c.toDataURL("image/jpeg", q);
+  while (d.length > 460_000 && q > 0.35) { q -= 0.08; d = c.toDataURL("image/jpeg", q); }
+  return d;
+}
 type Thread = { peer: PublicProfile; canSend: boolean; more: boolean; messages: Msg[]; seenUntil: string | null };
 type Row = { peer: PublicProfile; unread: number; last: { text: string; at: string; mine: boolean; read: boolean } };
 
@@ -174,6 +191,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     }
     if (ev.t === "unsend") setTh((cur) => (cur && cur !== "none" ? { ...cur, messages: cur.messages.filter((m) => m.id !== ev.id) } : cur));
     if (ev.t === "read") setTh((cur) => (cur && cur !== "none" ? { ...cur, seenUntil: ev.at } : cur));
+    if (ev.t === "react") setTh((cur) => (cur && cur !== "none" ? { ...cur, messages: cur.messages.map((m) => (m.id === ev.id ? { ...m, reactions: ev.reactions } : m)) } : cur));
     if (ev.t === "typing") { setTypingAt(Date.now()); if (stick.current) scrollEnd(); setTimeout(() => tick((x) => x + 1), 4200); }
   }, [handle, pull]);
   useLive(onLive);
@@ -189,17 +207,78 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
   }, [onClose]);
 
+  const [reply, setReply] = useState<Msg | null>(null);
+  const [attach, setAttach] = useState(false);
+  const [rec, setRec] = useState<{ start: number; mr: MediaRecorder; chunks: Blob[] } | null>(null);
+  const [, recTick] = useState(0);
+  const [viewer, setViewer] = useState<string | null>(null);
+  const [postOpen, setPostOpen] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  useEffect(() => { if (!rec) return; const id = setInterval(() => recTick((x) => x + 1), 500); return () => clearInterval(id); }, [rec]);
+  const added = (m: Msg) => {
+    setTh((cur) => (cur && cur !== "none" && !cur.messages.some((x) => x.id === m.id) ? { ...cur, messages: [...cur.messages, m] } : cur));
+    last.current = m.at; stick.current = true; scrollEnd(); setReply(null);
+  };
+  async function sendBody(body: Record<string, unknown>) {
+    setSending(true);
+    const r = await fetch(`/api/chat/${encodeURIComponent(handle)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
+      .then(async (x) => ({ ok: x.ok, j: await x.json().catch(() => null) })).catch(() => ({ ok: false, j: null }));
+    setSending(false);
+    if (r.ok && r.j?.message) added(r.j.message);
+    else if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); }
+    return r.ok;
+  }
+  async function sendPhoto(f: File) {
+    setAttach(false);
+    try { await sendBody({ action: "send", text: txt.trim(), photo: await chatPhoto(f), ...(reply ? { replyTo: reply.id } : {}) }); setTxt(""); } catch { setWarn(t.pfErr); }
+  }
+  function sendLocation() {
+    setAttach(false);
+    navigator.geolocation?.getCurrentPosition((pos) => void sendBody({ action: "location", lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => { setWarn(t.chLocDenied); setTimeout(() => setWarn(""), 4000); }, { enableHighAccuracy: true, timeout: 12_000 });
+  }
+  async function startRec() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const type = ["audio/mp4", "audio/webm;codecs=opus", "audio/webm"].find((x) => MediaRecorder.isTypeSupported?.(x)) ?? "";
+      const mr = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+      const chunks: Blob[] = [];
+      mr.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      mr.start(250);
+      setRec({ start: Date.now(), mr, chunks });
+    } catch { setWarn(t.chMicDenied); setTimeout(() => setWarn(""), 4000); }
+  }
+  function stopRec(sendIt: boolean) {
+    if (!rec) return;
+    const { mr, chunks } = rec;
+    mr.onstop = async () => {
+      mr.stream.getTracks().forEach((tr) => tr.stop());
+      if (!sendIt || !chunks.length) return;
+      const blob = new Blob(chunks, { type: (mr.mimeType || "audio/webm").split(";")[0] });
+      setSending(true);
+      const r = await fetch(`/api/chat/${encodeURIComponent(handle)}/voice${reply ? `?reply=${reply.id}` : ""}`, { method: "POST", headers: { "Content-Type": blob.type || "audio/webm" }, body: blob })
+        .then(async (x) => ({ ok: x.ok, j: await x.json().catch(() => null) })).catch(() => ({ ok: false, j: null }));
+      setSending(false);
+      if (r.ok && r.j?.message) added(r.j.message); else { setWarn(t.pfErr); setTimeout(() => setWarn(""), 3000); }
+    };
+    mr.stop(); setRec(null);
+  }
+  async function reactTo(m: Msg, e: string) {
+    const mineNow = m.reactions?.find((x) => x.mine)?.e;
+    const emoji = mineNow === e ? null : e;
+    setSel(null);
+    const r = await fetch(`/api/chat/${encodeURIComponent(handle)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "react", id: m.id, emoji }) }).then((x) => x.json()).catch(() => null);
+    if (r?.reactions) setTh((cur) => (cur && cur !== "none" ? { ...cur, messages: cur.messages.map((x) => (x.id === m.id ? { ...x, reactions: r.reactions } : x)) } : cur));
+  }
   async function send(e: React.FormEvent) {
     e.preventDefault();
     const v = txt.trim();
     if (!v || sending || !th || th === "none") return;
     setSending(true); setTxt("");
-    const r = await post(handle, { action: "send", text: v });
+    const r = await post(handle, { action: "send", text: v, ...(reply ? { replyTo: reply.id } : {}) });
     setSending(false);
-    if (r.ok && r.j?.message) {
-      setTh((cur) => (cur && cur !== "none" && !cur.messages.some((m) => m.id === r.j.message.id) ? { ...cur, messages: [...cur.messages, r.j.message] } : cur));
-      last.current = r.j.message.at; stick.current = true; scrollEnd();
-    } else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); } }
+    if (r.ok && r.j?.message) added(r.j.message);
+    else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); } }
   }
   async function earlier() {
     if (!th || th === "none" || !th.messages.length) return;
@@ -246,14 +325,25 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
               <div key={m.id} className="ch-line-wrap">
                 {newDay && <div className="ch-day">{dayLabel(m.at, t, locale)}</div>}
                 <div className={`ch-line ${m.mine ? "me" : "them"}`}>
-                  {m.ref && <span className="ch-ref">↩︎ {m.mine ? t.chStoryReplyMine : t.chStoryReply}{m.ref.text ? ` · “${m.ref.text}”` : ""}</span>}
-                  {m.text && (
+                  {m.reply && <span className="ch-quote">↩︎ {m.reply.mine ? t.chYou : `${p?.name.split(" ")[0] ?? ""}: `}{m.reply.text}</span>}
+                  {m.ref?.kind === "story" && <span className="ch-ref">↩︎ {m.mine ? t.chStoryReplyMine : t.chStoryReply}{m.ref.text ? ` · “${m.ref.text}”` : ""}</span>}
+                  {m.ref?.kind === "post" && <a className="ch-card" href={`#post:${m.ref.id}`} onClick={(e) => { e.preventDefault(); setPostOpen((m.ref as { id: string }).id); }}><span>🔗</span><span className="stack" style={{ gap: 0, minWidth: 0 }}><b>{t.chPostShared}</b><small className="ad-ellip">{m.ref.text}</small></span></a>}
+                  {m.ref?.kind === "loc" && <a className="ch-card loc" href={`https://www.google.com/maps/search/?api=1&query=${m.ref.lat},${m.ref.lng}`} target="_blank" rel="noreferrer"><span>📍</span><span className="stack" style={{ gap: 0 }}><b>{t.chLocation}</b><small>{m.ref.lat.toFixed(4)}, {m.ref.lng.toFixed(4)} · {t.chOpenMap}</small></span></a>}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {m.photo && <button className="ch-photo" onClick={() => setViewer(media(m.id, "photo"))}><img src={media(m.id, "photo")} alt="" loading="lazy" /></button>}
+                  {m.audio && <audio className="ch-audio" controls preload="metadata" src={media(m.id, "audio")} />}
+                  {m.text ? (
                     <button className={`ch-bub ${tail ? "tail" : ""}`} onClick={() => setSel(sel === m.id ? null : m.id)} title={new Date(m.at).toLocaleString(locale)}>
                       {m.text}
                     </button>
-                  )}
-                  {sel === m.id && <span className="ch-meta">{new Date(m.at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
-                    {m.mine && <button className="link-btn" onClick={async () => { await post(handle, { action: "unsend", id: m.id }); setTh({ ...th, messages: th.messages.filter((x) => x.id !== m.id) }); setSel(null); }}>{t.chUnsend}</button>}</span>}
+                  ) : <button className="ch-more" onClick={() => setSel(sel === m.id ? null : m.id)} aria-label="⋯">⋯</button>}
+                  {m.reactions && m.reactions.length > 0 && <span className="ch-rx">{m.reactions.map((x) => <button key={x.e} className={x.mine ? "on" : ""} onClick={() => void reactTo(m, x.e)}>{x.e}{x.n > 1 ? ` ${x.n}` : ""}</button>)}</span>}
+                  {sel === m.id && <span className="ch-pop">
+                    <span className="ch-rbar">{REACTS.map((e) => <button key={e} onClick={() => void reactTo(m, e)} className={m.reactions?.find((x) => x.mine)?.e === e ? "on" : ""}>{e}</button>)}</span>
+                    <span className="ch-meta">{new Date(m.at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}
+                      <button className="link-btn" onClick={() => { setReply(m); setSel(null); taRef.current?.focus(); }}>↩︎ {t.chReply}</button>
+                      {m.mine && <button className="link-btn" onClick={async () => { await post(handle, { action: "unsend", id: m.id }); setTh({ ...th, messages: th.messages.filter((x) => x.id !== m.id) }); setSel(null); }}>{t.chUnsend}</button>}</span>
+                  </span>}
                   {m.mine && lastMine?.id === m.id && <small className="ch-seen">{th.seenUntil && th.seenUntil >= m.at ? t.chSeen : t.chSent}</small>}
                 </div>
               </div>
@@ -264,14 +354,36 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
       </div>
       {warn && <p className="err ch-warn">{warn}</p>}
       {th && th !== "none" && (th.canSend ? (
+        <>
+        {reply && <div className="ch-replying"><span className="ad-ellip">↩︎ {t.chReplyingTo} <b>{reply.mine ? t.chYou.replace(/:\s*$/, "") : p?.name}</b>: {reply.text || (reply.photo ? "📷" : reply.audio ? "🎤" : "📍")}</span><button aria-label={t.close} onClick={() => setReply(null)}>✕</button></div>}
+        {attach && <div className="ch-attach">
+          <button onClick={() => fileRef.current?.click()}><span>📷</span>{t.chPhoto}</button>
+          <button onClick={sendLocation}><span>📍</span>{t.chLocation}</button>
+        </div>}
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void sendPhoto(f); }} />
+        {rec ? (
+          <div className="ch-say ch-rec">
+            <button type="button" className="ch-ic" aria-label={t.close} onClick={() => stopRec(false)}>✕</button>
+            <span className="ch-rec-dot" aria-hidden="true" /><b className="num">{Math.floor((Date.now() - rec.start) / 60000)}:{String(Math.floor((Date.now() - rec.start) / 1000) % 60).padStart(2, "0")}</b>
+            <span className="hint" style={{ flex: 1 }}>{t.chRecording}</span>
+            <button type="button" className="ch-send" aria-label={t.chSend} onClick={() => stopRec(true)}>➤</button>
+          </div>
+        ) : (
         <form className="ch-say" onSubmit={send}>
+          <button type="button" className={`ch-plus ${attach ? "on" : ""}`} aria-label={t.chAttach} aria-expanded={attach} onClick={() => setAttach(!attach)}>＋</button>
           <EmojiButton target={taRef} value={txt} set={setTxt} max={1000} labels={emojiLabels(t)} />
           <textarea ref={taRef} rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
             onChange={(e) => { setTxt(e.target.value); if (e.target.value) typed(); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); void send(e as unknown as React.FormEvent); } }} />
-          <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}>➤</button>
+          {txt.trim() || typeof MediaRecorder === "undefined"
+            ? <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}>➤</button>
+            : <button type="button" className="ch-send mic" disabled={sending} aria-label={t.chVoice} title={t.chVoice} onClick={() => void startRec()}>🎤</button>}
         </form>
+        )}
+        </>
       ) : <p className="hint ch-cant">{t.chCant}</p>)}
+      {postOpen && <PostSheet t={t} locale={locale} id={postOpen} cities={{}} onClose={() => setPostOpen(null)} />}
+      {viewer && <div className="ch-viewer" onClick={() => setViewer(null)}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={viewer} alt="" /></div>}
     </div>
   );
 }

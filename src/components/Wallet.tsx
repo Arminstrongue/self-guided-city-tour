@@ -10,6 +10,7 @@ import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { AddToPlan } from "./Explore";
 import { SearchPick } from "./SearchPick";
 import { CitySheet } from "./CitySheet";
+import { PostSheet, SavedGrid, TagSheet } from "./PostExtras";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { Composer, FeedTab } from "./Feed";
@@ -29,10 +30,10 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "passes" | "plans" | "wish" | "places" | "memories";
+type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "passes" | "plans" | "wish" | "places" | "memories" | "saved";
 type Section = "home" | "explore" | "videos" | "chat" | "people" | "profile";
-const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "passes", "plans", "wish", "places", "memories"];
-const SUB: Tab[] = ["passes", "plans", "wish", "places", "memories"];
+const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "passes", "plans", "wish", "places", "memories", "saved"];
+const SUB: Tab[] = ["passes", "plans", "wish", "places", "memories", "saved"];
 /** Vibração curta ao tocar (Android); no iPhone não faz nada. */
 const buzz = () => { try { navigator.vibrate?.(8); } catch { /* ignorar */ } };
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
@@ -146,6 +147,17 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const [notifOpen, setNotifOpen] = useState(false);
   const [inviting, setInviting] = useState(false);
   useEffect(() => { if (window.location.hash === "#notifs") setNotifOpen(true); }, []);
+  // #post:<id> e #tag:<hashtag> abrem por cima de qualquer separador.
+  const [deep, setDeep] = useState<{ post?: string; tag?: string } | null>(null);
+  useEffect(() => {
+    const read = () => {
+      const h = decodeURIComponent(window.location.hash.slice(1));
+      if (h.startsWith("post:")) setDeep({ post: h.slice(5) }); else if (h.startsWith("tag:")) setDeep({ tag: h.slice(4) }); else setDeep(null);
+    };
+    read(); window.addEventListener("popstate", read); window.addEventListener("hashchange", read);
+    return () => { window.removeEventListener("popstate", read); window.removeEventListener("hashchange", read); };
+  }, []);
+  const closeDeep = () => { setDeep(null); history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); };
   async function shareProfile() {
     if (!prof) return;
     const url = `${location.origin}/${locale}/u/${prof.handle}`;
@@ -160,8 +172,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     window.addEventListener("touchstart", start, { passive: true }); window.addEventListener("touchmove", move, { passive: true }); window.addEventListener("touchend", end);
     return () => { window.removeEventListener("touchstart", start); window.removeEventListener("touchmove", move); window.removeEventListener("touchend", end); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", explore: "🔍", profile: "👤", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, saved: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", explore: "🔍", profile: "👤", saved: "🔖", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -186,7 +198,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const go = (x: Tab) => { buzz(); setTab(x); };
   const create = () => { buzz(); if (!signed) return goSignIn(); if (!prof) return setEditing(true); setComposing(true); };
   const title = section === "home" ? null : section === "profile" ? (prof ? `@${prof.handle}` : t.wallet) : section === "explore" ? t.nvExplore : section === "chat" ? t.chTab : section === "people" ? t.wTabs.people : t.rlTitle;
-  const profileSubs: Tab[] = ["passes", "plans", "wish", "places", "memories"];
+  const profileSubs: Tab[] = ["passes", "plans", "wish", "places", "memories", "saved"];
 
   return (
     <div className="stack wl wl-app" style={{ gap: 14 }}>
@@ -303,7 +315,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         <nav className="wl-seg" role="tablist">
           {profileSubs.map((k) => (
             <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
-              <span aria-hidden="true">{icon[k]}</span><small>{t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
+              <span aria-hidden="true">{icon[k]}</span><small>{k === "saved" ? t.svTab : t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
             </button>
           ))}
         </nav>
@@ -328,6 +340,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
             </section>
           )}
         </>}
+        {sub === "saved" && (social?.profile ? <SavedGrid t={t} locale={locale} cities={cities} /> : <SignNudge t={t} onClick={goSignIn} />)}
         {sub === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={goSignIn} />)}
         {sub === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
         {sub === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : <SignNudge t={t} onClick={goSignIn} />)}
@@ -367,6 +380,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         </button>
       </nav>
 
+      {deep?.post && signed && <PostSheet t={t} locale={locale} id={deep.post} cities={cities} onClose={closeDeep} />}
+      {deep?.tag && signed && <TagSheet t={t} locale={locale} tag={deep.tag} cities={cities} onClose={closeDeep} />}
       {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} onClose={(c) => { setComposing(false); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
       {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}

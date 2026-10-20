@@ -34,7 +34,7 @@ test("conversas: só seguidores/a seguir, lidas, anular, apagar para mim, respos
   // Resposta a história
   const st = await p.createPost("b@x.com", { kind: "story", text: "Em Lisboa", photo: null, city: null, tag: null, bg: "ocean" }) as { id: string };
   const r = await c.replyToStory("a@x.com", st.id, "Que inveja!");
-  assert.equal("message" in r && r.message?.ref?.text, "Em Lisboa");
+  assert.equal("message" in r && r.message?.ref && "text" in r.message.ref ? r.message.ref.text : null, "Em Lisboa");
   // Apagar para mim
   await c.clearThread("a@x.com", "bruno");
   assert.equal((await c.inbox("a@x.com")).threads.length, 0);

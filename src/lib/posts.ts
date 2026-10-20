@@ -22,8 +22,20 @@ export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video: "processing" | "ready" | "failed" | null; duration: number | null;
+  photos: number; saved: boolean;
 };
 export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
+
+/** Colunas leves para os feeds: sem as fotos (vêm por URL), só se existem e quantas. */
+const P = schema.posts;
+const LITE = {
+  id: P.id, author: P.author, kind: P.kind, text: P.text, city: P.city, tag: P.tag, bg: P.bg, createdAt: P.createdAt, expiresAt: P.expiresAt,
+  video: P.video, videoStatus: P.videoStatus, duration: P.duration,
+  photo: sql<string | null>`case when ${P.photo} is null then null else '1' end`,
+  nExtra: sql<number>`coalesce(jsonb_array_length(${P.extra}), 0)::int`
+};
+type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; photo: string | null; nExtra: number };
+const lite = (p: schema.Post): Lite => ({ ...p, photo: p.photo ? "1" : null, nExtra: p.extra?.length ?? 0 });
 
 const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: p.photo, isPrivate: p.isPrivate });
 
@@ -47,16 +59,17 @@ const canComment = (me: string, author: string, c: Circle) =>
   !c.blocked.has(author) && (author === me || c.following.has(author) || c.followers.has(author));
 
 /** Junta autores, gostos e comentários a uma lista de publicações. */
-async function hydrate(me: string, rows: schema.Post[], c: Circle, more = false): Promise<FeedPage> {
+async function hydrate(me: string, rows: Lite[], c: Circle, more = false): Promise<FeedPage> {
   const d = await db();
   const ids = rows.map((r) => r.id);
   const emails = [...new Set(rows.map((r) => r.author))];
-  const [profs, likes, mineL, coms] = ids.length ? await Promise.all([
+  const [profs, likes, mineL, coms, savedL] = ids.length ? await Promise.all([
     d.select().from(schema.travellerProfiles).where(inArray(schema.travellerProfiles.email, emails)),
     d.select({ id: schema.postLikes.postId, n: sql<number>`count(*)::int` }).from(schema.postLikes).where(inArray(schema.postLikes.postId, ids)).groupBy(schema.postLikes.postId),
     d.select({ id: schema.postLikes.postId }).from(schema.postLikes).where(and(inArray(schema.postLikes.postId, ids), eq(schema.postLikes.email, me))),
-    d.select({ id: schema.postComments.postId, n: sql<number>`count(*)::int` }).from(schema.postComments).where(inArray(schema.postComments.postId, ids)).groupBy(schema.postComments.postId)
-  ]) : [[], [], [], []];
+    d.select({ id: schema.postComments.postId, n: sql<number>`count(*)::int` }).from(schema.postComments).where(inArray(schema.postComments.postId, ids)).groupBy(schema.postComments.postId),
+    d.select({ id: schema.postSaves.postId }).from(schema.postSaves).where(and(inArray(schema.postSaves.postId, ids), eq(schema.postSaves.email, me)))
+  ]) : [[], [], [], [], []];
   const byEmail = new Map(profs.map((p) => [p.email, p]));
   // Publicações com 3+ denúncias abertas ficam escondidas (exceto ao autor) até a equipa rever.
   const flagged = ids.length ? new Set((await d.select({ id: schema.reports.postId, n: sql<number>`count(*)::int` }).from(schema.reports)
@@ -72,7 +85,8 @@ async function hydrate(me: string, rows: schema.Post[], c: Circle, more = false)
       at: r.createdAt.toISOString(), expiresAt: r.expiresAt?.toISOString() ?? null,
       likes: likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
       mine: r.author === me, canComment: canComment(me, r.author, c),
-      video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null
+      video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null,
+      photos: (r.photo ? 1 : 0) + (r.nExtra ?? 0), saved: savedL.some((x) => x.id === r.id)
     });
   }
   return { posts, authors, next: more && rows.length ? rows[rows.length - 1].createdAt.toISOString() : null };
@@ -90,7 +104,7 @@ export async function purgeExpired() {
   return ids.length;
 }
 
-export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; city: string | null; tag: string | null; bg: string | null };
+export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; extra?: string[]; city: string | null; tag: string | null; bg: string | null };
 export async function createPost(me: string, v: NewPost) {
   if (!(await myProfile(me))) return { error: "no_profile" as const };
   const mod = moderate(v.text);
@@ -104,7 +118,9 @@ export async function createPost(me: string, v: NewPost) {
     if (n >= MAX_ACTIVE_STORIES) return { error: "too_many" as const };
   }
   const expiresAt = v.kind === "story" ? new Date(Date.now() + STORY_HOURS * 3600_000) : null;
-  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, expiresAt }).returning({ id: schema.posts.id });
+  const extra = v.kind === "post" && v.photo && v.extra?.length ? v.extra.slice(0, 5) : null;
+  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, extra, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, expiresAt }).returning({ id: schema.posts.id });
+  await notifyMentions(me, r.id, v.text).catch(() => null);
   return { id: r.id };
 }
 
@@ -118,7 +134,7 @@ export async function feedFollowing(me: string, cursor?: string | null): Promise
   // A conta oficial entra sempre no feed (dicas das cidades), para ninguém ver o feed vazio.
   const authors = [...new Set([me, ...c.following, OFFICIAL_EMAIL])].filter((e) => !c.blocked.has(e));
   const d = await db();
-  const rows = await d.select().from(schema.posts)
+  const rows = await d.select(LITE).from(schema.posts)
     .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1);
   return hydrate(me, rows.slice(0, PAGE), c, rows.length > PAGE);
@@ -134,13 +150,13 @@ export async function feedCity(me: string, city: string, cursor?: string | null)
   const less = new Set(prof?.lessOf ?? []);
   const d = await db();
   const visible = or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]));
-  const rows = (await d.select({ p: schema.posts }).from(schema.posts)
+  const rows: Lite[] = await d.select(LITE).from(schema.posts)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
     .where(and(eq(schema.posts.kind, "post"), eq(schema.posts.city, city), visible, videoOk(me), before(cursor)))
-    .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1)).map((r) => r.p);
+    .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
   const all = rows.slice(0, PAGE * 2);
-  const ok = (r: schema.Post) => !c.blocked.has(r.author) && !(r.tag && less.has(r.tag) && r.author !== me && !c.following.has(r.author));
-  const page: schema.Post[] = [];
+  const ok = (r: Lite) => !c.blocked.has(r.author) && !(r.tag && less.has(r.tag) && r.author !== me && !c.following.has(r.author));
+  const page: Lite[] = [];
   let scanned = 0;
   for (const r of all) { scanned++; if (ok(r)) { page.push(r); if (page.length === PAGE) break; } }
   const out = await hydrate(me, page, c, false);
@@ -156,7 +172,7 @@ export async function userPosts(me: string, handle: string, cursor?: string | nu
   if (!a) return null;
   const c = await circle(me);
   if (!canSee(me, a, c)) return null;
-  const rows = await d.select().from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), videoOk(me), before(cursor)))
+  const rows = await d.select(LITE).from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
   return hydrate(me, rows.slice(0, PAGE * 2), c, rows.length > PAGE * 2);
 }
@@ -171,7 +187,7 @@ export async function stories(me: string, onlyHandle?: string) {
     if (!a || !canSee(me, a, c)) return { rings: [], authors: {} };
     authors = [a.email];
   }
-  const rows = await d.select().from(schema.posts)
+  const rows = await d.select(LITE).from(schema.posts)
     .where(and(eq(schema.posts.kind, "story"), inArray(schema.posts.author, authors), gt(schema.posts.expiresAt, new Date())))
     .orderBy(schema.posts.createdAt).limit(300);
   const page = await hydrate(me, rows, c);
@@ -233,9 +249,9 @@ export async function feedVideos(me: string, scope: "foryou" | "following", curs
   if (onlyHandle) conds.push(eq(schema.travellerProfiles.handle, onlyHandle.toLowerCase()));
   if (scope === "following" || onlyHandle) conds.push(or(inArray(schema.posts.author, [me, ...c.following]), onlyHandle ? eq(schema.travellerProfiles.isPrivate, false) : undefined)!);
   else conds.push(or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]))!);
-  const rows = (await d.select({ p: schema.posts }).from(schema.posts)
+  const rows: Lite[] = await d.select(LITE).from(schema.posts)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
-    .where(and(...conds)).orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1)).map((x) => x.p);
+    .where(and(...conds)).orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1);
   const page = rows.slice(0, PAGE);
   const shown = page.filter((r) => !c.blocked.has(r.author) && !(scope === "foryou" && !onlyHandle && r.tag && less.has(r.tag) && !c.following.has(r.author)));
   const out = await hydrate(me, shown, c);
@@ -249,12 +265,64 @@ export async function feedVideos(me: string, scope: "foryou" | "following", curs
 export async function getPost(me: string, id: string) {
   const v = await visiblePost(me, id);
   if (!v) return null;
-  return hydrate(me, [v.post], v.circle);
+  return hydrate(me, [lite(v.post)], v.circle);
 }
 
-export async function photoOf(me: string, id: string) {
+export async function photoOf(me: string, id: string, i = 0) {
   const v = await visiblePost(me, id);
-  return v?.post.photo ?? null;
+  if (!v) return null;
+  return i === 0 ? v.post.photo : v.post.extra?.[i - 1] ?? null;
+}
+
+/* ---------- @menções e #hashtags ---------- */
+export const mentionsIn = (text: string) => [...new Set([...text.matchAll(/(^|[^\w@])@([a-z0-9._]{3,24})/gi)].map((m) => m[2].toLowerCase()))].slice(0, 10);
+/** Avisa quem foi mencionado (se puder ver a publicação). */
+async function notifyMentions(me: string, postId: string, text: string) {
+  const hs = mentionsIn(text);
+  if (!hs.length) return;
+  const d = await db();
+  const ps = await d.select({ email: schema.travellerProfiles.email }).from(schema.travellerProfiles).where(inArray(schema.travellerProfiles.handle, hs));
+  for (const p of ps) {
+    if (p.email === me) continue;
+    if (await visiblePost(p.email, postId)) await notify(p.email, me, "mention", { postId, text });
+  }
+}
+/** Publicações com uma #hashtag (as que o viajante pode ver). */
+export async function tagPosts(me: string, tag: string, cursor?: string | null): Promise<FeedPage> {
+  const t = tag.toLowerCase().replace(/[^\p{L}\p{N}_]/gu, "").slice(0, 40);
+  if (!t) return { posts: [], authors: {}, next: null };
+  const c = await circle(me);
+  const d = await db();
+  const re = new RegExp(`#${t}(?![\\p{L}\\p{N}_])`, "iu");
+  const rows: Lite[] = (await d.select(LITE).from(schema.posts)
+    .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
+    .where(and(eq(schema.posts.kind, "post"), sql`${schema.posts.text} ilike ${`%#${t}%`}`, or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following])), videoOk(me), before(cursor)))
+    .orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1));
+  const page = rows.slice(0, PAGE).filter((r) => re.test(r.text) && !c.blocked.has(r.author));
+  const out = await hydrate(me, page, c);
+  return { ...out, next: rows.length > PAGE ? rows[PAGE - 1].createdAt.toISOString() : null };
+}
+
+/* ---------- Guardados ---------- */
+export async function save(me: string, id: string, on: boolean) {
+  const v = await visiblePost(me, id);
+  if (!v) return null;
+  const d = await db();
+  if (on) await d.insert(schema.postSaves).values({ postId: id, email: me }).onConflictDoNothing();
+  else await d.delete(schema.postSaves).where(and(eq(schema.postSaves.postId, id), eq(schema.postSaves.email, me)));
+  return { saved: on };
+}
+export async function savedPosts(me: string, cursor?: string | null): Promise<FeedPage> {
+  const c = await circle(me);
+  const d = await db();
+  const rows = await d.select({ ...LITE, savedAt: schema.postSaves.createdAt }).from(schema.postSaves)
+    .innerJoin(schema.posts, eq(schema.posts.id, schema.postSaves.postId))
+    .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
+    .where(and(eq(schema.postSaves.email, me), cursor && !Number.isNaN(Date.parse(cursor)) ? lt(schema.postSaves.createdAt, new Date(cursor)) : undefined,
+      or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]))))
+    .orderBy(desc(schema.postSaves.createdAt)).limit(PAGE * 2 + 1);
+  const out = await hydrate(me, rows.slice(0, PAGE * 2).filter((r) => !c.blocked.has(r.author)), c);
+  return { ...out, next: rows.length > PAGE * 2 ? rows[PAGE * 2 - 1].savedAt.toISOString() : null };
 }
 
 export async function like(me: string, id: string, on: boolean) {
@@ -298,6 +366,7 @@ export async function addComment(me: string, id: string, text: string) {
   text = mod.text;
   const d = await db();
   const [r] = await d.insert(schema.postComments).values({ postId: id, author: me, text: text.trim() }).returning({ id: schema.postComments.id });
+  await notifyMentions(me, id, text).catch(() => null);
   await notify(v.post.author, me, "comment", { postId: id, text: text.trim() }).catch(() => null);
   return { id: r.id };
 }
@@ -320,6 +389,7 @@ export async function removePost(id: string, onlyAuthor?: string) {
   if (gone[0].video) await (await import("./video")).deleteVideoFiles([id]);
   await d.delete(schema.postLikes).where(eq(schema.postLikes.postId, id));
   await d.delete(schema.postComments).where(eq(schema.postComments.postId, id));
+  await d.delete(schema.postSaves).where(eq(schema.postSaves.postId, id));
   await dropPostNotifs([id]);
   return true;
 }
@@ -344,6 +414,7 @@ export async function purgeUser(email: string) {
   }
   await d.delete(schema.postLikes).where(eq(schema.postLikes.email, email));
   await d.delete(schema.postComments).where(eq(schema.postComments.author, email));
+  await d.delete(schema.postSaves).where(or(eq(schema.postSaves.email, email), mine.length ? inArray(schema.postSaves.postId, mine) : undefined));
 }
 
 /** Número de publicações (para o perfil). */

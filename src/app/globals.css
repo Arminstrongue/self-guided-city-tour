@@ -1427,3 +1427,58 @@ html,body{overflow-x:clip}
 .fs-ev-b b{font-size:13.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .fs-ev-b small{font-size:12px;color:var(--muted)}
 .fs-ev-b i{font-style:normal;font-size:12px;font-weight:700;color:var(--cobalt)}
+
+/* Carrossel, texto rico, partilha, hashtags, guardados */
+.pf-car{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;width:100%}
+.pf-car::-webkit-scrollbar{display:none}
+.pf-car img{flex:0 0 100%;width:100%;max-height:600px;object-fit:cover;scroll-snap-align:center}
+.pf-car-n{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:99px}
+.pf-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
+.pf-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5)}
+.pf-dots i.on{background:#fff}
+.pf-multi{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.pf-multi-i{position:relative;flex:0 0 96px;height:120px;border-radius:12px;overflow:hidden}
+.pf-multi-i img{width:100%;height:100%;object-fit:cover}
+.pf-multi-i button{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:11px;cursor:pointer}
+.pf-save{margin-left:auto}
+.pf-tag+.pf-save{margin-left:4px}
+.rt-at,.rt-tag{color:var(--cobalt);text-decoration:none;font-weight:600}
+.rt-link{color:var(--cobalt);word-break:break-all}
+.sh-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sh-big{display:flex;flex-direction:column;align-items:center;gap:4px;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;text-decoration:none;cursor:pointer}
+.sh-big span{font-size:24px}
+.sh-big small{font-size:12.5px;font-weight:600}
+.tg-h{font-size:24px;letter-spacing:-.02em}
+.wl-seg{grid-template-columns:repeat(6,1fr)}
+
+/* Conversa: fotos, voz, local, publicações, reações, respostas */
+.ch-quote{font-size:12px;color:var(--muted);margin:6px 6px -2px;padding:6px 10px;border-radius:12px;background:var(--surface-2);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-card{display:flex;align-items:center;gap:10px;margin-top:4px;padding:10px 12px;border-radius:16px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink);text-decoration:none;max-width:260px}
+.ch-card>span:first-child{font-size:22px}
+.ch-card b{font-size:13.5px}
+.ch-card small{font-size:12px;color:var(--muted);max-width:190px}
+.ch-photo{border:0;padding:0;margin-top:4px;border-radius:16px;overflow:hidden;background:none;cursor:zoom-in;max-width:240px}
+.ch-photo img{display:block;width:100%;max-height:320px;object-fit:cover}
+.ch-audio{margin-top:4px;height:40px;max-width:250px}
+.ch-more{border:0;background:none;color:var(--muted);font-size:14px;padding:0 6px;cursor:pointer}
+.ch-rx{display:flex;gap:4px;margin:-6px 8px 2px;z-index:1}
+.ch-rx button{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:1px 7px;font-size:13px;cursor:pointer;color:var(--ink)}
+.ch-rx button.on{border-color:var(--cobalt)}
+.ch-pop{display:flex;flex-direction:column;gap:4px;align-items:inherit}
+.ch-rbar{display:flex;gap:2px;padding:4px 6px;border-radius:99px;background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.15);margin-top:4px}
+.ch-rbar button{border:0;background:none;font-size:22px;padding:2px 4px;cursor:pointer;border-radius:50%;transition:transform .1s}
+.ch-rbar button:active{transform:scale(1.25)}
+.ch-rbar button.on{background:var(--cobalt-soft)}
+.ch-replying{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid var(--line);background:var(--surface);font-size:13px;color:var(--muted)}
+.ch-replying span{flex:1;min-width:0}
+.ch-replying button{border:0;background:none;color:var(--muted);cursor:pointer}
+.ch-attach{display:flex;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:var(--surface)}
+.ch-attach button{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.ch-plus{width:36px;height:36px;border-radius:50%;border:0;background:var(--surface-2);color:var(--ink);font-size:20px;cursor:pointer;flex:0 0 auto;align-self:flex-end;margin-bottom:3px;transition:transform .2s}
+.ch-plus.on{transform:rotate(45deg)}
+.ch-send.mic{background:var(--surface-2);font-size:18px}
+.ch-rec{align-items:center;gap:10px}
+.ch-rec-dot{width:10px;height:10px;border-radius:50%;background:#ff3b30;animation:chBlink 1s infinite}
+@keyframes chBlink{50%{opacity:.25}}
+.ch-viewer{position:fixed;inset:0;z-index:140;background:rgba(0,0,0,.92);display:grid;place-items:center;cursor:zoom-out}
+.ch-viewer img{max-width:100%;max-height:100%;object-fit:contain}

@@ -10,6 +10,7 @@ import { SheetX } from "@/components/WinNav";
 import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { StoryReply } from "./Chat";
 import { SearchPick } from "./SearchPick";
+import { RichText, ShareSheet } from "./PostExtras";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { ReelsViewer, VideoThumb, posterUrl } from "./Reels";
 import { useLive, type LiveEvent } from "@/lib/live-client";
@@ -18,6 +19,7 @@ export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video?: "processing" | "ready" | "failed" | null; duration?: number | null;
+  photos?: number; saved?: boolean;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
@@ -161,6 +163,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   const [pct, setPct] = useState<number | null>(null);
   const capRef = useRef<HTMLTextAreaElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [more, setMore] = useState<string[]>([]);
   const [text, setText] = useState("");
   const [city, setCity] = useState<string | null>(defaultCity);
   const [tag, setTag] = useState<Hobby | null>(null);
@@ -197,7 +200,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
     if (kind === "video") return sendVideo();
     if (!photo && !text.trim()) return;
     setBusy("send"); setErr("");
-    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, city, tag, bg: kind === "story" ? bg : null }) }).catch(() => null);
+    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, extra: kind === "post" ? more : [], city, tag, bg: kind === "story" ? bg : null }) }).catch(() => null);
     const j = await r?.json().catch(() => null);
     setBusy("");
     if (r?.ok) return onClose(kind);
@@ -219,15 +222,35 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
           {pct !== null && <div className="pf-up"><i style={{ width: `${pct}%` }} /><span>{fmt(t.rlUploading, { n: pct })}</span></div>}
         </>) : kind === "story" && !photo ? (
           <div className={`pf-prev-story sg-bg-${bg}`}><p>{text || t.pfStoryText}</p></div>
+        ) : photo && kind === "post" && more.length ? (
+          <div className="pf-multi">{[photo, ...more].map((src, i) => (
+            <span key={i} className="pf-multi-i">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt="" /><button type="button" aria-label="✕" onClick={() => { if (i === 0) { setPhoto(more[0] ?? null); setMore(more.slice(1)); } else setMore(more.filter((_, k) => k !== i - 1)); }}>✕</button>
+            </span>
+          ))}</div>
         ) : photo ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={photo} alt="" className="pf-prev" />
         ) : null}
         {kind !== "video" && <label className="btn ghost press pf-pick">
-          {busy === "photo" ? t.pfPhotoBusy : photo ? `🔄 ${t.pfChange}` : `📷 ${t.pfPhoto}`}
-          <input type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (!f) return; setBusy("photo"); try { setPhoto(await postPhoto(f)); } catch { setErr(t.pfErr); } setBusy(""); }} />
+          {busy === "photo" ? t.pfPhotoBusy : photo ? (kind === "post" ? `➕ ${t.pfAddMore}` : `🔄 ${t.pfChange}`) : `📷 ${kind === "post" ? t.pfPhotos : t.pfPhoto}`}
+          <input type="file" accept="image/*" hidden multiple={kind === "post"} onChange={async (e) => {
+            const files = Array.from(e.target.files ?? []); e.target.value = "";
+            if (!files.length) return;
+            setBusy("photo");
+            try {
+              if (kind !== "post") { setPhoto(await postPhoto(files[0])); }
+              else {
+                let first = photo; const add: string[] = [];
+                for (const f of files) { const d = await postPhoto(f); if (!first) first = d; else add.push(d); }
+                setPhoto(first); setMore((m) => [...m, ...add].slice(0, 5));
+              }
+            } catch { setErr(t.pfErr); }
+            setBusy("");
+          }} />
         </label>}
-        {photo && kind !== "video" && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
+        {photo && kind !== "video" && !more.length && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
         {kind === "story" && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
         <div className="field pf-cap"><EmojiButton target={capRef} value={text} set={setText} max={max} labels={emojiLabels(t)} /><textarea ref={capRef} rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
           <small className="hint" style={{ textAlign: "end" }}>{text.length}/{max}</small></div>
@@ -259,6 +282,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const cRef = useRef<HTMLInputElement>(null);
   useEffect(() => setP(post), [post]);
   const [reel, setReel] = useState(false);
+  const [slide, setSlide] = useState(0);
+  const [sharing, setSharing] = useState(false);
   useLive(useCallback((ev: LiveEvent) => { if (ev.t === "video" && ev.id === post.id) setP((x) => ({ ...x, video: ev.status })); }, [post.id]));
   async function toggleLike(force?: boolean) {
     const on = force ?? !p.liked;
@@ -297,23 +322,36 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
           )}
         </div>
       )}
+      {sharing && <ShareSheet t={t} locale={locale} post={p} onClose={() => setSharing(false)} />}
       {p.video && <VideoThumb t={t} p={p} onOpen={() => setReel(true)} />}
       {reel && <ReelsViewer t={t} locale={locale} cities={cities} initial={{ posts: [p], authors: { [author.handle]: author }, next: new Date().toISOString() }} onClose={() => setReel(false)} />}
       {p.photo && (
         <div className="pf-photo" onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" />
+          {(p.photos ?? 1) > 1 ? <>
+            <div className="pf-car" onScroll={(e) => { const el = e.currentTarget; setSlide(Math.round(el.scrollLeft / el.clientWidth)); }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {Array.from({ length: p.photos ?? 1 }, (_, i) => <img key={i} src={`${photoUrl(p.id)}${i ? `?i=${i}` : ""}`} alt={i ? "" : p.text.slice(0, 80)} loading="lazy" decoding="async" />)}
+            </div>
+            <span className="pf-car-n">{slide + 1}/{p.photos}</span>
+            <span className="pf-dots">{Array.from({ length: p.photos ?? 1 }, (_, i) => <i key={i} className={i === slide ? "on" : ""} />)}</span>
+          </> : <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" />
+          </>}
           {burst && <span className="pf-burst" aria-hidden="true">❤️</span>}
         </div>
       )}
       <div className="pf-acts">
         <button className={`pf-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={() => void toggleLike()}>{p.liked ? "❤️" : "🤍"}</button>
         <button className="pf-act" aria-label={t.pfComments} onClick={() => { setOpen(!open); if (!list) void loadComments(); }}>💬</button>
+        <button className="pf-act" aria-label={t.shTitle} onClick={() => setSharing(true)}>↗</button>
         {p.tag && <span className="pf-tag">{HOBBY_ICON[p.tag as Hobby]} {t.hob[p.tag as Hobby]}</span>}
+        <button className={`pf-act pf-save ${p.saved ? "on" : ""}`} aria-pressed={Boolean(p.saved)} aria-label={t.svSave} title={t.svSave}
+          onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); await postAct(p.id, { action: on ? "save" : "unsave" }); }}>{p.saved ? "🔖" : "🏷"}</button>
       </div>
       <div className="pf-body">
         {p.likes > 0 && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}</b>}
-        {p.text && <p className={p.photo ? "" : "pf-big"}><b>{author.handle}</b> {p.text}</p>}
+        {p.text && <p className={p.photo ? "" : "pf-big"}><b>{author.handle}</b> <RichText text={p.text} locale={locale} /></p>}
         {p.comments > 0 && !open && <button className="link-btn hint" onClick={() => { setOpen(true); void loadComments(); }}>{fmt(t.pfView, { n: p.comments })}</button>}
         {open && (
           <div className="stack pf-coms" style={{ gap: 8 }}>
@@ -427,7 +465,7 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true">▶</span></>
             : p.video ? <span className="pf-tile-t">{p.video === "processing" ? "⏳" : "⚠️"}</span>
-            : p.photo ? <img src={photoUrl(p.id)} alt="" loading="lazy" /> : <span className="pf-tile-t">{p.text}</span>}
+            : p.photo ? <><img src={photoUrl(p.id)} alt="" loading="lazy" />{(p.photos ?? 1) > 1 && <span className="pf-tile-v" aria-hidden="true">❐</span>}</> : <span className="pf-tile-t">{p.text}</span>}
           {p.likes > 0 && <small className="pf-tile-l">❤️ {p.likes}</small>}
         </button>
       ))}</div>}

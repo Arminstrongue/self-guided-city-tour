@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
-import { addComment, comments, deleteComment, getPost, like, removePost, reportPost } from "@/lib/posts";
+import { addComment, comments, deleteComment, getPost, like, removePost, reportPost, save } from "@/lib/posts";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -17,7 +17,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 const Body = z.object({
-  action: z.enum(["like", "unlike", "comment", "uncomment", "delete", "report"]),
+  action: z.enum(["like", "unlike", "comment", "uncomment", "delete", "report", "save", "unsave"]),
   text: z.string().trim().min(1).max(300).optional(),
   commentId: z.string().max(40).optional(),
   reason: z.enum(["spam", "fake", "harassment", "inappropriate", "safety", "other"]).optional(),
@@ -34,6 +34,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!rateLimit(req, action === "comment" ? "social-comment" : "social-like", action === "comment" ? 40 : 200)) return NextResponse.json({ error: "rate" }, { status: 429 });
   if (action === "like" || action === "unlike") {
     const r = await like(me, params.id, action === "like");
+    return r ? NextResponse.json(r) : NextResponse.json({ error: "not_found" }, { status: 404 });
+  }
+  if (action === "save" || action === "unsave") {
+    const r = await save(me, params.id, action === "save");
     return r ? NextResponse.json(r) : NextResponse.json({ error: "not_found" }, { status: 404 });
   }
   if (action === "comment") {
