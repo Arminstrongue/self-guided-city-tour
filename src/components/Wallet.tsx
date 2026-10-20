@@ -6,6 +6,8 @@ import { deleteMemory, listMemories, syncLocalToAccount, type Memory } from "@/l
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import type { Wallet } from "@/lib/wallet";
 import { COUNTRY_CODES, flag } from "@/data/countries";
+import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
+import { AddToPlan } from "./Explore";
 
 type Mem = Memory & { local?: boolean };
 
@@ -15,11 +17,21 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
+type Tab = "home" | "passes" | "plans" | "wish" | "places" | "memories";
+const TABS: Tab[] = ["home", "passes", "plans", "wish", "places", "memories"];
+const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
+
+/** Cor do bilhete de cada cidade (estável). */
+function hue(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
+
 export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string> }) {
   const [w, setW] = useState<Wallet | null | "anon">(null);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
   const [email, setEmail] = useState(""); const [sent, setSent] = useState(false); const [dev, setDev] = useState<string | null>(null);
+  const [tab, setTabState] = useState<Tab>("home");
+  const [wish, setWish] = useState<Wish[] | null>(null);
+  const [now, setNow] = useState(() => Date.now());
 
   async function load() {
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
@@ -28,13 +40,28 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
       if (n) { setSynced(n); const again = await fetch("/api/me", { cache: "no-store" }); setW(await again.json()); } else setW(await r.json());
       setLocal(await listMemories());
     } else { setW("anon"); setLocal((await listMemories()).map((m) => ({ ...m, local: true }))); }
+    void loadWish().then((x) => setWish(x.list));
   }
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
+  useEffect(() => { const h = window.location.hash.slice(1) as Tab; if (TABS.includes(h)) setTabState(h); }, []);
+  const setTab = (x: Tab) => { setTabState(x); try { history.replaceState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: Math.min(window.scrollY, (document.getElementById("wl-tabs")?.offsetTop ?? 0) - 64), behavior: "smooth" }); };
 
   const signed = w && w !== "anon" ? w : null;
   const memories: Mem[] = useMemo(() => [...(signed?.memories ?? []), ...local.map((m) => ({ ...m, local: true }))].sort((a, b) => b.at - a.at), [signed, local]);
   const stamps = useMemo(() => { const m = new Map<string, { name: string; n: number }>(); for (const x of memories) m.set(x.city, { name: x.cityName, n: (m.get(x.city)?.n ?? 0) + 1 }); return [...m.entries()]; }, [memories]);
-  const now = Date.now();
+  // Cidades e países: passes, memórias e as acrescentadas à mão.
+  const world = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const p of signed?.passes ?? []) if (p.city && cities[p.city]) m.set(cities[p.city].toLowerCase(), countryOf[p.city] ?? "");
+    for (const x of memories) m.set(x.cityName.toLowerCase(), countryOf[x.city] ?? "");
+    for (const v of signed?.visited ?? []) if (!v.want) m.set(v.name.toLowerCase(), v.country);
+    return { cities: m.size, countries: new Set([...m.values()].filter(Boolean)).size };
+  }, [signed, memories, cities, countryOf]);
+  const lvl = LEVELS.filter((n) => world.cities >= n).length - 1;
+  const nextAt = LEVELS[lvl + 1];
+  const pct = nextAt ? Math.round(((world.cities - LEVELS[lvl]) / (nextAt - LEVELS[lvl])) * 100) : 100;
+
   const dt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   const d = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" });
   const eur = (c: number) => new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "EUR" }).format(c / 100);
@@ -62,112 +89,213 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
   }
 
   const passes = signed?.passes ?? [];
+  const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
+  const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
+  const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
+  const counts: Record<Tab, number | null> = { home: null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, string> = { home: "✦", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+
+  const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
+    <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
+      <span className="wl-ticket-l"><span className="wl-ticket-k">{label}</span><b className="wl-ticket-t">{title}</b>{sub && <span className="wl-ticket-s">{sub}</span>}</span>
+      <span className="wl-ticket-cut" aria-hidden="true" />
+      <span className="wl-ticket-r">{right}</span>
+    </a>
+  );
+  const passCards = (limit?: number) => [
+    ...passes.map((p) => {
+      const on = new Date(p.expiresAt).getTime() > now;
+      return <Pass key={p.id} href={p.scope === "all" ? `/${locale}#cities` : `/${locale}/tour/${p.city}`} city={p.city ?? "all"} off={!on}
+        label={p.scope === "all" ? t.wAllCities : p.plan === "trip" ? "3 days" : "48 h"} title={p.scope === "all" ? `🌍 ${t.wAllCities}` : cities[p.city ?? ""] ?? p.city ?? ""}
+        sub={`${d.format(new Date(p.createdAt))} · ${eur(p.amountCents)}${p.flightNo ? ` · ${fmt(t.wFlight, { f: p.flightNo })}` : ""}`}
+        right={on ? <><span className="wl-ticket-live">● {fmt(t.wActive, { t: left(new Date(p.expiresAt).getTime() - now, locale) })}</span><b>{t.wOpen} →</b></> : <span>{t.wExpired}</span>} />;
+    }),
+    ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wFree}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
+  ].slice(0, limit);
+
   return (
-    <div className="stack" style={{ gap: 18 }}>
-      <section className="gp-hero">
-        <div className="gp-hero-top">
-          <span className="label" style={{ color: "rgba(255,255,255,.7)" }}>👛 {t.wallet}</span>
-          {signed && <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form>}
+    <div className="stack wl" style={{ gap: 16 }}>
+      {/* Cartão de membro */}
+      <section className="wl-card">
+        <div className="wl-card-top">
+          <span className="wl-brand">👛 {t.wallet}</span>
+          {signed ? <form action={`/api/me/logout?locale=${locale}`} method="post"><button className="gp-out">{t.wSignOut}</button></form> : <span className="wl-guest">{t.wGuest}</span>}
         </div>
-        <h1 className="gp-name">{t.wallet}</h1>
-        <span className="gp-meta">{signed ? fmt(t.wSignedAs, { email: signed.email }) : t.walletSub}</span>
-        <span className="gp-meta">{fmt(t.diaryStamps, { n: stamps.length, m: memories.length })}</span>
-        {stamps.length > 0 && <div className="dy-stamps">{stamps.map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
+        <div className="wl-level">
+          <span className="wl-level-b">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
+          <span className="wl-who">{signed ? signed.email : t.walletSub}</span>
+        </div>
+        <div className="wl-prog" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
+        <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
+        <div className="wl-stats">
+          {([["places", world.cities, t.wStatCities], ["places", world.countries, t.wStatCountries], ["memories", memories.length, t.wStatMem], ["wish", wish?.length ?? 0, t.wStatWish]] as [Tab, number, string][]).map(([k, n, l], i) => (
+            <button key={i} className="wl-stat press" onClick={() => setTab(k)}><b className="num">{n}</b><span>{l}</span></button>
+          ))}
+        </div>
+        {stamps.length > 0 && <div className="dy-stamps wl-stamps">{stamps.slice(0, 8).map(([id, c]) => <span key={id} className="dy-stamp"><b>{c.name}</b><small>{c.n}</small></span>)}</div>}
       </section>
 
       {synced > 0 && <p className="note">✓ {fmt(t.wSynced, { n: synced })}</p>}
 
-      {w === "anon" && (
-        <section className="card stack wl-sign">
-          <b style={{ fontSize: 18 }}>🔐 {t.wSignTitle}</b>
-          <p className="hint" style={{ margin: 0 }}>{t.wSignSub}</p>
-          {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
-            <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
-              e.preventDefault();
-              const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) }).catch(() => null);
-              const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
-            }}>
-              <div className="field" style={{ flex: 1, margin: 0 }}><input type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
-              <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }}>{t.wSignBtn}</button>
-            </form>
-          )}
-        </section>
-      )}
-
-      <section className="stack" style={{ gap: 10 }}>
-        <h2 className="gp-h2">🎟 {t.wPasses}</h2>
-        {passes.map((p) => {
-          const active = new Date(p.expiresAt).getTime() > now;
-          const href = p.scope === "all" ? `/${locale}#cities` : `/${locale}/tour/${p.city}`;
-          return (
-            <a key={p.id} href={href} className={`card wl-pass ${active ? "on" : "off"}`}>
-              <span className="wl-pass-l">
-                <span className="label">{p.scope === "all" ? t.wAllCities : p.plan === "trip" ? "3 days" : "48 h"}</span>
-                <b className="wl-city">{p.scope === "all" ? `🌍 ${t.wAllCities}` : cities[p.city ?? ""] ?? p.city}</b>
-                <span className="hint">{d.format(new Date(p.createdAt))} · {eur(p.amountCents)}{p.flightNo ? ` · ${fmt(t.wFlight, { f: p.flightNo })}` : ""}</span>
-              </span>
-              <span className="wl-pass-r"><span className={`pill ${active ? "active" : "cancelled"}`}>{active ? fmt(t.wActive, { t: left(new Date(p.expiresAt).getTime() - now, locale) }) : t.wExpired}</span>{active && <b className="wl-open">{t.wOpen} →</b>}</span>
-            </a>
-          );
-        })}
-        {free.filter((id) => cities[id]).map((id) => (
-          <a key={id} href={`/${locale}/tour/${id}`} className="card wl-pass on">
-            <span className="wl-pass-l"><span className="label">🎁 {t.wFree}</span><b className="wl-city">{cities[id]}</b></span>
-            <span className="wl-pass-r"><b className="wl-open">{t.wOpen} →</b></span>
-          </a>
+      {/* Separadores */}
+      <nav className="wl-tabs" id="wl-tabs" role="tablist">
+        {TABS.map((k) => (
+          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
+            <span aria-hidden="true">{icon[k]}</span> {t.wTabs[k]}{counts[k] ? <small className="num">{counts[k]}</small> : null}
+          </button>
         ))}
-        {signed && passes.length === 0 && <a className="btn ghost press" href={`/${locale}#cities`}>{t.wBuy}</a>}
-      </section>
+      </nav>
 
-      {signed && signed.bookings.length > 0 && (
+      {tab === "home" && <>
+        {w === "anon" && (
+          <section className="card stack wl-sign">
+            <b style={{ fontSize: 18 }}>🔐 {t.wSignTitle}</b>
+            <ul className="wl-benefits">{t.wBenefits.map((b) => <li key={b}>✓ {b}</li>)}</ul>
+            {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
+              <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
+                e.preventDefault();
+                const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) }).catch(() => null);
+                const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
+              }}>
+                <div className="field" style={{ flex: 1, margin: 0 }}><input type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
+                <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }}>{t.wSignBtn}</button>
+              </form>
+            )}
+          </section>
+        )}
+
+        {/* A seguir */}
         <section className="stack" style={{ gap: 10 }}>
-          <h2 className="gp-h2">🧑‍💼 {t.wBookings}</h2>
-          {signed.bookings.map((b) => (
-            <a key={b.id} href={`/${locale}/g/${b.guideId}`} className="card bk" style={{ textDecoration: "none", color: "inherit" }}>
-              <div className="row-between"><b style={{ fontSize: 17 }}>{b.guide}</b><span className={`chip st-${b.status}`}>{t.gpBs[b.status as keyof typeof t.gpBs] ?? b.status}</span></div>
-              <span className="bk-when">📅 {dt.format(new Date(b.startAt))} · {b.hours} h · {b.people} 👤 · {cities[b.city] ?? b.city}</span>
-              {"guidePhone" in b && b.guidePhone && <span className="hint">📞 {t.wGuideContact}: {b.guidePhone}</span>}
-              {"meeting" in b && b.meeting && <span className="hint">📍 {t.wMeet}: {b.meeting}</span>}
-            </a>
-          ))}
+          <h2 className="gp-h2">⚡ {t.wNextUp}</h2>
+          {active[0] ? passCards(1) : nextBooking ? (
+            <a href={`/${locale}/g/${nextBooking.guideId}`} className="card wl-next press"><span className="wl-next-ic">🧑‍💼</span><span className="stack" style={{ gap: 2 }}><b>{nextBooking.guide}</b><span className="hint">📅 {dt.format(new Date(nextBooking.startAt))} · {cities[nextBooking.city] ?? nextBooking.city}</span></span><b className="wl-open">→</b></a>
+          ) : nextPlan ? (
+            <a href={`/${locale}/plan/${nextPlan.id}`} className="card wl-next press"><span className="wl-next-ic">🗺</span><span className="stack" style={{ gap: 2 }}><b>{nextPlan.title}</b><span className="hint">📍 {nextPlan.cityName} · {d.format(new Date(`${nextPlan.startDate}T12:00:00`))}</span></span><b className="wl-open">→</b></a>
+          ) : free[0] && cities[free[0]] ? passCards(1).slice(-1) : null}
         </section>
-      )}
 
-      {signed && <Plans t={t} locale={locale} cities={cities} plans={signed.plans} />}
+        <div className="wl-quick">
+          <button className="press" onClick={() => setTab("plans")}><span>🗺</span>{t.wQuickPlan}</button>
+          <button className="press" onClick={() => setTab("places")}><span>🌍</span>{t.wQuickCity}</button>
+          <a className="press" href={`/${locale}#cities`}><span>✨</span>{t.wQuickExplore}</a>
+          <button className="press" onClick={() => setTab("wish")}><span>❤️</span>{t.wTabs.wish}</button>
+        </div>
 
-      {signed && <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} />}
+        {wish && wish.length > 0 && (
+          <section className="stack" style={{ gap: 10 }}>
+            <div className="row-between"><h2 className="gp-h2">❤️ {t.wlWishTitle}</h2><button className="link-btn" onClick={() => setTab("wish")}>{t.wSeeAll} →</button></div>
+            <div className="wl-strip">{wish.slice(0, 8).map((x) => (
+              <a key={wishKey(x)} className="wl-mini press" href={`/${locale}/c/${x.city}#explore`}><span className="wl-mini-ic">{x.icon ?? "📍"}</span><b>{x.title}</b><small>{cities[x.city] ?? x.cityName}</small></a>
+            ))}</div>
+          </section>
+        )}
 
-      {signed && (
-        <section className="card stack" style={{ gap: 10, padding: 16 }}>
-          <b>{t.wInterests}</b>
-          <div className="ex-chips">{HOBBIES.map((h) => <button key={h} className={signed.hobbies.includes(h) ? "on" : ""} aria-pressed={signed.hobbies.includes(h)} onClick={() => void setHobby(h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
+        {memories.length > 0 && (
+          <section className="stack" style={{ gap: 10 }}>
+            <div className="row-between"><h2 className="gp-h2">📔 {t.wMemories}</h2><button className="link-btn" onClick={() => setTab("memories")}>{t.wSeeAll} →</button></div>
+            <div className="wl-strip">{memories.slice(0, 10).map((x) => (
+              <button key={x.id} className="wl-mem press" onClick={() => setTab("memories")} style={x.photo ? { backgroundImage: `url(${x.photo})` } : undefined}><span><b>{x.title}</b><small>{x.cityName}</small></span></button>
+            ))}</div>
+          </section>
+        )}
+
+        {signed && (
+          <section className="card stack" style={{ gap: 10, padding: 16 }}>
+            <b>{t.wInterests}</b>
+            <div className="ex-chips">{HOBBIES.map((h) => <button key={h} className={signed.hobbies.includes(h) ? "on" : ""} aria-pressed={signed.hobbies.includes(h)} onClick={() => void setHobby(h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
+          </section>
+        )}
+      </>}
+
+      {tab === "passes" && <>
+        <section className="stack" style={{ gap: 10 }}>
+          {passCards()}
+          {signed && passes.length === 0 && <a className="btn ghost press" href={`/${locale}#cities`}>{t.wBuy}</a>}
+          {!signed && <button className="btn ghost press" onClick={() => setTab("home")}>🔐 {t.wSignTitle}</button>}
         </section>
-      )}
+        {signed && signed.bookings.length > 0 && (
+          <section className="stack" style={{ gap: 10 }}>
+            <h2 className="gp-h2">🧑‍💼 {t.wBookings}</h2>
+            {signed.bookings.map((b) => (
+              <a key={b.id} href={`/${locale}/g/${b.guideId}`} className="card bk" style={{ textDecoration: "none", color: "inherit" }}>
+                <div className="row-between"><b style={{ fontSize: 17 }}>{b.guide}</b><span className={`chip st-${b.status}`}>{t.gpBs[b.status as keyof typeof t.gpBs] ?? b.status}</span></div>
+                <span className="bk-when">📅 {dt.format(new Date(b.startAt))} · {b.hours} h · {b.people} 👤 · {cities[b.city] ?? b.city}</span>
+                {"guidePhone" in b && b.guidePhone && <span className="hint">📞 {t.wGuideContact}: {b.guidePhone}</span>}
+                {"meeting" in b && b.meeting && <span className="hint">📍 {t.wMeet}: {b.meeting}</span>}
+              </a>
+            ))}
+          </section>
+        )}
+      </>}
 
-      <section className="stack" style={{ gap: 10 }}>
-        <h2 className="gp-h2">📔 {t.wMemories}</h2>
-        {memories.length === 0 && w !== null && <div className="card gp-empty"><span aria-hidden="true">📔</span><b>{t.diaryEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
-        <div className="wl-mems">
-          {memories.map((x) => (
-            <article key={x.id} className="card dy-item">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {x.photo && <img src={x.photo} alt="" loading="lazy" />}
-              <div className="stack" style={{ gap: 4, padding: 14 }}>
-                <span className="label" style={{ color: "var(--cobalt)" }}>📍 {x.cityName}{x.local ? ` · ${t.wLocalOnly}` : ""}</span>
-                <b>{x.title}</b>
-                <span className="hint">{d.format(new Date(x.at))}</span>
-                {x.note && <p style={{ margin: 0 }}>{x.note}</p>}
-                <div className="ex-acts">
-                  <button onClick={() => void share(x)}>↗ {t.diaryShare}</button>
-                  <a href="https://www.tiktok.com/upload" target="_blank" rel="noreferrer">♪ TikTok</a>
-                  <button onClick={() => void remove(x)}>🗑 {t.diaryDelete}</button>
+      {tab === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+
+      {tab === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
+
+      {tab === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : <SignNudge t={t} onClick={() => setTab("home")} />)}
+
+      {tab === "memories" && (
+        <section className="stack" style={{ gap: 10 }}>
+          {memories.length === 0 && w !== null && <div className="card gp-empty"><span aria-hidden="true">📔</span><b>{t.diaryEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
+          <div className="wl-mems">
+            {memories.map((x) => (
+              <article key={x.id} className="card dy-item">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {x.photo && <img src={x.photo} alt="" loading="lazy" />}
+                <div className="stack" style={{ gap: 4, padding: 14 }}>
+                  <span className="label" style={{ color: "var(--cobalt)" }}>📍 {x.cityName}{x.local ? ` · ${t.wLocalOnly}` : ""}</span>
+                  <b>{x.title}</b>
+                  <span className="hint">{d.format(new Date(x.at))}</span>
+                  {x.note && <p style={{ margin: 0 }}>{x.note}</p>}
+                  <div className="ex-acts">
+                    <button onClick={() => void share(x)}>↗ {t.diaryShare}</button>
+                    <a href="https://www.tiktok.com/upload" target="_blank" rel="noreferrer">♪ TikTok</a>
+                    <button onClick={() => void remove(x)}>🗑 {t.diaryDelete}</button>
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function SignNudge({ t, onClick }: { t: Dict; onClick: () => void }) {
+  return <div className="card gp-empty"><span aria-hidden="true">🔐</span><b>{t.wSignTitle}</b><p className="hint" style={{ margin: 0 }}>{t.wSignSub}</p><button className="btn press" style={{ width: "auto", marginTop: 8 }} onClick={onClick}>{t.wSignBtn}</button></div>;
+}
+
+/* ---------- Wishlist ---------- */
+function Wishlist({ t, locale, cities, signed, list, setList }: { t: Dict; locale: Locale; cities: Record<string, string>; signed: boolean; list: Wish[] | null; setList: (l: Wish[]) => void }) {
+  const [toPlan, setToPlan] = useState<Wish | null>(null);
+  const [msg, setMsg] = useState("");
+  const groups = useMemo(() => { const m = new Map<string, Wish[]>(); for (const w of list ?? []) m.set(w.city, [...(m.get(w.city) ?? []), w]); return [...m.entries()]; }, [list]);
+  if (!list) return null;
+  const remove = (w: Wish) => { const next = list.filter((x) => wishKey(x) !== wishKey(w)); setList(next); void saveWish(next); };
+  return (
+    <section className="stack" style={{ gap: 10 }} id="wishlist">
+      {list.length === 0 && <div className="card gp-empty"><span aria-hidden="true">🤍</span><b>{t.wlWishEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
+      {list.length > 0 && !signed && <p className="hint" style={{ margin: 0 }}>{t.wlWishLocal}</p>}
+      {groups.map(([city, items]) => (
+        <div key={city} className="card stack wl-wish">
+          <a className="wl-wish-h" href={`/${locale}/c/${city}#explore`}><b>📍 {cities[city] ?? items[0].cityName ?? city}</b><span className="hint num">{items.length} →</span></a>
+          {items.map((w) => (
+            <div key={wishKey(w)} className="wl-wish-row">
+              <span className="cp-ic" aria-hidden="true">{w.icon ?? "📍"}</span>
+              <b className="ad-ellip" style={{ flex: 1, minWidth: 0 }}>{w.title}</b>
+              <span className="ex-acts sm">
+                <a href={`https://www.google.com/maps/dir/?api=1&destination=${w.lat},${w.lng}`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
+                {signed && <button onClick={() => setToPlan(w)}>🗺 {t.plAddTo}</button>}
+                <button aria-label={t.wlRemove} title={t.wlRemove} onClick={() => remove(w)}>✕</button>
+              </span>
+            </div>
           ))}
         </div>
-      </section>
-    </div>
+      ))}
+      {msg && <p className="note">✓ {msg}</p>}
+      {toPlan && <AddToPlan t={t} locale={locale} cityId={toPlan.city} cityName={cities[toPlan.city] ?? toPlan.cityName ?? toPlan.city} item={{ title: toPlan.title, lat: toPlan.lat, lng: toPlan.lng, icon: toPlan.icon ?? "📍", kind: "place" }} onClose={(m) => { setToPlan(null); if (m) { setMsg(m); setTimeout(() => setMsg(""), 3000); } }} />}
+    </section>
   );
 }
 

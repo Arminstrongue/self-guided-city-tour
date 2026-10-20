@@ -18,6 +18,8 @@ import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./Safety";
 import { RatingCard } from "./Rating";
 import { Explore } from "./Explore";
+import { CostPlanner } from "./CostPlanner";
+import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/cities";
 
@@ -47,7 +49,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const [open, setOpen] = useState<string>(city.stops[0].id);
   const [tab, setTab] = useState<"route" | "live" | "map" | "cost" | "museums" | "guide">("route");
   const [focus, setFocus] = useState<Focus | null>(null);
-  const showOnMap = (f: Focus) => { setFocus(f); setTab("map"); window.scrollTo({ top: 0 }); };
+  // O mapa vive dentro de "Explorar": mostrar um lugar abre esse separador já centrado nele.
+  const showOnMap = (f: Focus) => { setFocus({ ...f }); setTab(explore ? "live" : "map"); };
   const geo = useGeo();
   const cm = useCityMedia(city.id);
   const [now, setNow] = useState(() => Date.now());
@@ -164,8 +167,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
-          {(["route", ...(explore ? ["live" as const] : []), "map", "cost", "museums", "guide"] as const).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
+          {(["route", ...(explore ? ["live" as const] : ["map" as const]), "cost", "museums", "guide"] as const).map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map" || k === "live") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
         </div>
       </header>
@@ -198,7 +201,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         )}
 
         <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
-        {tab === "live" && explore && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore} />}
+        {tab === "live" && explore && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
+          route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
         {tab === "route" && (
@@ -302,9 +306,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               <div><span>{t.fixedLeg}: {city.air.line}</span><span className="num">{money(plan.fixed)}</span></div>
               <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
-              <div><b>{t.totalDay}</b><b className="num">{both(plan.transport + plan.entries)}</b></div>
             </div>
-            <p className="hint">{t.costNote}</p>
+            <CostPlanner cityId={city.id} t={t} locale={locale} transport={TRANSPORT[city.id] ?? []} museums={museums} base={plan.transport + plan.entries} money={both} />
           </>
         )}
 

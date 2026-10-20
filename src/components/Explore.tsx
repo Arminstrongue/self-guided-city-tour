@@ -1,4 +1,5 @@
 "use client";
+import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
 /** "O que viver": momentos curados, mapa de diversão (OpenStreetMap), eventos e diário, ordenados pelos interesses do viajante. */
 import { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
@@ -9,6 +10,9 @@ import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
 import { WHEN_ICON, type When } from "@/data/moments";
 import { saveMemoryAnywhere } from "@/lib/diary";
 import { loadGoogle, type G } from "@/lib/gmaps-client";
+import { MapView, type Focus } from "./MapView";
+import type { Airport, Stop } from "@/data/cities";
+import type { Museum } from "@/data/museums";
 
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string };
@@ -49,20 +53,36 @@ async function shrink(file: File): Promise<string> {
   } finally { URL.revokeObjectURL(url); }
 }
 
-export function Explore({ cityId, cityName, locale, t, moments, agenda, center, tz, gmapsKey, customs = [], bare = false }: {
+export type RouteForMap = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null };
+export function Explore({ cityId, cityName, locale, t, moments, agenda, center, tz, gmapsKey, customs = [], bare = false, route, focusIn }: {
   cityId: string; cityName: string; locale: Locale; t: Dict; moments: MomentView[]; agenda?: string; center: Pos; tz?: string; gmapsKey?: string; customs?: CustomView[]; bare?: boolean;
+  route?: RouteForMap; focusIn?: Focus | null;
 }) {
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [picking, setPicking] = useState(false);
   const [tab, setTab] = useState<"moments" | "places" | "events" | "customs">("moments");
   const [data, setData] = useState<{ places: Place[] | null; events: CityEvent[] | null; eventsEnabled: boolean; source?: "google" | "osm" } | null>(null);
   const [sv, setSv] = useState<Place | null>(null);
+  const [focus, setFocus] = useState<Focus | null>(focusIn ?? null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (focusIn) { setFocus(focusIn); setTab("moments"); setTimeout(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 60); } }, [focusIn]);
+  /** Mostra um lugar no mapa do separador atual (como em Diversão e lugares). */
+  const show = (f: { lat: number; lng: number; name: string }) => { setFocus({ ...f, walk: true }); setTimeout(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 30); };
   const [failed, setFailed] = useState(false);
   const [cat, setCat] = useState<PlaceCat | "all">("all");
   const [pos, setPos] = useState<Pos | null>(null);
   const [save, setSave] = useState<{ title: string; lat: number; lng: number } | null>(null);
   const [toPlan, setToPlan] = useState<{ title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" } | null>(null);
   const [toast, setToast] = useState("");
+  const [wish, setWish] = useState<Wish[]>([]);
+  useEffect(() => { void loadWish().then((r) => setWish(r.list)); }, []);
+  const wished = (title: string) => wish.some((x) => wishKey(x) === wishKey({ city: cityId, title }));
+  function heart(it: { title: string; lat: number; lng: number; icon: string }) {
+    const was = wished(it.title);
+    const next = toggleWish(wish, { city: cityId, cityName, ...it });
+    setWish(next); void saveWish(next);
+    if (!was) { setToast(`❤️ ${t.wlWishAdded}`); setTimeout(() => setToast(""), 2500); }
+  }
   const now = useMemo(() => nowWhen(tz), [tz]);
 
   useEffect(() => {
@@ -122,12 +142,18 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
 
       <div className="ex-tabs" role="tablist">
         {(["moments", "places", "events", ...(customs.length ? ["customs" as const] : [])] as const).map((k) => (
-          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
+          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); setFocus(null); }}>
             {k === "moments" ? `✨ ${t.exTabMoments}` : k === "places" ? `🎡 ${t.exTabPlaces}` : k === "events" ? `🎟 ${t.exTabEvents}` : `🤝 ${t.exTabCustoms}`}
           </button>
         ))}
       </div>
 
+      {tab === "moments" && (
+        <div ref={mapRef}>
+          <MapView stops={route?.stops ?? []} done={route?.done ?? {}} museums={route?.museums ?? []} airport={route?.airport} pos={route?.pos ?? pos} focus={focus} t={t} gmapsKey={gmapsKey}
+            extra={moments.map((m) => ({ lat: m.lat, lng: m.lng, icon: m.icon, title: m.title }))} center={center} legend={Boolean(route)} />
+        </div>
+      )}
       {tab === "moments" && (
         <div className="ex-moments">
           {ms.map((m) => (
@@ -138,6 +164,8 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
               <p className="hint" style={{ margin: 0 }}>{m.text}</p>
               <div className="ex-tags">{m.h.map((h) => <span key={h} className={hobbies.includes(h) ? "on" : ""}>{HOBBY_ICON[h]} {t.hob[h]}</span>)}</div>
               <div className="ex-acts">
+                <button className={wished(m.title) ? "wish on" : "wish"} aria-pressed={wished(m.title)} onClick={() => heart({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon })}>{wished(m.title) ? "❤️" : "🤍"} {t.wlWish}</button>
+                <button onClick={() => show({ lat: m.lat, lng: m.lng, name: m.title })}>📍 {t.map}</button>
                 <a href={goLink(m)} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
                 <a href={tiktok(`${m.title} ${cityName}`)} target="_blank" rel="noreferrer">♪ {t.exTiktok}</a>
                 <button onClick={() => setToPlan({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon, kind: "moment" })}>🗺 {t.plAddTo}</button>
@@ -157,10 +185,10 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
               <button className={cat === "all" ? "on" : ""} onClick={() => setCat("all")}>{t.exAll}</button>
               {cats.map((c) => <button key={c} className={cat === c ? "on" : ""} onClick={() => setCat(c)}>{CAT_ICON[c]} {t.cat[c]}</button>)}
             </div>
-            {gmapsKey && data.source === "google" ? <GoogleMap apiKey={gmapsKey} places={places} pos={pos} center={center} /> : <ExploreMap places={places} pos={pos} center={center} />}
+            <div ref={mapRef}>{gmapsKey && data.source === "google" ? <GoogleMap apiKey={gmapsKey} places={places} pos={pos} center={center} focus={focus} /> : <ExploreMap places={places} pos={pos} center={center} focus={focus} />}</div>
             <div className="ex-list">
               {places.map((p, i) => (
-                <div key={p.id} className="ex-row">
+                <div key={p.id} className="ex-row" onClick={(e) => { if ((e.target as HTMLElement).closest("a,button")) return; show({ lat: p.lat, lng: p.lng, name: p.name }); }} style={{ cursor: "pointer" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {p.photo && i < 15 ? <img className="ex-ph" src={`/api/explore/photo?n=${encodeURIComponent(p.photo)}`} alt="" loading="lazy" /> : <span className="ex-ic sm" aria-hidden="true">{CAT_ICON[p.cat]}</span>}
                   <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}>
@@ -171,6 +199,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
                       {p.openNow === true && <b className="ex-open"> · {t.exOpen}</b>}{p.openNow === false && <span> · {t.exClosed}</span>}
                     </span>
                     <span className="ex-acts sm">
+                      <button className={wished(p.name) ? "wish on" : "wish"} aria-pressed={wished(p.name)} aria-label={t.wlWish} onClick={() => heart({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat] })}>{wished(p.name) ? "❤️" : "🤍"}</button>
                       <a href={p.gmaps ?? (p.d < 1800 ? walkLink(p) : goLink(p))} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
                       {gmapsKey && data.source === "google" && <button onClick={() => setSv(p)}>👁 Street View</button>}
                       {p.web && <a href={p.web} target="_blank" rel="noreferrer">{t.exWeb}</a>}
@@ -263,7 +292,8 @@ function SaveMemory({ t, cityId, cityName, item, onClose }: { t: Dict; cityId: s
   );
 }
 
-function ExploreMap({ places, pos, center }: { places: (Place & { d: number })[]; pos: Pos | null; center: Pos }) {
+function ExploreMap({ places, pos, center, focus }: { places: (Place & { d: number })[]; pos: Pos | null; center: Pos; focus?: Focus | null }) {
+  const view = useRef("");
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
   const layer = useRef<LayerGroup | null>(null);
@@ -286,6 +316,10 @@ function ExploreMap({ places, pos, center }: { places: (Place & { d: number })[]
     const icon = (html: string) => L.divIcon({ html, className: "mk ex-mk", iconSize: [30, 30], iconAnchor: [15, 15] });
     places.forEach((p) => L.marker([p.lat, p.lng], { icon: icon(CAT_ICON[p.cat]) }).bindPopup(`<b>${p.name.replace(/[<>&]/g, "")}</b>`).addTo(g));
     if (pos) L.circleMarker([pos.lat, pos.lng], { radius: 8, color: "#fff", weight: 3, fillColor: "#2b7cff", fillOpacity: 1 }).addTo(g);
+    const key = `${places.map((p) => p.id).join(",")}|${focus?.lat},${focus?.lng}`;
+    if (key === view.current) return;
+    view.current = key;
+    if (focus) { m.setView([focus.lat, focus.lng], 17); return; }
     const pts = places.slice(0, 25).map((p) => [p.lat, p.lng] as [number, number]);
     if (pts.length) m.fitBounds(L.latLngBounds(pts).pad(0.1), { maxZoom: 15 });
   }
@@ -294,10 +328,11 @@ function ExploreMap({ places, pos, center }: { places: (Place & { d: number })[]
 
 
 /* ---------- Google Maps (mapa e Street View) ---------- */
-function GoogleMap({ apiKey, places, pos, center }: { apiKey: string; places: (Place & { d: number })[]; pos: Pos | null; center: Pos }) {
+function GoogleMap({ apiKey, places, pos, center, focus }: { apiKey: string; places: (Place & { d: number })[]; pos: Pos | null; center: Pos; focus?: Focus | null }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<G>(null);
   const marks = useRef<G[]>([]);
+  const view = useRef("");
   const [err, setErr] = useState(false);
   useEffect(() => {
     let off = false;
@@ -322,9 +357,18 @@ function GoogleMap({ apiKey, places, pos, center }: { apiKey: string; places: (P
       if (i < 25) b.extend({ lat: p.lat, lng: p.lng });
     });
     if (pos) marks.current.push(new g.maps.Marker({ map: map.current, position: pos, icon: { path: g.maps.SymbolPath.CIRCLE, scale: 8, fillColor: "#2b7cff", fillOpacity: 1, strokeColor: "#fff", strokeWeight: 3 } }));
-    if (places.length) { map.current.fitBounds(b, 40); if (places.length === 1) map.current.setZoom(16); }
+    // Só reposiciona quando muda a lista ou o lugar escolhido (não a cada passo do GPS).
+    const key = `${places.map((p) => p.id).join(",")}|${focus?.lat},${focus?.lng}`;
+    if (key !== view.current) {
+      view.current = key;
+      if (focus) {
+        map.current.panTo({ lat: focus.lat, lng: focus.lng }); map.current.setZoom(17);
+        const hit = marks.current.find((mk) => mk.getTitle?.() === focus.name);
+        if (hit) g.maps.event.trigger(hit, "click");
+      } else if (places.length) { map.current.fitBounds(b, 40); if (places.length === 1) map.current.setZoom(16); }
+    }
   }
-  if (err) return <ExploreMap places={places} pos={pos} center={center} />;
+  if (err) return <ExploreMap places={places} pos={pos} center={center} focus={focus} />;
   return <div ref={el} className="ex-map" role="region" aria-label="Google Maps" />;
 }
 
@@ -349,7 +393,7 @@ function StreetView({ apiKey, place, t, onClose }: { apiKey: string; place: Plac
   );
 }
 
-function AddToPlan({ t, locale, cityId, cityName, item, onClose }: { t: Dict; locale: Locale; cityId: string; cityName: string; item: { title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" }; onClose: (msg?: string) => void }) {
+export function AddToPlan({ t, locale, cityId, cityName, item, onClose }: { t: Dict; locale: Locale; cityId: string; cityName: string; item: { title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" }; onClose: (msg?: string) => void }) {
   const [plans, setPlans] = useState<{ id: string; title: string; city: string | null; days: number }[] | null | "auth">(null);
   const [day, setDay] = useState(1);
   useEffect(() => { fetch("/api/me/plans").then((r) => (r.status === 401 ? "auth" : r.json().then((j) => j.plans))).then(setPlans).catch(() => setPlans([])); }, []);

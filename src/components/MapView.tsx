@@ -26,7 +26,9 @@ export function transitLink(to: Pos) {
   return `https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=transit`;
 }
 
-type MapProps = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null; focus: Focus | null; t: Dict; gmapsKey?: string };
+export type Extra = { lat: number; lng: number; icon: string; title: string };
+type MapProps = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null; focus: Focus | null; t: Dict; gmapsKey?: string;
+  extra?: Extra[]; center?: Pos; legend?: boolean };
 
 /** Google Maps quando há chave de navegador; senão o mapa OpenStreetMap. */
 export function MapView(p: MapProps) {
@@ -34,7 +36,7 @@ export function MapView(p: MapProps) {
   return p.gmapsKey && !failed ? <GoogleRouteMap {...p} onFail={() => setFailed(true)} /> : <OsmMap {...p} />;
 }
 
-function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail }: MapProps & { onFail: () => void }) {
+function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail, extra = [], center, legend = true }: MapProps & { onFail: () => void }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<G>(null);
   const objs = useRef<G[]>([]);
@@ -43,7 +45,8 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
     let off = false;
     loadGoogle(gmapsKey!).then((g) => {
       if (off || !el.current) return;
-      map.current = new g.maps.Map(el.current, { center: { lat: stops[0].lat, lng: stops[0].lng }, zoom: 14, mapTypeControl: false, streetViewControl: true, fullscreenControl: true, gestureHandling: "greedy", clickableIcons: true });
+      const c = stops[0] ?? center ?? extra[0] ?? { lat: 0, lng: 0 };
+      map.current = new g.maps.Map(el.current, { center: { lat: c.lat, lng: c.lng }, zoom: 14, mapTypeControl: false, streetViewControl: true, fullscreenControl: true, gestureHandling: "greedy", clickableIcons: true });
       draw(g);
     }).catch(onFail);
     return () => { off = true; };
@@ -62,6 +65,7 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
         label: { text: done[s.id] ? "✓" : String(i + 1), color: "#fff", fontWeight: "700", fontSize: "13px" }, icon: pin(done[s.id] ? "#30d158" : "#0071e3") }));
       mk.addListener("click", () => { info.setContent(`<b>${esc(s.n)}</b><br>${esc(s.a)}`); info.open({ map: m, anchor: mk }); });
     });
+    extra.forEach((x) => { const mk = add(new g.maps.Marker({ map: m, position: { lat: x.lat, lng: x.lng }, title: x.title, label: { text: x.icon, fontSize: "15px" }, icon: pin("#ffffff", "#5e5ce6", 14) })); mk.addListener("click", () => { info.setContent(`<b>${esc(x.title)}</b>`); info.open({ map: m, anchor: mk }); }); });
     museums.forEach((x) => { const mk = add(new g.maps.Marker({ map: m, position: { lat: x.lat, lng: x.lng }, title: x.n, label: { text: "🏛", fontSize: "14px" }, icon: pin("#ffffff", "#b25000", 13) })); mk.addListener("click", () => { info.setContent(`<b>${esc(x.n)}</b>`); info.open({ map: m, anchor: mk }); }); });
     if (airport) add(new g.maps.Marker({ map: m, position: { lat: airport.lat, lng: airport.lng }, title: airport.name, label: { text: "✈", fontSize: "15px" }, icon: pin("#ffffff", "#1d1d1f", 14) }));
     if (pos) add(new g.maps.Marker({ map: m, position: pos, zIndex: 99, icon: pin("#2b7cff", "#fff", 8) }));
@@ -69,11 +73,11 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
       add(new g.maps.Marker({ map: m, position: { lat: focus.lat, lng: focus.lng }, zIndex: 98, label: { text: "★", color: "#fff", fontSize: "14px" }, icon: pin("#ff9f0a") }));
       if (pos) add(new g.maps.Polyline({ map: m, path: [pos, { lat: focus.lat, lng: focus.lng }], strokeOpacity: 0, icons: [{ icon: { path: "M 0,-1 0,1", strokeOpacity: 1, strokeColor: "#ff9f0a", scale: 3 }, offset: "0", repeat: "14px" }] }));
     }
-    const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}`;
+    const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}|${extra.length}`;
     if (key !== viewKey.current) {
       viewKey.current = key;
       if (focus) { m.setCenter({ lat: focus.lat, lng: focus.lng }); m.setZoom(16); }
-      else { const b = new g.maps.LatLngBounds(); stops.forEach((s) => b.extend({ lat: s.lat, lng: s.lng })); m.fitBounds(b, 36); }
+      else { const b = new g.maps.LatLngBounds(); [...stops, ...extra].forEach((s) => b.extend({ lat: s.lat, lng: s.lng })); if (!b.isEmpty()) m.fitBounds(b, 36); }
     }
   }
   const d = focus && pos ? km(pos, focus) : null;
@@ -90,12 +94,12 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
           </div>
         </div>
       )}
-      <div className="legend"><span>━ {t.route}</span><span>🏛 {t.museums}</span><span>✈ {t.airport}</span><span>👤 Street View</span></div>
+      {legend && <div className="legend"><span>━ {t.route}</span><span>🏛 {t.museums}</span><span>✈ {t.airport}</span><span>👤 Street View</span></div>}
     </div>
   );
 }
 
-function OsmMap({ stops, done, museums, airport, pos, focus, t }: MapProps) {
+function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], center, legend = true }: MapProps) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
   const layer = useRef<LayerGroup | null>(null);
@@ -125,6 +129,7 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t }: MapProps) {
     L.polyline(stops.map((s) => [s.lat, s.lng] as [number, number]), { color: "#2997ff", weight: 5, opacity: 0.9 }).addTo(g);
     stops.forEach((s, i) => L.marker([s.lat, s.lng], { icon: icon(done[s.id] ? "✓" : String(i + 1), done[s.id] ? "done" : "stop") }).bindPopup(`<b>${esc(s.n)}</b><br>${esc(s.a)}`).addTo(g));
     museums.forEach((x) => L.marker([x.lat, x.lng], { icon: icon("🏛", "mus") }).bindPopup(`<b>${esc(x.n)}</b>`).addTo(g));
+    extra.forEach((x) => L.marker([x.lat, x.lng], { icon: icon(x.icon, "mus") }).bindPopup(`<b>${esc(x.title)}</b>`).addTo(g));
     if (airport) L.marker([airport.lat, airport.lng], { icon: icon("✈", "air") }).bindPopup(`<b>${esc(airport.name)}</b>`).addTo(g);
     if (pos) L.circleMarker([pos.lat, pos.lng], { radius: 8, color: "#fff", weight: 3, fillColor: "#2b7cff", fillOpacity: 1 }).addTo(g);
     if (focus) {
@@ -132,11 +137,13 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t }: MapProps) {
       if (pos) L.polyline([[pos.lat, pos.lng], [focus.lat, focus.lng]], { color: "#ff9f0a", weight: 4, dashArray: "6 6" }).addTo(g);
     }
     // Só reposiciona o mapa quando muda o destino ou o roteiro (não a cada minuto nem a cada passo do GPS).
-    const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}`;
+    const key = `${focus?.lat},${focus?.lng}|${stops.map((s) => s.id).join(",")}|${extra.length}`;
     if (key !== viewKey.current) {
       viewKey.current = key;
+      const pts = [...stops, ...extra].map((s) => [s.lat, s.lng] as [number, number]);
       if (focus) m.setView([focus.lat, focus.lng], 16);
-      else m.fitBounds(L.latLngBounds(stops.map((s) => [s.lat, s.lng] as [number, number])).pad(0.15));
+      else if (pts.length) m.fitBounds(L.latLngBounds(pts).pad(0.15));
+      else if (center) m.setView([center.lat, center.lng], 13);
     }
   }
 
@@ -154,7 +161,7 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t }: MapProps) {
           </div>
         </div>
       )}
-      <div className="legend"><span>━ {t.route}</span><span>🏛 {t.museums}</span><span>✈ {t.airport}</span></div>
+      {legend && <div className="legend"><span>━ {t.route}</span><span>🏛 {t.museums}</span><span>✈ {t.airport}</span></div>}
     </div>
   );
 }
