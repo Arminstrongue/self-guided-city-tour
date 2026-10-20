@@ -776,3 +776,6 @@ html,body{overflow-x:clip}
 .pl-time{font:inherit;font-weight:700;width:118px;flex:none;border:1px solid var(--line);border-radius:10px;padding:6px;background:var(--surface-2);color:var(--ink)}
 .ex-acts select{font:inherit;font-size:12px;border:0;border-radius:999px;background:var(--cobalt-soft);color:var(--cobalt);padding:4px 8px}
 .btn.danger{color:#ff453a;border-color:#ff453a}
+.vs-chip.wish{border-style:dashed;border-color:var(--tram)}
+.vs-chip a{color:var(--cobalt);text-decoration:none;font-weight:700;padding:0 2px}
+.vs-chip button[title]{color:var(--good);font-weight:700}

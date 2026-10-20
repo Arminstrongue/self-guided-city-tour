@@ -220,45 +220,71 @@ function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: 
 
 /* ---------- Cidades visitadas ---------- */
 function Visited({ t, locale, wallet, cities, countryOf, memories, onChange }: { t: Dict; locale: Locale; wallet: Wallet; cities: Record<string, string>; countryOf: Record<string, string>; memories: { city: string; cityName: string }[]; onChange: (v: Wallet["visited"]) => void }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<"visited" | "wish" | null>(null);
   const [f, setF] = useState({ name: "", country: "", year: "" });
   const region = useMemo(() => { try { return new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }); } catch { return null; } }, [locale]);
   const countries = useMemo(() => COUNTRY_CODES.map((c) => ({ c, n: region?.of(c) ?? c })).sort((a, b) => a.n.localeCompare(b.n)), [region]);
-  // Visitadas com a app (passes e memórias) + as que o viajante acrescentou.
+  // Visitadas com a app (passes e memórias) + as que o viajante acrescentou; "quero visitar" à parte.
   const auto = useMemo(() => {
     const m = new Map<string, { name: string; country: string }>();
     for (const p of wallet.passes) if (p.city && cities[p.city]) m.set(p.city, { name: cities[p.city], country: countryOf[p.city] ?? "" });
     for (const x of memories) if (!m.has(x.city)) m.set(x.city, { name: x.cityName, country: countryOf[x.city] ?? "" });
     return [...m.values()];
   }, [wallet.passes, memories, cities, countryOf]);
-  const all = useMemo(() => {
+  const been = useMemo(() => {
     const seen = new Set(auto.map((a) => a.name.toLowerCase()));
-    return [...auto.map((a) => ({ ...a, mine: false, at: 0, year: undefined as number | undefined })), ...wallet.visited.filter((v) => !seen.has(v.name.toLowerCase())).map((v) => ({ ...v, mine: true }))];
+    return [...auto.map((a) => ({ ...a, mine: false, at: 0, year: undefined as number | undefined })), ...wallet.visited.filter((v) => !v.want && !seen.has(v.name.toLowerCase())).map((v) => ({ ...v, mine: true }))];
   }, [auto, wallet.visited]);
-  const nCountries = new Set(all.map((a) => a.country).filter(Boolean)).size;
+  const wish = wallet.visited.filter((v) => v.want);
+  const nCountries = new Set(been.map((a) => a.country).filter(Boolean)).size;
+  const same = (a: { name: string; country: string }, b: { name: string; country: string }) => a.name === b.name && a.country === b.country;
   async function save(visited: Wallet["visited"]) {
     onChange(visited);
     await fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ visited }) }).catch(() => null);
   }
+  const ourId = (name: string) => Object.entries(cities).find(([, n]) => n.toLowerCase() === name.toLowerCase())?.[0];
   return (
-    <section className="stack" style={{ gap: 10 }}>
-      <div className="row-between"><h2 className="gp-h2">🌍 {t.vTitle}</h2><span className="hint">{fmt(t.vStats, { c: all.length, p: nCountries })}</span></div>
-      <div className="vs-grid">{all.map((v) => (
+    <section className="stack" style={{ gap: 12 }}>
+      <div className="row-between"><h2 className="gp-h2">🌍 {t.vTitle}</h2><span className="hint">{fmt(t.vStats, { c: been.length, p: nCountries })}</span></div>
+      <div className="vs-grid">{been.map((v) => (
         <span key={`${v.name}-${v.country}`} className={`vs-chip ${v.mine ? "" : "auto"}`}>
           <span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : !v.mine ? <small>{t.vAuto}</small> : null}
-          {v.mine && <button aria-label="✕" onClick={() => void save(wallet.visited.filter((x) => !(x.name === v.name && x.country === v.country)))}>✕</button>}
+          {v.mine && <button aria-label="✕" onClick={() => void save(wallet.visited.filter((x) => !same(x, v)))}>✕</button>}
         </span>
       ))}</div>
+
+      <div className="row-between" style={{ marginTop: 6 }}><h2 className="gp-h2" style={{ fontSize: 18 }}>✈️ {t.vWishTitle}</h2><span className="hint">{wish.length}</span></div>
+      {wish.length > 0 && <div className="vs-grid">{wish.map((v) => {
+        const id = ourId(v.name);
+        return (
+          <span key={`w-${v.name}-${v.country}`} className="vs-chip wish">
+            <span aria-hidden="true">{flag(v.country)}</span><b>{v.name}</b>{v.year ? <small>{v.year}</small> : null}
+            {id && <a href={`/${locale}/c/${id}`} title={t.wOpen}>→</a>}
+            <button title={t.vBeen} onClick={() => void save(wallet.visited.map((x) => (same(x, v) ? { name: x.name, country: x.country, at: Date.now(), year: new Date().getFullYear() } : x)))}>✓</button>
+            <button aria-label="✕" onClick={() => void save(wallet.visited.filter((x) => !same(x, v)))}>✕</button>
+          </span>
+        );
+      })}</div>}
+
       {open ? (
-        <form className="card stack wl-form" onSubmit={(e) => { e.preventDefault(); if (!f.name.trim() || !f.country) return; void save([...wallet.visited, { name: f.name.trim(), country: f.country, ...(f.year ? { year: Number(f.year) } : {}), at: Date.now() }]); setF({ name: "", country: f.country, year: "" }); setOpen(false); }}>
+        <form className="card stack wl-form" onSubmit={(e) => { e.preventDefault(); if (!f.name.trim() || !f.country) return; void save([...wallet.visited.filter((x) => !same(x, { name: f.name.trim(), country: f.country })), { name: f.name.trim(), country: f.country, ...(f.year ? { year: Number(f.year) } : {}), ...(open === "wish" ? { want: true } : {}), at: Date.now() }]); setF({ name: "", country: f.country, year: "" }); setOpen(null); }}>
+          <div className="ex-tabs" role="tablist">
+            <button type="button" className={open === "visited" ? "on" : ""} onClick={() => setOpen("visited")}>🌍 {t.vKindBeen}</button>
+            <button type="button" className={open === "wish" ? "on" : ""} onClick={() => setOpen("wish")}>✈️ {t.vKindWish}</button>
+          </div>
           <div className="grid2">
             <div className="field"><label htmlFor="vc">{t.vCity}</label><input id="vc" required value={f.name} maxLength={80} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
             <div className="field"><label htmlFor="vk">{t.vCountry}</label><select id="vk" required value={f.country} onChange={(e) => setF({ ...f, country: e.target.value })}><option value="" />{countries.map((x) => <option key={x.c} value={x.c}>{flag(x.c)} {x.n}</option>)}</select></div>
           </div>
-          <div className="field"><label htmlFor="vy">{t.vYear}</label><input id="vy" inputMode="numeric" maxLength={4} value={f.year} onChange={(e) => setF({ ...f, year: e.target.value.replace(/\D/g, "") })} /></div>
-          <div className="grid2"><button type="button" className="btn ghost press" onClick={() => setOpen(false)}>{t.exCancel}</button><button className="btn press">{t.vSave}</button></div>
+          <div className="field"><label htmlFor="vy">{open === "wish" ? t.vYearWish : t.vYear}</label><input id="vy" inputMode="numeric" maxLength={4} value={f.year} onChange={(e) => setF({ ...f, year: e.target.value.replace(/\D/g, "") })} /></div>
+          <div className="grid2"><button type="button" className="btn ghost press" onClick={() => setOpen(null)}>{t.exCancel}</button><button className="btn press">{t.vSave}</button></div>
         </form>
-      ) : <button className="btn ghost press" onClick={() => setOpen(true)}>{t.vAdd}</button>}
+      ) : (
+        <div className="grid2">
+          <button className="btn ghost press" onClick={() => setOpen("visited")}>{t.vAdd}</button>
+          <button className="btn ghost press" onClick={() => setOpen("wish")}>{t.vAddWish}</button>
+        </div>
+      )}
     </section>
   );
 }

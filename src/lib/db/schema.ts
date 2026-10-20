@@ -171,7 +171,7 @@ export const travellerPrefs = pgTable("traveller_prefs", {
   email: text("email").primaryKey(),
   hobbies: jsonb("hobbies").$type<string[]>().notNull().default([]),
   saved: jsonb("saved").$type<{ city: string; title: string; lat: number; lng: number; at: number }[]>().notNull().default([]),
-  visited: jsonb("visited").$type<{ name: string; country: string; year?: number; at: number }[]>().notNull().default([]),
+  visited: jsonb("visited").$type<{ name: string; country: string; year?: number; want?: boolean; at: number }[]>().notNull().default([]),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
