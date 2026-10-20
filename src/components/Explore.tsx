@@ -224,7 +224,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
             <div key={day} className="stack" style={{ gap: 8 }}>
               <b className="ex-day">{dayFmt.format(new Date(`${day}T12:00:00`))}</b>
               {list.map((e) => (
-                <a key={e.id} href={e.url} target="_blank" rel="noreferrer" className={`card ex-ev ${score(EVENT_HOBBY[e.kind], hobbies) ? "fit" : ""}`}>
+                <a key={e.id} href={`/${locale}/wallet/agenda?city=${cityId}&ev=${encodeURIComponent(e.id)}`} className={`card ex-ev ${score(EVENT_HOBBY[e.kind], hobbies) ? "fit" : ""}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {e.image ? <img src={e.image} alt="" loading="lazy" /> : <span className="ex-ev-ph" aria-hidden="true">🎟</span>}
                   <span className="stack" style={{ gap: 2, minWidth: 0 }}>
@@ -236,7 +236,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
               ))}
             </div>
           ))}
-          {agenda && <div className="card ex-agenda"><span className="hint">{data?.eventsEnabled ? "" : t.exEventsSoon}</span><a className="btn ghost press" href={agenda} target="_blank" rel="noreferrer">📅 {t.exAgenda}</a></div>}
+          <div className="card ex-agenda"><span className="hint">{data?.eventsEnabled ? "" : t.exEventsSoon}</span><a className="btn ghost press" href={`/${locale}/wallet/agenda?city=${cityId}`}>📅 {t.exAgenda}</a></div>
           <p className="hint" style={{ fontSize: 12 }}>{data?.eventsEnabled ? "Ticketmaster" : ""}</p>
         </div>
       )}

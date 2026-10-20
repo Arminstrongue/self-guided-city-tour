@@ -180,7 +180,7 @@ export function WalletView({ t, locale, cities, free, countryOf }: { t: Dict; lo
           <button className="press" onClick={() => setTab("plans")}><span>🗺</span>{t.wQuickPlan}</button>
           <button className="press" onClick={() => setTab("places")}><span>🌍</span>{t.wQuickCity}</button>
           <a className="press" href={`/${locale}#cities`}><span>✨</span>{t.wQuickExplore}</a>
-          <button className="press" onClick={() => setTab("wish")}><span>❤️</span>{t.wTabs.wish}</button>
+          <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span>{t.evTitle}</a>
         </div>
 
         {wish && wish.length > 0 && (
