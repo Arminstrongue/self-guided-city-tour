@@ -4,15 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 const LOCALES = ["pt", "en", "es", "fr", "de", "it", "zh", "ar", "ja"];
 const ROUTES = ["admin", "tour", "legal", "c", "success", "merchants", "agents", "guides", "g", "diary"]; // páginas, não códigos de cidade
 
+/** Inglês por omissão. Só muda se o viajante já escolheu outro idioma (cookie guardado pelo seletor de idioma). */
 function pickLocale(req: NextRequest): string {
   const saved = req.cookies.get("sgct_locale")?.value;
-  if (saved && LOCALES.includes(saved)) return saved;
-  const header = req.headers.get("accept-language") ?? "";
-  for (const part of header.split(",")) {
-    const code = part.trim().slice(0, 2).toLowerCase();
-    if (LOCALES.includes(code)) return code;
-  }
-  return "en";
+  return saved && LOCALES.includes(saved) ? saved : "en";
 }
 
 /**
