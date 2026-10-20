@@ -4,6 +4,7 @@
  * Leve: as fotos vêm por URL (com cache) e só carregam quando aparecem no ecrã.
  */
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
@@ -12,7 +13,8 @@ import { StoryReply } from "./Chat";
 import { SearchPick } from "./SearchPick";
 import { RichText, ShareSheet } from "./PostExtras";
 import { EmojiButton, emojiLabels } from "./Emoji";
-import { ReelsViewer, VideoThumb, posterUrl } from "./Reels";
+import { ReelsViewer, FeedVideo, posterUrl } from "./Reels";
+import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
 import { useLive, type LiveEvent } from "@/lib/live-client";
 
 export type PostItem = {
@@ -310,7 +312,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
         <a href={`/${locale}/u/${author.handle}`} className="pf-who"><Avatar p={author} size={36} />
           <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}<Verified handle={author.handle} /></b>
             <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
-        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}>⋯</button>
+        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}><I icon={Ellipsis} size={20} /></button>
       </header>
       {menu && (
         <div className="stack sc-menu" style={{ gap: 6, margin: "0 12px 8px" }}>
@@ -323,7 +325,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
         </div>
       )}
       {sharing && <ShareSheet t={t} locale={locale} post={p} onClose={() => setSharing(false)} />}
-      {p.video && <VideoThumb t={t} p={p} onOpen={() => setReel(true)} />}
+      {p.video && <FeedVideo t={t} locale={locale} p={p} onOpen={() => setReel(true)} onLike={(f) => void toggleLike(f)}
+        onComments={() => { setOpen(true); if (!list) void loadComments(); }} onShare={() => setSharing(true)} />}
       {reel && <ReelsViewer t={t} locale={locale} cities={cities} initial={{ posts: [p], authors: { [author.handle]: author }, next: new Date().toISOString() }} onClose={() => setReel(false)} />}
       {p.photo && (
         <div className="pf-photo" onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
@@ -338,16 +341,18 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" />
           </>}
-          {burst && <span className="pf-burst" aria-hidden="true">❤️</span>}
+          {burst && <span className="pf-burst" aria-hidden="true"><I icon={Heart} size={96} solid /></span>}
         </div>
       )}
       <div className="pf-acts">
-        <button className={`pf-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={() => void toggleLike()}>{p.liked ? "❤️" : "🤍"}</button>
-        <button className="pf-act" aria-label={t.pfComments} onClick={() => { setOpen(!open); if (!list) void loadComments(); }}>💬</button>
-        <button className="pf-act" aria-label={t.shTitle} onClick={() => setSharing(true)}>↗</button>
+        {!p.video && <>
+          <button className={`pf-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={() => void toggleLike()}><I icon={Heart} size={26} solid={p.liked} /></button>
+          <button className="pf-act" aria-label={t.pfComments} onClick={() => { setOpen(!open); if (!list) void loadComments(); }}><I icon={MessageCircle} size={26} /></button>
+          <button className="pf-act" aria-label={t.shTitle} onClick={() => setSharing(true)}><I icon={Send} size={24} /></button>
+        </>}
         {p.tag && <span className="pf-tag">{HOBBY_ICON[p.tag as Hobby]} {t.hob[p.tag as Hobby]}</span>}
         <button className={`pf-act pf-save ${p.saved ? "on" : ""}`} aria-pressed={Boolean(p.saved)} aria-label={t.svSave} title={t.svSave}
-          onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); await postAct(p.id, { action: on ? "save" : "unsave" }); }}>{p.saved ? "🔖" : "🏷"}</button>
+          onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); await postAct(p.id, { action: on ? "save" : "unsave" }); }}><I icon={Bookmark} size={25} solid={Boolean(p.saved)} /></button>
       </div>
       <div className="pf-body">
         {p.likes > 0 && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}</b>}
@@ -387,6 +392,9 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   const [rings, setRings] = useState<{ rings: Ring[]; authors: Record<string, PublicProfile> }>({ rings: [], authors: {} });
   const [viewer, setViewer] = useState<number | null>(null);
   const [comp, setComp] = useState<"post" | "story" | null>(null);
+  // As histórias aparecem no topo da carteira (antes de "A seguir"), se a página tiver esse lugar.
+  const [storySlot, setStorySlot] = useState<HTMLElement | null>(null);
+  useEffect(() => { setStorySlot(document.getElementById("wl-stories")); }, []);
   const { seen, mark } = useSeen();
   const req = useRef(0);
   const feedUrl = (before?: string | null) => `/api/social/feed?${scope === "following" ? "" : `city=${scope}&`}${before ? `before=${encodeURIComponent(before)}` : ""}`;
@@ -414,8 +422,8 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   const evCity = scope !== "following" ? scope : chips[0] ?? null;
   return (
     <section className="stack pf-feed" style={{ gap: 12 }}>
-      <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />
-      <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true">📷</b></button>
+      {(() => { const bar = <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />; return storySlot ? createPortal(bar, storySlot) : bar; })()}
+      <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true"><I icon={Camera} size={22} /></b></button>
       <div className="ex-chips pf-scope">
         <button className={scope === "following" ? "on" : ""} onClick={() => setScope("following")}>👥 {t.pfFollowing}</button>
         {[...chips, ...(scope !== "following" && !chips.includes(scope) ? [scope] : [])].map((c) => <button key={c} className={scope === c ? "on" : ""} onClick={() => setScope(c)}>📍 {cities[c]}</button>)}
@@ -463,7 +471,7 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
       {page && page.posts.length > 0 && <div className="pf-grid">{page.posts.map((p) => (
         <button key={p.id} className="pf-tile" onClick={() => (p.video === "ready" ? setReel(p.id) : setOpen(p))} aria-label={p.text.slice(0, 60) || t.pfPost}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true">▶</span></>
+          {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true"><I icon={Play} size={14} solid /></span></>
             : p.video ? <span className="pf-tile-t">{p.video === "processing" ? "⏳" : "⚠️"}</span>
             : p.photo ? <><img src={photoUrl(p.id)} alt="" loading="lazy" />{(p.photos ?? 1) > 1 && <span className="pf-tile-v" aria-hidden="true">❐</span>}</> : <span className="pf-tile-t">{p.text}</span>}
           {p.likes > 0 && <small className="pf-tile-l">❤️ {p.likes}</small>}

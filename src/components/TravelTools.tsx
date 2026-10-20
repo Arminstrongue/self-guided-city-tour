@@ -6,6 +6,8 @@ import { convert, CURRENCIES, CURRENCY_COOKIE, formatMoney } from "@/lib/currenc
 import { offlineList, offlineReady, removeCity, saveCity, type OfflineInfo } from "@/lib/offline-client";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile } from "./Social";
+import { I, ArrowLeftRight, CloudDownload, Receipt, Wrench } from "./Ico";
+import type { LucideIcon } from "lucide-react";
 
 export type ToolTab = "fx" | "offline" | "split";
 
@@ -393,14 +395,14 @@ export function ToolsSheet({ t, locale, cities, mine, localCur, tab: tab0, split
 }) {
   const [tab, setTab] = useState<ToolTab>(tab0);
   useEffect(() => setTab(tab0), [tab0]);
-  const tabs: [ToolTab, string, string][] = [["fx", "💱", t.ttFx], ["offline", "📴", t.ttOffline], ["split", "➗", t.ttSplit]];
+  const tabs: [ToolTab, LucideIcon, string][] = [["fx", ArrowLeftRight, t.ttFx], ["offline", CloudDownload, t.ttOffline], ["split", Receipt, t.ttSplit]];
   return (
     <div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack tt" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
-        <b style={{ fontSize: 19 }}>🧰 {t.ttTools}</b>
+        <b style={{ fontSize: 19 }} className="row" ><span className="qi q3 sm"><I icon={Wrench} size={17} /></span>{t.ttTools}</b>
         <nav className="seg-3" role="tablist">
-          {tabs.map(([k, ic, label]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}><span aria-hidden="true">{ic}</span>{label}</button>)}
+          {tabs.map(([k, ic, label]) => <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}><I icon={ic} size={17} on={tab === k} />{label}</button>)}
         </nav>
         {tab === "fx" && <FxConverter t={t} locale={locale} from={localCur} />}
         {tab === "offline" && <OfflineTab t={t} locale={locale} cities={cities} mine={mine} />}

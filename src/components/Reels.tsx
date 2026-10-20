@@ -10,6 +10,7 @@ import { HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { Composer, ago, type PostItem } from "./Feed";
 import { EmojiButton, emojiLabels } from "./Emoji";
+import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, Pause, X, Plus, Maximize2 } from "./Ico";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 export const videoUrl = (id: string) => `/api/social/video/${id}`;
@@ -79,13 +80,13 @@ export function ReelsViewer({ t, locale, cities, scope: scope0 = "foryou", handl
   return (
     <div className="rl" role="dialog" aria-modal="true" aria-label={t.rlTitle}>
       <div className="rl-top">
-        <button className="rl-ic" onClick={onClose} aria-label={t.close} title={t.close}>✕</button>
+        <button className="rl-ic" onClick={onClose} aria-label={t.close} title={t.close}><I icon={X} size={20} /></button>
         {showTabs ? (
           <div className="rl-tabs">
             {(["following", "foryou"] as const).map((s) => <button key={s} className={scope === s ? "on" : ""} onClick={() => setScope(s)}>{s === "foryou" ? t.rlForYou : t.pfFollowing}</button>)}
           </div>
         ) : <b className="rl-ttl">{handle ? `@${handle}` : t.rlTitle}</b>}
-        {onCreate ? <button className="rl-ic" onClick={onCreate} aria-label={t.rlNew} title={t.rlNew}>＋</button> : <span style={{ width: 40 }} />}
+        {onCreate ? <button className="rl-ic" onClick={onCreate} aria-label={t.rlNew} title={t.rlNew}><I icon={Plus} size={22} /></button> : <span style={{ width: 40 }} />}
       </div>
       <div className="rl-feed" ref={box}>
         {page === null && <div className="rl-slide"><span className="rl-spin" aria-label={t.exLoading} /></div>}
@@ -154,16 +155,16 @@ function Reel({ i, t, locale, p, a, cities, active, near, muted, setMuted, onPat
       <video ref={v} className="rl-video" src={near ? videoUrl(p.id) : undefined} poster={posterUrl(p.id)} playsInline loop muted={muted}
         preload={active ? "auto" : near ? "metadata" : "none"}
         onLoadedMetadata={(e) => { const el = e.currentTarget; el.classList.toggle("fill", el.videoHeight > el.videoWidth); }} onTimeUpdate={(e) => { const el = e.currentTarget; if (el.duration) setProg(el.currentTime / el.duration); }} onClick={tap} />
-      {paused && <span className="rl-play" aria-hidden="true">▶</span>}
-      {burst > 0 && <span key={burst} className="rl-burst" aria-hidden="true">❤️</span>}
-      <button className="rl-sound" onClick={() => setMuted(!muted)} aria-label={muted ? t.rlUnmute : t.rlMute}>{muted ? "🔇" : "🔊"}</button>
+      {paused && <span className="rl-play" aria-hidden="true"><I icon={Play} size={36} solid /></span>}
+      {burst > 0 && <span key={burst} className="rl-burst" aria-hidden="true"><I icon={Heart} size={110} solid /></span>}
+      <button className="rl-sound" onClick={() => setMuted(!muted)} aria-label={muted ? t.rlUnmute : t.rlMute}><I icon={muted ? VolumeX : Volume2} size={19} /></button>
 
       <div className="rl-rail">
         {a && <a href={`/${locale}/u/${a.handle}`} className="rl-av" aria-label={a.name}><Avatar p={a} size={46} /></a>}
-        <button className={`rl-btn ${p.liked ? "on" : ""}`} onClick={() => void like()} aria-pressed={p.liked} aria-label={t.pfLike}><span>{p.liked ? "❤️" : "🤍"}</span><small>{compact(p.likes, locale)}</small></button>
-        <button className="rl-btn" onClick={onComments} aria-label={t.pfComments}><span>💬</span><small>{compact(p.comments, locale)}</small></button>
-        <button className="rl-btn" onClick={() => void share()} aria-label={t.rlShare}><span>↗</span><small>{shared ? "✓" : t.rlShare}</small></button>
-        <button className="rl-btn" onClick={() => setMenu(!menu)} aria-label="⋯"><span>⋯</span></button>
+        <button className={`rl-btn ${p.liked ? "on" : ""}`} onClick={() => void like()} aria-pressed={p.liked} aria-label={t.pfLike}><span><I icon={Heart} size={32} solid={p.liked} /></span><small>{compact(p.likes, locale)}</small></button>
+        <button className="rl-btn" onClick={onComments} aria-label={t.pfComments}><span><I icon={MessageCircle} size={31} /></span><small>{compact(p.comments, locale)}</small></button>
+        <button className="rl-btn" onClick={() => void share()} aria-label={t.rlShare}><span><I icon={Send} size={29} /></span><small>{shared ? "✓" : t.rlShare}</small></button>
+        <button className="rl-btn" onClick={() => setMenu(!menu)} aria-label="⋯"><span><I icon={Ellipsis} size={30} /></span></button>
       </div>
       {menu && (
         <div className="rl-menu">
@@ -180,7 +181,7 @@ function Reel({ i, t, locale, p, a, cities, active, near, muted, setMuted, onPat
         {p.text && <p className={`rl-cap ${more ? "open" : ""}`} onClick={() => setMore(!more)}>{p.text}</p>}
         <small className="rl-meta">{city ? `📍 ${city} · ` : ""}{p.tag ? `${HOBBY_ICON[p.tag as Hobby]} ${t.hob[p.tag as Hobby]} · ` : ""}{ago(p.at, locale)}</small>
       </div>
-      <div className="rl-prog"><i style={{ width: `${prog * 100}%` }} /></div>
+      <Scrub v={v} prog={prog} label={t.rlVideo} />
     </section>
   );
 }
@@ -224,21 +225,92 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
   );
 }
 
-/** Miniatura de vídeo no feed: toca sem som quando aparece; toque abre em ecrã inteiro. */
-export function VideoThumb({ t, p, onOpen }: { t: Dict; p: PostItem; onOpen: () => void }) {
+/* ---------- Vídeo no feed: toca sozinho, toque pausa, duplo toque gosta, som e expandir no próprio vídeo ---------- */
+// Som partilhado por todos os vídeos do feed (ligar num liga nos outros) e só um vídeo a tocar de cada vez.
+let feedMuted = true;
+const muteSubs = new Set<(m: boolean) => void>();
+const setFeedMuted = (m: boolean) => { feedMuted = m; muteSubs.forEach((f) => f(m)); };
+const playing = new Set<HTMLVideoElement>();
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+/** Barra de progresso que se pode arrastar para avançar/recuar. */
+export function Scrub({ v, prog, label }: { v: React.RefObject<HTMLVideoElement>; prog: number; label: string }) {
+  const [drag, setDrag] = useState<number | null>(null);
+  const seek = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    let x = (e.clientX - r.left) / r.width; if (document.dir === "rtl") x = 1 - x;
+    x = Math.min(1, Math.max(0, x)); setDrag(x);
+    const el = v.current; if (el?.duration) el.currentTime = x * el.duration;
+  };
+  return (
+    <div className={`vscrub ${drag !== null ? "on" : ""}`} role="slider" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((drag ?? prog) * 100)}
+      onClick={(e) => e.stopPropagation()}
+      onPointerDown={(e) => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); seek(e); }}
+      onPointerMove={(e) => { if (drag !== null) seek(e); }} onPointerUp={() => setDrag(null)} onPointerCancel={() => setDrag(null)}>
+      <i style={{ width: `${(drag ?? prog) * 100}%` }}><b /></i>
+    </div>
+  );
+}
+
+export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }: {
+  t: Dict; locale: Locale; p: PostItem; onOpen: () => void; onLike: (force?: boolean) => void; onComments: () => void; onShare: () => void;
+}) {
   const v = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(feedMuted);
+  const [paused, setPaused] = useState(true);
+  const [byUser, setByUser] = useState(false);
+  const [prog, setProg] = useState(0);
+  const [left, setLeft] = useState(p.duration ?? 0);
+  const [flash, setFlash] = useState<{ k: "play" | "pause"; at: number } | null>(null);
+  const [burst, setBurst] = useState(0);
+  const lastTap = useRef(0);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => { muteSubs.add(setMuted); return () => { muteSubs.delete(setMuted); }; }, []);
+  useEffect(() => { if (v.current) v.current.muted = muted; }, [muted]);
+  // Toca quando está bem visível (a não ser que o viajante o tenha pausado); pára quando sai do ecrã.
   useEffect(() => {
     const el = v.current; if (!el || p.video !== "ready") return;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) el.play().catch(() => null); else el.pause(); }, { threshold: 0.7 });
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !byUser) { playing.forEach((o) => { if (o !== el) o.pause(); }); el.play().catch(() => { el.muted = true; setFeedMuted(true); el.play().catch(() => null); }); }
+      else if (!e.isIntersecting) el.pause();
+    }, { threshold: 0.65 });
     io.observe(el); return () => io.disconnect();
-  }, [p.video]);
+  }, [p.video, byUser]);
+  function tap() {
+    const now = Date.now();
+    if (now - lastTap.current < 280) {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+      lastTap.current = 0; setBurst(now); onLike(true); return;
+    }
+    lastTap.current = now;
+    tapTimer.current = setTimeout(() => {
+      const el = v.current; if (!el) return;
+      if (el.paused) { playing.forEach((o) => { if (o !== el) o.pause(); }); void el.play().catch(() => null); setByUser(false); setFlash({ k: "play", at: Date.now() }); }
+      else { el.pause(); setByUser(true); setFlash({ k: "pause", at: Date.now() }); }
+    }, 280);
+  }
   if (p.video === "processing") return <div className="pf-vproc"><span className="rl-spin" /> {t.rlProcessing}</div>;
   if (p.video === "failed") return <div className="pf-vproc">⚠️ {t.rlFailed}</div>;
+  const compactN = (n: number) => compact(n, locale);
   return (
-    <button className="pf-vthumb" onClick={onOpen} aria-label={t.rlOpen}>
-      <video ref={v} src={videoUrl(p.id)} poster={posterUrl(p.id)} muted playsInline loop preload="metadata" />
-      <span className="pf-vbadge">▶ {p.duration ? `${Math.floor(p.duration / 60)}:${String(p.duration % 60).padStart(2, "0")}` : ""}</span>
-    </button>
+    <div className="fv">
+      <video ref={v} src={videoUrl(p.id)} poster={posterUrl(p.id)} muted={muted} playsInline loop preload="metadata" onClick={tap}
+        onPlay={(e) => { playing.add(e.currentTarget); setPaused(false); }} onPause={(e) => { playing.delete(e.currentTarget); setPaused(true); }}
+        onTimeUpdate={(e) => { const el = e.currentTarget; if (el.duration) { setProg(el.currentTime / el.duration); setLeft(el.duration - el.currentTime); } }} />
+      {paused && !flash && <span className="fv-big" aria-hidden="true"><I icon={Play} size={30} solid /></span>}
+      {flash && <span key={flash.at} className="fv-flash" aria-hidden="true" onAnimationEnd={() => setFlash(null)}><I icon={flash.k === "play" ? Play : Pause} size={30} solid /></span>}
+      {burst > 0 && <span key={burst} className="fv-burst" aria-hidden="true"><I icon={Heart} size={96} solid /></span>}
+      <span className="fv-time num">{clock(left)}</span>
+      <button className="fv-btn fv-expand" onClick={(e) => { e.stopPropagation(); onOpen(); }} aria-label={t.rlOpen} title={t.rlOpen}><I icon={Maximize2} size={18} /></button>
+      <button className="fv-btn fv-vol" onClick={(e) => { e.stopPropagation(); setFeedMuted(!muted); }} aria-label={muted ? t.rlUnmute : t.rlMute} title={muted ? t.rlUnmute : t.rlMute}>
+        <I icon={muted ? VolumeX : Volume2} size={18} /></button>
+      <div className="fv-rail">
+        <button className={`fv-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={(e) => { e.stopPropagation(); onLike(); }}><I icon={Heart} size={26} solid={p.liked} /><small className="num">{compactN(p.likes)}</small></button>
+        <button className="fv-act" aria-label={t.pfComments} onClick={(e) => { e.stopPropagation(); onComments(); }}><I icon={MessageCircle} size={26} /><small className="num">{compactN(p.comments)}</small></button>
+        <button className="fv-act" aria-label={t.shTitle} onClick={(e) => { e.stopPropagation(); onShare(); }}><I icon={Send} size={24} /><small>{t.rlShare}</small></button>
+      </div>
+      <Scrub v={v} prog={prog} label={t.rlVideo} />
+    </div>
   );
 }
 

@@ -15,6 +15,8 @@ import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { Composer, FeedTab } from "./Feed";
 import { ToolsSheet, type ToolTab } from "./TravelTools";
+import { I, House, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
+import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { signIn } from "next-auth/react";
 import { VideosTab } from "./Reels";
@@ -177,7 +179,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     return () => { window.removeEventListener("touchstart", start); window.removeEventListener("touchmove", move); window.removeEventListener("touchend", end); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, saved: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, string> = { home: "✦", explore: "🔍", profile: "👤", saved: "🔖", videos: "🎬", chat: "💬", people: "👥", passes: "🎟", plans: "🗺", wish: "❤️", places: "🌍", memories: "📔" };
+  const icon: Record<Tab, LucideIcon> = { home: LayoutGrid, explore: Search, profile: Users, saved: Bookmark, videos: Clapperboard, chat: MessageCircle, people: Users, passes: Ticket, plans: MapIcon, wish: Heart, places: Globe, memories: BookOpen };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -208,12 +210,12 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     <div className="stack wl wl-app" style={{ gap: 14 }}>
       {/* Barra de cima: título + notificações e mensagens (como no Instagram) */}
       <div className="wl-bar">
-        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand">👛 {t.wallet}</b>}
+        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand"><span className="wl-logo"><I icon={MapPin} size={15} stroke={2.6} /></span>{t.wallet}</b>}
         <span className="row" style={{ gap: 4 }}>
-          {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}>⚙︎</button>}
-          {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}>☰</a>}
-          {prof && <button className="wl-bar-ic" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => { buzz(); setNotifOpen(true); }}>🔔{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
-          {prof && <button className="wl-bar-ic" aria-label={t.chTab} title={t.chTab} onClick={() => go("chat")}>💬{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
+          {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}><I icon={Settings} size={22} /></button>}
+          {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}><I icon={Menu} size={22} /></a>}
+          {prof && <button className="wl-bar-ic" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => { buzz(); setNotifOpen(true); }}><I icon={Bell} size={23} className={notifs > 0 ? "ring" : ""} />{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
+          {prof && <button className="wl-bar-ic" aria-label={t.chTab} title={t.chTab} onClick={() => go("chat")}><I icon={MessageCircle} size={23} />{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
           {!signed && w !== null && <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
         </span>
       </div>
@@ -222,6 +224,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
       {/* ---------- Início: o que vem a seguir + histórias + feed ---------- */}
       {section === "home" && <>
+        <div id="wl-stories" className="wl-stories" />
         {w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
         {w === "anon" && (
           <section className="card stack wl-sign">
@@ -257,11 +260,11 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
           </section>
         )}
         <div className="wl-quick">
-          <button className="press" onClick={() => go("plans")}><span>🗺</span>{t.wQuickPlan}</button>
-          <button className="press" onClick={() => go("places")}><span>🌍</span>{t.wQuickCity}</button>
-          <button className="press" onClick={() => setTools({ tab: "fx" })}><span>🧰</span>{t.wQuickTools}</button>
-          <a className="press" href={`/${locale}#cities`}><span>✨</span>{t.wQuickExplore}</a>
-          <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span>{t.evTitle}</a>
+          <button className="press" onClick={() => go("plans")}><span className="qi q1"><I icon={MapIcon} size={22} /></span>{t.wQuickPlan}</button>
+          <button className="press" onClick={() => go("places")}><span className="qi q2"><I icon={Globe} size={22} /></span>{t.wQuickCity}</button>
+          <button className="press" onClick={() => setTools({ tab: "fx" })}><span className="qi q3"><I icon={Wrench} size={22} /></span>{t.wQuickTools}</button>
+          <a className="press" href={`/${locale}#cities`}><span className="qi q4"><I icon={Sparkles} size={22} /></span>{t.wQuickExplore}</a>
+          <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
         </div>
         {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
@@ -270,7 +273,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
       {/* ---------- Explorar: pessoas, cidades e o que há ---------- */}
       {section === "explore" && <>
         <div className="nv-cities">
-          <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span>📅</span><b>{t.evTitle}</b></a>
+          <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
           {Object.entries(cities).sort((a, b) => Number(myCities.includes(b[0])) - Number(myCities.includes(a[0])) || a[1].localeCompare(b[1])).map(([id, n]) => (
             <a key={id} className="nv-city" href={`#feed:${id}`}><span>{flag(countryOf[id] ?? "")}</span><b>{n}</b></a>
           ))}
@@ -320,7 +323,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         <nav className="wl-seg" role="tablist">
           {profileSubs.map((k) => (
             <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
-              <span aria-hidden="true">{icon[k]}</span><small>{k === "saved" ? t.svTab : t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
+              <span aria-hidden="true"><I icon={icon[k]} size={20} on={sub === k} /></span><small>{k === "saved" ? t.svTab : t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
             </button>
           ))}
         </nav>
@@ -376,12 +379,12 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
       {/* ---------- Barra de baixo ---------- */}
       <nav className="nv" aria-label={t.wallet}>
-        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvHome}><span>{section === "home" ? "🏠" : "⌂"}</span><small>{t.nvHome}</small></button>
-        <button className={section === "explore" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span>🔍</span><small>{t.nvExplore}</small></button>
-        <button className="nv-plus" onClick={create} aria-label={t.pfNew}><span>＋</span></button>
-        <button className={section === "videos" ? "on" : ""} onClick={() => go("videos")} aria-label={t.rlTitle}><span>🎬</span><small>{t.rlTitle}</small></button>
+        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvHome}><span><I icon={House} on={section === "home"} /></span><small>{t.nvHome}</small></button>
+        <button className={section === "explore" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
+        <button className="nv-plus" onClick={create} aria-label={t.pfNew}><span><I icon={Plus} size={24} stroke={2.6} /></span></button>
+        <button className={section === "videos" ? "on" : ""} onClick={() => go("videos")} aria-label={t.rlTitle}><span><I icon={Clapperboard} on={section === "videos"} /></span><small>{t.rlTitle}</small></button>
         <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
-          <span>{prof ? <Avatar p={prof} size={24} /> : "👤"}</span><small>{t.nvProfile}</small>
+          <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={Users} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>
       </nav>
 

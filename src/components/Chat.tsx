@@ -10,6 +10,7 @@ import { ago } from "./Feed";
 import { useLive, type LiveEvent } from "@/lib/live-client";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { PostSheet } from "./PostExtras";
+import { I, Plus, Mic, SendHorizontal } from "./Ico";
 
 type Ref = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
 type Msg = {
@@ -366,18 +367,18 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
             <button type="button" className="ch-ic" aria-label={t.close} onClick={() => stopRec(false)}>✕</button>
             <span className="ch-rec-dot" aria-hidden="true" /><b className="num">{Math.floor((Date.now() - rec.start) / 60000)}:{String(Math.floor((Date.now() - rec.start) / 1000) % 60).padStart(2, "0")}</b>
             <span className="hint" style={{ flex: 1 }}>{t.chRecording}</span>
-            <button type="button" className="ch-send" aria-label={t.chSend} onClick={() => stopRec(true)}>➤</button>
+            <button type="button" className="ch-send" aria-label={t.chSend} onClick={() => stopRec(true)}><I icon={SendHorizontal} size={20} /></button>
           </div>
         ) : (
         <form className="ch-say" onSubmit={send}>
-          <button type="button" className={`ch-plus ${attach ? "on" : ""}`} aria-label={t.chAttach} aria-expanded={attach} onClick={() => setAttach(!attach)}>＋</button>
+          <button type="button" className={`ch-plus ${attach ? "on" : ""}`} aria-label={t.chAttach} aria-expanded={attach} onClick={() => setAttach(!attach)}><I icon={Plus} size={22} /></button>
           <EmojiButton target={taRef} value={txt} set={setTxt} max={1000} labels={emojiLabels(t)} />
           <textarea ref={taRef} rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
             onChange={(e) => { setTxt(e.target.value); if (e.target.value) typed(); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); void send(e as unknown as React.FormEvent); } }} />
           {txt.trim() || typeof MediaRecorder === "undefined"
-            ? <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}>➤</button>
-            : <button type="button" className="ch-send mic" disabled={sending} aria-label={t.chVoice} title={t.chVoice} onClick={() => void startRec()}>🎤</button>}
+            ? <button className="ch-send" disabled={!txt.trim() || sending} aria-label={t.chSend}><I icon={SendHorizontal} size={20} /></button>
+            : <button type="button" className="ch-send mic" disabled={sending} aria-label={t.chVoice} title={t.chVoice} onClick={() => void startRec()}><I icon={Mic} size={21} /></button>}
         </form>
         )}
         </>
@@ -424,7 +425,7 @@ export function StoryReply({ t, storyId, name, onFocus }: { t: Dict; storyId: st
     <form className="st-reply" onSubmit={go} onPointerDown={(e) => e.stopPropagation()}>
       <input value={v} maxLength={1000} onChange={(e) => setV(e.target.value)} placeholder={fmt(t.chReplyStory, { name })} aria-label={fmt(t.chReplyStory, { name })}
         onFocus={() => onFocus(true)} onBlur={() => onFocus(false)} />
-      {v.trim() && <button disabled={state === "sending"} aria-label={t.chSend}>➤</button>}
+      {v.trim() && <button disabled={state === "sending"} aria-label={t.chSend}><I icon={SendHorizontal} size={20} /></button>}
       {state === "err" && <small style={{ color: "#fff" }}>{t.chCant}</small>}
     </form>
   );
