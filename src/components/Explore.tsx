@@ -230,7 +230,8 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
                   <span className="stack" style={{ gap: 2, minWidth: 0 }}>
                     <span className="label" style={{ color: "var(--cobalt)" }}>{t.evKind[e.kind]}{e.localTime ? ` · ${e.localTime}` : ""}</span>
                     <b className="ex-ev-t">{e.name}</b>
-                    <span className="hint ad-ellip">{e.venue ?? ""}{e.priceMin && e.currency ? ` · ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : ""}</span>
+                    <span className="hint ad-ellip">{e.venue ?? ""}</span>
+                    <span className={`ag-price ${e.free ? "free" : e.priceMin ? "" : "unk"}`}>{e.free ? `🆓 ${t.exFreeEntry}` : e.priceMin && e.currency ? `🎟 ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : `🎟 ${t.evPriceSite}`}</span>
                   </span>
                 </a>
               ))}

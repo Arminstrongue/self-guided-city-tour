@@ -8,6 +8,7 @@ export type CityEvent = {
   id: string; name: string; url: string; start: string; localDate: string; localTime: string | null;
   kind: "music" | "sport" | "arts" | "family" | "film" | "other"; venue: string | null; lat: number | null; lng: number | null;
   image: string | null; priceMin: number | null; currency: string | null;
+  free?: boolean;   // entrada gratuita
   until?: string;   // última data, quando o mesmo evento se repete em vários dias
   runs?: number;    // número de dias com sessões
 };
@@ -21,7 +22,8 @@ type TmEvent = {
   dates?: { start?: { dateTime?: string; localDate?: string; localTime?: string } };
   classifications?: { segment?: { name?: string }; genre?: { name?: string } }[];
   images?: { url: string; width: number; ratio?: string }[];
-  priceRanges?: { min?: number; currency?: string }[];
+  priceRanges?: { min?: number; max?: number; currency?: string }[];
+  info?: string; pleaseNote?: string;
   _embedded?: { venues?: { name?: string; location?: { latitude?: string; longitude?: string } }[] };
 };
 
@@ -41,6 +43,7 @@ export function parseTicketmaster(json: { _embedded?: { events?: TmEvent[] } }):
   for (const e of json._embedded?.events ?? []) {
     const d = e.dates?.start;
     if (!d?.localDate) continue;
+    if (/gift ?card|voucher|parking|upgrade|add[- ]?on|fast ?track only|hospitality package/i.test(e.name)) continue; // não são eventos
     const key = `${e.name.toLowerCase()}|${d.localDate}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -48,10 +51,13 @@ export function parseTicketmaster(json: { _embedded?: { events?: TmEvent[] } }):
     const imgs = (e.images ?? []).filter((i) => i.ratio === "16_9" && i.width >= 500).sort((a, b) => a.width - b.width);
     const c = e.classifications?.[0];
     const lat = Number(v?.location?.latitude), lng = Number(v?.location?.longitude);
+    const low = (e.priceRanges ?? []).filter((p) => typeof p.min === "number" && p.currency).sort((a, b) => a.min! - b.min!)[0];
+    const free = (low?.min === 0 && (low.max ?? 0) === 0) || /\bfree (entry|admission|event)\b|\bentrada (gratuita|livre)\b/i.test(`${e.name} ${e.info ?? ""} ${e.pleaseNote ?? ""}`);
     out.push({
       id: e.id, name: e.name, url: e.url, start: d.dateTime ?? `${d.localDate}T${d.localTime ?? "00:00:00"}`, localDate: d.localDate, localTime: d.localTime?.slice(0, 5) ?? null,
       kind: kindOf(c?.segment?.name, c?.genre?.name), venue: v?.name ?? null, lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null,
-      image: imgs[0]?.url ?? e.images?.[0]?.url ?? null, priceMin: e.priceRanges?.[0]?.min ?? null, currency: e.priceRanges?.[0]?.currency ?? null
+      image: imgs[0]?.url ?? e.images?.[0]?.url ?? null, priceMin: low?.min ?? null, currency: low?.currency ?? null,
+      ...(free ? { free: true } : {})
     });
   }
   return out;
@@ -71,7 +77,8 @@ export function collapseRuns(list: CityEvent[], max = 150): CityEvent[] {
       first.runs = (first.runs ?? 1) + 1;
       first.until = e.localDate > (first.until ?? first.localDate) ? e.localDate : first.until;
     }
-    if (first.priceMin === null && e.priceMin !== null) { first.priceMin = e.priceMin; first.currency = e.currency; }
+    if (e.priceMin !== null && (first.priceMin === null || e.priceMin < first.priceMin)) { first.priceMin = e.priceMin; first.currency = e.currency; }
+    if (e.free) first.free = true;
   }
   return [...by.values()].sort((a, b) => a.start.localeCompare(b.start)).slice(0, max);
 }

@@ -897,3 +897,6 @@ html,body{overflow-x:clip}
 .ag-sheet{padding:0;overflow:hidden auto}
 .ag-cover{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
 .ag-runs{font-size:12px;font-weight:600;color:var(--muted)}
+.ag-price{align-self:flex-start;margin-top:4px;font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--cobalt-soft);color:var(--cobalt)}
+.ag-price.free{background:rgba(52,199,89,.14);color:#1d8a3a}
+.ag-price.unk{background:var(--surface-2);color:var(--muted);font-weight:600}

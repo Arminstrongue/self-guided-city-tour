@@ -46,6 +46,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
   const dayFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "long", day: "numeric", month: "long" });
   const shortFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short" });
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: c, maximumFractionDigits: 0 }).format(n); } catch { return `${n} ${c}`; } };
+  const price = (e: CityEvent) => (e.free ? `🆓 ${t.exFreeEntry}` : e.priceMin && e.currency ? `🎟 ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : `🎟 ${t.evPriceSite}`);
   const wished = (title: string) => wish.some((x) => wishKey(x) === wishKey({ city: cityId, title }));
   function heart(e: CityEvent) {
     if (e.lat === null || e.lng === null) return;
@@ -91,8 +92,9 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               <span className="stack" style={{ gap: 2, minWidth: 0, flex: 1, textAlign: "start" }}>
                 <span className="label" style={{ color: "var(--cobalt)" }}>{KIND_ICON[e.kind]} {t.evKind[e.kind]}{e.localTime ? ` · ${e.localTime}` : ""}</span>
                 <b className="ex-ev-t">{e.name}</b>
-                <span className="hint ad-ellip">{e.venue ?? ""}{e.priceMin && e.currency ? ` · ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : ""}</span>
+                <span className="hint ad-ellip">{e.venue ?? ""}</span>
                 {e.until && <span className="ag-runs">🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${e.until}T12:00:00`)), n: e.runs ?? 2 })}</span>}
+                <span className={`ag-price ${e.free ? "free" : e.priceMin ? "" : "unk"}`}>{price(e)}</span>
               </span>
               {wished(e.name) && <span aria-hidden="true">❤️</span>}
             </button>
@@ -130,7 +132,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               <span>📅 {dayFmt.format(new Date(`${open.localDate}T12:00:00`))}{open.localTime ? ` · ${open.localTime}` : ""}</span>
               {open.until && <span>🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${open.until}T12:00:00`)), n: open.runs ?? 2 })}</span>}
               {open.venue && <span>📍 {open.venue}</span>}
-              {open.priceMin && open.currency && <span>🎟 {fmt(t.exFrom, { p: money(open.priceMin, open.currency) })}</span>}
+              <span className={`ag-price ${open.free ? "free" : open.priceMin ? "" : "unk"}`}>{price(open)}</span>
               <div className="grid2" style={{ marginTop: 6 }}>
                 <a className="btn press" href={open.url} target="_blank" rel="noopener noreferrer">🎟 {t.exTickets}</a>
                 {open.lat !== null && open.lng !== null ? <a className="btn ghost press" href={`https://www.google.com/maps/dir/?api=1&destination=${open.lat},${open.lng}`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a> : <span />}
