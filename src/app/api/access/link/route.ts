@@ -14,7 +14,8 @@ export async function GET(req: Request) {
   const locale = isLocale(l) ? l : "en";
   const city = await loadCity(url.searchParams.get("city") ?? "");
   if (!readAccessToken(token)) return NextResponse.redirect(`${env.appUrl}/${locale}`);
-  const res = NextResponse.redirect(`${env.appUrl}/${locale}${city ? `/tour/${city.id}` : ""}`);
+  const to = url.searchParams.get("to") === "wallet" ? "/wallet" : city ? `/tour/${city.id}` : "";
+  const res = NextResponse.redirect(`${env.appUrl}/${locale}${to}`);
   res.cookies.set(ACCESS_COOKIE, token as string, { httpOnly: true, sameSite: "lax", secure: isProd, maxAge: ACCESS_TTL_S, path: "/" });
   return res;
 }

@@ -156,7 +156,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               </select>
             ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
           </div>
-          <CurrencyPicker current={fx.cur} label={t.currency} />
+          <span className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
+            <a className="wl-btn press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}>👛</a>
+            <CurrencyPicker current={fx.cur} label={t.currency} />
+          </span>
           {leave && <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>}
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>

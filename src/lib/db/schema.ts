@@ -152,6 +152,28 @@ export const ratings = pgTable("ratings", {
 }, (t) => [uniqueIndex("ratings_access_city_idx").on(t.accessId, t.city), index("ratings_created_idx").on(t.createdAt)]);
 export type Rating = typeof ratings.$inferSelect;
 
+/* ---------- Carteira do viajante: memórias e preferências guardadas na conta (email) ---------- */
+export const travellerMemories = pgTable("traveller_memories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  city: text("city").notNull(),
+  cityName: text("city_name").notNull(),
+  title: text("title").notNull(),
+  note: text("note").notNull().default(""),
+  photo: text("photo"), // data URL JPEG reduzida (≤ 300 KB)
+  lat: text("lat"), lng: text("lng"),
+  takenAt: timestamp("taken_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("memories_email_idx").on(t.email, t.takenAt)]);
+export type TravellerMemory = typeof travellerMemories.$inferSelect;
+
+export const travellerPrefs = pgTable("traveller_prefs", {
+  email: text("email").primaryKey(),
+  hobbies: jsonb("hobbies").$type<string[]>().notNull().default([]),
+  saved: jsonb("saved").$type<{ city: string; title: string; lat: number; lng: number; at: number }[]>().notNull().default([]),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+});
+
 /* ---------- Marketplace de guias (modelo Uber: guias registam-se, turistas escolhem o melhor avaliado) ---------- */
 export const guideStatus = pgEnum("guide_status", ["pending", "active", "suspended", "rejected"]);
 export const bookingStatus = pgEnum("booking_status", ["pending", "requested", "confirmed", "declined", "cancelled", "expired", "completed", "refunded"]);

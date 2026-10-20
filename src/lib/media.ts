@@ -23,7 +23,7 @@ export type Media = {
 const UA = "SelfGuidedCityTour/1.0 (https://selfguidedcitytour.com; hello@selfguidedcitytour.com)";
 const WIKI_TTL = 7 * 24 * 3600e3;
 const EMPTY_TTL = 15 * 60e3;          // resultados vazios (falha ou limite da Wikimedia): voltar a tentar em 15 min
-const GOOGLE_TTL = 24 * 3600e3;
+const GOOGLE_TTL = 7 * 24 * 3600e3; // 7 dias: controla o custo do Google (pesquisa com avaliações + fotos)
 const cache = new Map<string, { at: number; ttl: number; v: unknown }>();
 
 async function cached<T>(key: string, ttl: number, fn: () => Promise<T>, isEmpty: (v: T) => boolean = () => false): Promise<T> {
@@ -206,7 +206,7 @@ async function googlePlace(query: string, lat: number, lng: number, lang: string
     if (!p) return null;
     // A Google devolve um URL de imagem sem a chave quando se pede skipHttpRedirect.
     const photos: Photo[] = [];
-    for (const ph of (p.photos ?? []).slice(0, 6)) {
+    for (const ph of (p.photos ?? []).slice(0, 3)) {
       try {
         const m = await getJson<{ photoUri?: string }>(`https://places.googleapis.com/v1/${ph.name}/media?maxWidthPx=1280&skipHttpRedirect=true&key=${key}`);
         if (!m.photoUri) continue;

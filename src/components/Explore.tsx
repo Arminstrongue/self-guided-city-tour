@@ -7,7 +7,7 @@ import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
 import { CAT_HOBBIES, CAT_ICON, HOBBIES, HOBBY_ICON, distM, rankCats, type Hobby, type Place, type PlaceCat } from "@/lib/explore";
 import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
 import { WHEN_ICON, type When } from "@/data/moments";
-import { saveMemory } from "@/lib/diary";
+import { saveMemoryAnywhere } from "@/lib/diary";
 
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string };
@@ -63,7 +63,15 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
   const [toast, setToast] = useState("");
   const now = useMemo(() => nowWhen(tz), [tz]);
 
-  useEffect(() => { const h = loadHobbies(); setHobbies(h); if (!h.length) setPicking(true); }, []);
+  useEffect(() => {
+    const h = loadHobbies(); setHobbies(h);
+    if (h.length) return;
+    // Sem interesses neste dispositivo: tenta os da conta; se não houver, pede para escolher.
+    fetch("/api/me/prefs").then((r) => (r.ok ? r.json() : null)).then((p) => {
+      const fromAccount = (p?.hobbies ?? []).filter((x: string) => (HOBBIES as readonly string[]).includes(x)) as Hobby[];
+      if (fromAccount.length) { setHobbies(fromAccount); try { localStorage.setItem(KEY, JSON.stringify(fromAccount)); } catch { /* ignorar */ } } else setPicking(true);
+    }).catch(() => setPicking(true));
+  }, []);
   // Carrega lugares e eventos só quando o viajante abre esses separadores.
   useEffect(() => {
     if (tab === "moments" || data || failed) return;
@@ -78,6 +86,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
     const next = hobbies.includes(h) ? hobbies.filter((x) => x !== h) : [...hobbies, h];
     setHobbies(next);
     try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* ignorar */ }
+    void fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hobbies: next }) }).catch(() => null); // guarda na conta, se houver sessão
   }
 
   const ms = useMemo(() => [...moments].sort((a, b) => (score(b.h, hobbies) + (now.includes(b.when) ? 2 : 0)) - (score(a.h, hobbies) + (now.includes(a.when) ? 2 : 0))), [moments, hobbies, now]);
@@ -147,10 +156,10 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
             </div>
             {gmapsKey && data.source === "google" ? <GoogleMap apiKey={gmapsKey} places={places} pos={pos} center={center} /> : <ExploreMap places={places} pos={pos} center={center} />}
             <div className="ex-list">
-              {places.map((p) => (
+              {places.map((p, i) => (
                 <div key={p.id} className="ex-row">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {p.photo ? <img className="ex-ph" src={`/api/explore/photo?n=${encodeURIComponent(p.photo)}`} alt="" loading="lazy" /> : <span className="ex-ic sm" aria-hidden="true">{CAT_ICON[p.cat]}</span>}
+                  {p.photo && i < 15 ? <img className="ex-ph" src={`/api/explore/photo?n=${encodeURIComponent(p.photo)}`} alt="" loading="lazy" /> : <span className="ex-ic sm" aria-hidden="true">{CAT_ICON[p.cat]}</span>}
                   <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}>
                     <b className="ad-ellip">{p.name}</b>
                     <span className="hint">
@@ -214,7 +223,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
       )}
 
       {save && <SaveMemory t={t} cityId={cityId} cityName={cityName} item={save} onClose={(ok) => { setSave(null); if (ok) { setToast(t.exSaved); setTimeout(() => setToast(""), 2500); } }} />}
-      {toast && <div className="ex-toast" role="status">{toast} <a href={`/${locale}/diary`}>{t.diary} →</a></div>}
+      {toast && <div className="ex-toast" role="status">{toast} <a href={`/${locale}/wallet`}>{t.wallet} →</a></div>}
     </section>
   );
 }
@@ -241,7 +250,7 @@ function SaveMemory({ t, cityId, cityName, item, onClose }: { t: Dict; cityId: s
           <button className="btn ghost press" onClick={() => onClose(false)}>{t.exCancel}</button>
           <button className="btn press" disabled={busy} onClick={async () => {
             setBusy(true);
-            try { await saveMemory({ city: cityId, cityName, title: item.title, note: note.trim(), photo, lat: item.lat, lng: item.lng }); onClose(true); } catch { setBusy(false); }
+            try { await saveMemoryAnywhere({ city: cityId, cityName, title: item.title, note: note.trim(), photo, lat: item.lat, lng: item.lng }); onClose(true); } catch { setBusy(false); }
           }}>{t.exSaveBtn}</button>
         </div>
       </div>

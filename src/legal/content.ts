@@ -113,7 +113,8 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Comerciais independentes: nome, email, telefone, país, carteira de negócios e comissões.",
         "Reservas de guias: nome, email, telefone e nota do viajante, partilhados com o guia depois de ele aceitar.",
         "Guias: dados do perfil público; dados profissionais e fiscais (registo da atividade, seguro, NIF, país fiscal, morada e data de nascimento); a conta bancária é tratada pela Stripe.",
-        "Avaliações: estrelas, NPS e comentários, sem o seu nome; os comentários sobre guias podem aparecer no perfil do guia."
+        "Avaliações: estrelas, NPS e comentários, sem o seu nome; os comentários sobre guias podem aparecer no perfil do guia.",
+        "Carteira: se entrar com o seu email, guardamos as memórias (fotos e notas), os lugares guardados e os interesses que escolher, para os ter em qualquer dispositivo. Pode apagá-los na própria carteira."
       ] },
       { h: "Para quê e com que fundamento", p: [
         "Prestar o serviço comprado e calcular a hora de regresso (execução do contrato).",
@@ -242,7 +243,8 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Independent sales partners: name, email, phone, country, deal pipeline and commissions.",
         "Guide bookings: traveller name, email, phone and note, shared with the guide once they accept.",
         "Guides: public profile; professional and tax details (activity registration, insurance, tax ID, tax country, address and date of birth); bank details are handled by Stripe.",
-        "Ratings: stars, NPS and comments, without your name; comments about guides may appear on the guide's profile."
+        "Ratings: stars, NPS and comments, without your name; comments about guides may appear on the guide's profile.",
+        "Wallet: if you sign in with your email, we store your memories (photos and notes), saved places and chosen interests so you have them on any device. You can delete them in the wallet."
       ] },
       { h: "Purposes and legal bases", p: [
         "Providing the service and computing your return time (contract).",

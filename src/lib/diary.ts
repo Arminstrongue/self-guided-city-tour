@@ -13,6 +13,26 @@ async function tx<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBReq
   const db = await open();
   return new Promise((ok, bad) => { const q = fn(db.transaction(STORE, mode).objectStore(STORE)); q.onsuccess = () => ok(q.result); q.onerror = () => bad(q.error); });
 }
+/** Guarda na conta quando há sessão; sem sessão, guarda só no dispositivo. Devolve onde ficou guardado. */
+export async function saveMemoryAnywhere(m: Omit<Memory, "id" | "at">): Promise<"account" | "device"> {
+  try {
+    const r = await fetch("/api/me/memories", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(m) });
+    if (r.ok) { try { window.dispatchEvent(new Event("sgct:diary")); } catch { /* ignorar */ } return "account"; }
+  } catch { /* sem rede: guarda no dispositivo */ }
+  await saveMemory(m);
+  return "device";
+}
+
+/** Envia para a conta as memórias guardadas só neste dispositivo e apaga-as daqui. */
+export async function syncLocalToAccount(): Promise<number> {
+  let n = 0;
+  for (const m of await listMemories()) {
+    const r = await fetch("/api/me/memories", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo, lat: m.lat, lng: m.lng, at: m.at }) }).catch(() => null);
+    if (r?.ok) { await deleteMemory(m.id); n++; } else break;
+  }
+  return n;
+}
+
 export async function saveMemory(m: Omit<Memory, "id" | "at">): Promise<Memory> {
   const full: Memory = { ...m, id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`, at: Date.now() };
   await tx("readwrite", (s) => s.put(full));
