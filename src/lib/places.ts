@@ -4,6 +4,8 @@
  * Custo: um pedido por paragem e idioma a cada 6 h por instância (cache em memória).
  * Regras da Google: mostrar a atribuição "Google Maps" e não guardar os dados em base de dados.
  */
+import { takeGoogle } from "./gbudget";
+
 export type Eat = {
   id: string; name: string; rating: number; reviews: number; price: number | null;
   openNow: boolean | null; type: string | null; url: string; lat: number; lng: number; score: number;
@@ -52,6 +54,7 @@ export async function bestEats(lat: number, lng: number, lang: string): Promise<
   const key = `${lat.toFixed(4)},${lng.toFixed(4)},${lang}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.v;
+  if (!takeGoogle("search")) return [];
   const res = await fetch("https://places.googleapis.com/v1/places:searchNearby", {
     method: "POST",
     headers: {

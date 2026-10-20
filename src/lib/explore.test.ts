@@ -69,3 +69,10 @@ test("plano automático: hora certa, interesses, sem repetir, rota do dia", () =
   assert.ok(d1.some((i) => i.time === "18:30")); // pôr do sol
   assert.match(dayRoute(d1)!, /waypoints=/);
 });
+
+import { takeGoogle } from "./gbudget";
+test("teto diário do Google", () => {
+  process.env.GOOGLE_MAX_PHOTOS_PER_DAY = "3";
+  assert.deepEqual([takeGoogle("photo"), takeGoogle("photo"), takeGoogle("photo"), takeGoogle("photo")], [true, true, true, false]);
+  assert.equal(takeGoogle("search"), true);
+});

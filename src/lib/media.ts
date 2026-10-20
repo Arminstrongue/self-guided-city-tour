@@ -8,6 +8,7 @@
  *
  * Tudo corre no servidor (a chave da Google nunca chega ao navegador) e fica em cache em memória.
  */
+import { takeGoogle } from "./gbudget";
 import { placesEnabled } from "./places";
 
 export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google"; page?: string };
@@ -193,6 +194,7 @@ type GPlace = {
 
 async function googlePlace(query: string, lat: number, lng: number, lang: string) {
   return cached(`g:${query}:${lang}`, GOOGLE_TTL, async () => {
+    if (!takeGoogle("search")) throw new Error("google_daily_cap"); // teto atingido: só Wikimedia (e não fica em cache)
     const key = process.env.GOOGLE_PLACES_API_KEY ?? "";
     const j = await getJson<{ places?: GPlace[] }>("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
@@ -207,6 +209,7 @@ async function googlePlace(query: string, lat: number, lng: number, lang: string
     // A Google devolve um URL de imagem sem a chave quando se pede skipHttpRedirect.
     const photos: Photo[] = [];
     for (const ph of (p.photos ?? []).slice(0, 3)) {
+      if (!takeGoogle("photo")) break;
       try {
         const m = await getJson<{ photoUri?: string }>(`https://places.googleapis.com/v1/${ph.name}/media?maxWidthPx=1280&skipHttpRedirect=true&key=${key}`);
         if (!m.photoUri) continue;

@@ -5,6 +5,7 @@
  */
 import type { City } from "@/data/cities";
 import { cityCenter, distM, PLACE_CATS, type Place, type PlaceCat } from "./explore";
+import { takeGoogle } from "./gbudget";
 
 /** Pesquisa por categoria (em inglês, funciona em qualquer país). `far` = arredores. */
 const Q: Record<PlaceCat, { q: string; far?: boolean }> = {
@@ -49,6 +50,7 @@ const TTL = 7 * 24 * 3600_000; // 7 dias: parques e museus não mudam; mantém o
 
 async function search(cat: PlaceCat, cityName: string, center: { lat: number; lng: number }, lang: string): Promise<Place[]> {
   const { q, far } = Q[cat];
+  if (!takeGoogle("search")) throw new Error("google_daily_cap");
   const r = await fetch("https://places.googleapis.com/v1/places:searchText", {
     method: "POST",
     headers: {
@@ -79,6 +81,7 @@ export async function googlePlacesFor(city: City, _lang: string): Promise<Place[
 /** Foto de um lugar (redireciona para o URL temporário do Google; a chave nunca vai para o navegador). */
 export async function photoUrl(name: string, w = 640): Promise<string | null> {
   if (!/^places\/[\w-]+\/photos\/[\w-]+$/.test(name)) return null;
+  if (!takeGoogle("photo")) return null;
   const r = await fetch(`https://places.googleapis.com/v1/${name}/media?maxWidthPx=${w}&skipHttpRedirect=true&key=${process.env.GOOGLE_PLACES_API_KEY ?? ""}`, { signal: AbortSignal.timeout(8000) });
   if (!r.ok) return null;
   return ((await r.json()) as { photoUri?: string }).photoUri ?? null;
