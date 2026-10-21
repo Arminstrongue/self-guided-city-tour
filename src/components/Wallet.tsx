@@ -163,6 +163,10 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
   const prof = social?.profile ?? null;
   const points = usePoints(Boolean(signed));
+  // Na app nativa (Capacitor) o Google recusa o login dentro da app ("disallowed_useragent"): fica só a Apple e o email.
+  const [native, setNative] = useState(false);
+  useEffect(() => { setNative(Boolean((window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.())); }, []);
+  const shownProviders = native ? providers.filter((p) => p.id !== "google") : providers;
   const { unread, notifs, refreshUnread } = useUnread(Boolean(prof));
   useLiveConnection(Boolean(signed));
   const [notifOpen, setNotifOpen] = useState(false);
@@ -267,7 +271,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
           <section className="card stack wl-sign">
             <b style={{ fontSize: 17 }}>🔐 {t.wSignTitle}</b>
             <ul className="wl-benefits">{t.wBenefits.map((b) => <li key={b}>✓ {b}</li>)}</ul>
-            {providers.length > 0 && <div className="wl-oauth">{providers.map((p) => (
+            {shownProviders.length > 0 && <div className="wl-oauth">{shownProviders.map((p) => (
               <button key={p.id} type="button" className={`wl-oauth-b ${p.id}`} onClick={() => void signIn(p.id, { callbackUrl: `/api/me/oauth?next=${encodeURIComponent(`/${locale}/wallet${retCity ? `?signin=1&city=${retCity}` : ""}`)}` })}>
                 <span aria-hidden="true">{p.id === "google" ? "G" : p.id === "apple" ? "" : "f"}</span>{fmt(t.nvContinue, { p: p.name })}
               </button>
