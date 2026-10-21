@@ -1945,3 +1945,11 @@ main:focus{outline:none}
 }
 @keyframes pkPop{from{transform:scale(.94) translateY(-6px);opacity:0}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.pk,.pk-ind{animation:none;transition:none}}
+/* Admin: "Tem N assuntos à espera" leva à lista e destaca-a */
+.ad-todo-link{color:inherit;text-decoration:underline;text-decoration-color:rgba(255,255,255,.35);text-underline-offset:4px;font-weight:600;transition:text-decoration-color .2s}
+.ad-todo-link:hover{text-decoration-color:currentColor}
+.ad-todo-link span{display:inline-block;transition:transform .2s var(--ease)}
+.ad-todo-link:hover span{transform:translateX(3px)}
+#todo{scroll-margin-top:90px}
+#todo:target{animation:adFlash 1.6s var(--ease)}
+@keyframes adFlash{0%,40%{box-shadow:0 0 0 3px var(--cobalt);border-radius:18px}100%{box-shadow:0 0 0 3px transparent}}

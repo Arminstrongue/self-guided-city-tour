@@ -179,7 +179,7 @@ export default async function Admin({ params, searchParams }: { params: { locale
             <form action={`/api/admin/logout?locale=${L}`} method="post"><button className="gp-out">Sair</button></form>
           </div>
           <h1 className="ad-title">{hello}.</h1>
-          <p className="ad-sub">{todo ? `Tem ${todo} ${todo === 1 ? "assunto" : "assuntos"} à espera de decisão.` : "Está tudo em dia."}{openReq ? ` ${openReq} ${openReq === 1 ? "reserva aguarda" : "reservas aguardam"} resposta dos guias.` : ""}</p>
+          <p className="ad-sub">{todo ? <a href="#todo" className="ad-todo-link">Tem {todo} {todo === 1 ? "assunto" : "assuntos"} à espera de decisão <span aria-hidden="true">→</span></a> : "Está tudo em dia."}{openReq ? ` ${openReq} ${openReq === 1 ? "reserva aguarda" : "reservas aguardam"} resposta dos guias.` : ""}</p>
           <nav className="ad-links">
             <Link href={`/${L}/admin/metrics`}>📈 Métricas e NPS</Link>
             <Link href={`/${L}/admin/content`}>🗺 Cidades e paragens</Link>
