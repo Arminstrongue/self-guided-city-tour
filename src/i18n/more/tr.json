@@ -1400,5 +1400,8 @@
 "qrShare": "Paylaş",
 "qrCopy": "Bağlantıyı kopyala",
 "qrSave": "Kaydet",
-"qrCopied": "Bağlantı kopyalandı"
+"qrCopied": "Bağlantı kopyalandı",
+"achLevel": "🎉 {n}. seviyeye ulaştın: {x}",
+"achBadge": "🏅 Yeni rozet: {x}",
+"achReward": "🎁 Bir sonraki biletin için {x} kredi kazandın"
 }

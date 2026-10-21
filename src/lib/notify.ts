@@ -6,6 +6,9 @@ import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { env } from "./env";
 import { isOnline, publish } from "./live";
+import { achievementText } from "./achievement-text";
+import { getDict, type Locale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 /** Tipo de notificação → preferência que a controla. */
 const PREF: Record<string, keyof schema.NotifPrefs> = {
@@ -98,10 +101,12 @@ export async function notify(to: string, actor: string, type: schema.Notificatio
   const [a] = await d.select({ name: schema.travellerProfiles.name, handle: schema.travellerProfiles.handle }).from(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, actor)).limit(1);
   const name = a?.name ?? "";
   const lang = o.lang ?? st.lang ?? "en";
-  const body = notifText(type === "like" && o.storyLike ? "like_story" : type, name, text, lang);
+  const body = type === "achievement" ? achievementText(text, getDict((isLocale(lang) ? lang : "en") as Locale))
+    : notifText(type === "like" && o.storyLike ? "like_story" : type, name, text, lang);
   const url = type === "message" || type === "story_reply" ? `/${lang}/wallet#chat:${a?.handle ?? ""}`
     : type === "follow" || type === "request" || type === "accepted" || type === "invite_joined" ? `/${lang}/u/${a?.handle ?? ""}`
     : type === "split" ? `/${lang}/wallet#split:${o.postId ?? ""}`
+    : type === "achievement" ? `/${lang}/wallet#points`
     : `/${lang}/wallet#notifs`;
   await sendPush(to, { title: type === "message" ? name : "HelloTravell", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
 }

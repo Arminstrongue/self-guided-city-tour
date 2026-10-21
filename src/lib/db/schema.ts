@@ -378,7 +378,7 @@ export const accountSettings = pgTable("account_settings", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
-export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined" | "mention" | "split";
+export type NotificationType = "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined" | "mention" | "split" | "achievement";
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),            // quem recebe
@@ -519,3 +519,10 @@ export const cityPulse = pgTable("city_pulse", {
   data: jsonb("data").$type<PulseData>().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("city_pulse_key_idx").on(t.city, t.day)]);
+
+/** Conquistas já anunciadas (nível, medalha, prémio): cada uma notifica uma só vez. key = "level:3" | "badge:cities-5" | "reward:1000" | "seed". */
+export const achievements = pgTable("achievements", {
+  email: text("email").notNull(),
+  key: text("key").notNull(),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("achievements_key_idx").on(t.email, t.key)]);

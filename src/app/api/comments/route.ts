@@ -3,6 +3,7 @@ import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
 import { addComment, commentCounts, listComments } from "@/lib/place-comments";
 import { rateLimit } from "@/lib/rate-limit";
+import { checkAchievements } from "@/lib/achievements";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,5 +28,6 @@ export async function POST(req: Request) {
   const v = Body.safeParse(await req.json().catch(() => null));
   if (!v.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const r = await addComment(me, v.data.city, v.data.stop, v.data.text);
+  if (!("error" in r)) void checkAchievements(me).catch(() => {});
   return "error" in r ? NextResponse.json(r, { status: r.error === "no_profile" ? 409 : r.error === "limit" ? 429 : 400 }) : NextResponse.json({ comment: r });
 }

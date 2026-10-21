@@ -3,6 +3,7 @@ import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
 import { checkIn, myCheckins, undoCheckIn } from "@/lib/points";
 import { rateLimit } from "@/lib/rate-limit";
+import { checkAchievements } from "@/lib/achievements";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,5 +29,7 @@ export async function POST(req: Request) {
   const { city, stop, lat, lng, undo } = v.data;
   if (undo) { await undoCheckIn(me, city, stop); return NextResponse.json({ ok: true }); }
   const r = await checkIn(me, city, stop, lat !== undefined && lng !== undefined ? { lat, lng } : null);
-  return "error" in r ? NextResponse.json(r, { status: 400 }) : NextResponse.json(r);
+  if ("error" in r) return NextResponse.json(r, { status: 400 });
+  const won = await checkAchievements(me).catch(() => [] as string[]);
+  return NextResponse.json({ ...r, won });
 }

@@ -10,6 +10,7 @@ import { loadCities } from "../src/lib/content";
 import { buildPulse } from "../src/lib/city-pulse";
 import { refreshAllKnowledge } from "../src/lib/city-knowledge";
 import { purgeExpired } from "../src/lib/posts";
+import { sweepAchievements } from "../src/lib/achievements";
 
 const log = (m: string) => console.log(`[worker ${new Date().toISOString()}] ${m}`);
 const PULSE_EVERY = 6 * 3600_000;
@@ -28,6 +29,8 @@ async function round() {
     const gone = await purgeExpired().catch(() => 0);
     if (gone) log(`histórias expiradas apagadas: ${gone}`);
   }
+  const ach = await sweepAchievements().catch((e) => { log(`conquistas: ${e}`); return null; });
+  if (ach) log(`conquistas: ${ach.users} viajantes, ${ach.announced} avisos`);
   log("volta concluída");
 }
 

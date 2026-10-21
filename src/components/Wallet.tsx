@@ -168,6 +168,10 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const [notifOpen, setNotifOpen] = useState(false);
   const [inviting, setInviting] = useState(false);
   useEffect(() => { if (window.location.hash === "#notifs") setNotifOpen(true); }, []);
+  useEffect(() => { // aviso de conquista (push ou centro de notificações) → abre os pontos
+    const f = () => { if (window.location.hash === "#points" && points) { setPointsOpen(true); history.replaceState(null, "", window.location.pathname); } };
+    f(); window.addEventListener("hashchange", f); return () => window.removeEventListener("hashchange", f);
+  }, [points]);
   // #post:<id> e #tag:<hashtag> abrem por cima de qualquer separador.
   const [deep, setDeep] = useState<{ post?: string; tag?: string } | null>(null);
   const [tools, setTools] = useState<{ tab: ToolTab; split?: string } | null>(null);

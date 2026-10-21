@@ -1400,5 +1400,8 @@
 "qrShare": "공유",
 "qrCopy": "링크 복사",
 "qrSave": "저장",
-"qrCopied": "링크가 복사되었습니다"
+"qrCopied": "링크가 복사되었습니다",
+"achLevel": "🎉 레벨 {n} 달성: {x}",
+"achBadge": "🏅 새 배지: {x}",
+"achReward": "🎁 다음 패스에 쓸 수 있는 {x} 크레딧을 받았어요"
 }

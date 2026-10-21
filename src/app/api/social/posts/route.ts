@@ -4,6 +4,7 @@ import { currentTraveller } from "@/lib/wallet";
 import { createPost, STORY_BGS } from "@/lib/posts";
 import { HOBBIES } from "@/lib/explore";
 import { rateLimit } from "@/lib/rate-limit";
+import { checkAchievements } from "@/lib/achievements";
 
 export const runtime = "nodejs";
 const Body = z.object({
@@ -26,5 +27,6 @@ export async function POST(req: Request) {
   if (!v.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const r = await createPost(me, v.data);
   if ("error" in r) return NextResponse.json(r, { status: r.error === "no_profile" ? 409 : 400 });
+  void checkAchievements(me).catch(() => {});
   return NextResponse.json(r);
 }

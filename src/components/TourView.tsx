@@ -26,6 +26,7 @@ import { Wallet } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { CommentsButton } from "./Comments";
 import Portal from "@/components/Portal";
+import { achievementText } from "@/lib/achievement-text";
 // Separadores carregados só quando abertos.
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
 const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
@@ -134,6 +135,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
       body: JSON.stringify({ city: city.id, stop: id, ...(on ? (geo.pos ? { lat: geo.pos.lat, lng: geo.pos.lng } : {}) : { undo: true }) }) }).catch(() => null);
     const j = await r?.json().catch(() => null);
     if (on && j?.pts) toast(fmt(t.ptCheckin, { n: j.pts }), { icon: j.verified ? "📡" : "⭐" });
+    // Conquistas desbloqueadas por este check-in: um aviso de celebração a seguir (com um pequeno intervalo).
+    (j?.won as string[] | undefined)?.forEach((k, i) => setTimeout(() => toast(achievementText(k, t), { ms: 5000 }), 1400 * (i + 1)));
     window.dispatchEvent(new Event("sgct:points"));
   }
   function toggleDone(id: string) {

@@ -895,5 +895,8 @@
 "qrShare": "共有",
 "qrCopy": "リンクをコピー",
 "qrSave": "保存",
-"qrCopied": "リンクをコピーしました"
+"qrCopied": "リンクをコピーしました",
+"achLevel": "🎉 レベル{n}に到達：{x}",
+"achBadge": "🏅 新しいバッジ：{x}",
+"achReward": "🎁 次のパスに使える{x}のクレジットを獲得しました"
 }

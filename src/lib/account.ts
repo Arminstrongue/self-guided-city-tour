@@ -54,6 +54,7 @@ export async function deleteAccount(email: string) {
   await (await import("./invites")).purgeInvites(email);
   await (await import("./referrals")).purgeReferrals(email);
   await (await import("./points")).purgePoints(email);
+  await (await import("./achievements")).purgeAchievements(email);
   await (await import("./split")).purgeSplit(email);
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })

@@ -952,5 +952,8 @@
 "qrShare": "Condividi",
 "qrCopy": "Copia link",
 "qrSave": "Salva",
-"qrCopied": "Link copiato"
+"qrCopied": "Link copiato",
+"achLevel": "🎉 Livello {n} raggiunto: {x}",
+"achBadge": "🏅 Nuovo badge: {x}",
+"achReward": "🎁 Hai sbloccato {x} di credito per il prossimo pass"
 }

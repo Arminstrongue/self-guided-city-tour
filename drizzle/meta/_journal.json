@@ -155,6 +155,13 @@
       "when": 1793900000000,
       "tag": "0021_city_knowledge",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1794000000000,
+      "tag": "0022_achievements",
+      "breakpoints": true
     }
   ]
 }
