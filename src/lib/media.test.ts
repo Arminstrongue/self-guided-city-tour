@@ -34,3 +34,11 @@ test("fotos antigas ficam de fora; destacadas da Commons primeiro", () => {
   const plainPic = photoScore({ DateTimeOriginal: { value: "2018-05-01" } }, 1600, 1000)!;
   assert.ok(featured > plainPic);
 });
+
+test("avaliações da Google: só as do último mês", async () => {
+  const { recentReviews } = await import("./media");
+  const now = Date.parse("2026-10-21T12:00:00Z");
+  const r = (at?: number) => ({ author: "a", avatar: null, rating: 5, text: "x", when: "", url: null, at });
+  const out = recentReviews([r(now - 5 * 86400_000), r(now - 40 * 86400_000), r(undefined)], now);
+  assert.equal(out.length, 1);
+});

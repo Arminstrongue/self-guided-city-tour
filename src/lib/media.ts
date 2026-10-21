@@ -12,7 +12,10 @@ import { takeGoogle } from "./gbudget";
 import { placesEnabled } from "./places";
 
 export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google"; page?: string };
-export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null };
+export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null; at?: number };
+/** Só mostramos avaliações da Google com menos de um mês. */
+export const REVIEW_MAX_AGE_MS = 31 * 86400_000;
+export const recentReviews = (list: Review[], now = Date.now()) => list.filter((r) => r.at && now - r.at <= REVIEW_MAX_AGE_MS);
 export type Media = {
   photos: Photo[];
   rating: number | null; ratings: number | null;
@@ -191,7 +194,7 @@ export async function cityCover(cityId: string, cityEn: string): Promise<Photo[]
 type GPlace = {
   id: string; rating?: number; userRatingCount?: number; googleMapsUri?: string;
   photos?: { name: string; widthPx: number; heightPx: number; authorAttributions?: { displayName?: string; uri?: string }[] }[];
-  reviews?: { rating?: number; text?: { text?: string }; originalText?: { text?: string }; relativePublishTimeDescription?: string; authorAttribution?: { displayName?: string; photoUri?: string; uri?: string }; googleMapsUri?: string }[];
+  reviews?: { rating?: number; text?: { text?: string }; originalText?: { text?: string }; relativePublishTimeDescription?: string; publishTime?: string; authorAttribution?: { displayName?: string; photoUri?: string; uri?: string }; googleMapsUri?: string }[];
 };
 
 async function googlePlace(query: string, lat: number, lng: number, lang: string) {
@@ -220,6 +223,7 @@ async function googlePlace(query: string, lat: number, lng: number, lang: string
       } catch { /* salta esta foto */ }
     }
     const reviews: Review[] = (p.reviews ?? []).filter((r) => (r.text?.text ?? r.originalText?.text ?? "").trim()).slice(0, 5).map((r) => ({
+      at: r.publishTime ? Date.parse(r.publishTime) || undefined : undefined,
       author: r.authorAttribution?.displayName ?? "Google", avatar: r.authorAttribution?.photoUri ?? null,
       rating: r.rating ?? 0, text: (r.text?.text ?? r.originalText?.text ?? "").trim(), when: r.relativePublishTimeDescription ?? "",
       url: r.authorAttribution?.uri ?? r.googleMapsUri ?? null
@@ -237,7 +241,7 @@ export async function stopMedia(o: { names: string[]; city: string; lat: number;
   return {
     // Fotos da Google primeiro (são as mais atuais), completadas pelas da Commons.
     photos: [...(g?.photos ?? []), ...w.photos].slice(0, 14),
-    rating: g?.rating ?? null, ratings: g?.ratings ?? null, reviews: g?.reviews ?? [],
+    rating: g?.rating ?? null, ratings: g?.ratings ?? null, reviews: recentReviews(g?.reviews ?? []),
     placeId: g?.id ?? null,
     mapsUrl: g?.maps ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${o.names[0]}, ${o.city}`)}`,
     wiki: w.wiki
