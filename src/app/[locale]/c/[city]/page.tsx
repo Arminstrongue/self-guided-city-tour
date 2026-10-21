@@ -22,6 +22,7 @@ import { TOUR_PLANS } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { routeOptions } from "@/lib/route-cost";
 import { CityGallery, CityHero, StickyBook } from "@/components/Showcase";
+import { PlaceComments } from "@/components/Comments";
 
 /** Página de entrada do QR: fotografias, destaques, plano, voo e pagamento. */
 export const dynamic = "force-dynamic";
@@ -71,6 +72,11 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         <section className="sec" id="safety">
           <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
           <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
+        </section>
+
+        <section className="sec" id="comments">
+          <div className="sec-h reveal"><div><h2>💬 {fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
+          <PlaceComments t={t} locale={params.locale} city={city.id} />
         </section>
 
         {free ? (

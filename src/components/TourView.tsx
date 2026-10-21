@@ -23,6 +23,8 @@ import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
 import { Wallet } from "lucide-react";
+import { toast } from "@/lib/toast";
+import { CommentsButton } from "./Comments";
 // Separadores carregados só quando abertos.
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
 const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
@@ -117,9 +119,26 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
 
   useEffect(() => { track("tour_open", { city: city.id, locale }, "day"); }, [city.id, locale]);
 
+  // Pontos: cada paragem marcada conta (com GPS por perto vale o dobro); sincroniza entre dispositivos.
+  const [cmCounts, setCmCounts] = useState<Record<string, number>>({});
+  useEffect(() => {
+    fetch(`/api/comments?city=${city.id}&counts=1`).then((r) => (r.ok ? r.json() : null)).then((j) => j && setCmCounts(j.counts)).catch(() => null);
+    fetch(`/api/me/checkin?city=${city.id}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j: { checkins?: { stop: string }[] } | null) => {
+      const srv = (j?.checkins ?? []).filter((c) => c.stop).map((c) => c.stop);
+      if (srv.some((x) => !done[x])) setDone({ ...done, ...Object.fromEntries(srv.map((x) => [x, true])) });
+    }).catch(() => null);
+  }, [city.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  async function syncCheckin(id: string, on: boolean) {
+    const r = await fetch("/api/me/checkin", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ city: city.id, stop: id, ...(on ? (geo.pos ? { lat: geo.pos.lat, lng: geo.pos.lng } : {}) : { undo: true }) }) }).catch(() => null);
+    const j = await r?.json().catch(() => null);
+    if (on && j?.pts) toast(fmt(t.ptCheckin, { n: j.pts }), { icon: j.verified ? "📡" : "⭐" });
+    window.dispatchEvent(new Event("sgct:points"));
+  }
   function toggleDone(id: string) {
     const nv = { ...done, [id]: !done[id] };
     setDone(nv);
+    void syncCheckin(id, Boolean(nv[id]));
     if (nv[id]) {
       track("stop_done", { city: city.id, stop: id });
       if (plan.stops.every((s) => nv[s.id])) track("tour_done", { city: city.id, locale }, "day");
@@ -273,6 +292,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
                           <EatNearby cityId={city.id} stopId={s.id} locale={locale} t={t} />
+                          <CommentsButton t={t} locale={locale} city={city.id} stop={s.id} title={stopName(s, locale)} count={cmCounts[s.id] ?? 0} />
                         </div>
                       )}
                     </div>

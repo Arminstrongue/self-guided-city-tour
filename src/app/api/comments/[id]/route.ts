@@ -1,0 +1,23 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { currentTraveller } from "@/lib/wallet";
+import { deleteComment, reportComment } from "@/lib/place-comments";
+import { rateLimit } from "@/lib/rate-limit";
+
+export const runtime = "nodejs";
+
+export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const me = await currentTraveller();
+  if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
+  return NextResponse.json({ ok: await deleteComment(me, params.id) });
+}
+
+const Body = z.object({ reason: z.enum(["spam", "fake", "harassment", "inappropriate", "safety", "other"]).default("other") });
+/** Denunciar um comentário. */
+export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const me = await currentTraveller();
+  if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
+  if (!rateLimit(req, "comments-report", 30)) return NextResponse.json({ error: "rate" }, { status: 429 });
+  const v = Body.safeParse(await req.json().catch(() => ({})));
+  return NextResponse.json({ ok: await reportComment(me, params.id, v.success ? v.data.reason : "other") });
+}

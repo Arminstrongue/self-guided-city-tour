@@ -141,6 +141,13 @@
       "when": 1793700000000,
       "tag": "0019_referrals",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1793800000000,
+      "tag": "0020_points_comments",
+      "breakpoints": true
     }
   ]
 }

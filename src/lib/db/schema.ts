@@ -420,7 +420,7 @@ export const referralCredits = pgTable("referral_credits", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
   amountCents: integer("amount_cents").notNull(),        // + ganho, − gasto
-  kind: text("kind").$type<"earned" | "spent">().notNull(),
+  kind: text("kind").$type<"earned" | "spent" | "reward">().notNull(),
   accessId: uuid("access_id").notNull(),
   friend: text("friend"),                                 // quem comprou (no caso de "earned")
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
@@ -469,3 +469,26 @@ export const splitItems = pgTable("split_items", {
   createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("split_items_group_idx").on(t.groupId, t.createdAt)]);
+
+/* ---------- Pontos: paragens e cidades visitadas (check-in) ---------- */
+/** Uma linha por cidade (stop = "") ou paragem visitada. verified = o GPS confirmou que estava lá. */
+export const checkins = pgTable("checkins", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  city: text("city").notNull(),
+  stop: text("stop").notNull().default(""),
+  verified: boolean("verified").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("checkins_uniq_idx").on(t.email, t.city, t.stop), index("checkins_city_idx").on(t.city, t.stop)]);
+
+/* ---------- Comentários sobre cidades e lugares ---------- */
+export const placeComments = pgTable("place_comments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  city: text("city").notNull(),
+  stop: text("stop").notNull().default(""),
+  author: text("author").notNull(),
+  text: text("text").notNull(),
+  hidden: boolean("hidden").notNull().default(false),
+  reports: integer("reports").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("place_comments_place_idx").on(t.city, t.stop, t.createdAt), index("place_comments_author_idx").on(t.author)]);

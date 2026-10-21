@@ -17,6 +17,7 @@ import { I, House, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, M
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
+import { PointsCard, usePoints } from "./Points";
 import { useLiveConnection } from "@/lib/live-client";
 import dynamic from "next/dynamic";
 // Ecrãs e folhas que só carregam quando são abertos (a carteira abre mais depressa).
@@ -29,6 +30,7 @@ const ToolsSheet = dynamic(() => import("./TravelTools").then((m) => m.ToolsShee
 const VideosTab = dynamic(() => import("./Reels").then((m) => m.VideosTab), { ssr: false });
 const ChatTab = dynamic(() => import("./Chat").then((m) => m.ChatTab), { ssr: false });
 const InstallApp = dynamic(() => import("./InstallApp").then((m) => m.InstallApp), { ssr: false });
+const PointsSheet = dynamic(() => import("./Points").then((m) => m.PointsSheet), { ssr: false });
 const GlobalSearch = dynamic(() => import("./GlobalSearch").then((m) => m.GlobalSearch), { ssr: false });
 const NotifsSheet = dynamic(() => import("./Notifs").then((m) => m.NotifsSheet), { ssr: false });
 const InviteSheet = dynamic(() => import("./Invite").then((m) => m.InviteSheet), { ssr: false });
@@ -60,6 +62,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const [refreshKey, setRefreshKey] = useState(0);
   const [pulling, setPulling] = useState(0);
   const [searching, setSearching] = useState(false);
+  const [pointsOpen, setPointsOpen] = useState(false);
   const [pendingCompose, setPendingCompose] = useState<string | null>(null);
   const [composeText, setComposeText] = useState("");
   const [w, setW] = useState<Wallet | null | "anon">(null);
@@ -159,6 +162,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
   const prof = social?.profile ?? null;
+  const points = usePoints(Boolean(signed));
   const { unread, notifs, refreshUnread } = useUnread(Boolean(prof));
   useLiveConnection(Boolean(signed));
   const [notifOpen, setNotifOpen] = useState(false);
@@ -326,7 +330,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
             <div className="wl-me">
               <button className="wl-me-av" onClick={() => setEditing(true)} aria-label={t.scEdit}><Avatar p={prof} size={68} /></button>
               <div className="wl-me-nums">
-                <button onClick={() => go("places")}><b className="num">{world.cities}</b><small>{t.wStatCities}</small></button>
+                <button onClick={() => go("places")}><b className="num">{Math.max(world.cities, points?.cities ?? 0)}</b><small>{t.wStatCities}</small></button>
                 <button onClick={() => go("people")}><b className="num">{social!.count.followers}</b><small>{social!.count.followers === 1 ? t.scFollower : t.scFollowers}</small></button>
                 <button onClick={() => go("people")}><b className="num">{social!.count.following}</b><small>{t.scFollowingN}</small></button>
               </div>
@@ -351,6 +355,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
             {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
           </div>}
         </section>
+        {signed && <PointsCard t={t} locale={locale} s={points} onOpen={() => setPointsOpen(true)} />}
         <nav className="wl-seg" role="tablist">
           {profileSubs.map((k) => (
             <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
@@ -427,6 +432,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
       {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}
       {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
+      {pointsOpen && points && <PointsSheet t={t} locale={locale} s={points} onClose={() => setPointsOpen(false)} />}
       {searching && <GlobalSearch t={t} locale={locale} cities={cities} onClose={() => setSearching(false)} />}
       {notifOpen && <NotifsSheet t={t} locale={locale} cities={cities} onRead={() => void refreshUnread()} onClose={() => { setNotifOpen(false); if (window.location.hash === "#notifs") history.replaceState(null, "", window.location.pathname); }} />}
       {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
