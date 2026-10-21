@@ -27,6 +27,7 @@ import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
 const MusicPicker = dynamic(() => import("./Music").then((m) => m.MusicPicker), { ssr: false });
 import { useLive, type LiveEvent } from "@/lib/live-client";
 import Portal from "@/components/Portal";
+import { QrTile } from "@/components/ProfileQR";
 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
@@ -85,10 +86,11 @@ export function StoryRing({ p, size = 64, state, onClick, label }: { p: { photo:
   );
 }
 
-function StoriesBar({ t, me, rings, authors, onOpen, onAdd, seen }: { t: Dict; me: PublicProfile; rings: Ring[]; authors: Record<string, PublicProfile>; onOpen: (i: number) => void; onAdd: () => void; seen: string[] }) {
+function StoriesBar({ t, locale, me, rings, authors, onOpen, onAdd, seen }: { t: Dict; locale: string; me: PublicProfile; rings: Ring[]; authors: Record<string, PublicProfile>; onOpen: (i: number) => void; onAdd: () => void; seen: string[] }) {
   const mineIdx = rings.findIndex((r) => r.mine);
   return (
-    <div className="st-bar" role="list">
+    <div className="st-wrap" role="list">
+    <div className="st-bar">
       <div className="st-item" role="listitem">
         <span className="st-me">
           <StoryRing p={me} state={mineIdx >= 0 ? "seen" : "none"} onClick={() => (mineIdx >= 0 ? onOpen(mineIdx) : onAdd())} label={t.pfYourStory} />
@@ -102,6 +104,8 @@ function StoriesBar({ t, me, rings, authors, onOpen, onAdd, seen }: { t: Dict; m
           <small className="ad-ellip">{authors[r.handle]?.name.split(" ")[0]}</small>
         </div>
       ))}
+    </div>
+    <QrTile t={t} locale={locale} me={me} />
     </div>
   );
 }
@@ -577,7 +581,7 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   const evCity = scope !== "following" ? scope : chips[0] ?? null;
   return (
     <section className="stack pf-feed" style={{ gap: 12 }}>
-      {(() => { const bar = <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />; return storySlot ? createPortal(bar, storySlot) : bar; })()}
+      {(() => { const bar = <StoriesBar t={t} locale={locale} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />; return storySlot ? createPortal(bar, storySlot) : bar; })()}
       <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true"><I icon={Camera} size={22} /></b></button>
       <div className="ex-chips pf-scope">
         <button className={scope === "following" ? "on" : ""} onClick={() => setScope("following")}>👥 {t.pfFollowing}</button>

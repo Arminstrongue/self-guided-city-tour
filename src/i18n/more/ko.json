@@ -1393,5 +1393,12 @@
 "gkTitle": "{city}에서 알아 두면 좋은 것",
 "gkSub": "나가기 전 실용 팁.",
 "gkCurrency": "통화",
-"qrScan": "휴대폰에서 열기"
+"qrScan": "휴대폰에서 열기",
+"qrMy": "내 QR",
+"qrScanMe": "Self Guided City Tour에서 저를 팔로우하세요:",
+"qrHint": "상대방이 휴대폰 카메라로 코드를 비추면 내 프로필이 열려 팔로우할 수 있어요.",
+"qrShare": "공유",
+"qrCopy": "링크 복사",
+"qrSave": "저장",
+"qrCopied": "링크가 복사되었습니다"
 }

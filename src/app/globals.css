@@ -1953,3 +1953,26 @@ main:focus{outline:none}
 #todo{scroll-margin-top:90px}
 #todo:target{animation:adFlash 1.6s var(--ease)}
 @keyframes adFlash{0%,40%{box-shadow:0 0 0 3px var(--cobalt);border-radius:18px}100%{box-shadow:0 0 0 3px transparent}}
+/* ── QR do perfil na barra de stories ── */
+.st-wrap{display:flex;align-items:flex-start;gap:10px}
+.st-wrap .st-bar{flex:1;min-width:0}
+.qr-tile{flex:none}
+.qr-mini{position:relative;width:72px;height:72px;border-radius:20px;border:0;padding:9px;cursor:pointer;background:#fff;box-shadow:0 0 0 2px transparent,0 6px 18px -6px rgba(59,91,253,.55);background-image:linear-gradient(#fff,#fff),linear-gradient(135deg,#3b5bfd,#a259ff);background-origin:border-box;background-clip:padding-box,border-box;border:2px solid transparent;display:grid;place-items:center;color:#0b0b0d}
+.qr-mini-img,.qr-mini-img svg{display:block;width:100%;height:100%}
+.qr-mini i{position:absolute;right:-5px;bottom:-5px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#3b5bfd,#a259ff);border:2px solid var(--bg)}
+.qr-bg{z-index:120}
+.qr-sheet{display:flex;flex-direction:column;align-items:center;gap:16px;padding:28px 20px calc(24px + env(safe-area-inset-bottom));background:radial-gradient(120% 70% at 50% 0%,#5b6cff 0%,#7a4dff 45%,#1a1440 100%);color:#fff;max-width:480px;animation:pkUp .32s var(--ease) both}
+.qr-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.16);cursor:pointer}
+.qr-card{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:8px}
+.qr-code{position:relative;width:min(68vw,260px);aspect-ratio:1;padding:18px;border-radius:28px;background:#fff;box-shadow:0 24px 60px -18px rgba(0,0,0,.55)}
+.qr-code>span:first-child,.qr-code svg{display:block;width:100%;height:100%}
+.qr-av{position:absolute;left:50%;top:50%;width:22%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:30%;padding:4px;background:#fff;display:grid;place-items:center;overflow:hidden}
+.qr-av img{width:100%;height:100%;object-fit:cover;border-radius:26%}
+.qr-av b{width:100%;height:100%;border-radius:26%;display:grid;place-items:center;color:#fff;font-size:22px;background:linear-gradient(135deg,#3b5bfd,#a259ff)}
+.qr-name{margin-top:14px;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.qr-handle{font-size:15px;font-weight:600;opacity:.75}
+.qr-hint{margin:0;max-width:34ch;text-align:center;font-size:13.5px;line-height:1.45;opacity:.82}
+.qr-acts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:380px}
+.qr-act{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:18px;border:0;cursor:pointer;color:#fff;font:inherit;font-size:13px;font-weight:650;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.qr-act:hover{background:rgba(255,255,255,.22)}
+@media (min-width:720px){.qr-bg{align-items:center}.qr-sheet{border-radius:28px;animation:pkPop .28s var(--ease) both}}

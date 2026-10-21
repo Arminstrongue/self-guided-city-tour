@@ -888,5 +888,12 @@
 "gkTitle": "{city}で知っておきたいこと",
 "gkSub": "出かける前の実用的なヒント。",
 "gkCurrency": "通貨",
-"qrScan": "スマホで開く"
+"qrScan": "スマホで開く",
+"qrMy": "マイQR",
+"qrScanMe": "Self Guided City Tour でフォローしてね：",
+"qrHint": "相手にスマホのカメラをコードに向けてもらうと、あなたのプロフィールが開きフォローできます。",
+"qrShare": "共有",
+"qrCopy": "リンクをコピー",
+"qrSave": "保存",
+"qrCopied": "リンクをコピーしました"
 }

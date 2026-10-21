@@ -945,5 +945,12 @@
 "gkTitle": "Buono a sapersi a {city}",
 "gkSub": "Consigli pratici prima di uscire.",
 "gkCurrency": "Valuta",
-"qrScan": "Apri sul telefono"
+"qrScan": "Apri sul telefono",
+"qrMy": "Il mio QR",
+"qrScanMe": "Seguimi su Self Guided City Tour:",
+"qrHint": "Chiedi all'altra persona di inquadrare il codice con la fotocamera: si apre il tuo profilo per seguirti.",
+"qrShare": "Condividi",
+"qrCopy": "Copia link",
+"qrSave": "Salva",
+"qrCopied": "Link copiato"
 }

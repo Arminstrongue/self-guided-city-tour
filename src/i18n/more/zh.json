@@ -888,5 +888,12 @@
 "gkTitle": "{city}须知",
 "gkSub": "出门前的实用提示。",
 "gkCurrency": "货币",
-"qrScan": "在手机上打开"
+"qrScan": "在手机上打开",
+"qrMy": "我的二维码",
+"qrScanMe": "在 Self Guided City Tour 关注我：",
+"qrHint": "让对方用手机相机对准二维码，即可打开你的主页并关注你。",
+"qrShare": "分享",
+"qrCopy": "复制链接",
+"qrSave": "保存",
+"qrCopied": "链接已复制"
 }

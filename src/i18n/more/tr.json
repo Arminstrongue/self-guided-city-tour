@@ -1393,5 +1393,12 @@
 "gkTitle": "{city} için bilmekte fayda var",
 "gkSub": "Çıkmadan önce pratik ipuçları.",
 "gkCurrency": "Para birimi",
-"qrScan": "Telefonunda aç"
+"qrScan": "Telefonunda aç",
+"qrMy": "QR kodum",
+"qrScanMe": "Beni Self Guided City Tour'da takip et:",
+"qrHint": "Karşındaki kişi telefon kamerasını koda tutsun; profilin açılır ve seni takip edebilir.",
+"qrShare": "Paylaş",
+"qrCopy": "Bağlantıyı kopyala",
+"qrSave": "Kaydet",
+"qrCopied": "Bağlantı kopyalandı"
 }
