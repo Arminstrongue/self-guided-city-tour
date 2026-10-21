@@ -1227,5 +1227,23 @@
 "pfTopic": "주제",
 "pfNewStory": "새 스토리",
 "pfStoryShort": "스토리",
-"pfOrText": "또는 글만 써도 돼요"
+"pfOrText": "또는 글만 써도 돼요",
+"skipToContent": "본문으로 건너뛰기",
+"ntAnd": "{a}님과 {b}님",
+"ntOthers": "{a}님 외 {k}명",
+"ntMany": {
+"like": "{n}이 회원님의 게시물을 좋아합니다.",
+"comment": "{n}이 회원님의 게시물에 댓글을 남겼어요.",
+"follow": "{n}이 회원님을 팔로우하기 시작했어요."
+},
+"tsSaved": "저장됨",
+"tsUnsaved": "저장에서 삭제됨",
+"tsPosted": "공유됨",
+"tsStoryPosted": "스토리에 추가됨",
+"tsVideoUp": "동영상 업로드 완료 — 준비되면 알려 드릴게요",
+"tsDeleted": "게시물이 삭제됨",
+"tsUndo": "실행 취소",
+"tsCopied": "복사됨",
+"tsError": "문제가 발생했어요. 다시 시도해 주세요.",
+"tsOffline": "오프라인 상태예요. 연결되면 다시 시도하세요."
 }

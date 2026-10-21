@@ -37,7 +37,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
           <span className="eyebrow">▣ {t.scanned}</span>
           <h1>{t.heroA} <em>{t.europe}</em> {t.heroB}</h1>
           <p>{t.heroSub}</p>
-          <div className="stats">
+          <div className="stats" tabIndex={0}>
             <span><b>{list.length}</b> {t.statCities}</span><span><b>{stops}</b> {t.stops}</span>
             <span><b>{LOCALES.length}</b> {t.statLangs}</span><span>{t.f2t}</span>
           </div>

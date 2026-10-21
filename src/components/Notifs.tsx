@@ -8,6 +8,19 @@ import { useLive } from "@/lib/live-client";
 import { Avatar, act, type PublicProfile } from "./Social";
 import { PostCard, ago, type PostItem } from "./Feed";
 
+/** Agrupa gostos na mesma publicação e novos seguidores: "Ana e mais 3 gostaram da sua publicação". */
+type Group = { lead: Item; actors: PublicProfile[] };
+function group(list: Item[]): Group[] {
+  const out: Group[] = []; const by = new Map<string, Group>();
+  for (const n of list) {
+    const k = n.type === "like" && n.post ? `like:${n.post.id}` : n.type === "follow" ? "follow" : n.type === "video_ready" ? null : n.type === "comment" && n.post ? `comment:${n.post.id}` : null;
+    const g = k ? by.get(k) : undefined;
+    if (g) { if (!g.actors.some((a) => a.handle === n.actor.handle)) g.actors.push(n.actor); continue; }
+    const ng = { lead: n, actors: [n.actor] }; out.push(ng); if (k) by.set(k, ng);
+  }
+  return out;
+}
+
 type Item = { id: string; type: "split" | "mention" | "like" | "comment" | "follow" | "request" | "accepted" | "story_reply" | "video_ready" | "invite_joined"; text: string; at: string; read: boolean; actor: PublicProfile; post: { id: string; photo: boolean; kind: string } | null; split?: string | null };
 
 export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; locale: Locale; cities: Record<string, string>; onClose: () => void; onRead: () => void }) {
@@ -40,13 +53,18 @@ export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; l
     location.href = `/${locale}/u/${n.actor.handle}`;
   }
   const isNew = (n: Item) => !n.read || Boolean(newIds.current?.has(n.id));
-  const fresh = items?.filter(isNew) ?? [];
-  const old = items?.filter((n) => !isNew(n)) ?? [];
-  const row = (n: Item) => (
+  const fresh = group(items?.filter(isNew) ?? []);
+  const old = group(items?.filter((n) => !isNew(n)) ?? []);
+  const who = (g: Group) => g.actors.length === 1 ? g.actors[0].name
+    : g.actors.length === 2 ? fmt(t.ntAnd, { a: g.actors[0].name, b: g.actors[1].name })
+    : fmt(t.ntOthers, { a: g.actors[0].name, k: g.actors.length - 1 });
+  const row = (g: Group) => { const n = g.lead; return (
     <div key={n.id} className={`nt-row ${isNew(n) ? "new" : ""}`}>
-      <a href={`/${locale}/u/${n.actor.handle}`} aria-label={n.actor.name}><Avatar p={n.actor} size={44} /></a>
+      {g.actors.length > 1
+        ? <span className="nt-stack" aria-hidden="true">{g.actors.slice(0, 2).map((a) => <Avatar key={a.handle} p={a} size={32} />)}</span>
+        : <a href={`/${locale}/u/${n.actor.handle}`} aria-label={n.actor.name}><Avatar p={n.actor} size={44} /></a>}
       <button className="nt-txt" onClick={() => go(n)}>
-        <span>{fmt(t.ntTypes[n.type], { n: n.actor.name, x: n.text })}</span>
+        <span>{fmt(g.actors.length > 1 && (n.type === "like" || n.type === "comment" || n.type === "follow") ? t.ntMany[n.type] : t.ntTypes[n.type], { n: who(g), x: n.text })}</span>
         <small className="hint">{ago(n.at, locale)}</small>
       </button>
       {n.type === "request" ? (
@@ -61,7 +79,7 @@ export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; l
         <img className="nt-thumb" src={`/api/social/photo/${n.post.id}`} alt="" loading="lazy" onClick={() => go(n)} />
       ) : null}
     </div>
-  );
+  ); };
   return (
     <div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack nt-sheet" style={{ gap: 10 }} onClick={(e) => e.stopPropagation()}>

@@ -1227,5 +1227,23 @@
 "pfTopic": "Konu",
 "pfNewStory": "Yeni hikâye",
 "pfStoryShort": "Hikâye",
-"pfOrText": "ya da sadece bir şey yaz"
+"pfOrText": "ya da sadece bir şey yaz",
+"skipToContent": "İçeriğe geç",
+"ntAnd": "{a} ve {b}",
+"ntOthers": "{a} ve {k} kişi daha",
+"ntMany": {
+"like": "{n} gönderini beğendi.",
+"comment": "{n} gönderine yorum yaptı.",
+"follow": "{n} seni takip etmeye başladı."
+},
+"tsSaved": "Kaydedildi",
+"tsUnsaved": "Kaydedilenlerden çıkarıldı",
+"tsPosted": "Paylaşıldı",
+"tsStoryPosted": "Hikâyene eklendi",
+"tsVideoUp": "Video yüklendi — hazır olunca haber vereceğiz",
+"tsDeleted": "Gönderi silindi",
+"tsUndo": "Geri al",
+"tsCopied": "Kopyalandı",
+"tsError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+"tsOffline": "Çevrimdışısın. Bağlanınca tekrar dene."
 }

@@ -5,6 +5,9 @@ import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { NativeChrome } from "@/components/NativeChrome";
+import { Toaster } from "@/components/Toaster";
+import { SkipLink } from "@/components/SkipLink";
+import { SheetManager } from "@/components/SheetManager";
 import { isLocale, RTL } from "@/i18n/core";
 import { getDict } from "@/i18n/dictionaries";
 
@@ -32,9 +35,12 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <script dangerouslySetInnerHTML={{ __html: `try{var d=document.documentElement,t=localStorage.getItem("sgct:theme"),a=localStorage.getItem("sgct:accent");if(t==="light"||t==="dark")d.dataset.theme=t;if(a&&a!=="blue")d.dataset.accent=a}catch(e){}` }} />
       </head>
       <body>
+        <SkipLink label={t.skipToContent} />
         <ServiceWorker />
         <NativeChrome />
+        <SheetManager />
         {children}
+        <Toaster />
         <footer className="foot">
           <p>{t.footer}</p>
           <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link> · <Link href={`/${params.locale}/guides/join`}>{t.lGuides}</Link> · <Link href={`/${params.locale}/wallet`}>{t.wallet}</Link></p>

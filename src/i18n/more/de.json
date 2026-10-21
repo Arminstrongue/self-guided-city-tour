@@ -752,5 +752,23 @@
 "pfTopic": "Thema",
 "pfNewStory": "Neue Story",
 "pfStoryShort": "Story",
-"pfOrText": "oder schreib einfach einen Text"
+"pfOrText": "oder schreib einfach einen Text",
+"skipToContent": "Zum Inhalt springen",
+"ntAnd": "{a} und {b}",
+"ntOthers": "{a} und {k} weitere",
+"ntMany": {
+"like": "{n} gefällt dein Beitrag.",
+"comment": "{n} haben deinen Beitrag kommentiert.",
+"follow": "{n} folgen dir jetzt."
+},
+"tsSaved": "Gespeichert",
+"tsUnsaved": "Aus Gespeichert entfernt",
+"tsPosted": "Geteilt",
+"tsStoryPosted": "Zu deiner Story hinzugefügt",
+"tsVideoUp": "Video hochgeladen — wir melden uns, wenn es fertig ist",
+"tsDeleted": "Beitrag gelöscht",
+"tsUndo": "Rückgängig",
+"tsCopied": "Kopiert",
+"tsError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+"tsOffline": "Du bist offline. Versuche es mit Verbindung erneut."
 }

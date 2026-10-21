@@ -746,5 +746,23 @@
 "pfTopic": "Thème",
 "pfNewStory": "Nouvelle story",
 "pfStoryShort": "Story",
-"pfOrText": "ou écrivez simplement un texte"
+"pfOrText": "ou écrivez simplement un texte",
+"skipToContent": "Aller au contenu",
+"ntAnd": "{a} et {b}",
+"ntOthers": "{a} et {k} autres",
+"ntMany": {
+"like": "{n} ont aimé votre publication.",
+"comment": "{n} ont commenté votre publication.",
+"follow": "{n} ont commencé à vous suivre."
+},
+"tsSaved": "Enregistré",
+"tsUnsaved": "Retiré des enregistrements",
+"tsPosted": "Publié",
+"tsStoryPosted": "Ajouté à votre story",
+"tsVideoUp": "Vidéo envoyée — nous vous préviendrons quand elle sera prête",
+"tsDeleted": "Publication supprimée",
+"tsUndo": "Annuler",
+"tsCopied": "Copié",
+"tsError": "Une erreur s’est produite. Réessayez.",
+"tsOffline": "Vous êtes hors ligne. Réessayez une fois connecté."
 }

@@ -1,5 +1,6 @@
 "use client";
 /** Plano de viagem: dias com lugares reais, criação automática pelos interesses, rota do dia e partilha. */
+import { toast } from "@/lib/toast";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -65,7 +66,7 @@ export function PlanView({ t, locale, plan: initial, moments }: { t: Dict; local
       return its.length ? [`\n${fmt(t.plDay, { n })}${dayDate(n) ? ` · ${dayDate(n)}` : ""}`, ...its.map((i) => `${i.time ?? "—"}  ${i.icon ?? "•"} ${i.title}`)] : [];
     }), `\nselfguidedcitytour.com${plan.city ? `/${plan.city}` : ""}`];
     const text = lines.join("\n");
-    try { if (navigator.share) await navigator.share({ title: plan.title, text }); else { await navigator.clipboard.writeText(text); } } catch { /* cancelado */ }
+    try { if (navigator.share) await navigator.share({ title: plan.title, text }); else { await navigator.clipboard.writeText(text); toast(t.tsCopied, { icon: "📋" }); } } catch { /* cancelado */ }
   }
 
   return (

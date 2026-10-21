@@ -14,6 +14,7 @@ import { SearchPick } from "./SearchPick";
 import { RichText } from "./PostExtras";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { FeedVideo, posterUrl } from "./FeedVideo";
+import { PullRefresh } from "./PullRefresh";
 import dynamic from "next/dynamic";
 // Partes pesadas só quando são abertas.
 const ReelsViewer = dynamic(() => import("./Reels").then((m) => m.ReelsViewer), { ssr: false });
@@ -22,6 +23,7 @@ const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { s
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
 import { ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
 import { MusicSticker, SoundButton, usePostMusic, type PickedMusic } from "./Music";
+import { toast, withUndo } from "@/lib/toast";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
 const MusicPicker = dynamic(() => import("./Music").then((m) => m.MusicPicker), { ssr: false });
 import { useLive, type LiveEvent } from "@/lib/live-client";
@@ -142,15 +144,30 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
     return () => clearTimeout(id);
   }, [item, paused, next]);
   useEffect(() => {
-    const k = (e: KeyboardEvent) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); };
+    const k = (e: KeyboardEvent) => { if (e.key === "ArrowRight") next(); if (e.key === "ArrowLeft") prev(); if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
   });
+  // Gestos: deslizar para baixo fecha; para o lado muda de pessoa.
+  const sw = useRef<{ x: number; y: number } | null>(null);
+  const [dragY, setDragY] = useState(0);
+  const onTouchStart = (e: React.TouchEvent) => { sw.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }; };
+  const onTouchMove = (e: React.TouchEvent) => { const s0 = sw.current; if (!s0) return; const dy = e.touches[0].clientY - s0.y; if (dy > 0 && dy > Math.abs(e.touches[0].clientX - s0.x)) setDragY(dy); };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const s0 = sw.current; sw.current = null; setDragY(0); if (!s0) return;
+    const dx = e.changedTouches[0].clientX - s0.x, dy = e.changedTouches[0].clientY - s0.y;
+    if (dy > 90 && dy > Math.abs(dx)) return onClose();
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) {
+      const fwd = (document.dir === "rtl" ? -dx : dx) < 0;
+      if (fwd) { if (ri < rings.length - 1) { setRi(ri + 1); setIi(0); } else onClose(); }
+      else if (ri > 0) { setRi(ri - 1); setIi(0); }
+    }
+  };
   if (!ring || !item) return null;
   const a = authors[ring.handle];
   const isLiked = liked[item.id] ?? item.liked;
   return (
-    <div className="st-view" role="dialog" aria-modal="true" aria-label={a?.name}>
-      <div className={`st-card ${item.photo ? "" : `sg-bg-${item.bg ?? "ocean"}`}`}
+    <div className="st-view" role="dialog" aria-modal="true" aria-label={a?.name} onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+      <div className={`st-card ${item.photo ? "" : `sg-bg-${item.bg ?? "ocean"}`}`} style={dragY ? { transform: `translateY(${dragY}px) scale(${1 - Math.min(dragY, 300) / 1500})`, borderRadius: 18 } : undefined}
         onPointerDown={() => setPause(true)} onPointerUp={() => setPause(false)} onPointerLeave={() => setPause(false)}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {item.photo && <img src={photoUrl(item.id)} alt="" className="st-img" />}
@@ -233,7 +250,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
     x.upload.onprogress = (e) => { if (e.lengthComputable) setPct(Math.round((e.loaded / e.total) * 100)); };
     x.onload = () => {
       setBusy(""); setPct(null);
-      if (x.status >= 200 && x.status < 300) return onClose("video");
+      if (x.status >= 200 && x.status < 300) { toast(t.tsVideoUp, { icon: "🎬" }); return onClose("video"); }
       let j: { error?: string } = {}; try { j = JSON.parse(x.responseText); } catch { /* ignorar */ }
       setErr(j.error === "too_big" || x.status === 413 ? t.rlTooBig : j.error === "offensive" ? t.mdOffensive : j.error === "busy" || x.status === 429 ? t.rlBusy : t.pfErr);
     };
@@ -249,7 +266,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
       music: music ? ("lib" in music ? { lib: music.lib } : { own: music.own, title: music.title }) : null }) }).catch(() => null);
     const j = await r?.json().catch(() => null);
     setBusy("");
-    if (r?.ok) return onClose(kind);
+    if (r?.ok) { toast(kind === "story" ? t.tsStoryPosted : t.tsPosted, { icon: "✓" }); return onClose(kind); }
     setErr(j?.error === "too_many" ? t.pfTooMany : j?.error === "offensive" ? t.mdOffensive : t.pfErr);
   }
   const isStory = kind === "story", isVideo = kind === "video";
@@ -368,7 +385,6 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const [list, setList] = useState<Comment[] | null>(null);
   const [txt, setTxt] = useState("");
   const [menu, setMenu] = useState(false);
-  const [sure, setSure] = useState(false);
   const [reported, setReported] = useState(false);
   const [burst, setBurst] = useState(false);
   const cRef = useRef<HTMLInputElement>(null);
@@ -376,6 +392,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const [reel, setReel] = useState(false);
   const [slide, setSlide] = useState(0);
   const [sharing, setSharing] = useState(false);
+  const [gone, setGone] = useState(false);
   const mu = usePostMusic(p.video ? null : p.music?.url);
   useLive(useCallback((ev: LiveEvent) => { if (ev.t === "video" && ev.id === post.id) setP((x) => ({ ...x, video: ev.status })); }, [post.id]));
   async function toggleLike(force?: boolean) {
@@ -384,6 +401,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
     setP({ ...p, liked: on, likes: p.likes + (on ? 1 : -1) });
     const r = await postAct(p.id, { action: on ? "like" : "unlike" });
     if (r?.likes !== undefined) setP((x) => ({ ...x, likes: r.likes, liked: on }));
+    else if (!r) { setP((x) => ({ ...x, liked: !on, likes: x.likes + (on ? -1 : 1) })); toast(navigator.onLine ? t.tsError : t.tsOffline, { tone: "err" }); }
   }
   async function loadComments() {
     const r = await fetch(`/api/social/post/${p.id}`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null);
@@ -397,19 +415,20 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
     await postAct(p.id, { action: "comment", text: v });
     await loadComments();
   }
+  if (gone) return null;
   return (
     <article className="card pf-card">
       <header className="pf-head">
         <a href={`/${locale}/u/${author.handle}`} className="pf-who"><Avatar p={author} size={36} />
           <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}<Verified handle={author.handle} /></b>
             <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
-        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}><I icon={Ellipsis} size={20} /></button>
+        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); }}><I icon={Ellipsis} size={20} /></button>
       </header>
       {p.music && !p.video && <div className="pf-music" ref={p.photo ? undefined : mu.box}><MusicSticker m={p.music} playing={mu.playing} onClick={mu.toggle} label={mu.muted ? t.rlUnmute : t.rlMute} /></div>}
       {menu && (
         <div className="stack sc-menu" style={{ gap: 6, margin: "0 12px 8px" }}>
           {p.mine ? (
-            <button className={sure ? "danger" : ""} onClick={async () => { if (!sure) return setSure(true); await postAct(p.id, { action: "delete" }); onDeleted?.(); }}>🗑 {sure ? t.pfDeleteSure : t.pfDelete}</button>
+            <button className="danger" onClick={() => { setMenu(false); withUndo(t.tsDeleted, t.tsUndo, { icon: "🗑", apply: () => setGone(true), revert: () => setGone(false), commit: async () => { await postAct(p.id, { action: "delete" }); onDeleted?.(); } }); }}>🗑 {t.pfDelete}</button>
           ) : reported ? <p className="note">✓ {t.pfReported}</p> : (
             <><b>⚑ {t.pfReport}</b>
               <div className="ex-chips">{(Object.keys(t.scReasons) as (keyof typeof t.scReasons)[]).map((r) => <button key={r} onClick={async () => { await postAct(p.id, { action: "report", reason: r }); setReported(true); }}>{t.scReasons[r]}</button>)}</div></>
@@ -445,7 +464,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
         </>}
         {p.tag && <span className="pf-tag">{HOBBY_ICON[p.tag as Hobby]} {t.hob[p.tag as Hobby]}</span>}
         <button className={`pf-act pf-save ${p.saved ? "on" : ""}`} aria-pressed={Boolean(p.saved)} aria-label={t.svSave} title={t.svSave}
-          onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); await postAct(p.id, { action: on ? "save" : "unsave" }); }}><I icon={Bookmark} size={25} solid={Boolean(p.saved)} /></button>
+          onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); toast(on ? t.tsSaved : t.tsUnsaved, { icon: "🔖" }); const r = await postAct(p.id, { action: on ? "save" : "unsave" }); if (!r) { setP((x) => ({ ...x, saved: !on })); toast(t.tsError, { tone: "err" }); } }}><I icon={Bookmark} size={25} solid={Boolean(p.saved)} /></button>
       </div>
       <div className="pf-body">
         {p.likes > 0 && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}</b>}
@@ -515,6 +534,11 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   const evCity = scope !== "following" ? scope : chips[0] ?? null;
   return (
     <section className="stack pf-feed" style={{ gap: 12 }}>
+      <PullRefresh label={t.exLoading} onRefresh={async () => {
+        const n = ++req.current;
+        const [r] = await Promise.all([fetch(feedUrl(), { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null), loadStories()]);
+        if (r && n === req.current) setPage(r);
+      }} />
       {(() => { const bar = <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />; return storySlot ? createPortal(bar, storySlot) : bar; })()}
       <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true"><I icon={Camera} size={22} /></b></button>
       <div className="ex-chips pf-scope">

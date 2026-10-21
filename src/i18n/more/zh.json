@@ -722,5 +722,23 @@
 "pfTopic": "主题",
 "pfNewStory": "新快拍",
 "pfStoryShort": "快拍",
-"pfOrText": "或者只写一段文字"
+"pfOrText": "或者只写一段文字",
+"skipToContent": "跳到内容",
+"ntAnd": "{a} 和 {b}",
+"ntOthers": "{a} 等 {k} 人",
+"ntMany": {
+"like": "{n}赞了你的帖子。",
+"comment": "{n}评论了你的帖子。",
+"follow": "{n}开始关注你。"
+},
+"tsSaved": "已收藏",
+"tsUnsaved": "已取消收藏",
+"tsPosted": "已发布",
+"tsStoryPosted": "已添加到你的快拍",
+"tsVideoUp": "视频已上传，准备好后会通知你",
+"tsDeleted": "帖子已删除",
+"tsUndo": "撤销",
+"tsCopied": "已复制",
+"tsError": "出了点问题，请重试。",
+"tsOffline": "你已离线，联网后再试。"
 }

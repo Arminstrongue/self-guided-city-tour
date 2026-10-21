@@ -3,6 +3,7 @@
  * Rede social da carteira (fase 3): conversas privadas com seguidores e com quem segue.
  * Leve: a caixa de entrada carrega quando abre o separador; a conversa aberta pede só as mensagens novas a cada 4 s.
  */
+import { toast } from "@/lib/toast";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -280,7 +281,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     const r = await post(handle, { action: "send", text: v, ...(reply ? { replyTo: reply.id } : {}) });
     setSending(false);
     if (r.ok && r.j?.message) added(r.j.message);
-    else { setTxt(v); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); } }
+    else { setTxt(v); if (!r.j) toast(navigator.onLine ? t.tsError : t.tsOffline, { tone: "err" }); if (r.j?.error === "not_allowed") setTh({ ...th, canSend: false }); if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); } }
   }
   async function earlier() {
     if (!th || th === "none" || !th.messages.length) return;

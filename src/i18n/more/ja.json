@@ -722,5 +722,23 @@
 "pfTopic": "テーマ",
 "pfNewStory": "新しいストーリー",
 "pfStoryShort": "ストーリー",
-"pfOrText": "またはテキストだけでもOK"
+"pfOrText": "またはテキストだけでもOK",
+"skipToContent": "本文へスキップ",
+"ntAnd": "{a}さんと{b}さん",
+"ntOthers": "{a}さんほか{k}人",
+"ntMany": {
+"like": "{n}があなたの投稿にいいねしました。",
+"comment": "{n}があなたの投稿にコメントしました。",
+"follow": "{n}があなたをフォローしました。"
+},
+"tsSaved": "保存しました",
+"tsUnsaved": "保存を解除しました",
+"tsPosted": "シェアしました",
+"tsStoryPosted": "ストーリーに追加しました",
+"tsVideoUp": "動画をアップロードしました。準備ができたらお知らせします",
+"tsDeleted": "投稿を削除しました",
+"tsUndo": "元に戻す",
+"tsCopied": "コピーしました",
+"tsError": "問題が発生しました。もう一度お試しください。",
+"tsOffline": "オフラインです。接続後にもう一度お試しください。"
 }

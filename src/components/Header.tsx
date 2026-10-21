@@ -34,7 +34,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
   const pickCur = (v: string) => { document.cookie = `${CURRENCY_COOKIE}=${v}; path=/; max-age=${365 * 86400}; samesite=lax`; window.location.reload(); };
   return (
     <div className={`bar${over ? " over" : ""}`}>
-      <Link className="brand" href={`/${locale}`}><span className="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path fillRule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 4.9 5.6 11.6 6.3 12.4a.9.9 0 0 0 1.4 0C13.4 20.6 19 13.9 19 9a7 7 0 0 0-7-7zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z" /></svg></span><span className="word">Self Guided <span>City Tour</span></span></Link>
+      <Link className="brand" href={`/${locale}`} aria-label="Self Guided City Tour"><span className="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path fillRule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 4.9 5.6 11.6 6.3 12.4a.9.9 0 0 0 1.4 0C13.4 20.6 19 13.9 19 9a7 7 0 0 0-7-7zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z" /></svg></span><span className="word">Self Guided <span>City Tour</span></span></Link>
       <div className="bar-end">
         <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label="Wallet" title="Wallet"><Wallet size={18} strokeWidth={2} aria-hidden="true" /></Link>
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
