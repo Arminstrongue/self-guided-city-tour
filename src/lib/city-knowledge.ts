@@ -46,6 +46,32 @@ async function intro(f: F, lang: string, title: string, max: number) {
   return { title: page.title ?? title, text: trimAtSentence(page.extract, max), url: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent((page.title ?? title).replace(/ /g, "_"))}` };
 }
 
+/** Título da secção "História" do artigo da cidade, em cada língua. */
+const HISTORY_HEADING: Record<string, RegExp> = {
+  en: /^history$/i, pt: /^história$/i, es: /^historia$/i, fr: /^histoire$/i, de: /^geschichte$/i, it: /^storia$/i,
+  zh: /^(历史|歷史)$/, ar: /^(التاريخ|تاريخ)$/, ja: /^歴史$/, tr: /^(tarih|tarihçe)$/i, ru: /^история$/i, ko: /^역사$/
+};
+/** Para cidades sem artigo "História de …": a secção "História" do próprio artigo da cidade. */
+async function historySection(f: F, lang: string, title: string, max: number) {
+  const j = await json(f, `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=extracts&explaintext=1&exsectionformat=wiki&titles=${encodeURIComponent(title)}`);
+  const page = Object.values(j?.query?.pages ?? {})[0] as { title?: string; extract?: string } | undefined;
+  const text = page?.extract ?? "";
+  const re = HISTORY_HEADING[lang] ?? HISTORY_HEADING.en;
+  const lines = text.split("\n");
+  const start = lines.findIndex((l) => { const m = l.match(/^==\s*([^=].*?)\s*==\s*$/); return Boolean(m && re.test(m[1].trim())); });
+  if (start < 0) return null;
+  const body: string[] = [];
+  for (const l of lines.slice(start + 1)) {
+    if (/^==\s*[^=].*==\s*$/.test(l)) break;          // próxima secção principal
+    if (/^={3,}.*={3,}\s*$/.test(l)) continue;           // subtítulos
+    body.push(l);
+  }
+  const out = trimAtSentence(body.join("\n"), max);
+  if (out.length < 200) return null;
+  const t = page?.title ?? title;
+  return { title: t, text: out, url: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(t.replace(/ /g, "_"))}#${encodeURIComponent(lines[start].replace(/=/g, "").trim().replace(/ /g, "_"))}` };
+}
+
 /** Busca e guarda o resumo e a história de uma cidade numa língua. */
 export async function refreshCityKnowledge(city: string, lang: string, f: F = fetch) {
   const en = WIKI_TITLE[city]; if (!en) return 0;
@@ -55,9 +81,16 @@ export async function refreshCityKnowledge(city: string, lang: string, f: F = fe
     const enTitle = kind === "summary" ? en : `History of ${en}`;
     let got: { title: string; text: string; url: string } | null = null, src = lang;
     try {
+      const max = kind === "summary" ? 900 : 2200;
       const t = await localTitle(f, enTitle, lang);
-      if (t) got = await intro(f, lang, t, kind === "summary" ? 900 : 2200);
-      if (!got && lang !== "en") { got = await intro(f, "en", enTitle, kind === "summary" ? 900 : 2200); src = "en"; }
+      if (t) got = await intro(f, lang, t, max);
+      // Sem artigo "História de …" nesta língua: a secção "História" do artigo da cidade.
+      if (!got && kind === "history") { const ct = await localTitle(f, en, lang); if (ct) got = await historySection(f, lang, ct, max); }
+      if (!got && lang !== "en") {
+        src = "en";
+        got = await intro(f, "en", enTitle, max);
+        if (!got && kind === "history") got = await historySection(f, "en", en, max);
+      }
     } catch { continue; }
     if (!got) continue;
     const row = { city, lang, kind, title: got.title, text: got.text, url: got.url, srcLang: src, fetchedAt: new Date() };
@@ -70,8 +103,11 @@ export async function refreshCityKnowledge(city: string, lang: string, f: F = fe
 /** Renova tudo o que tem mais de 7 dias (ou nunca foi buscado). */
 export async function refreshAllKnowledge(cities: string[], f: F = fetch, log: (m: string) => void = () => undefined) {
   const d = await db();
-  const have = await d.select({ city: schema.cityKnowledge.city, lang: schema.cityKnowledge.lang, at: schema.cityKnowledge.fetchedAt }).from(schema.cityKnowledge).where(eq(schema.cityKnowledge.kind, "summary"));
-  const fresh = new Set(have.filter((h) => Date.now() - h.at.getTime() < MAX_AGE).map((h) => `${h.city}:${h.lang}`));
+  const have = await d.select({ city: schema.cityKnowledge.city, lang: schema.cityKnowledge.lang, kind: schema.cityKnowledge.kind, at: schema.cityKnowledge.fetchedAt }).from(schema.cityKnowledge);
+  // Fresca = tem resumo E história com menos de 7 dias (as que ficaram sem história voltam a tentar).
+  const count = new Map<string, number>();
+  for (const h of have) if (Date.now() - h.at.getTime() < MAX_AGE) count.set(`${h.city}:${h.lang}`, (count.get(`${h.city}:${h.lang}`) ?? 0) + 1);
+  const fresh = new Set([...count.entries()].filter(([, n]) => n >= 2).map(([k]) => k));
   let n = 0;
   for (const c of cities) for (const l of LOCALES) {
     if (fresh.has(`${c}:${l}`)) continue;
