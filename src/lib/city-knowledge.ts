@@ -6,13 +6,14 @@
 import { and, eq } from "drizzle-orm";
 import { db, schema } from "./db";
 import { LOCALES } from "@/i18n/core";
+import { env } from "./env";
 
 export const WIKI_TITLE: Record<string, string> = {
   lis: "Lisbon", opo: "Porto", mad: "Madrid", bcn: "Barcelona", par: "Paris", lon: "London", rom: "Rome", ams: "Amsterdam",
   edi: "Edinburgh", man: "Manchester", gla: "Glasgow", liv: "Liverpool", bir: "Birmingham", ist: "Istanbul",
   dxb: "Dubai", auh: "Abu Dhabi", doh: "Doha", ruh: "Riyadh", jed: "Jeddah", cai: "Cairo", amm: "Amman", mct: "Muscat"
 };
-const UA = { "User-Agent": "HelloTravell/1.0 (https://hellotravell.com; hello@hellotravell.com)", "Api-User-Agent": "HelloTravell/1.0" };
+const UA = { "User-Agent": env.ua, "Api-User-Agent": env.ua };
 const MAX_AGE = 7 * 86400_000;
 
 type F = typeof fetch;

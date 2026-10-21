@@ -10,6 +10,7 @@
  */
 import { takeGoogle } from "./gbudget";
 import { placesEnabled } from "./places";
+import { env } from "./env";
 
 export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google"; page?: string };
 export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null; at?: number };
@@ -24,7 +25,7 @@ export type Media = {
   wiki: string | null;
 };
 
-const UA = "HelloTravell/1.0 (https://hellotravell.com; hello@hellotravell.com)";
+const UA = env.ua;
 const WIKI_TTL = 7 * 24 * 3600e3;
 const EMPTY_TTL = 15 * 60e3;          // resultados vazios (falha ou limite da Wikimedia): voltar a tentar em 15 min
 const GOOGLE_TTL = 7 * 24 * 3600e3; // 7 dias: controla o custo do Google (pesquisa com avaliações + fotos)

@@ -2,6 +2,7 @@
  * Textos legais (modelo). Os dados da empresa vêm das variáveis COMPANY_*.
  * IMPORTANTE: rever com um advogado antes do lançamento.
  */
+import { env } from "@/lib/env";
 export type LegalDoc = "terms" | "privacy" | "cookies" | "guides";
 export type Section = { h: string; p: string[] };
 
@@ -11,7 +12,7 @@ export function company() {
     name: v("COMPANY_NAME", "[nome da empresa — a preencher]"),
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
-    email: v("COMPANY_EMAIL", "hello@hellotravell.com"),
+    email: v("COMPANY_EMAIL", env.contact),
     updated: "19 de outubro de 2026"
   };
 }

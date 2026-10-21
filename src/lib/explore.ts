@@ -3,6 +3,7 @@
  * (Overpass API, dados abertos, sem chave). Um pedido por cidade a cada 24 h, guardado em memória.
  */
 import type { City } from "@/data/cities";
+import { env } from "./env";
 
 export const HOBBIES = ["food", "photo", "nature", "art", "music", "sport", "night", "shopping", "family", "history",
   "beach", "adventure", "wellness", "architecture", "cafe", "festival", "wine", "budget"] as const;
@@ -128,7 +129,7 @@ async function fetchCat(city: City, cat: PlaceCat): Promise<OsmEl[] | null> {
   const body = new URLSearchParams({ data: overpassQuery(cityCenter(city), cat) }).toString();
   for (const url of ENDPOINTS) {
     try {
-      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "HelloTravell/1.0 (hello@hellotravell.com)" }, signal: AbortSignal.timeout(12_000) });
+      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": env.ua }, signal: AbortSignal.timeout(12_000) });
       if (!r.ok) { console.warn(`[explore] ${city.id}/${cat} ${url} HTTP ${r.status}`); continue; }
       const j = (await r.json()) as OsmJson;
       // O Overpass responde 200 mesmo quando o pedido falha (tempo ou memória): o erro vem em "remark".
