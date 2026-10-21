@@ -329,6 +329,13 @@ export const postLikes = pgTable("post_likes", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("post_likes_pair_idx").on(t.postId, t.email)]);
 
+/** Quem viu cada história (só o autor vê a lista; apaga-se com a história). */
+export const storyViews = pgTable("story_views", {
+  postId: uuid("post_id").notNull(),
+  viewer: text("viewer").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("story_views_pair_idx").on(t.postId, t.viewer)]);
+
 export const postComments = pgTable("post_comments", {
   id: uuid("id").primaryKey().defaultRandom(),
   postId: uuid("post_id").notNull(),

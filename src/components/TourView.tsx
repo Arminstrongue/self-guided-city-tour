@@ -228,7 +228,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               return (
                 <div key={s.id}>
                   {i > 0 && legView(s.leg)}
-                  <div className={`stop ${done[s.id] ? "done" : ""}`}>
+                  <div id={`s-${s.id}`} className={`stop ${done[s.id] ? "done" : ""}`}>
                     <span className="pin num">{done[s.id] ? "✓" : i + 1}</span>
                     <div className="body">
                       <button className="cover" tabIndex={-1} aria-hidden="true" onClick={() => setOpen(isOpen ? "" : s.id)}>

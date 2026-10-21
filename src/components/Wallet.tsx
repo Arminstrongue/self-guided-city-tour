@@ -28,6 +28,7 @@ const TagSheet = dynamic(() => import("./PostExtras").then((m) => m.TagSheet), {
 const ToolsSheet = dynamic(() => import("./TravelTools").then((m) => m.ToolsSheet), { ssr: false });
 const VideosTab = dynamic(() => import("./Reels").then((m) => m.VideosTab), { ssr: false });
 const ChatTab = dynamic(() => import("./Chat").then((m) => m.ChatTab), { ssr: false });
+const GlobalSearch = dynamic(() => import("./GlobalSearch").then((m) => m.GlobalSearch), { ssr: false });
 const NotifsSheet = dynamic(() => import("./Notifs").then((m) => m.NotifsSheet), { ssr: false });
 const InviteSheet = dynamic(() => import("./Invite").then((m) => m.InviteSheet), { ssr: false });
 const signIn = (...a: Parameters<typeof import("next-auth/react").signIn>) => import("next-auth/react").then((m) => m.signIn(...a));
@@ -57,6 +58,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const [composing, setComposing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [pulling, setPulling] = useState(0);
+  const [searching, setSearching] = useState(false);
   const [w, setW] = useState<Wallet | null | "anon">(null);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
@@ -180,7 +182,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   // Puxar para atualizar (no topo da página).
   useEffect(() => {
     let y0: number | null = null, dy = 0;
-    const start = (e: TouchEvent) => { y0 = window.scrollY <= 0 && !document.querySelector(".sheet-bg,.rl,.ch-view,.ob") ? e.touches[0].clientY : null; dy = 0; };
+    const start = (e: TouchEvent) => { y0 = window.scrollY <= 0 && !document.querySelector(".sheet-bg,.rl,.ch-view,.ob,.st-view") ? e.touches[0].clientY : null; dy = 0; };
     const move = (e: TouchEvent) => { if (y0 === null) return; dy = e.touches[0].clientY - y0; setPulling(dy > 8 ? dy * 0.5 : 0); };
     const end = () => { if (y0 !== null && dy * 0.5 > 60) { buzz(); void load(); setRefreshKey((k) => k + 1); } y0 = null; setPulling(0); };
     window.addEventListener("touchstart", start, { passive: true }); window.addEventListener("touchmove", move, { passive: true }); window.addEventListener("touchend", end);
@@ -222,6 +224,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         <span className="row" style={{ gap: 4 }}>
           {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}><I icon={Settings} size={22} /></button>}
           {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}><I icon={Menu} size={22} /></a>}
+          <button className="wl-bar-ic" aria-label={t.gsTitle} title={t.gsTitle} onClick={() => setSearching(true)}><I icon={Search} size={22} /></button>
           {prof && <button className="wl-bar-ic" aria-label={t.ntTitle} title={t.ntTitle} onClick={() => { buzz(); setNotifOpen(true); }}><I icon={Bell} size={23} className={notifs > 0 ? "ring" : ""} />{notifs > 0 && <span className="wl-badge">{notifs > 9 ? "9+" : notifs}</span>}</button>}
           {prof && <button className="wl-bar-ic" aria-label={t.chTab} title={t.chTab} onClick={() => go("chat")}><I icon={MessageCircle} size={23} />{unread > 0 && <span className="wl-badge">{unread > 9 ? "9+" : unread}</span>}</button>}
           {!signed && w !== null && <button className="gp-out wl-in" onClick={goSignIn}>{t.wSignIn}</button>}
@@ -280,6 +283,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
       {/* ---------- Explorar: pessoas, cidades e o que há ---------- */}
       {section === "explore" && <>
+        <button className="gs-fake press" onClick={() => setSearching(true)}><I icon={Search} size={18} /><span>{t.gsPlaceholder}</span></button>
         <div className="nv-cities">
           <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
           {Object.entries(cities).sort((a, b) => Number(myCities.includes(b[0])) - Number(myCities.includes(a[0])) || a[1].localeCompare(b[1])).map(([id, n]) => (
@@ -404,6 +408,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
       {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}
       {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
+      {searching && <GlobalSearch t={t} locale={locale} cities={cities} onClose={() => setSearching(false)} />}
       {notifOpen && <NotifsSheet t={t} locale={locale} cities={cities} onRead={() => void refreshUnread()} onClose={() => { setNotifOpen(false); if (window.location.hash === "#notifs") history.replaceState(null, "", window.location.pathname); }} />}
       {settings && <SettingsSheet t={t} locale={locale} hobbies={signed?.hobbies ?? []} social={social} cities={cities} onHobbies={(h) => signed && setW({ ...signed, hobbies: h })} onClose={(c) => { setSettings(false); if (c) refreshSocial(); }} />}
     </div>

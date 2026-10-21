@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
-import { addComment, comments, deleteComment, getPost, like, removePost, reportPost, save } from "@/lib/posts";
+import { addComment, comments, deleteComment, getPost, like, removePost, reportPost, save, storyViewers, viewStory } from "@/lib/posts";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
@@ -17,7 +17,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 const Body = z.object({
-  action: z.enum(["like", "unlike", "comment", "uncomment", "delete", "report", "save", "unsave"]),
+  action: z.enum(["like", "unlike", "comment", "uncomment", "delete", "report", "save", "unsave", "view", "viewers"]),
   text: z.string().trim().min(1).max(300).optional(),
   commentId: z.string().max(40).optional(),
   reason: z.enum(["spam", "fake", "harassment", "inappropriate", "safety", "other"]).optional(),
@@ -31,7 +31,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const v = Body.safeParse(await req.json().catch(() => null));
   if (!v.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const { action } = v.data;
-  if (!rateLimit(req, action === "comment" ? "social-comment" : "social-like", action === "comment" ? 40 : 200)) return NextResponse.json({ error: "rate" }, { status: 429 });
+  if (!rateLimit(req, action === "comment" ? "social-comment" : action === "view" || action === "viewers" ? "story-view" : "social-like", action === "comment" ? 40 : action === "view" || action === "viewers" ? 900 : 200)) return NextResponse.json({ error: "rate" }, { status: 429 });
+  if (action === "view") return NextResponse.json({ ok: await viewStory(me, params.id) });
+  if (action === "viewers") { const list = await storyViewers(me, params.id); return list ? NextResponse.json({ viewers: list }) : NextResponse.json({ error: "not_found" }, { status: 404 }); }
   if (action === "like" || action === "unlike") {
     const r = await like(me, params.id, action === "like");
     return r ? NextResponse.json(r) : NextResponse.json({ error: "not_found" }, { status: 404 });

@@ -14,7 +14,6 @@ import { SearchPick } from "./SearchPick";
 import { RichText } from "./PostExtras";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { FeedVideo, posterUrl } from "./FeedVideo";
-import { PullRefresh } from "./PullRefresh";
 import dynamic from "next/dynamic";
 // Partes pesadas só quando são abertas.
 const ReelsViewer = dynamic(() => import("./Reels").then((m) => m.ReelsViewer), { ssr: false });
@@ -106,14 +105,18 @@ function StoriesBar({ t, me, rings, authors, onOpen, onAdd, seen }: { t: Dict; m
   );
 }
 
-export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen, onChanged }: {
-  t: Dict; locale: Locale; rings: Ring[]; authors: Record<string, PublicProfile>; start: number; onClose: () => void; onSeen?: (id: string) => void; onChanged?: () => void;
+const REACTIONS = ["😍", "😂", "😮", "🔥", "👏", "❤️"];
+export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen, onChanged, cities }: {
+  t: Dict; locale: Locale; rings: Ring[]; authors: Record<string, PublicProfile>; start: number; onClose: () => void; onSeen?: (id: string) => void; onChanged?: () => void; cities?: Record<string, string>;
 }) {
   const [ri, setRi] = useState(start);
   const [ii, setIi] = useState(0);
   const [pause, setPause] = useState(false);
   const [typing, setTyping] = useState(false);
-  const paused = pause || typing;
+  const [viewers, setViewers] = useState<{ n: number; list: (PublicProfile & { at: string; liked: boolean })[] } | null>(null);
+  const [showViewers, setShowViewers] = useState(false);
+  const [burst, setBurst] = useState<string | null>(null);
+  const paused = pause || typing || showViewers;
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const ring = rings[ri]; const item = ring?.items[ii];
   const [muted, setMutedS] = useState(isMuted());
@@ -138,6 +141,22 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
   }, [ring, ii, ri, rings.length, onClose]);
   const prev = () => { if (ii > 0) setIi(ii - 1); else if (ri > 0) { setRi(ri - 1); setIi(0); } };
   useEffect(() => { if (item) onSeen?.(item.id); }, [item, onSeen]);
+  // Conta a visualização (servidor) e, nas minhas histórias, mostra quem viu.
+  useEffect(() => {
+    if (!item) return;
+    setViewers(null);
+    if (!item.mine) { void postAct(item.id, { action: "view" }); return; }
+    let live = true;
+    void postAct(item.id, { action: "viewers" }).then((r) => { if (live && r?.viewers) setViewers({ n: r.viewers.length, list: r.viewers }); });
+    return () => { live = false; };
+  }, [item?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  async function react(e: string) {
+    if (!item) return;
+    setBurst(e); setTimeout(() => setBurst(null), 900);
+    try { navigator.vibrate?.(10); } catch { /* sem vibração */ }
+    const r = await fetch("/api/chat/story", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ story: item.id, text: e }) }).catch(() => null);
+    toast(r?.ok ? t.chSent : t.chCant, { icon: r?.ok ? e : undefined, tone: r?.ok ? "ok" : "err" });
+  }
   useEffect(() => {
     if (!item || paused) return;
     const id = setTimeout(next, 5500);
@@ -172,7 +191,11 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {item.photo && <img src={photoUrl(item.id)} alt="" className="st-img" />}
         {item.text && <p className={`st-text ${item.photo ? "cap" : ""}`}>{item.text}</p>}
-        {item.music && <div className="st-music"><MusicSticker m={item.music} playing={muPlaying} dark /></div>}
+        {(item.music || (item.city && cities?.[item.city])) && <div className="st-music">
+          {item.music && <MusicSticker m={item.music} playing={muPlaying} dark />}
+          {item.city && cities?.[item.city] && <a className="st-loc" href={`#feed:${item.city}`} onClick={onClose} onPointerDown={(e) => e.stopPropagation()}>📍 {cities[item.city]}</a>}
+        </div>}
+        {burst && <span className="st-burst" aria-hidden="true">{burst}</span>}
         <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (paused ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
         <div className="st-head">
           <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
@@ -186,16 +209,34 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         <button className="st-tap l" aria-label={t.navBack} onClick={prev} />
         <button className="st-tap r" aria-label={t.navFwd} onClick={next} />
         <div className="st-foot">
-          {item.mine ? (
+          {item.mine ? (<>
+            <button className="st-btn st-seen" onPointerDown={(e) => e.stopPropagation()} onClick={() => setShowViewers(true)} aria-label={t.stSeenBy}>
+              <span className="st-seen-av">{viewers?.list.slice(0, 3).map((v) => <Avatar key={v.handle} p={v} size={22} />)}</span>
+              👁 {viewers ? fmt(t.stSeenN, { n: viewers.n }) : "…"}
+            </button>
+            <span style={{ flex: 1 }} />
             <button className="st-btn" onClick={async () => { await postAct(item.id, { action: "delete" }); onChanged?.(); onClose(); }}>🗑 {t.pfDelete}</button>
-          ) : (
+          </>) : (
             <>
+              {!typing && <div className="st-reacts" onPointerDown={(e) => e.stopPropagation()}>{REACTIONS.map((e) => <button key={e} type="button" onClick={() => void react(e)} aria-label={`${t.stReact} ${e}`}>{e}</button>)}</div>}
               <StoryReply t={t} storyId={item.id} name={a?.name.split(" ")[0] ?? ""} onFocus={setTyping} />
               <button className={`st-btn st-like ${isLiked ? "on" : ""}`} aria-pressed={isLiked} aria-label={t.pfLike} onClick={async () => { setLiked({ ...liked, [item.id]: !isLiked }); await postAct(item.id, { action: isLiked ? "unlike" : "like" }); }}>{isLiked ? "❤️" : "🤍"}</button>
             </>
           )}
         </div>
       </div>
+      {showViewers && (
+        <div className="sheet-bg" style={{ zIndex: 120 }} onClick={() => setShowViewers(false)}>
+          <div className="sheet stack" style={{ gap: 8 }} onClick={(e) => e.stopPropagation()}>
+            <SheetX onClose={() => setShowViewers(false)} label={t.close} />
+            <b style={{ fontSize: 18 }}>👁 {fmt(t.stSeenN, { n: viewers?.n ?? 0 })}</b>
+            {!viewers?.list.length && <p className="hint">{t.stNoViews}</p>}
+            {viewers?.list.map((v) => (
+              <a key={v.handle} className="gs-row" href={`/${locale}/u/${v.handle}`}><Avatar p={v} size={40} /><span className="gs-t"><b>{v.name}</b><small>@{v.handle} · {ago(v.at, locale)}</small></span>{v.liked && <span aria-label={t.pfLike}>❤️</span>}</a>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -286,12 +327,13 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
       setBusy("");
     }} />
   );
-  const sticker = music && <div className="cp2-sticker"><MusicSticker m={music} playing={musicOn} dark onClick={toggleMusic} /></div>;
+  const storyCity = kind === "story" && city && cities[city] ? cities[city] : null;
+  const sticker = (music || storyCity) && <div className="cp2-sticker">{music && <MusicSticker m={music} playing={musicOn} dark onClick={toggleMusic} />}{storyCity && <span className="st-loc">📍 {storyCity}</span>}</div>;
   const tools: { k: typeof tool; icon: React.ReactNode; label: string; value?: string | null; show: boolean }[] = [
     { k: "photo", icon: <ImagePlus size={20} aria-hidden="true" />, label: photo ? (kind === "post" ? t.pfAddMore : t.pfChange) : t.pfPhoto, show: !isVideo },
     { k: "music", icon: <Music2 size={20} aria-hidden="true" />, label: music ? music.title : t.muAdd, value: music ? "on" : null, show: !isVideo },
     { k: "bg", icon: <Palette size={20} aria-hidden="true" />, label: t.pfBg, show: isStory && !photo },
-    { k: "city", icon: <MapPin size={20} aria-hidden="true" />, label: city && cities[city] ? cities[city] : t.pfCity, value: city, show: !isStory },
+    { k: "city", icon: <MapPin size={20} aria-hidden="true" />, label: city && cities[city] ? cities[city] : t.pfCity, value: city, show: true },
     { k: "tag", icon: <Hash size={20} aria-hidden="true" />, label: tag ? t.hob[tag] : t.pfTopic, value: tag, show: !isStory }
   ];
   return (
@@ -357,7 +399,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
           ))}
         </div>
         {tool === "bg" && isStory && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
-        {tool === "city" && !isStory && <SearchPick id="pfc" label={t.pfCity} placeholder={t.spCity} noneLabel={t.pfNoCity} value={city} onChange={(v) => setCity(v)}
+        {tool === "city" && <SearchPick id="pfc" label={t.pfCity} placeholder={t.spCity} noneLabel={t.pfNoCity} value={city} onChange={(v) => setCity(v)}
           options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />}
         {tool === "tag" && !isStory && <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>}
 
@@ -534,11 +576,6 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
   const evCity = scope !== "following" ? scope : chips[0] ?? null;
   return (
     <section className="stack pf-feed" style={{ gap: 12 }}>
-      <PullRefresh label={t.exLoading} onRefresh={async () => {
-        const n = ++req.current;
-        const [r] = await Promise.all([fetch(feedUrl(), { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).catch(() => null), loadStories()]);
-        if (r && n === req.current) setPage(r);
-      }} />
       {(() => { const bar = <StoriesBar t={t} me={me} rings={rings.rings} authors={rings.authors} seen={seen} onOpen={setViewer} onAdd={() => setComp("story")} />; return storySlot ? createPortal(bar, storySlot) : bar; })()}
       <button className="pf-new" onClick={() => setComp("post")}><Avatar p={me} size={36} /><span>{t.pfShare}</span><b aria-hidden="true"><I icon={Camera} size={22} /></b></button>
       <div className="ex-chips pf-scope">
@@ -560,7 +597,7 @@ export function FeedTab({ t, locale, social, cities, myCities, onEdit }: { t: Di
         </Fragment>
       ))}
       {page?.next && <button className="btn ghost press" disabled={loadingMore} onClick={() => void more()}>{loadingMore ? "…" : t.pfMore}</button>}
-      {viewer !== null && <StoryViewer t={t} locale={locale} rings={rings.rings} authors={rings.authors} start={viewer} onSeen={mark} onChanged={loadStories} onClose={() => setViewer(null)} />}
+      {viewer !== null && <StoryViewer t={t} locale={locale} cities={cities} rings={rings.rings} authors={rings.authors} start={viewer} onSeen={mark} onChanged={loadStories} onClose={() => setViewer(null)} />}
       {comp && <Composer t={t} social={social} cities={cities} defaultCity={scope !== "following" ? scope : me.cities[0] ?? null} startKind={comp}
         onClose={(c) => { setComp(null); if (c === "post" || c === "video") void load(); if (c === "story") void loadStories(); }} />}
     </section>

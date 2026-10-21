@@ -102,6 +102,7 @@ export async function purgeExpired() {
   await (await import("./music")).deleteOwnMusic(old.map((o) => o.music?.own));
   await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, ids));
   await d.delete(schema.postComments).where(inArray(schema.postComments.postId, ids));
+  await d.delete(schema.storyViews).where(inArray(schema.storyViews.postId, ids));
   await d.delete(schema.posts).where(inArray(schema.posts.id, ids));
   return ids.length;
 }
@@ -362,6 +363,27 @@ export async function like(me: string, id: string, on: boolean) {
   return { likes: n, liked: on };
 }
 
+/** Regista que vi uma história (não conta o próprio autor). */
+export async function viewStory(me: string, id: string) {
+  const v = await visiblePost(me, id);
+  if (!v || v.post.kind !== "story" || v.post.author === me) return false;
+  const d = await db();
+  await d.insert(schema.storyViews).values({ postId: id, viewer: me }).onConflictDoNothing();
+  return true;
+}
+
+/** Quem viu a minha história, do mais recente para o mais antigo (só para o autor). */
+export async function storyViewers(me: string, id: string) {
+  const d = await db();
+  const [p] = await d.select({ author: schema.posts.author, kind: schema.posts.kind }).from(schema.posts).where(eq(schema.posts.id, id)).limit(1);
+  if (!p || p.author !== me || p.kind !== "story") return null;
+  const rows = await d.select({ prof: schema.travellerProfiles, at: schema.storyViews.createdAt }).from(schema.storyViews)
+    .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.storyViews.viewer))
+    .where(eq(schema.storyViews.postId, id)).orderBy(desc(schema.storyViews.createdAt)).limit(200);
+  const likes = new Set((await d.select({ e: schema.postLikes.email }).from(schema.postLikes).where(eq(schema.postLikes.postId, id))).map((x) => x.e));
+  return rows.map((r) => ({ ...pub(r.prof), at: r.at.toISOString(), liked: likes.has(r.prof.email) }));
+}
+
 export async function comments(me: string, id: string) {
   const v = await visiblePost(me, id);
   if (!v) return null;
@@ -413,6 +435,7 @@ export async function removePost(id: string, onlyAuthor?: string) {
   await d.delete(schema.postLikes).where(eq(schema.postLikes.postId, id));
   await d.delete(schema.postComments).where(eq(schema.postComments.postId, id));
   await d.delete(schema.postSaves).where(eq(schema.postSaves.postId, id));
+  await d.delete(schema.storyViews).where(eq(schema.storyViews.postId, id));
   await dropPostNotifs([id]);
   return true;
 }
@@ -438,6 +461,7 @@ export async function purgeUser(email: string) {
     await (await import("./video")).deleteVideoFiles(mine);
   }
   await d.delete(schema.postLikes).where(eq(schema.postLikes.email, email));
+  await d.delete(schema.storyViews).where(or(eq(schema.storyViews.viewer, email), mine.length ? inArray(schema.storyViews.postId, mine) : undefined));
   await d.delete(schema.postComments).where(eq(schema.postComments.author, email));
   await d.delete(schema.postSaves).where(or(eq(schema.postSaves.email, email), mine.length ? inArray(schema.postSaves.postId, mine) : undefined));
 }
