@@ -9,6 +9,7 @@ import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { ACCENT_HEX, applyTheme, readTheme, type Accent, type Theme } from "@/lib/theme";
+import Portal from "@/components/Portal";
 
 export type PublicProfile = { handle: string; name: string; bio: string; photo: string | null; isPrivate: boolean };
 export type MyProfile = PublicProfile & { theme: Theme; accent: Accent; cities: string[]; lessOf: string[] };
@@ -61,7 +62,7 @@ export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyPro
     setErr(j?.error === "taken" ? t.scErrTaken : j?.error === "handle" ? t.scErrHandle : j?.error === "offensive" ? t.mdOffensive : t.scErr);
   }
   return (
-    <div className="sheet-bg" onClick={() => onClose(false)}>
+    <Portal><div className="sheet-bg" onClick={() => onClose(false)}>
       <form className="sheet stack sc-edit" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} onSubmit={save}>
         <SheetX onClose={() => onClose(false)} label={t.close} />
         <b style={{ fontSize: 19 }}>{initial ? t.scEdit : t.scCreate}</b>
@@ -85,7 +86,7 @@ export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyPro
           await fetch("/api/me/profile", { method: "DELETE" }).catch(() => null); onClose(true);
         }}>{del ? t.scDeleteSure : t.scDelete}</button>}
       </form>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -185,7 +186,7 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
   }
   const chip = (h: Hobby, on: boolean, toggle: () => void, minus = false) => <button key={h} className={`sc-chip ${on ? "on" : ""} ${minus ? "less" : ""}`} onClick={toggle}>{on ? "" : "+ "}{HOBBY_ICON[h]} {t.hob[h]}{on ? " ✕" : ""}</button>;
   return (
-    <div className="sheet-bg" onClick={() => onClose(false)}>
+    <Portal><div className="sheet-bg" onClick={() => onClose(false)}>
       <div className="sheet stack sc-set" style={{ gap: 18 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={() => onClose(false)} label={t.close} />
         <a className="ac-link" href={`/${locale}/wallet/account`}><span aria-hidden="true">👤</span><span className="stack" style={{ gap: 0 }}><b>{t.acTitle}</b><small className="hint">{t.acLinkSub}</small></span><span aria-hidden="true">›</span></a>
@@ -217,6 +218,6 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
         <div className="grid2"><button className="btn ghost press" onClick={() => onClose(false)}>{t.close}</button><button className="btn press" onClick={() => void save()}>{t.scSave}</button></div>
         <a className="hint" href={`/${locale}/legal/privacy`} style={{ fontSize: 12 }}>{t.lPrivacy}</a>
       </div>
-    </div>
+    </div></Portal>
   );
 }

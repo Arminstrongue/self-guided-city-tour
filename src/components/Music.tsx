@@ -10,6 +10,7 @@ import type { Dict } from "@/i18n/dictionaries";
 import { MUSIC, MUSIC_ARTIST, type Track } from "@/data/music";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
 import { SheetX } from "@/components/WinNav";
+import Portal from "@/components/Portal";
 
 export type PickedMusic = { lib: string; title: string; artist: string; url: string } | { own: string; title: string; artist: string; url: string };
 type MusicView = { title: string; artist: string; url: string };
@@ -72,7 +73,7 @@ export function MusicPicker({ t, current, onPick, onClose }: { t: Dict; current:
   }
   const pick = (m: PickedMusic) => { a.current?.pause(); onPick(m); onClose(); };
   return (
-    <div className="sheet-bg" style={{ zIndex: 97 }} onClick={onClose}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 97 }} onClick={onClose}>
       <div className="sheet stack mu-pick" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 19 }} className="row"><span className="qi q4 sm"><Music2 size={16} aria-hidden="true" /></span>{t.muTitle}</b>
@@ -89,7 +90,7 @@ export function MusicPicker({ t, current, onPick, onClose }: { t: Dict; current:
         ) : <OwnSound t={t} onPick={pick} />}
         {current && <button className="btn ghost press" onClick={() => { a.current?.pause(); onPick(null); onClose(); }}>{t.muRemove}</button>}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 

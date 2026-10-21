@@ -25,6 +25,7 @@ import dynamic from "next/dynamic";
 import { Wallet } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { CommentsButton } from "./Comments";
+import Portal from "@/components/Portal";
 // Separadores carregados só quando abertos.
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
 const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
@@ -360,13 +361,13 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         </div>
       </div>
       {fxOpen && (
-        <div className="sheet-bg" onClick={() => setFxOpen(false)}>
+        <Portal><div className="sheet-bg" onClick={() => setFxOpen(false)}>
           <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
             <SheetX onClose={() => setFxOpen(false)} label={t.close} />
             <b style={{ fontSize: 18 }}>💱 {t.ttFx}</b>
             <FxConverter t={t} locale={locale} from={city.cur} />
           </div>
-        </div>
+        </div></Portal>
       )}
     </>
   );

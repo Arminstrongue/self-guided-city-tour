@@ -10,6 +10,7 @@ import { flag } from "@/data/countries";
 import type { Wallet } from "@/lib/wallet";
 import type { Memory } from "@/lib/diary";
 import { SheetX } from "@/components/WinNav";
+import Portal from "@/components/Portal";
 
 type Spot = { name: string; country: string; year?: number; mine: boolean; want?: boolean };
 type Weather = { rainy: boolean; firstRain: string | null; max: number | null; min: number | null };
@@ -30,7 +31,7 @@ export function CitySheet({ t, locale, spot, id, wallet, memories, onClose }: {
   const status = spot.want ? `✈️ ${t.vKindWish}${spot.year ? ` · ${spot.year}` : ""}` : spot.year ? fmt(t.csVisitedIn, { y: spot.year }) : !spot.mine ? `✓ ${t.vAuto}` : `✓ ${t.vKindBeen}`;
 
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack cs" style={{ gap: 16 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <header className="cs-hero">
@@ -89,6 +90,6 @@ export function CitySheet({ t, locale, spot, id, wallet, memories, onClose }: {
           </>}
         </section>
       </div>
-    </div>
+    </div></Portal>
   );
 }

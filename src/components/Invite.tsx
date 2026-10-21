@@ -6,6 +6,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { REFERRAL_FRIEND_PCT } from "@/lib/pricing";
 import { Avatar, FollowBtn, type PublicProfile } from "./Social";
+import Portal from "@/components/Portal";
 
 type Info = { handle: string; link: string; sent: number; joined: number; friends: PublicProfile[]; rewards?: { paidFriends: number; earned: number; credit: number; friendPct: number; reward: number } };
 const eur = (c: number, l: string) => new Intl.NumberFormat(l, { style: "currency", currency: "EUR" }).format(c / 100);
@@ -24,8 +25,8 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
     fetch(`/api/invites?l=${locale}`, { cache: "no-store" }).then(async (r) => setInfo(r.status === 409 ? "no_profile" : r.ok ? await r.json() : null)).catch(() => setInfo(null));
   }, [locale]);
   if (info === "no_profile") return (
-    <div className="sheet-bg" onClick={onClose}><div className="sheet stack" style={{ gap: 10 }} onClick={(e) => e.stopPropagation()}>
-      <SheetX onClose={onClose} label={t.close} /><b style={{ fontSize: 19 }}>✉️ {t.ivTitle}</b><p className="hint">{t.ivNeedProfile}</p></div></div>
+    <Portal><div className="sheet-bg" onClick={onClose}><div className="sheet stack" style={{ gap: 10 }} onClick={(e) => e.stopPropagation()}>
+      <SheetX onClose={onClose} label={t.close} /><b style={{ fontSize: 19 }}>✉️ {t.ivTitle}</b><p className="hint">{t.ivNeedProfile}</p></div></div></Portal>
   );
   const link = info?.link ?? "";
   const text = fmt(t.ivText, { link });
@@ -59,7 +60,7 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
     await navigator.clipboard.writeText(link).catch(() => null); setCopied(true); setTimeout(() => setCopied(false), 2000); void record("link");
   }
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack iv" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 20 }}>✉️ {t.ivTitle}</b>
@@ -105,7 +106,7 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
         </section>}
         <small className="hint">{t.ivPrivacy}</small>
       </div>
-    </div>
+    </div></Portal>
   );
 }
 

@@ -6,6 +6,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile } from "./Social";
 import { PostCard, TileImg, type PostItem } from "./Feed";
+import Portal from "@/components/Portal";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -33,7 +34,7 @@ export function ShareSheet({ t, locale, post, onClose }: { t: Dict; locale: Loca
     await fetch(`/api/chat/${encodeURIComponent(h)}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "share", post: post.id }) }).catch(() => null);
   }
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 17 }}>↗ {t.shTitle}</b>
@@ -52,7 +53,7 @@ export function ShareSheet({ t, locale, post, onClose }: { t: Dict; locale: Loca
           </div>
         ))}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -64,13 +65,13 @@ export function PostSheet({ t, locale, id, cities, onClose }: { t: Dict; locale:
       .then((j) => { const p = j?.posts?.[0]; setV(p ? { p, a: j.authors[p.handle] } : "none"); }).catch(() => setV("none"));
   }, [id]);
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet pf-one" onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         {v === null ? <p className="hint" style={{ padding: 24 }}>{t.exLoading}</p> : v === "none" ? <p className="hint" style={{ padding: 24 }}>{t.scNotFound}</p>
           : <PostCard t={t} locale={locale} post={v.p} author={v.a} cities={cities} onDeleted={onClose} />}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -79,7 +80,7 @@ export function TagSheet({ t, locale, tag, cities, onClose }: { t: Dict; locale:
   const [page, setPage] = useState<Page | null>(null);
   useEffect(() => { fetch(`/api/social/tag?t=${encodeURIComponent(tag)}`).then((r) => (r.ok ? r.json() : null)).then((j) => setPage(j ?? { posts: [], authors: {}, next: null })).catch(() => setPage({ posts: [], authors: {}, next: null })); }, [tag]);
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack tg" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b className="tg-h">#{tag}</b>
@@ -87,7 +88,7 @@ export function TagSheet({ t, locale, tag, cities, onClose }: { t: Dict; locale:
         {page?.posts.length === 0 && <p className="hint">{t.pfEmpty}</p>}
         {page?.posts.map((p) => page.authors[p.handle] && <PostCard key={p.id} t={t} locale={locale} post={p} author={page.authors[p.handle]} cities={cities} />)}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 

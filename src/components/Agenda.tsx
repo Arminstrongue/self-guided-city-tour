@@ -9,6 +9,7 @@ import type { MomentView } from "./Explore";
 import { AddToPlan } from "./Explore";
 import { WHEN_ICON } from "@/data/moments";
 import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
+import Portal from "@/components/Portal";
 
 type Range = "all" | "today" | "tomorrow" | "weekend";
 const KINDS: CityEvent["kind"][] = ["music", "sport", "arts", "family", "film", "other"];
@@ -124,7 +125,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
       {msg && <p className="note">✓ {msg}</p>}
 
       {open && (
-        <div className="sheet-bg" onClick={() => setOpen(null)}>
+        <Portal><div className="sheet-bg" onClick={() => setOpen(null)}>
           <div className="sheet ag-sheet" role="dialog" aria-modal="true" onClick={(x) => x.stopPropagation()}>
             <SheetX onClose={() => setOpen(null)} label={t.close} />
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -148,7 +149,7 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               <button className="link-btn" onClick={() => setOpen(null)}>{t.close}</button>
             </div>
           </div>
-        </div>
+        </div></Portal>
       )}
       {toPlan && <AddToPlan t={t} locale={locale} cityId={cityId} cityName={cities[cityId]} item={toPlan} onClose={(m) => { setToPlan(null); if (m) { setMsg(m); setTimeout(() => setMsg(""), 3000); } }} />}
     </div>

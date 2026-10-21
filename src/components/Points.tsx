@@ -6,6 +6,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { toast } from "@/lib/toast";
+import Portal from "@/components/Portal";
 
 type BadgeId = keyof Dict["ptBadgeNames"];
 type Score = {
@@ -73,7 +74,7 @@ export function PointsSheet({ t, locale, s, onClose }: { t: Dict; locale: Locale
     </a>
   );
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack pt-sheet" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <div className="pt-hero">
@@ -110,6 +111,6 @@ export function PointsSheet({ t, locale, s, onClose }: { t: Dict; locale: Locale
           <small className="hint">{t.ptRewardNote}</small>
         </>}
       </div>
-    </div>
+    </div></Portal>
   );
 }

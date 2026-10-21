@@ -15,6 +15,7 @@ import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, Pause,
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 import { Scrub, videoUrl, posterUrl, compact } from "./FeedVideo";
+import Portal from "@/components/Portal";
 export { videoUrl, posterUrl };
 const postAct = (id: string, body: Record<string, string>) =>
   fetch(`/api/social/post/${id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json()).catch(() => null);
@@ -199,7 +200,7 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
   }, [post.id]);
   useEffect(() => { void load(); }, [load]);
   return (
-    <div className="sheet-bg" style={{ zIndex: 130 }} onClick={() => onClose(list?.length ?? null)}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 130 }} onClick={() => onClose(list?.length ?? null)}>
       <div className="sheet stack rl-coms" style={{ gap: 10 }} onClick={(e) => e.stopPropagation()}>
         <b style={{ textAlign: "center" }}>{list ? fmt(t.rlComments, { n: list.length }) : t.pfComments}</b>
         <div className="stack" style={{ gap: 10, overflowY: "auto", maxHeight: "50vh" }}>
@@ -221,7 +222,7 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
           </form>
         ) : <small className="hint">{t.pfOnlyCircle}</small>}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 

@@ -6,6 +6,7 @@ import { SheetX } from "@/components/WinNav";
 import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { track } from "@/lib/track";
+import Portal from "@/components/Portal";
 
 const SafetyPanel = dynamic(() => import("./Safety").then((m) => m.SafetyPanel), { ssr: false, loading: () => <div className="card wl-skel" style={{ height: 220 }} /> });
 type Pos = { lat: number; lng: number };
@@ -25,7 +26,7 @@ export function SosButton(props: { cityId: string; country?: string; cityName: s
     <>
       <button className="sos-fab press" onClick={() => { setOpen(true); track("sos_open", { city: props.cityId }); }} aria-label={props.t.safety}>{props.t.sosBtn}</button>
       {open && (
-        <div className="sheet-bg" onClick={() => setOpen(false)}>
+        <Portal><div className="sheet-bg" onClick={() => setOpen(false)}>
           <div className="sheet" role="dialog" aria-modal="true" aria-label={props.t.safety} onClick={(e) => e.stopPropagation()}>
             <SheetX onClose={() => setOpen(false)} label={props.t.close} />
             <div className="row-between" style={{ marginBottom: 12 }}>
@@ -34,7 +35,7 @@ export function SosButton(props: { cityId: string; country?: string; cityName: s
             </div>
             <SafetyPanel {...props} compact />
           </div>
-        </div>
+        </div></Portal>
       )}
     </>
   );

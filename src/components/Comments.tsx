@@ -6,6 +6,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { toast } from "@/lib/toast";
+import Portal from "@/components/Portal";
 
 type Author = { handle: string; name: string; photo: string | null };
 type Item = { id: string; text: string; at: string; author: Author; mine: boolean; canDelete: boolean };
@@ -97,13 +98,13 @@ export function CommentsButton({ t, locale, city, stop, title, count }: { t: Dic
   return <>
     <button type="button" className="cm-btn" onClick={() => setOpen(true)}><MessageCircle size={15} aria-hidden="true" /> {count > 0 ? (count === 1 ? t.cm1 : fmt(t.cmN, { n: count })) : t.cmTitle}</button>
     {open && (
-      <div className="sheet-bg" onClick={() => setOpen(false)}>
+      <Portal><div className="sheet-bg" onClick={() => setOpen(false)}>
         <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
           <SheetX onClose={() => setOpen(false)} label={t.close} />
           <b style={{ fontSize: 19 }}>💬 {title}</b>
           <PlaceComments t={t} locale={locale} city={city} stop={stop} />
         </div>
-      </div>
+      </div></Portal>
     )}
   </>;
 }

@@ -9,6 +9,7 @@ import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile } from "./Social";
 import { I, ArrowLeftRight, CloudDownload, Receipt, Wrench } from "./Ico";
 import type { LucideIcon } from "lucide-react";
+import Portal from "@/components/Portal";
 
 export type ToolTab = "fx" | "offline" | "split";
 
@@ -203,7 +204,7 @@ function NewGroup({ t, onClose }: { t: Dict; onClose: (id?: string) => void }) {
     if (r?.id) onClose(r.id); else setErr(r?.error === "offensive" ? t.mdOffensive : t.spFail);
   }
   return (
-    <div className="sheet-bg" style={{ zIndex: 96 }} onClick={() => onClose()}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 96 }} onClick={() => onClose()}>
       <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={() => onClose()} label={t.close} />
         <b style={{ fontSize: 18 }}>🧾 {t.spNew}</b>
@@ -223,7 +224,7 @@ function NewGroup({ t, onClose }: { t: Dict; onClose: (id?: string) => void }) {
         {err && <small className="ch-warn">{err}</small>}
         <button className="btn press" disabled={busy || !f.title.trim()} onClick={() => void create()}>{t.spCreate}</button>
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -324,7 +325,7 @@ function ExpenseSheet({ t, locale, g, onClose, onSave }: { t: Dict; locale: Loca
     if (r?.ok) onClose(); else setErr(r?.error === "offensive" ? t.mdOffensive : r?.error === "shares" ? t.spSharesErr : t.spFail);
   }
   return (
-    <div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
       <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 18 }}>🧾 {t.spAddExp}</b>
@@ -357,7 +358,7 @@ function ExpenseSheet({ t, locale, g, onClose, onSave }: { t: Dict; locale: Loca
         {err && <small className="ch-warn">{err}</small>}
         <button className="btn press" disabled={busy || !(amt > 0) || (!custom && !among.length)} onClick={() => void save()}>{t.spAddExp}</button>
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -370,7 +371,7 @@ function PersonSheet({ t, g, onClose, onSave }: { t: Dict; g: Group; onClose: ()
     if (r?.ok) onClose(); else setErr(r?.error === "offensive" ? t.mdOffensive : t.spFail);
   }
   return (
-    <div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
       <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 18 }}>＋ {t.spAddPerson}</b>
@@ -386,7 +387,7 @@ function PersonSheet({ t, g, onClose, onSave }: { t: Dict; g: Group; onClose: ()
         </div>
         {err && <small className="ch-warn">{err}</small>}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -398,7 +399,7 @@ export function ToolsSheet({ t, locale, cities, mine, localCur, tab: tab0, split
   useEffect(() => setTab(tab0), [tab0]);
   const tabs: [ToolTab, LucideIcon, string][] = [["fx", ArrowLeftRight, t.ttFx], ["offline", CloudDownload, t.ttOffline], ["split", Receipt, t.ttSplit]];
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack tt" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 19 }} className="row" ><span className="qi q3 sm"><I icon={Wrench} size={17} /></span>{t.ttTools}</b>
@@ -409,6 +410,6 @@ export function ToolsSheet({ t, locale, cities, mine, localCur, tab: tab0, split
         {tab === "offline" && <OfflineTab t={t} locale={locale} cities={cities} mine={mine} />}
         {tab === "split" && (signed ? <SplitTab t={t} locale={locale} open={split} /> : <p className="hint">{t.wSignSub}</p>)}
       </div>
-    </div>
+    </div></Portal>
   );
 }

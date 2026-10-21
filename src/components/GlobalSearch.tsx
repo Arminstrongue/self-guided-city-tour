@@ -5,6 +5,7 @@ import { Search, X, MapPin, Landmark, Hash, BadgeCheck, Clock, Star } from "luci
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { SearchResult } from "@/lib/search";
 import { Avatar } from "./Social";
+import Portal from "@/components/Portal";
 
 const KEY = "sgct:recent-search";
 const flag = (cc: string) => (cc.length === 2 ? String.fromCodePoint(...[...cc.toUpperCase()].map((c) => 127397 + c.charCodeAt(0))) : "🌍");
@@ -36,7 +37,7 @@ export function GlobalSearch({ t, locale, cities, onClose }: { t: Dict; locale: 
   const go = (href: string) => { remember(); onClose(); if (href.startsWith("#")) location.hash = href.slice(1); else location.href = href; };
   const none = r && !r.cities.length && !r.stops.length && !r.people.length && !r.tags.length && !r.guides.length;
   return (
-    <div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
+    <Portal><div className="sheet-bg" style={{ zIndex: 96 }} onClick={onClose}>
       <div className="sheet gs" onClick={(e) => e.stopPropagation()} aria-label={t.gsTitle}>
         <form className="gs-bar" role="search" onSubmit={(e) => { e.preventDefault(); remember(); input.current?.blur(); }}>
           <Search size={18} aria-hidden="true" />
@@ -78,6 +79,6 @@ export function GlobalSearch({ t, locale, cities, onClose }: { t: Dict; locale: 
           </div>
         )}
       </div>
-    </div>
+    </div></Portal>
   );
 }

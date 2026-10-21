@@ -7,6 +7,7 @@ import { SheetX } from "@/components/WinNav";
 import { useLive } from "@/lib/live-client";
 import { Avatar, act, type PublicProfile } from "./Social";
 import { PostCard, ago, type PostItem } from "./Feed";
+import Portal from "@/components/Portal";
 
 /** Agrupa gostos na mesma publicação e novos seguidores: "Ana e mais 3 gostaram da sua publicação". */
 type Group = { lead: Item; actors: PublicProfile[] };
@@ -81,7 +82,7 @@ export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; l
     </div>
   ); };
   return (
-    <div className="sheet-bg" onClick={onClose}>
+    <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack nt-sheet" style={{ gap: 10 }} onClick={(e) => e.stopPropagation()}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 19 }}>🔔 {t.ntTitle}</b>
@@ -100,6 +101,6 @@ export function NotifsSheet({ t, locale, cities, onClose, onRead }: { t: Dict; l
           </div>
         </div>
       )}
-    </div>
+    </div></Portal>
   );
 }

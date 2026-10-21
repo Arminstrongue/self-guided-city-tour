@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Globe, Wallet, Check, X } from "lucide-react";
 import { LOCALES } from "@/i18n/core";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
+import Portal from "@/components/Portal";
 
 /** Cada idioma escrito no próprio idioma, para quem não lê o atual. */
 export const LANG_NAMES: Record<string, string> = {
@@ -42,7 +43,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
         </button>
       </div>
       {open && (
-        <div className="sheet-bg hb-bg" onClick={() => setOpen(false)}>
+        <Portal><div className="sheet-bg hb-bg" onClick={() => setOpen(false)}>
           <div className="sheet hb-sheet" role="dialog" aria-label={l} onClick={(e) => e.stopPropagation()}>
             <button className="sheet-x" onClick={() => setOpen(false)} aria-label="✕"><X size={18} aria-hidden="true" /></button>
             <b className="hb-h">{l}</b>
@@ -60,7 +61,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
               </div>
             </>}
           </div>
-        </div>
+        </div></Portal>
       )}
     </div>
   );

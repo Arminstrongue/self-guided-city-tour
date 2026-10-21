@@ -26,6 +26,7 @@ import { toast, withUndo } from "@/lib/toast";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
 const MusicPicker = dynamic(() => import("./Music").then((m) => m.MusicPicker), { ssr: false });
 import { useLive, type LiveEvent } from "@/lib/live-client";
+import Portal from "@/components/Portal";
 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
@@ -226,7 +227,7 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         </div>
       </div>
       {showViewers && (
-        <div className="sheet-bg" style={{ zIndex: 120 }} onClick={() => setShowViewers(false)}>
+        <Portal><div className="sheet-bg" style={{ zIndex: 120 }} onClick={() => setShowViewers(false)}>
           <div className="sheet stack" style={{ gap: 8 }} onClick={(e) => e.stopPropagation()}>
             <SheetX onClose={() => setShowViewers(false)} label={t.close} />
             <b style={{ fontSize: 18 }}>👁 {fmt(t.stSeenN, { n: viewers?.n ?? 0 })}</b>
@@ -235,7 +236,7 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
               <a key={v.handle} className="gs-row" href={`/${locale}/u/${v.handle}`}><Avatar p={v} size={40} /><span className="gs-t"><b>{v.name}</b><small>@{v.handle} · {ago(v.at, locale)}</small></span>{v.liked && <span aria-label={t.pfLike}>❤️</span>}</a>
             ))}
           </div>
-        </div>
+        </div></Portal>
       )}
     </div>
   );
@@ -337,7 +338,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", i
     { k: "tag", icon: <Hash size={20} aria-hidden="true" />, label: tag ? t.hob[tag] : t.pfTopic, value: tag, show: !isStory }
   ];
   return (
-    <div className="sheet-bg" onClick={() => onClose(null)}>
+    <Portal><div className="sheet-bg" onClick={() => onClose(null)}>
       <div className="sheet cp2" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={isStory ? t.pfNewStory : t.pfNew}>
         <div className="cp2-head">
           <button type="button" className="cp2-x press" onClick={() => onClose(null)} aria-label={t.close}><X size={20} aria-hidden="true" /></button>
@@ -408,7 +409,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", i
         <button className="btn press cp2-go" disabled={busy !== "" || (isVideo ? !video : !photo && !text.trim() && !music)} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
         {picking && <MusicPicker t={t} current={music} onPick={(m) => { setMusic(m); setMusicOn(false); }} onClose={() => setPicking(false)} />}
       </div>
-    </div>
+    </div></Portal>
   );
 }
 
@@ -634,13 +635,13 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
       {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}
       {reel && <ReelsViewer t={t} locale={locale} cities={cities} handle={handle} startId={reel} onClose={() => setReel(null)} />}
       {open && (
-        <div className="sheet-bg" onClick={() => setOpen(null)}>
+        <Portal><div className="sheet-bg" onClick={() => setOpen(null)}>
           <div className="sheet pf-one" onClick={(e) => e.stopPropagation()}>
             <SheetX onClose={() => setOpen(null)} label={t.close} />
             <PostCard t={t} locale={locale} post={open} author={page?.authors[open.handle] ?? author} cities={cities}
               onDeleted={() => { setPage(page ? { ...page, posts: page.posts.filter((x) => x.id !== open.id) } : page); setOpen(null); }} />
           </div>
-        </div>
+        </div></Portal>
       )}
     </section>
   );
