@@ -10,6 +10,6 @@
 		health_interval 15s
 	}
 	# Ficheiros estáticos com cache longa (a Cloudflare guarda-os na rede dela).
-	@static path /_next/static/* /icon-* /apple-touch-icon.png
+	@static path /_next/static/* /icon-* /apple-touch-icon.png /music/*
 	header @static Cache-Control "public, max-age=31536000, immutable"
 }

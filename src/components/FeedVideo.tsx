@@ -10,11 +10,7 @@ export const posterUrl = (id: string) => `/api/social/video/${id}?poster=1`;
 export const compact = (n: number, locale: Locale) => new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
 /* ---------- Vídeo no feed: toca sozinho, toque pausa, duplo toque gosta, som e expandir no próprio vídeo ---------- */
-// Som partilhado por todos os vídeos do feed (ligar num liga nos outros) e só um vídeo a tocar de cada vez.
-let feedMuted = true;
-const muteSubs = new Set<(m: boolean) => void>();
-const setFeedMuted = (m: boolean) => { feedMuted = m; muteSubs.forEach((f) => f(m)); };
-const playing = new Set<HTMLVideoElement>();
+import { claim, isMuted, onMuted, release, setMuted as setFeedMuted } from "@/lib/media-bus";
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /** Barra de progresso que se pode arrastar para avançar/recuar. */
@@ -40,7 +36,7 @@ export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }:
   t: Dict; locale: Locale; p: PostItem; onOpen: () => void; onLike: (force?: boolean) => void; onComments: () => void; onShare: () => void;
 }) {
   const v = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(feedMuted);
+  const [muted, setMuted] = useState(isMuted());
   const [paused, setPaused] = useState(true);
   const [byUser, setByUser] = useState(false);
   const [prog, setProg] = useState(0);
@@ -49,13 +45,13 @@ export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }:
   const [burst, setBurst] = useState(0);
   const lastTap = useRef(0);
   const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => { muteSubs.add(setMuted); return () => { muteSubs.delete(setMuted); }; }, []);
+  useEffect(() => onMuted(setMuted), []);
   useEffect(() => { if (v.current) v.current.muted = muted; }, [muted]);
   // Toca quando está bem visível (a não ser que o viajante o tenha pausado); pára quando sai do ecrã.
   useEffect(() => {
     const el = v.current; if (!el || p.video !== "ready") return;
     const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !byUser) { playing.forEach((o) => { if (o !== el) o.pause(); }); el.play().catch(() => { el.muted = true; setFeedMuted(true); el.play().catch(() => null); }); }
+      if (e.isIntersecting && !byUser) void claim(el);
       else if (!e.isIntersecting) el.pause();
     }, { threshold: 0.65 });
     io.observe(el); return () => io.disconnect();
@@ -69,7 +65,7 @@ export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }:
     lastTap.current = now;
     tapTimer.current = setTimeout(() => {
       const el = v.current; if (!el) return;
-      if (el.paused) { playing.forEach((o) => { if (o !== el) o.pause(); }); void el.play().catch(() => null); setByUser(false); setFlash({ k: "play", at: Date.now() }); }
+      if (el.paused) { void claim(el); setByUser(false); setFlash({ k: "play", at: Date.now() }); }
       else { el.pause(); setByUser(true); setFlash({ k: "pause", at: Date.now() }); }
     }, 280);
   }
@@ -79,7 +75,7 @@ export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }:
   return (
     <div className="fv">
       <video ref={v} src={videoUrl(p.id)} poster={posterUrl(p.id)} muted={muted} playsInline loop preload="metadata" onClick={tap}
-        onPlay={(e) => { playing.add(e.currentTarget); setPaused(false); }} onPause={(e) => { playing.delete(e.currentTarget); setPaused(true); }}
+        onPlay={() => setPaused(false)} onPause={(e) => { release(e.currentTarget); setPaused(true); }}
         onTimeUpdate={(e) => { const el = e.currentTarget; if (el.duration) { setProg(el.currentTime / el.duration); setLeft(el.duration - el.currentTime); } }} />
       {paused && !flash && <span className="fv-big" aria-hidden="true"><I icon={Play} size={30} solid /></span>}
       {flash && <span key={flash.at} className="fv-flash" aria-hidden="true" onAnimationEnd={() => setFlash(null)}><I icon={flash.k === "play" ? Play : Pause} size={30} solid /></span>}

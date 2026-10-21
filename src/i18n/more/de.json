@@ -721,5 +721,36 @@
 "gpTourN": [
 "Tour",
 "Touren"
-]
+],
+"muAdd": "Musik hinzufügen",
+"muTitle": "Musik",
+"muOriginals": "Originals",
+"muOriginalsSub": "Self Guided City Tour Originals: eigene Tracks, frei nutzbar in Beiträgen und Storys.",
+"muOwn": "Dein Sound",
+"muOwnSub": "Wähle eine Audiodatei vom Handy und 30 Sekunden daraus.",
+"muChoose": "Audiodatei wählen",
+"muName": "Name des Sounds",
+"muStart": "Ab {s}",
+"muStartLabel": "Beginn des Ausschnitts",
+"muRights": "Der Sound gehört mir oder ich darf ihn teilen.",
+"muUse": "Verwenden",
+"muUploading": "Sound wird vorbereitet…",
+"muRemove": "Musik entfernen",
+"muTooBig": "Die Datei ist größer als 20 MB.",
+"muErr": "Diese Datei konnte nicht verwendet werden. Versuche eine andere.",
+"muMood": {
+"chill": "Entspannt",
+"upbeat": "Fröhlich",
+"jazz": "Jazz",
+"tropical": "Tropisch",
+"night": "Nacht",
+"epic": "Episch",
+"acoustic": "Akustisch",
+"oriental": "Orientalisch"
+},
+"pfBg": "Hintergrund",
+"pfTopic": "Thema",
+"pfNewStory": "Neue Story",
+"pfStoryShort": "Story",
+"pfOrText": "oder schreib einfach einen Text"
 }

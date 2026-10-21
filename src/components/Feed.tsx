@@ -20,13 +20,17 @@ const ReelsViewer = dynamic(() => import("./Reels").then((m) => m.ReelsViewer), 
 const ShareSheet = dynamic(() => import("./PostExtras").then((m) => m.ShareSheet), { ssr: false });
 const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { ssr: false });
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
+import { ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
+import { MusicSticker, SoundButton, usePostMusic, type PickedMusic } from "./Music";
+import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
+const MusicPicker = dynamic(() => import("./Music").then((m) => m.MusicPicker), { ssr: false });
 import { useLive, type LiveEvent } from "@/lib/live-client";
 
 export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video?: "processing" | "ready" | "failed" | null; duration?: number | null;
-  photos?: number; saved?: boolean;
+  photos?: number; saved?: boolean; music?: { title: string; artist: string; url: string } | null;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
@@ -110,6 +114,20 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
   const paused = pause || typing;
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const ring = rings[ri]; const item = ring?.items[ii];
+  const [muted, setMutedS] = useState(isMuted());
+  const [muPlaying, setMuPlaying] = useState(false);
+  const au = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => onMuted(setMutedS), []);
+  // Abrir uma história é um toque do utilizador: liga o som se houver música (como no Instagram).
+  useEffect(() => { if (rings.some((r) => r.items.some((x) => x.music))) setMuted(false); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const muUrl = item?.music?.url ?? null;
+  useEffect(() => {
+    if (!muUrl) return;
+    const el = new Audio(muUrl); el.loop = true; au.current = el;
+    el.onplay = () => setMuPlaying(true); el.onpause = () => setMuPlaying(false);
+    return () => { el.pause(); release(el); au.current = null; setMuPlaying(false); };
+  }, [muUrl, item?.id]);
+  useEffect(() => { const el = au.current; if (!el) return; if (paused || muted) el.pause(); else void claim(el); }, [paused, muted, muUrl, item?.id]);
   const next = useCallback(() => {
     if (!ring) return onClose();
     if (ii < ring.items.length - 1) setIi(ii + 1);
@@ -137,12 +155,16 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {item.photo && <img src={photoUrl(item.id)} alt="" className="st-img" />}
         {item.text && <p className={`st-text ${item.photo ? "cap" : ""}`}>{item.text}</p>}
+        {item.music && <div className="st-music"><MusicSticker m={item.music} playing={muPlaying} dark /></div>}
         <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (paused ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
         <div className="st-head">
           <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
             {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{a?.name}</b><small style={{ opacity: .8 }}>{ago(item.at, locale)}</small>
           </a>
-          <SheetX onClose={onClose} label={t.close} />
+          <span className="st-hr">
+            {item.music && <button type="button" className="st-snd" onPointerDown={(e) => e.stopPropagation()} onClick={() => setMuted(!muted)} aria-label={muted ? t.rlUnmute : t.rlMute}>{muted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}</button>}
+            <SheetX onClose={onClose} label={t.close} />
+          </span>
         </div>
         <button className="st-tap l" aria-label={t.navBack} onClick={prev} />
         <button className="st-tap r" aria-label={t.navFwd} onClick={next} />
@@ -177,6 +199,21 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   const [bg, setBg] = useState<(typeof BGS)[number]>("ocean");
   const [busy, setBusy] = useState<"" | "photo" | "send">("");
   const [err, setErr] = useState("");
+  const [tool, setTool] = useState<"photo" | "music" | "bg" | "city" | "tag" | null>(null);
+  const [music, setMusic] = useState<PickedMusic | null>(null);
+  const [picking, setPicking] = useState(false);
+  const [musicOn, setMusicOn] = useState(false);
+  const prevAudio = useRef<HTMLAudioElement | null>(null);
+  useEffect(() => () => { prevAudio.current?.pause(); }, []);
+  useEffect(() => { prevAudio.current?.pause(); setMusicOn(false); }, [music]);
+  function toggleMusic() {
+    if (!music) return;
+    if (!prevAudio.current) prevAudio.current = new Audio();
+    const el = prevAudio.current;
+    if (musicOn) { el.pause(); setMusicOn(false); return; }
+    if (el.src !== new URL(music.url, location.href).href) el.src = music.url;
+    el.loop = true; void claim(el); setMusicOn(true);
+  }
   const max = kind === "story" ? 200 : 500;
   useEffect(() => () => { if (video) URL.revokeObjectURL(video.url); }, [video]);
   async function pickVideo(f: File) {
@@ -205,71 +242,112 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   }
   async function send() {
     if (kind === "video") return sendVideo();
-    if (!photo && !text.trim()) return;
+    if (!photo && !text.trim() && !music) return;
+    prevAudio.current?.pause();
     setBusy("send"); setErr("");
-    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, extra: kind === "post" ? more : [], city, tag, bg: kind === "story" ? bg : null }) }).catch(() => null);
+    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, extra: kind === "post" ? more : [], city, tag, bg: kind === "story" ? bg : null,
+      music: music ? ("lib" in music ? { lib: music.lib } : { own: music.own, title: music.title }) : null }) }).catch(() => null);
     const j = await r?.json().catch(() => null);
     setBusy("");
     if (r?.ok) return onClose(kind);
     setErr(j?.error === "too_many" ? t.pfTooMany : j?.error === "offensive" ? t.mdOffensive : t.pfErr);
   }
+  const isStory = kind === "story", isVideo = kind === "video";
+  const photoInput = (
+    <input type="file" accept="image/*" hidden multiple={kind === "post"} onChange={async (e) => {
+      const files = Array.from(e.target.files ?? []); e.target.value = "";
+      if (!files.length) return;
+      setBusy("photo");
+      try {
+        if (kind !== "post") { setPhoto(await postPhoto(files[0])); }
+        else {
+          let first = photo; const add: string[] = [];
+          for (const f of files) { const d = await postPhoto(f); if (!first) first = d; else add.push(d); }
+          setPhoto(first); setMore((m) => [...m, ...add].slice(0, 5));
+        }
+      } catch { setErr(t.pfErr); }
+      setBusy("");
+    }} />
+  );
+  const sticker = music && <div className="cp2-sticker"><MusicSticker m={music} playing={musicOn} dark onClick={toggleMusic} /></div>;
+  const tools: { k: typeof tool; icon: React.ReactNode; label: string; value?: string | null; show: boolean }[] = [
+    { k: "photo", icon: <ImagePlus size={20} aria-hidden="true" />, label: photo ? (kind === "post" ? t.pfAddMore : t.pfChange) : t.pfPhoto, show: !isVideo },
+    { k: "music", icon: <Music2 size={20} aria-hidden="true" />, label: music ? music.title : t.muAdd, value: music ? "on" : null, show: !isVideo },
+    { k: "bg", icon: <Palette size={20} aria-hidden="true" />, label: t.pfBg, show: isStory && !photo },
+    { k: "city", icon: <MapPin size={20} aria-hidden="true" />, label: city && cities[city] ? cities[city] : t.pfCity, value: city, show: !isStory },
+    { k: "tag", icon: <Hash size={20} aria-hidden="true" />, label: tag ? t.hob[tag] : t.pfTopic, value: tag, show: !isStory }
+  ];
   return (
     <div className="sheet-bg" onClick={() => onClose(null)}>
-      <div className="sheet stack pf-comp" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
-        <SheetX onClose={() => onClose(null)} label={t.close} />
-        <b style={{ fontSize: 19 }}>{t.pfNew}</b>
-        <div className="sc-seg pf-seg3">{(["post", "video", "story"] as const).map((k) => <button key={k} className={kind === k ? "on" : ""} onClick={() => setKind(k)}>{k === "post" ? `🖼 ${t.pfPost}` : k === "video" ? `🎬 ${t.rlVideo}` : `⏱ ${t.pfStory}`}</button>)}</div>
-        {kind === "video" ? (<>
-          {video ? <video src={video.url} className="pf-prev pf-prev-v" controls playsInline muted /> : null}
-          <label className="btn ghost press pf-pick">
-            {video ? `🔄 ${t.rlChange}` : `🎬 ${t.rlPick}`}
-            <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void pickVideo(f); }} />
-          </label>
-          <small className="hint">{video && video.secs > 60 ? `✂️ ${t.rlTrim}` : t.rlRules}</small>
-          {pct !== null && <div className="pf-up"><i style={{ width: `${pct}%` }} /><span>{fmt(t.rlUploading, { n: pct })}</span></div>}
-        </>) : kind === "story" && !photo ? (
-          <div className={`pf-prev-story sg-bg-${bg}`}><p>{text || t.pfStoryText}</p></div>
-        ) : photo && kind === "post" && more.length ? (
-          <div className="pf-multi">{[photo, ...more].map((src, i) => (
-            <span key={i} className="pf-multi-i">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="" /><button type="button" aria-label="✕" onClick={() => { if (i === 0) { setPhoto(more[0] ?? null); setMore(more.slice(1)); } else setMore(more.filter((_, k) => k !== i - 1)); }}>✕</button>
-            </span>
-          ))}</div>
+      <div className="sheet cp2" onClick={(e) => e.stopPropagation()} role="dialog" aria-label={isStory ? t.pfNewStory : t.pfNew}>
+        <div className="cp2-head">
+          <button type="button" className="cp2-x press" onClick={() => onClose(null)} aria-label={t.close}><X size={20} aria-hidden="true" /></button>
+          <b>{isStory ? t.pfNewStory : isVideo ? t.rlNew : t.pfNew}</b>
+          <button type="button" className="cp2-share press" disabled={busy !== "" || (isVideo ? !video : !photo && !text.trim() && !music)} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
+        </div>
+        <div className="seg-3 cp2-seg" role="tablist">
+          {([["post", <ImagePlus key="p" size={16} aria-hidden="true" />, t.pfPost], ["video", <Clapperboard key="v" size={16} aria-hidden="true" />, t.rlVideo], ["story", <CircleDashed key="s" size={16} aria-hidden="true" />, t.pfStoryShort]] as const).map(([k, ic, label]) => (
+            <button key={k} role="tab" aria-selected={kind === k} className={kind === k ? "on" : ""} onClick={() => { setKind(k); setTool(null); }}>{ic}{label}</button>
+          ))}
+        </div>
+
+        {isVideo ? (
+          video ? <video src={video.url} className="cp2-media" controls playsInline muted /> : (
+            <label className="cp2-drop press"><span className="qi q4"><Clapperboard size={26} aria-hidden="true" /></span><b>{t.rlPick}</b><small>{t.rlRules}</small>
+              <input type="file" accept="video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) void pickVideo(f); }} /></label>
+          )
+        ) : isStory ? (
+          <div className={`cp2-story ${photo ? "" : `sg-bg-${bg}`}`}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {photo && <img src={photo} alt="" />}
+            <p className={photo ? "cap" : ""}>{text || (photo ? "" : t.pfStoryText)}</p>
+            {photo && <button type="button" className="cp2-rm" onClick={() => setPhoto(null)} aria-label={t.pfRemovePhoto}><X size={16} aria-hidden="true" /></button>}
+            {sticker}
+          </div>
         ) : photo ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={photo} alt="" className="pf-prev" />
-        ) : null}
-        {kind !== "video" && <label className="btn ghost press pf-pick">
-          {busy === "photo" ? t.pfPhotoBusy : photo ? (kind === "post" ? `➕ ${t.pfAddMore}` : `🔄 ${t.pfChange}`) : `📷 ${kind === "post" ? t.pfPhotos : t.pfPhoto}`}
-          <input type="file" accept="image/*" hidden multiple={kind === "post"} onChange={async (e) => {
-            const files = Array.from(e.target.files ?? []); e.target.value = "";
-            if (!files.length) return;
-            setBusy("photo");
-            try {
-              if (kind !== "post") { setPhoto(await postPhoto(files[0])); }
-              else {
-                let first = photo; const add: string[] = [];
-                for (const f of files) { const d = await postPhoto(f); if (!first) first = d; else add.push(d); }
-                setPhoto(first); setMore((m) => [...m, ...add].slice(0, 5));
-              }
-            } catch { setErr(t.pfErr); }
-            setBusy("");
-          }} />
-        </label>}
-        {photo && kind !== "video" && !more.length && <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setPhoto(null)}>✕ {t.pfRemovePhoto}</button>}
-        {kind === "story" && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
-        <div className="field pf-cap"><EmojiButton target={capRef} value={text} set={setText} max={max} labels={emojiLabels(t)} /><textarea ref={capRef} rows={kind === "story" ? 2 : 3} maxLength={max} placeholder={kind === "story" ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
-          <small className="hint" style={{ textAlign: "end" }}>{text.length}/{max}</small></div>
-        {kind !== "story" && <>
-          <SearchPick id="pfc" label={t.pfCity} placeholder={t.spCity} noneLabel={t.pfNoCity} value={city} onChange={(v) => setCity(v)}
-            options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />
-          <b style={{ fontSize: 14 }}>{t.pfTag}</b>
-          <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>
-        </>}
-        <p className="hint" style={{ margin: 0, fontSize: 13 }}>{social.profile?.isPrivate ? `🔒 ${t.pfWhoPriv}` : `🌍 ${t.pfWhoPub}`}{kind === "story" ? ` · ${t.pfStoryNote}` : ""}</p>
+          <div className="cp2-photos">
+            {[photo, ...more].map((src, i) => (
+              <span key={i} className={`cp2-ph ${more.length ? "" : "one"}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt="" />
+                <button type="button" className="cp2-rm" aria-label={t.pfRemovePhoto} onClick={() => { if (i === 0) { setPhoto(more[0] ?? null); setMore(more.slice(1)); } else setMore(more.filter((_, k) => k !== i - 1)); }}><X size={14} aria-hidden="true" /></button>
+              </span>
+            ))}
+            {more.length < 5 && <label className="cp2-ph add press"><ImagePlus size={24} aria-hidden="true" />{photoInput}</label>}
+            {sticker}
+          </div>
+        ) : (
+          <label className="cp2-drop press"><span className="qi q1"><ImagePlus size={26} aria-hidden="true" /></span><b>{busy === "photo" ? t.pfPhotoBusy : t.pfPhotos}</b><small>{t.pfOrText}</small>{photoInput}</label>
+        )}
+        {!isStory && !isVideo && !photo && sticker}
+        {pct !== null && <div className="pf-up"><i style={{ width: `${pct}%` }} /><span>{fmt(t.rlUploading, { n: pct })}</span></div>}
+        {isVideo && video && video.secs > 60 && <small className="hint">✂️ {t.rlTrim}</small>}
+
+        <div className="cp2-cap">
+          <textarea ref={capRef} rows={isStory ? 2 : 3} maxLength={max} placeholder={isStory ? t.pfStoryText : t.pfCaption} value={text} onChange={(e) => setText(e.target.value)} aria-label={t.pfCaption} />
+          <span className="cp2-cap-f"><EmojiButton target={capRef} value={text} set={setText} max={max} labels={emojiLabels(t)} /><small className="hint num">{text.length}/{max}</small></span>
+        </div>
+
+        <div className="cp2-tools">
+          {tools.filter((x) => x.show).map((x) => (
+            x.k === "photo" ? (
+              <label key={x.k} className="cp2-tool press">{x.icon}<span>{busy === "photo" ? t.pfPhotoBusy : x.label}</span>{photoInput}</label>
+            ) : (
+              <button key={x.k} type="button" className={`cp2-tool press ${tool === x.k ? "open" : ""} ${x.value ? "set" : ""}`} onClick={() => (x.k === "music" ? setPicking(true) : setTool(tool === x.k ? null : x.k))}>
+                {x.icon}<span className="ad-ellip">{x.label}</span>
+              </button>
+            )
+          ))}
+        </div>
+        {tool === "bg" && isStory && !photo && <div className="pf-bgs">{BGS.map((b) => <button key={b} aria-label={b} aria-pressed={bg === b} className={`sg-bg-${b} ${bg === b ? "on" : ""}`} onClick={() => setBg(b)} />)}</div>}
+        {tool === "city" && !isStory && <SearchPick id="pfc" label={t.pfCity} placeholder={t.spCity} noneLabel={t.pfNoCity} value={city} onChange={(v) => setCity(v)}
+          options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />}
+        {tool === "tag" && !isStory && <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>}
+
+        <p className="cp2-who">{social.profile?.isPrivate ? <Lock size={14} aria-hidden="true" /> : <Globe2 size={14} aria-hidden="true" />}{social.profile?.isPrivate ? t.pfWhoPriv : t.pfWhoPub}{isStory ? ` · ${t.pfStoryNote}` : ""}</p>
         {err && <p className="err">{err}</p>}
-        <button className="btn press" disabled={busy !== "" || (kind === "video" ? !video : !photo && !text.trim())} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
+        <button className="btn press cp2-go" disabled={busy !== "" || (isVideo ? !video : !photo && !text.trim() && !music)} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
+        {picking && <MusicPicker t={t} current={music} onPick={(m) => { setMusic(m); setMusicOn(false); }} onClose={() => setPicking(false)} />}
       </div>
     </div>
   );
@@ -298,6 +376,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
   const [reel, setReel] = useState(false);
   const [slide, setSlide] = useState(0);
   const [sharing, setSharing] = useState(false);
+  const mu = usePostMusic(p.video ? null : p.music?.url);
   useLive(useCallback((ev: LiveEvent) => { if (ev.t === "video" && ev.id === post.id) setP((x) => ({ ...x, video: ev.status })); }, [post.id]));
   async function toggleLike(force?: boolean) {
     const on = force ?? !p.liked;
@@ -326,6 +405,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
             <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
         <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); setSure(false); }}><I icon={Ellipsis} size={20} /></button>
       </header>
+      {p.music && !p.video && <div className="pf-music" ref={p.photo ? undefined : mu.box}><MusicSticker m={p.music} playing={mu.playing} onClick={mu.toggle} label={mu.muted ? t.rlUnmute : t.rlMute} /></div>}
       {menu && (
         <div className="stack sc-menu" style={{ gap: 6, margin: "0 12px 8px" }}>
           {p.mine ? (
@@ -341,7 +421,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
         onComments={() => { setOpen(true); if (!list) void loadComments(); }} onShare={() => setSharing(true)} />}
       {reel && <ReelsViewer t={t} locale={locale} cities={cities} initial={{ posts: [p], authors: { [author.handle]: author }, next: new Date().toISOString() }} onClose={() => setReel(false)} />}
       {p.photo && (
-        <div className="pf-photo" onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
+        <div className="pf-photo" ref={p.music ? mu.box : undefined} onDoubleClick={() => { void toggleLike(true); setBurst(true); setTimeout(() => setBurst(false), 700); }}>
           {(p.photos ?? 1) > 1 ? <>
             <div className="pf-car" onScroll={(e) => { const el = e.currentTarget; setSlide(Math.round(el.scrollLeft / el.clientWidth)); }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -353,6 +433,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" onError={(e) => { const box = e.currentTarget.closest(".pf-photo") as HTMLElement | null; if (box) box.style.display = "none"; }} />
           </>}
+          {p.music && <SoundButton muted={mu.muted || !mu.playing} onClick={mu.toggle} t={t} />}
           {burst && <span className="pf-burst" aria-hidden="true"><I icon={Heart} size={96} solid /></span>}
         </div>
       )}

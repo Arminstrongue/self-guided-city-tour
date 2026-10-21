@@ -22,7 +22,7 @@ export type PostItem = {
   id: string; kind: "post" | "story"; handle: string; text: string; photo: boolean; city: string | null; tag: string | null; bg: string | null;
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video: "processing" | "ready" | "failed" | null; duration: number | null;
-  photos: number; saved: boolean;
+  photos: number; saved: boolean; music: { title: string; artist: string; url: string } | null;
 };
 export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -30,11 +30,11 @@ export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfil
 const P = schema.posts;
 const LITE = {
   id: P.id, author: P.author, kind: P.kind, text: P.text, city: P.city, tag: P.tag, bg: P.bg, createdAt: P.createdAt, expiresAt: P.expiresAt,
-  video: P.video, videoStatus: P.videoStatus, duration: P.duration,
+  video: P.video, videoStatus: P.videoStatus, duration: P.duration, music: P.music,
   photo: sql<string | null>`case when ${P.photo} is null then null else '1' end`,
   nExtra: sql<number>`coalesce(jsonb_array_length(${P.extra}), 0)::int`
 };
-type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; photo: string | null; nExtra: number };
+type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; music: schema.PostMusic | null; photo: string | null; nExtra: number };
 const lite = (p: schema.Post): Lite => ({ ...p, photo: p.photo ? "1" : null, nExtra: p.extra?.length ?? 0 });
 
 const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: p.photo, isPrivate: p.isPrivate });
@@ -86,7 +86,8 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false): Promi
       likes: likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
       mine: r.author === me, canComment: canComment(me, r.author, c),
       video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null,
-      photos: (r.photo ? 1 : 0) + (r.nExtra ?? 0), saved: savedL.some((x) => x.id === r.id)
+      photos: (r.photo ? 1 : 0) + (r.nExtra ?? 0), saved: savedL.some((x) => x.id === r.id),
+      music: r.music ? { title: r.music.title, artist: r.music.artist, url: r.music.lib ? `/music/${r.music.lib}.m4a` : `/api/social/music/${r.id}` } : null
     });
   }
   return { posts, authors, next: more && rows.length ? rows[rows.length - 1].createdAt.toISOString() : null };
@@ -95,22 +96,37 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false): Promi
 /** Apaga histórias expiradas (e os respetivos gostos e comentários). */
 export async function purgeExpired() {
   const d = await db();
-  const old = await d.select({ id: schema.posts.id }).from(schema.posts).where(lte(schema.posts.expiresAt, new Date())).limit(500);
+  const old = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts).where(lte(schema.posts.expiresAt, new Date())).limit(500);
   if (!old.length) return 0;
   const ids = old.map((o) => o.id);
+  await (await import("./music")).deleteOwnMusic(old.map((o) => o.music?.own));
   await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, ids));
   await d.delete(schema.postComments).where(inArray(schema.postComments.postId, ids));
   await d.delete(schema.posts).where(inArray(schema.posts.id, ids));
   return ids.length;
 }
 
-export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; extra?: string[]; city: string | null; tag: string | null; bg: string | null };
+export type NewMusic = { lib: string } | { own: string; title: string };
+export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; extra?: string[]; city: string | null; tag: string | null; bg: string | null; music?: NewMusic | null };
 export async function createPost(me: string, v: NewPost) {
   if (!(await myProfile(me))) return { error: "no_profile" as const };
   const mod = moderate(v.text);
   if (!mod.ok) return { error: "offensive" as const };
   v = { ...v, text: mod.text };
-  if (!v.photo && !v.text.trim()) return { error: "empty" as const };
+  if (!v.photo && !v.text.trim() && !v.music) return { error: "empty" as const };
+  let music: schema.PostMusic | null = null;
+  if (v.music && "lib" in v.music) {
+    const { trackById, MUSIC_ARTIST } = await import("@/data/music");
+    const tr = trackById(v.music.lib);
+    if (!tr) return { error: "invalid" as const };
+    music = { lib: tr.id, title: tr.title, artist: MUSIC_ARTIST };
+  } else if (v.music && "own" in v.music) {
+    if (!(await (await import("./music")).ownsMusic(me, v.music.own))) return { error: "invalid" as const };
+    const mt = moderate(v.music.title.trim().slice(0, 60) || "♪");
+    if (!mt.ok) return { error: "offensive" as const };
+    const prof = await myProfile(me);
+    music = { own: v.music.own, title: mt.text, artist: prof ? `@${prof.handle}` : "" };
+  }
   const d = await db();
   await purgeExpired();
   if (v.kind === "story") {
@@ -119,7 +135,7 @@ export async function createPost(me: string, v: NewPost) {
   }
   const expiresAt = v.kind === "story" ? new Date(Date.now() + STORY_HOURS * 3600_000) : null;
   const extra = v.kind === "post" && v.photo && v.extra?.length ? v.extra.slice(0, 5) : null;
-  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, extra, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, expiresAt }).returning({ id: schema.posts.id });
+  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, extra, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, music, expiresAt }).returning({ id: schema.posts.id });
   await notifyMentions(me, r.id, v.text).catch(() => null);
   return { id: r.id };
 }
@@ -268,6 +284,12 @@ export async function getPost(me: string, id: string) {
   return hydrate(me, [lite(v.post)], v.circle);
 }
 
+/** Som próprio de uma publicação, se o viajante a puder ver (as faixas da biblioteca são ficheiros públicos). */
+export async function musicOf(me: string, id: string) {
+  const v = await visiblePost(me, id);
+  return v?.post.music?.own ?? null;
+}
+
 export async function photoOf(me: string, id: string, i = 0) {
   const v = await visiblePost(me, id);
   if (!v) return null;
@@ -384,8 +406,9 @@ export async function deleteComment(me: string, commentId: string) {
 export async function removePost(id: string, onlyAuthor?: string) {
   const d = await db();
   const where = onlyAuthor ? and(eq(schema.posts.id, id), eq(schema.posts.author, onlyAuthor)) : eq(schema.posts.id, id);
-  const gone = await d.delete(schema.posts).where(where).returning({ id: schema.posts.id, video: schema.posts.video });
+  const gone = await d.delete(schema.posts).where(where).returning({ id: schema.posts.id, video: schema.posts.video, music: schema.posts.music });
   if (!gone.length) return false;
+  await (await import("./music")).deleteOwnMusic([gone[0].music?.own]);
   if (gone[0].video) await (await import("./video")).deleteVideoFiles([id]);
   await d.delete(schema.postLikes).where(eq(schema.postLikes.postId, id));
   await d.delete(schema.postComments).where(eq(schema.postComments.postId, id));
@@ -404,7 +427,9 @@ export async function reportPost(me: string, id: string, reason: string, note: s
 /** Ao apagar o perfil: publicações, histórias, gostos e comentários do viajante. */
 export async function purgeUser(email: string) {
   const d = await db();
-  const mine = (await d.select({ id: schema.posts.id }).from(schema.posts).where(eq(schema.posts.author, email))).map((r) => r.id);
+  const mineRows = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts).where(eq(schema.posts.author, email));
+  const mine = mineRows.map((r) => r.id);
+  await (await import("./music")).deleteOwnMusic(mineRows.map((r) => r.music?.own));
   if (mine.length) {
     await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, mine));
     await d.delete(schema.postComments).where(inArray(schema.postComments.postId, mine));

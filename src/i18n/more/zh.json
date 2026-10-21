@@ -691,5 +691,36 @@
 "次导览",
 "次导览"
 ],
-"gjEmail": "邮箱"
+"gjEmail": "邮箱",
+"muAdd": "添加音乐",
+"muTitle": "音乐",
+"muOriginals": "原创",
+"muOriginalsSub": "Self Guided City Tour Originals：我们自己的曲目，可在帖子和快拍中免费使用。",
+"muOwn": "你的声音",
+"muOwnSub": "从手机中选择一个音频文件，并截取 30 秒。",
+"muChoose": "选择音频文件",
+"muName": "声音名称",
+"muStart": "从 {s} 开始",
+"muStartLabel": "片段开始位置",
+"muRights": "这段声音属于我，或我有权分享。",
+"muUse": "使用",
+"muUploading": "正在准备声音…",
+"muRemove": "移除音乐",
+"muTooBig": "文件超过 20 MB。",
+"muErr": "无法使用此文件，请换一个音频。",
+"muMood": {
+"chill": "轻松",
+"upbeat": "欢快",
+"jazz": "爵士",
+"tropical": "热带",
+"night": "夜晚",
+"epic": "史诗",
+"acoustic": "原声",
+"oriental": "东方"
+},
+"pfBg": "背景",
+"pfTopic": "主题",
+"pfNewStory": "新快拍",
+"pfStoryShort": "快拍",
+"pfOrText": "或者只写一段文字"
 }

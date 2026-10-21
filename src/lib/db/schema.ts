@@ -302,6 +302,8 @@ export const reports = pgTable("reports", {
 }, (t) => [index("reports_status_idx").on(t.status, t.createdAt)]);
 
 /* ---------- Fase 2: publicações, histórias (24 h), gostos e comentários ---------- */
+/** Música de uma publicação: faixa da biblioteca (lib) ou som próprio carregado pelo autor (own = ficheiro em MEDIA_DIR/m). */
+export type PostMusic = { lib?: string; own?: string; title: string; artist: string };
 export const posts = pgTable("posts", {
   id: uuid("id").primaryKey().defaultRandom(),
   author: text("author").notNull(),                       // email do autor (nunca mostrado)
@@ -315,6 +317,7 @@ export const posts = pgTable("posts", {
   video: text("video"),                                   // id do ficheiro de vídeo (MEDIA_DIR/v/<id>.mp4)
   videoStatus: text("video_status").$type<"processing" | "ready" | "failed">(),
   duration: integer("duration"),                          // segundos
+  music: jsonb("music").$type<PostMusic>(),               // música da biblioteca ou som próprio
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp("expires_at", { withTimezone: true })
 }, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);

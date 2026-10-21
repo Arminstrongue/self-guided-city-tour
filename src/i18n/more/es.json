@@ -748,5 +748,36 @@
 "Rutas a pie con audioguías en 9 idiomas",
 "Una cartera de viaje con pases, planes y recuerdos",
 "Vídeos, historias y mensajes con otros viajeros"
-]
+],
+"muAdd": "Añadir música",
+"muTitle": "Música",
+"muOriginals": "Originales",
+"muOriginalsSub": "Self Guided City Tour Originals: temas propios, libres para usar en publicaciones e historias.",
+"muOwn": "Tu sonido",
+"muOwnSub": "Elige un archivo de audio del móvil y 30 segundos.",
+"muChoose": "Elegir archivo de audio",
+"muName": "Nombre del sonido",
+"muStart": "Desde {s}",
+"muStartLabel": "Inicio del fragmento",
+"muRights": "El sonido es mío o tengo derecho a compartirlo.",
+"muUse": "Usar",
+"muUploading": "Preparando el sonido…",
+"muRemove": "Quitar música",
+"muTooBig": "El archivo supera los 20 MB.",
+"muErr": "No se pudo usar este archivo. Prueba otro audio.",
+"muMood": {
+"chill": "Tranquilo",
+"upbeat": "Animado",
+"jazz": "Jazz",
+"tropical": "Tropical",
+"night": "Noche",
+"epic": "Épico",
+"acoustic": "Acústico",
+"oriental": "Oriental"
+},
+"pfBg": "Fondo",
+"pfTopic": "Tema",
+"pfNewStory": "Nueva historia",
+"pfStoryShort": "Historia",
+"pfOrText": "o escribe solo un texto"
 }

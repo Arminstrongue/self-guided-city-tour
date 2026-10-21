@@ -13,7 +13,8 @@ const Body = z.object({
   extra: z.array(z.string().max(480_000).regex(/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/)).max(5).default([]),
   city: z.string().regex(/^[a-z]{2,12}$/).nullable().default(null),
   tag: z.enum(HOBBIES as unknown as [string, ...string[]]).nullable().default(null),
-  bg: z.enum(STORY_BGS).nullable().default(null)
+  bg: z.enum(STORY_BGS).nullable().default(null),
+  music: z.union([z.object({ lib: z.string().regex(/^[a-z-]{2,40}$/) }), z.object({ own: z.string().uuid(), title: z.string().max(60).default("") })]).nullable().default(null)
 }).refine((v) => v.kind === "post" || v.text.length <= 200, { message: "story text" });
 
 /** Nova publicação ou história (24 h). */

@@ -691,5 +691,36 @@
 "gpTourN": [
 "ツアー",
 "ツアー"
-]
+],
+"muAdd": "音楽を追加",
+"muTitle": "音楽",
+"muOriginals": "オリジナル",
+"muOriginalsSub": "Self Guided City Tour Originals：自社制作の曲で、投稿やストーリーに自由に使えます。",
+"muOwn": "自分のサウンド",
+"muOwnSub": "スマホの音声ファイルを選び、30秒を切り取ります。",
+"muChoose": "音声ファイルを選ぶ",
+"muName": "サウンド名",
+"muStart": "{s} から",
+"muStartLabel": "切り取り開始位置",
+"muRights": "このサウンドは自分のもの、または共有する権利があります。",
+"muUse": "使う",
+"muUploading": "サウンドを準備中…",
+"muRemove": "音楽を削除",
+"muTooBig": "ファイルが20MBを超えています。",
+"muErr": "このファイルは使えませんでした。別の音声をお試しください。",
+"muMood": {
+"chill": "チル",
+"upbeat": "アップビート",
+"jazz": "ジャズ",
+"tropical": "トロピカル",
+"night": "ナイト",
+"epic": "エピック",
+"acoustic": "アコースティック",
+"oriental": "オリエンタル"
+},
+"pfBg": "背景",
+"pfTopic": "テーマ",
+"pfNewStory": "新しいストーリー",
+"pfStoryShort": "ストーリー",
+"pfOrText": "またはテキストだけでもOK"
 }
