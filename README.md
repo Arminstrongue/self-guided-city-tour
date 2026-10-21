@@ -105,7 +105,7 @@ Ver [MOBILE.md](MOBILE.md): projetos nativos em `ios/` e `android/`, ícones em 
 
 ## Instalar na Hetzner
 
-Atalho: num servidor Ubuntu 24.04 novo, `deploy/hetzner-setup.sh <url do repositório>` instala Docker, firewall e a app. Cópias diárias da base de dados: `deploy/backup.sh`.
+Atalho: num servidor Ubuntu 24.04 novo, `deploy/hetzner-setup.sh <url do repositório>` instala Docker, firewall e a app. Cópias diárias da base de dados e das fotos/vídeos para a Storage Box: `deploy/backup.sh --install` (ver `deploy/RESTORE.md`).
 
 1. Crie um servidor (CX23 chega para o MVP) com Ubuntu e instale Docker.
 2. Na Cloudflare, aponte o domínio para o IP do servidor (registo A, proxy ligado, SSL "Full (strict)").
