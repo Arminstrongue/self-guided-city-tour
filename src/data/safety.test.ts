@@ -8,7 +8,7 @@ describe("safety", () => {
   it("covers every city", () => {
     for (const c of CITIES) assert.ok(safetyFor(c.id, COUNTRY[c.id]), c.id);
   });
-  it("has every alert in all 9 languages", () => {
+  it("has every alert in every language", () => {
     for (const k of Object.keys(ALERT_TEXT) as (keyof typeof ALERT_TEXT)[])
       for (const l of LOCALES) { const v = ALERT_TEXT[k][l]; assert.ok(v?.[0] && v?.[1], `${k}/${l}`); }
   });

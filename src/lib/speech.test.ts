@@ -39,7 +39,7 @@ test("biografias: todas as paragens têm texto longo em inglês e português", (
     for (const lang of BIO_LANGS) {
       const b = biosFor(c.id, lang);
       for (const s of c.stops) {
-        assert.ok(b[s.id]?.text && b[s.id].text.length > (/^(zh|ja)$/.test(lang) ? 150 : 400), `${lang}/${c.id}/${s.id}`);
+        assert.ok(b[s.id]?.text && b[s.id].text.length > (/^(zh|ja|ko)$/.test(lang) ? 150 : 400), `${lang}/${c.id}/${s.id}`);
         assert.equal(b[s.id].lang, lang, `${lang}/${c.id}/${s.id} em falta`);
       }
     }

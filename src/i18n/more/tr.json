@@ -22,7 +22,7 @@
 "f1t": "En ucuz ulaşım",
 "f1s": "Günlük kartları ve tek biletleri sizin için karşılaştırırız.",
 "f2t": "Sesli rehber",
-"f2s": "Her yerin hikâyesi 9 dilde.",
+"f2s": "Her yerin hikâyesi 12 dilde.",
 "f3t": "Uçuş geri sayımı",
 "f3s": "Ne zaman dönmeniz gerektiğini her zaman bilin.",
 "f4t": "Gerçek yorumlar",
@@ -467,7 +467,7 @@
 "ivLandTitle": "{n} sizi davet etti",
 "ivLandSub": "Rotalar, sesli rehberler ve gezgin topluluğuyla şehirleri kendi başınıza keşfedin.",
 "ivLandPoints": [
-"9 dilde sesli rehberli yürüyüş rotaları",
+"12 dilde sesli rehberli yürüyüş rotaları",
 "Paslar, planlar ve anılar için seyahat cüzdanı",
 "Diğer gezginlerle videolar, hikâyeler ve mesajlar"
 ],

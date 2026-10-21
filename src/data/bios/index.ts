@@ -12,9 +12,12 @@ import it from "./it.json";
 import zh from "./zh.json";
 import ar from "./ar.json";
 import ja from "./ja.json";
+import tr from "./tr.json";
+import ru from "./ru.json";
+import ko from "./ko.json";
 
 type Bios = Record<string, Record<string, string>>;
-const BIOS: Record<string, Bios> = { en, pt, es, fr, de, it, zh, ar, ja };
+const BIOS: Record<string, Bios> = { en, pt, es, fr, de, it, zh, ar, ja, tr, ru, ko };
 
 export type Bio = { text: string; lang: string };
 
