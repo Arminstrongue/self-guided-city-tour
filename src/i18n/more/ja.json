@@ -887,5 +887,6 @@
 "hiSource": "出典：",
 "gkTitle": "{city}で知っておきたいこと",
 "gkSub": "出かける前の実用的なヒント。",
-"gkCurrency": "通貨"
+"gkCurrency": "通貨",
+"qrScan": "スマホで開く"
 }

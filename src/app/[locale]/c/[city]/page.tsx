@@ -26,6 +26,7 @@ import { PlaceComments } from "@/components/Comments";
 import { CityHub, CityToday, CityHistory, GoodToKnow } from "@/components/CityInfo";
 import { latestPulse } from "@/lib/city-pulse";
 import { cityKnowledge, ensureKnowledge } from "@/lib/city-knowledge";
+import PageQR from "@/components/PageQR";
 
 /** Página de entrada do QR: fotografias, destaques, plano, voo e pagamento. */
 export const dynamic = "force-dynamic";
@@ -61,6 +62,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
             ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>🎁 {t.freeCta}</Link>
             : <a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a>}</div>
         </div>
+        <PageQR label={t.qrScan} />
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>

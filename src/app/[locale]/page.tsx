@@ -10,6 +10,7 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
+import PageQR from "@/components/PageQR";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
           </div>
           <div className="ctas"><a className="btn tram press" href="#cities">{t.explore}</a></div>
         </div>
+        <PageQR label={t.qrScan} />
       </HomeHero>
 
       <section className="sec" id="cities" style={{ scrollMarginTop: 70 }}>

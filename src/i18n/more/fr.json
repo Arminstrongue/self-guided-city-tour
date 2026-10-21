@@ -911,5 +911,6 @@
 "hiSource": "Source :",
 "gkTitle": "Bon à savoir à {city}",
 "gkSub": "Conseils pratiques avant de sortir.",
-"gkCurrency": "Monnaie"
+"gkCurrency": "Monnaie",
+"qrScan": "Ouvrir sur le téléphone"
 }

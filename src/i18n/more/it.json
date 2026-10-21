@@ -944,5 +944,6 @@
 "hiSource": "Fonte:",
 "gkTitle": "Buono a sapersi a {city}",
 "gkSub": "Consigli pratici prima di uscire.",
-"gkCurrency": "Valuta"
+"gkCurrency": "Valuta",
+"qrScan": "Apri sul telefono"
 }
