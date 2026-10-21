@@ -415,6 +415,17 @@ export const invites = pgTable("invites", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("invites_inviter_idx").on(t.inviter, t.createdAt), index("invites_target_idx").on(t.targetHash)]);
 
+/** Recompensas de convites: crédito ganho quando um amigo convidado compra, e crédito gasto numa compra. */
+export const referralCredits = pgTable("referral_credits", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  amountCents: integer("amount_cents").notNull(),        // + ganho, − gasto
+  kind: text("kind").$type<"earned" | "spent">().notNull(),
+  accessId: uuid("access_id").notNull(),
+  friend: text("friend"),                                 // quem comprou (no caso de "earned")
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("referral_credits_access_kind_idx").on(t.accessId, t.kind), index("referral_credits_email_idx").on(t.email)]);
+
 /* ---------- Guardados, reações a mensagens ---------- */
 export const postSaves = pgTable("post_saves", {
   postId: uuid("post_id").notNull(),

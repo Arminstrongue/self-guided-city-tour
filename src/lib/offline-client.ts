@@ -2,9 +2,11 @@
 /**
  * Descarregar uma cidade para usar sem internet: a página do roteiro (com scripts e estilos),
  * fotografias, meteorologia, sugestões e taxas de câmbio ficam guardadas pelo service worker.
- * O mapa guarda os mosaicos que o viajante já viu (o OpenStreetMap não permite pré-descarregar).
+ * O mapa guarda os mosaicos que o viajante já viu; com um fornecedor que o permita (MAP_TILES_PREFETCH=1),
+ * descarrega também os mosaicos da área do roteiro (zoom 12–16).
  */
 import type { Locale } from "@/i18n/dictionaries";
+import { canPrefetchTiles, tilesFor } from "./map-config";
 
 const KEY = "sgct:offline";
 export type OfflineInfo = { at: number; n: number; failed: number; bytes: number; urls?: string[] };
@@ -44,6 +46,11 @@ async function urlsFor(city: string, locale: Locale) {
   for (const s of Object.values(m?.stops ?? {})) if (s?.thumb) urls.push(s.thumb, s.thumb.replace("/500px-", "/960px-"));
   const c = await fetch(`/api/media?city=${city}&cover=1`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { cover?: { thumb: string; url: string }[] } | null;
   for (const p of (c?.cover ?? []).slice(0, 6)) urls.push(p.url);
+  // Mapa: só com um fornecedor de mosaicos que permita descarregar (MAP_TILES_PREFETCH=1); o OpenStreetMap público não permite.
+  if (canPrefetchTiles()) {
+    const b = await fetch(`/api/city-bbox?city=${city}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    if (b) urls.push(...tilesFor(b, 12, 16, 900));
+  }
   return urls;
 }
 

@@ -10,6 +10,10 @@ import { LOCALES } from "@/i18n/core";
 import { merchantByRef } from "@/lib/merchants";
 import { normaliseFlightNo, validFlightNo } from "@/lib/flight";
 import { rateLimit } from "@/lib/rate-limit";
+import { cookies } from "next/headers";
+import { REF_COOKIE } from "@/lib/invites";
+import { quote } from "@/lib/referrals";
+import { currentTraveller } from "@/lib/wallet";
 
 export const runtime = "nodejs";
 
@@ -36,6 +40,8 @@ export async function POST(req: Request) {
   if (b.flightAt && new Date(b.flightAt).getTime() < Date.now()) return NextResponse.json({ error: "flight_in_past" }, { status: 400 });
 
   const plan = TOUR_PLANS[b.plan];
+  // Convites: desconto de amigo na primeira compra e crédito de quem convidou.
+  const q = await quote({ amount: plan.amount, buyerEmail: b.email, refHandle: cookies().get(REF_COOKIE)?.value ?? null, signedEmail: await currentTraveller().catch(() => null) });
   const ref = await merchantByRef(b.ref);
   const label = b.plan === "all" ? "All-Cities Pass — 30 days" : b.plan === "trip" ? `${cityName(city, b.locale)} — 3 days` : `${cityName(city, b.locale)} — 48 h`;
   try {
@@ -43,8 +49,8 @@ export async function POST(req: Request) {
       mode: "payment",
       customer_email: b.email,
       locale: b.locale === "ar" ? "auto" : b.locale,
-      line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: plan.amount, product_data: { name: `Self Guided City Tour · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "" },
+      line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: q.amount, product_data: { name: `Self Guided City Tour · ${label}` } } }],
+      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed) },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

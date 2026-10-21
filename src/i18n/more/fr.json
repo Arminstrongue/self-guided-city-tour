@@ -783,5 +783,17 @@
 "stSeenBy": "Vu par",
 "stSeenN": "{n} vues",
 "stNoViews": "Personne n’a encore vu cette story.",
-"stReact": "Réagir avec"
+"stReact": "Réagir avec",
+"rfFriend": "{n} vous a invité — {p} % de réduction sur votre premier pass",
+"rfCreditApplied": "Votre crédit de parrainage ({c}) est déduit de ce pass",
+"rfGiveGet": "Offrez {p} %, gagnez {r}",
+"rfHow": "Les amis qui s’inscrivent avec votre lien ont {p} % de réduction sur leur premier pass. Quand ils achètent, vous gagnez {r} de crédit, déduit automatiquement de votre prochain pass.",
+"rfPaidFriends": "amis ont acheté un pass",
+"rfCredit": "votre crédit",
+"rfLand": "Vous avez {p} % de réduction sur votre premier pass ville.",
+"iaTitle": "Installer l’app",
+"iaSub": "Plein écran, plus rapide et fonctionne hors ligne.",
+"iaInstall": "Installer",
+"iaIos1": "Touchez",
+"iaIos2": "puis « Sur l’écran d’accueil »."
 }

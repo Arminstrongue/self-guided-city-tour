@@ -44,6 +44,8 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
     return again[0] ?? null;
   }
 
+  await (await import("./referrals")).settleReferral(access, { refInviter: m.refInviter, creditUsed: m.creditUsed });
+
   if (access.refMerchantId) {
     const [mer] = await d.select().from(schema.merchants).where(eq(schema.merchants.id, access.refMerchantId)).limit(1);
     if (mer && mer.plan === "partner" && mer.status === "active") {

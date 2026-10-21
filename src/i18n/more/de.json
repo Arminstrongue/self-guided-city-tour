@@ -789,5 +789,17 @@
 "stSeenBy": "Gesehen von",
 "stSeenN": "{n} Aufrufe",
 "stNoViews": "Noch niemand hat diese Story gesehen.",
-"stReact": "Reagieren mit"
+"stReact": "Reagieren mit",
+"rfFriend": "{n} hat dich eingeladen – {p} % Rabatt auf deinen ersten Pass",
+"rfCreditApplied": "Dein Einladungsguthaben ({c}) wird bei diesem Pass abgezogen",
+"rfGiveGet": "Schenke {p} %, erhalte {r}",
+"rfHow": "Freunde, die über deinen Link kommen, erhalten {p} % Rabatt auf ihren ersten Pass. Wenn sie kaufen, bekommst du {r} Guthaben, das automatisch von deinem nächsten Pass abgezogen wird.",
+"rfPaidFriends": "Freunde haben einen Pass gekauft",
+"rfCredit": "dein Guthaben",
+"rfLand": "Du erhältst {p} % Rabatt auf deinen ersten Stadtpass.",
+"iaTitle": "App installieren",
+"iaSub": "Vollbild, schneller und funktioniert offline.",
+"iaInstall": "Installieren",
+"iaIos1": "Tippe auf",
+"iaIos2": "und dann „Zum Home-Bildschirm“."
 }

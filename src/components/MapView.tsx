@@ -11,8 +11,7 @@ import { km, walkMin } from "@/lib/route-cost";
 import { ExtLink } from "./ExtLink";
 import { loadGoogle, type G } from "@/lib/gmaps-client";
 
-const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
-const ATTR = process.env.NEXT_PUBLIC_MAP_ATTRIBUTION || "© OpenStreetMap";
+import { tilesAttr, tilesUrl } from "@/lib/map-config";
 
 export type Focus = { lat: number; lng: number; name: string; walk: boolean };
 type Pos = { lat: number; lng: number };
@@ -110,7 +109,7 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], cent
     void import("leaflet").then((L) => {
       if (cancelled || !el.current || map.current) return;
       const m = L.map(el.current, { zoomControl: true, attributionControl: true });
-      L.tileLayer(TILES, { maxZoom: 19, attribution: ATTR }).addTo(m);
+      L.tileLayer(tilesUrl(), { maxZoom: 19, attribution: tilesAttr() }).addTo(m);
       layer.current = L.layerGroup().addTo(m);
       map.current = m;
       draw(L);

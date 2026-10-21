@@ -6,6 +6,11 @@ export const TOUR_PLANS = {
 } as const;
 export type TourPlan = keyof typeof TOUR_PLANS;
 
+/** Convites: o amigo convidado tem desconto no primeiro passe; quem convidou ganha crédito quando ele compra. */
+export const REFERRAL_FRIEND_PCT = 20;
+export const REFERRAL_REWARD_CENTS = 200;
+export const STRIPE_MIN_CENTS = 50; // valor mínimo que o Stripe aceita cobrar em EUR
+
 /** Cidades com roteiro gratuito (demonstração): abre sem pagamento nem conta. Pode ser alterado com FREE_CITIES=man,lis. */
 export const FREE_CITIES: string[] = (process.env.FREE_CITIES ?? "man").split(",").map((s) => s.trim()).filter(Boolean);
 export const isFreeCity = (id: string) => FREE_CITIES.includes(id);

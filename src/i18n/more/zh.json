@@ -759,5 +759,17 @@
 "stSeenBy": "浏览者",
 "stSeenN": "{n} 次浏览",
 "stNoViews": "还没有人看过这条快拍。",
-"stReact": "回应"
+"stReact": "回应",
+"rfFriend": "{n} 邀请了你——首张通行证享 {p}% 折扣",
+"rfCreditApplied": "你的邀请奖励（{c}）将抵扣本次通行证",
+"rfGiveGet": "送好友 {p}% 折扣，你得 {r}",
+"rfHow": "通过你的链接加入的好友，首张通行证享 {p}% 折扣。他们购买后，你将获得 {r} 奖励，下次购买时自动抵扣。",
+"rfPaidFriends": "位好友购买了通行证",
+"rfCredit": "你的奖励余额",
+"rfLand": "首张城市通行证享 {p}% 折扣。",
+"iaTitle": "安装应用",
+"iaSub": "全屏、更快，离线也能用。",
+"iaInstall": "安装",
+"iaIos1": "点按",
+"iaIos2": "然后选择“添加到主屏幕”。"
 }

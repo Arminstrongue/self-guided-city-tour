@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
+import { REFERRAL_FRIEND_PCT } from "@/lib/pricing";
 import { Avatar, FollowBtn, type PublicProfile } from "./Social";
 
-type Info = { handle: string; link: string; sent: number; joined: number; friends: PublicProfile[] };
+type Info = { handle: string; link: string; sent: number; joined: number; friends: PublicProfile[]; rewards?: { paidFriends: number; earned: number; credit: number; friendPct: number; reward: number } };
+const eur = (c: number, l: string) => new Intl.NumberFormat(l, { style: "currency", currency: "EUR" }).format(c / 100);
 type Contact = { name?: string[]; email?: string[]; tel?: string[] };
 
 export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; onClose: () => void }) {
@@ -62,6 +64,11 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 20 }}>✉️ {t.ivTitle}</b>
         <p className="hint" style={{ margin: 0 }}>{t.ivSub}</p>
+        {info?.rewards && <div className="iv-gift"><b>🎁 {fmt(t.rfGiveGet, { p: info.rewards.friendPct, r: eur(info.rewards.reward, locale) })}</b><small>{fmt(t.rfHow, { p: info.rewards.friendPct, r: eur(info.rewards.reward, locale) })}</small></div>}
+        {info?.rewards && (info.rewards.paidFriends > 0 || info.rewards.credit > 0) && <div className="iv-reward">
+          <div><b className="num">{info.rewards.paidFriends}</b><small>{t.rfPaidFriends}</small></div>
+          <div><b className="num">{eur(info.rewards.credit, locale)}</b><small>{t.rfCredit}</small></div>
+        </div>}
         {info && info.joined > 0 && <p className="note" style={{ margin: 0 }}>🎉 {fmt(info.joined === 1 ? t.ivJoined1 : t.ivJoined, { n: info.joined })}</p>}
 
         {/* Link */}
@@ -116,6 +123,7 @@ export function InviteLanding({ t, locale, inviter, signed }: { t: Dict; locale:
           <span className="hint">@{inviter.handle} · {inviter.followers} {inviter.followers === 1 ? t.scFollower : t.scFollowers}</span>
         </> : <h1 style={{ margin: 0, fontSize: 26 }}>{t.ivJoinTitle}</h1>}
         <p style={{ margin: 0 }}>{t.ivLandSub}</p>
+        <p className="note ref-note" style={{ margin: 0 }}>🎁 {fmt(t.rfLand, { p: REFERRAL_FRIEND_PCT })}</p>
         <ul className="wl-benefits" style={{ textAlign: "start" }}>{t.ivLandPoints.map((b) => <li key={b}>✓ {b}</li>)}</ul>
       </section>
       {signed ? (

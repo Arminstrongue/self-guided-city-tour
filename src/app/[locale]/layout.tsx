@@ -32,6 +32,8 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
     <html lang={params.locale} dir={RTL.includes(params.locale) ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
         {/* Tema (dia/noite) e cor escolhidos na carteira, aplicados antes de pintar para não piscar. */}
+        {/* Fornecedor de mapas configurável no servidor (sem reconstruir a app): MAP_TILES, MAP_ATTRIBUTION, MAP_TILES_PREFETCH. */}
+        <script dangerouslySetInnerHTML={{ __html: `window.__SGCT_MAP=${JSON.stringify({ t: process.env.MAP_TILES || process.env.NEXT_PUBLIC_MAP_TILES || "", a: process.env.MAP_ATTRIBUTION || process.env.NEXT_PUBLIC_MAP_ATTRIBUTION || "", p: process.env.MAP_TILES_PREFETCH === "1" }).replace(/</g, "\\u003c")}` }} />
         <script dangerouslySetInnerHTML={{ __html: `try{var d=document.documentElement,t=localStorage.getItem("sgct:theme"),a=localStorage.getItem("sgct:accent");if(t==="light"||t==="dark")d.dataset.theme=t;if(a&&a!=="blue")d.dataset.accent=a}catch(e){}` }} />
       </head>
       <body>

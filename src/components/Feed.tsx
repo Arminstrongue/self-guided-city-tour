@@ -242,8 +242,8 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
 }
 
 /* ---------- Nova publicação / história ---------- */
-export function Composer({ t, social, cities, defaultCity, startKind = "post", onClose }: {
-  t: Dict; social: Social; cities: Record<string, string>; defaultCity: string | null; startKind?: "post" | "story" | "video"; onClose: (created: "post" | "story" | "video" | null) => void;
+export function Composer({ t, social, cities, defaultCity, startKind = "post", initialText = "", onClose }: {
+  t: Dict; social: Social; cities: Record<string, string>; defaultCity: string | null; startKind?: "post" | "story" | "video"; initialText?: string; onClose: (created: "post" | "story" | "video" | null) => void;
 }) {
   const [kind, setKind] = useState<"post" | "story" | "video">(startKind);
   const [video, setVideo] = useState<{ file: File; url: string; secs: number } | null>(null);
@@ -251,7 +251,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   const capRef = useRef<HTMLTextAreaElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [more, setMore] = useState<string[]>([]);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(initialText);
   const [city, setCity] = useState<string | null>(defaultCity);
   const [tag, setTag] = useState<Hobby | null>(null);
   const [bg, setBg] = useState<(typeof BGS)[number]>("ocean");

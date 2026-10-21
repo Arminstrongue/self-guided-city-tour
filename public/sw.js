@@ -1,5 +1,5 @@
 /* Self Guided City Tour — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v3";
+const VERSION = "sgct-v4";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -39,15 +39,15 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
 
-  // Mosaicos do mapa: rede primeiro e guardar os vistos (sem pré-descarregar — regras do OpenStreetMap).
-  if (/(^|\.)tile\.openstreetmap\.org$|basemaps\.cartocdn\.com$/.test(url.hostname)) {
+  // Mosaicos do mapa (OpenStreetMap ou o fornecedor configurado): rede primeiro e guardar os vistos; sem rede, os guardados ou descarregados.
+  if (url.origin !== self.location.origin && (/(^|\.)tile\.openstreetmap\.org$|basemaps\.cartocdn\.com$/.test(url.hostname) || /\/\d{1,2}\/\d+\/\d+(@2x)?\.(png|jpe?g|webp)$/.test(url.pathname))) {
     e.respondWith((async () => {
       const c = await caches.open(TILES);
       try {
         const r = await fetch(req);
         if (r.ok || r.type === "opaque") { await c.put(req, r.clone()); trimTiles(c); }
         return r;
-      } catch { return (await c.match(req)) || Response.error(); }
+      } catch { return (await c.match(req)) || (await caches.match(req)) || Response.error(); }
     })());
     return;
   }
@@ -86,7 +86,7 @@ self.addEventListener("message", (e) => {
       const c = await caches.open(OFFLINE);
       const st = await caches.open(STATIC);
       let done = 0, failed = 0, bytes = 0;
-      const urls = [...new Set(d.urls)].slice(0, 400);
+      const urls = [...new Set(d.urls)].slice(0, 1400);
       const one = async (u) => {
         try {
           const same = new URL(u, self.location.origin).origin === self.location.origin;

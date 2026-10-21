@@ -36,8 +36,16 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
   useEffect(() => { let d = ""; try { d = localStorage.getItem(DEP_KEY) ?? ""; } catch { /* ignorar */ } setFlight(d || defaultFlight()); }, []);
   // Preço em euros; se o viajante usar outra moeda, mostra-se também o valor aproximado nela.
   const price = (c: number) => dualMoney(c / 100, "EUR", fx, INTL_LOCALE[locale]);
-  const priceTag = (c: number) => { const p = price(c); return p.local ? <>{p.local}<span className="price-local">{p.main}</span></> : p.main; };
-  const chosen = price(prices[plan]);
+  // Convites: desconto de amigo no primeiro passe e crédito ganho a convidar (estimativa; o Stripe mostra o valor final).
+  const [refl, setRefl] = useState<{ inviter: string | null; friendPct: number; credit: number; email: string | null } | null>(null);
+  useEffect(() => { fetch("/api/referral", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then(setRefl).catch(() => null); }, []);
+  const final = (c: number) => {
+    let a = c - Math.round(c * (refl?.friendPct ?? 0) / 100);
+    if (refl?.credit && refl.email && refl.email === email.trim().toLowerCase()) a -= Math.min(refl.credit, Math.max(0, a - 50));
+    return a;
+  };
+  const priceTag = (c: number) => { const f = final(c); const p = price(f); const tag = p.local ? <>{p.local}<span className="price-local">{p.main}</span></> : p.main; return f < c ? <><s className="price-was">{price(c).main}</s> {tag}</> : tag; };
+  const chosen = price(final(prices[plan]));
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -77,6 +85,8 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
           <div className="or">{t.orEmail}</div>
         </>
       )}
+      {refl?.inviter && <p className="note ref-note">🎁 {fmt(t.rfFriend, { n: `@${refl.inviter}`, p: refl.friendPct })}</p>}
+      {refl && refl.credit > 0 && refl.email && refl.email === email.trim().toLowerCase() && <p className="note ref-note">💳 {fmt(t.rfCreditApplied, { c: price(refl.credit).main })}</p>}
       <div className="mode-switch" role="tablist">
         <button type="button" role="tab" aria-selected={mode === "layover"} onClick={() => pickMode("layover")}>✈ {t.modeLayover}</button>
         <button type="button" role="tab" aria-selected={mode === "trip"} onClick={() => pickMode("trip")}>🧳 {t.modeTrip}</button>

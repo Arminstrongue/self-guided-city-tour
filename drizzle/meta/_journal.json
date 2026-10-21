@@ -134,6 +134,13 @@
       "when": 1793600000000,
       "tag": "0018_story_views",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1793700000000,
+      "tag": "0019_referrals",
+      "breakpoints": true
     }
   ]
 }

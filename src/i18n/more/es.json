@@ -816,5 +816,17 @@
 "stSeenBy": "Visto por",
 "stSeenN": "{n} visualizaciones",
 "stNoViews": "Nadie ha visto esta historia todavía.",
-"stReact": "Reaccionar con"
+"stReact": "Reaccionar con",
+"rfFriend": "{n} te invitó: {p}% de descuento en tu primer pase",
+"rfCreditApplied": "Tu crédito por invitaciones ({c}) se descuenta en este pase",
+"rfGiveGet": "Regala un {p}%, gana {r}",
+"rfHow": "Tus amigos que entren con tu enlace tienen un {p}% de descuento en su primer pase. Cuando compren, ganas {r} de crédito que se descuenta solo en tu próximo pase.",
+"rfPaidFriends": "amigos compraron un pase",
+"rfCredit": "tu crédito",
+"rfLand": "Tienes un {p}% de descuento en tu primer pase de ciudad.",
+"iaTitle": "Instala la app",
+"iaSub": "Pantalla completa, más rápida y funciona sin conexión.",
+"iaInstall": "Instalar",
+"iaIos1": "Toca",
+"iaIos2": "y luego «Añadir a pantalla de inicio»."
 }

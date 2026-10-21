@@ -5,6 +5,7 @@ import { myProfile } from "@/lib/social";
 import { inviteLink, inviteStats, recordInvite, sendEmailInvites, validPhone } from "@/lib/invites";
 import { LOCALES } from "@/i18n/core";
 import { rateLimit } from "@/lib/rate-limit";
+import { referralStats } from "@/lib/referrals";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,7 +18,7 @@ export async function GET(req: Request) {
   if (!p) return NextResponse.json({ error: "no_profile" }, { status: 409 });
   const l = new URL(req.url).searchParams.get("l") ?? "en";
   const locale = (LOCALES as readonly string[]).includes(l) ? l : "en";
-  return NextResponse.json({ handle: p.handle, link: inviteLink(p.handle, locale, "link"), ...(await inviteStats(me)) });
+  return NextResponse.json({ handle: p.handle, link: inviteLink(p.handle, locale, "link"), ...(await inviteStats(me)), rewards: await referralStats(me) });
 }
 
 const Body = z.discriminatedUnion("action", [

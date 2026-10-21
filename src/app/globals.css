@@ -1798,3 +1798,15 @@ main:focus{outline:none}
 .st-seen-av{display:inline-flex}
 .st-seen-av>*{margin-inline-start:-6px;box-shadow:0 0 0 2px rgba(0,0,0,.4);border-radius:50%}
 .st-seen-av>*:first-child{margin-inline-start:0}
+.price-was{color:var(--muted);font-weight:500;font-size:.85em;margin-inline-end:4px}
+.ref-note{margin:0;font-weight:600}
+.iv-reward{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.iv-reward>div{border-radius:16px;padding:14px;background:var(--surface-2);display:flex;flex-direction:column;gap:2px}
+.iv-reward b{font-size:22px}
+.iv-reward small{color:var(--muted)}
+.iv-gift{border-radius:18px;padding:16px;color:#fff;background:linear-gradient(135deg,#5e5ce6,#bf5af2 60%,#ff5f8f);display:flex;flex-direction:column;gap:4px}
+.iv-gift b{font-size:18px}
+.ia{display:flex;align-items:center;gap:12px;padding:12px}
+.ia img{border-radius:12px;flex:none}
+.ia .sc-follow{display:inline-flex;align-items:center;gap:6px}
+.ia-x{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:4px;flex:none}

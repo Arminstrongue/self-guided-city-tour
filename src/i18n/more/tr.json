@@ -1264,5 +1264,17 @@
 "stSeenBy": "Görenler",
 "stSeenN": "{n} görüntülenme",
 "stNoViews": "Bu hikâyeyi henüz kimse görmedi.",
-"stReact": "Tepki ver:"
+"stReact": "Tepki ver:",
+"rfFriend": "{n} seni davet etti — ilk geçişinde %{p} indirim",
+"rfCreditApplied": "Davet kredin ({c}) bu geçişten düşülür",
+"rfGiveGet": "%{p} indirim ver, {r} kazan",
+"rfHow": "Bağlantınla katılan arkadaşların ilk geçişte %{p} indirim alır. Satın aldıklarında {r} kredi kazanırsın; bir sonraki geçişinden otomatik düşülür.",
+"rfPaidFriends": "arkadaş geçiş satın aldı",
+"rfCredit": "kredin",
+"rfLand": "İlk şehir geçişinde %{p} indirim kazanırsın.",
+"iaTitle": "Uygulamayı yükle",
+"iaSub": "Tam ekran, daha hızlı ve çevrimdışı çalışır.",
+"iaInstall": "Yükle",
+"iaIos1": "Dokun:",
+"iaIos2": "ardından “Ana Ekrana Ekle”."
 }

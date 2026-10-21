@@ -28,6 +28,7 @@ const TagSheet = dynamic(() => import("./PostExtras").then((m) => m.TagSheet), {
 const ToolsSheet = dynamic(() => import("./TravelTools").then((m) => m.ToolsSheet), { ssr: false });
 const VideosTab = dynamic(() => import("./Reels").then((m) => m.VideosTab), { ssr: false });
 const ChatTab = dynamic(() => import("./Chat").then((m) => m.ChatTab), { ssr: false });
+const InstallApp = dynamic(() => import("./InstallApp").then((m) => m.InstallApp), { ssr: false });
 const GlobalSearch = dynamic(() => import("./GlobalSearch").then((m) => m.GlobalSearch), { ssr: false });
 const NotifsSheet = dynamic(() => import("./Notifs").then((m) => m.NotifsSheet), { ssr: false });
 const InviteSheet = dynamic(() => import("./Invite").then((m) => m.InviteSheet), { ssr: false });
@@ -59,6 +60,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const [refreshKey, setRefreshKey] = useState(0);
   const [pulling, setPulling] = useState(0);
   const [searching, setSearching] = useState(false);
+  const [pendingCompose, setPendingCompose] = useState<string | null>(null);
+  const [composeText, setComposeText] = useState("");
   const [w, setW] = useState<Wallet | null | "anon">(null);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
@@ -168,6 +171,9 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     const read = () => {
       const h = decodeURIComponent(window.location.hash.slice(1));
       if (h.startsWith("post:")) setDeep({ post: h.slice(5) }); else if (h.startsWith("tag:")) setDeep({ tag: h.slice(4) }); else setDeep(null);
+      // Atalhos da app instalada e "partilhar para a app": #compose[:texto] e #search.
+      if (h === "compose" || h.startsWith("compose:")) { setPendingCompose(h.slice(8)); history.replaceState(null, "", window.location.pathname); }
+      if (h === "search") { setSearching(true); history.replaceState(null, "", window.location.pathname); }
       if (h.startsWith("split:")) setTools({ tab: "split", split: h.slice(6) }); else if (h === "tools" || h === "split") setTools({ tab: h === "split" ? "split" : "fx" });
     };
     read(); window.addEventListener("popstate", read); window.addEventListener("hashchange", read);
@@ -212,6 +218,18 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const section: Section = tab === "chat" || tab === "people" || tab === "explore" || tab === "videos" ? tab : SUB.includes(tab) || tab === "profile" ? "profile" : "home";
   const sub: Tab = SUB.includes(tab) ? tab : "passes";
   const go = (x: Tab) => { buzz(); setTab(x); };
+  useEffect(() => {
+    if (pendingCompose === null || w === null || (w !== "anon" && !social)) return;
+    const txt = pendingCompose; setPendingCompose(null);
+    if (!signed) return goSignIn();
+    if (!prof) return setEditing(true);
+    setComposeText(txt); setComposing(true);
+  }, [pendingCompose, w, signed, prof, social]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Contador no ícone da app instalada (mensagens + notificações por ler).
+  useEffect(() => {
+    const n = unread + notifs; const nav = navigator as Navigator & { setAppBadge?: (n: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+    try { if (n > 0) void nav.setAppBadge?.(n).catch(() => null); else void nav.clearAppBadge?.().catch(() => null); } catch { /* sem suporte */ }
+  }, [unread, notifs]);
   const create = () => { buzz(); if (!signed) return goSignIn(); if (!prof) return setEditing(true); setComposing(true); };
   const title = section === "home" ? null : section === "profile" ? (prof ? `@${prof.handle}` : t.wallet) : section === "explore" ? t.nvExplore : section === "chat" ? t.chTab : section === "people" ? t.wTabs.people : t.rlTitle;
   const profileSubs: Tab[] = ["passes", "plans", "wish", "places", "memories", "saved"];
@@ -259,6 +277,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
           </section>
         )}
 
+        {signed && <InstallApp t={t} />}
         {/* A seguir (passe ativo, guia, plano) */}
         {(active[0] || nextBooking || nextPlan || (free[0] && cities[free[0]])) && (
           <section className="stack" style={{ gap: 8 }}>
@@ -404,7 +423,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         onClose={() => { setTools(null); if (/^#(split|tools)/.test(window.location.hash)) history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); }} />}
       {deep?.post && signed && <PostSheet t={t} locale={locale} id={deep.post} cities={cities} onClose={closeDeep} />}
       {deep?.tag && signed && <TagSheet t={t} locale={locale} tag={deep.tag} cities={cities} onClose={closeDeep} />}
-      {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} onClose={(c) => { setComposing(false); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}
+      {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} initialText={composeText} onClose={(c) => { setComposing(false); setComposeText(""); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) refreshSocial(); }} />}
       {onboard && signed && <InterestsOnboarding t={t} initial={signed.hobbies} onDone={(h) => { setOnboard(false); if (h) setW({ ...signed, hobbies: h }); }} />}
       {inviting && <InviteSheet t={t} locale={locale} onClose={() => setInviting(false)} />}
