@@ -44,7 +44,8 @@ const GENERAL: Record<string, string> = {
 };
 const EDITION: Record<string, string> = {
   pt: "hl=pt-PT&gl=PT&ceid=PT:pt-150", en: "hl=en-GB&gl=GB&ceid=GB:en", es: "hl=es&gl=ES&ceid=ES:es", fr: "hl=fr&gl=FR&ceid=FR:fr",
-  de: "hl=de&gl=DE&ceid=DE:de", it: "hl=it&gl=IT&ceid=IT:it", zh: "hl=zh-CN&gl=CN&ceid=CN:zh-Hans", ar: "hl=ar&gl=AE&ceid=AE:ar", ja: "hl=ja&gl=JP&ceid=JP:ja"
+  de: "hl=de&gl=DE&ceid=DE:de", it: "hl=it&gl=IT&ceid=IT:it", zh: "hl=zh-CN&gl=CN&ceid=CN:zh-Hans", ar: "hl=ar&gl=AE&ceid=AE:ar", ja: "hl=ja&gl=JP&ceid=JP:ja",
+  tr: "hl=tr&gl=TR&ceid=TR:tr", ru: "hl=ru&gl=RU&ceid=RU:ru", ko: "hl=ko&gl=KR&ceid=KR:ko"
 };
 /** Editoras de referência (aparecem primeiro e com um selo). */
 const TRUSTED = /\b(bbc|reuters|associated press|ap news|the guardian|financial times|sky news|euronews|france 24|le monde|le figaro|franceinfo|el país|el pais|rtve|la vanguardia|el mundo|público|publico|rtp|sic notícias|observador|expresso|lusa|jornal de notícias|diário de notícias|corriere|la repubblica|ansa|rai|tagesschau|spiegel|zeit|faz|süddeutsche|dw|nos\.nl|nu\.nl|dutchnews|hürriyet|daily sabah|al jazeera|the national|nhk|asahi|xinhua|cgtn|gov\.uk|manchester evening news|evening standard|the scotsman)\b/i;

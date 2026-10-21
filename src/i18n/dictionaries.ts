@@ -5,6 +5,9 @@ import itMore from "./more/it.json";
 import zhMore from "./more/zh.json";
 import arMore from "./more/ar.json";
 import jaMore from "./more/ja.json";
+import trMore from "./more/tr.json";
+import ruMore from "./more/ru.json";
+import koMore from "./more/ko.json";
 import type { Locale } from "./core";
 export * from "./core";
 
@@ -3011,7 +3014,8 @@ const more = (d: Dict, m: unknown): Dict => {
   return out as Dict;
 };
 const DICTS: Record<Locale, Dict> = {
-  pt, en, es: more(es, esMore), fr: more(fr, frMore), de: more(de, deMore), it: more(it, itMore), zh: more(zh, zhMore), ar: more(ar, arMore), ja: more(ja, jaMore)
+  pt, en, es: more(es, esMore), fr: more(fr, frMore), de: more(de, deMore), it: more(it, itMore), zh: more(zh, zhMore), ar: more(ar, arMore), ja: more(ja, jaMore),
+  tr: more(en, trMore), ru: more(en, ruMore), ko: more(en, koMore)
 };
 export function getDict(locale: Locale): Dict { return DICTS[locale]; }
 

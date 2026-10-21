@@ -1,4 +1,4 @@
-/** Email de acesso ao roteiro, na língua do cliente (9 línguas), com botão e texto simples. */
+/** Email de acesso ao roteiro, na língua do cliente (12 línguas), com botão e texto simples. */
 import { INTL_LOCALE } from "@/i18n/core";
 import type { Locale } from "@/i18n/dictionaries";
 
@@ -12,7 +12,10 @@ const TX: Record<Locale, T> = {
   it: { hi: "Ciao,", hiName: "Ciao {n},", ready: "Il tuo itinerario di {c} è pronto. Aprilo su qualsiasi dispositivo:", open: "Apri l'itinerario", until: "Accesso valido fino al {d}.", tip: "Conserva questa email: il link riapre l'itinerario su un altro telefono o computer.", help: "Serve aiuto? Rispondi a questa email." },
   zh: { hi: "您好，", hiName: "{n}，您好：", ready: "您的{c}路线已准备好，可在任何设备上打开：", open: "打开路线", until: "访问有效期至 {d}。", tip: "请保存此邮件：链接可在其他手机或电脑上再次打开路线。", help: "需要帮助？直接回复此邮件即可。" },
   ar: { hi: "مرحباً،", hiName: "مرحباً {n}،", ready: "مسارك في {c} جاهز. افتحه على أي جهاز:", open: "افتح المسار", until: "الوصول صالح حتى {d}.", tip: "احتفظ بهذا البريد: الرابط يعيد فتح المسار على هاتف أو حاسوب آخر.", help: "تحتاج مساعدة؟ ردّ على هذا البريد." },
-  ja: { hi: "こんにちは。", hiName: "{n} 様", ready: "{c}のルートの準備ができました。どの端末でも開けます：", open: "ルートを開く", until: "アクセス有効期限：{d}", tip: "このメールは保存してください。リンクから別のスマホやパソコンでもルートを開けます。", help: "お困りの際はこのメールに返信してください。" }
+  ja: { hi: "こんにちは。", hiName: "{n} 様", ready: "{c}のルートの準備ができました。どの端末でも開けます：", open: "ルートを開く", until: "アクセス有効期限：{d}", tip: "このメールは保存してください。リンクから別のスマホやパソコンでもルートを開けます。", help: "お困りの際はこのメールに返信してください。" },
+  tr: { hi: "Merhaba,", hiName: "Merhaba {n},", ready: "{c} rotanız hazır. Herhangi bir cihazda açın:", open: "Rotayı aç", until: "Erişim {d} tarihine kadar geçerli.", tip: "Bu e-postayı saklayın: bağlantı rotayı başka bir telefonda veya bilgisayarda yeniden açar.", help: "Yardım mı lazım? Bu e-postayı yanıtlamanız yeterli." },
+  ru: { hi: "Здравствуйте!", hiName: "Здравствуйте, {n}!", ready: "Ваш маршрут по городу {c} готов. Откройте его на любом устройстве:", open: "Открыть маршрут", until: "Доступ действует до {d}.", tip: "Сохраните это письмо: по ссылке маршрут откроется на другом телефоне или компьютере.", help: "Нужна помощь? Просто ответьте на это письмо." },
+  ko: { hi: "안녕하세요,", hiName: "{n}님, 안녕하세요.", ready: "{c} 경로가 준비됐어요. 어떤 기기에서든 열 수 있어요:", open: "경로 열기", until: "이용 기간: {d}까지.", tip: "이 이메일을 보관하세요. 링크로 다른 휴대폰이나 컴퓨터에서도 경로를 다시 열 수 있어요.", help: "도움이 필요하신가요? 이 이메일에 답장해 주세요." }
 };
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);

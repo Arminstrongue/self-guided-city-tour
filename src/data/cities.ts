@@ -323,6 +323,32 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
   ...ME_NAMES
 };
+/* Turco, russo e coreano. */
+for (const [id, [tr, ru, ko]] of Object.entries({
+  lis: ["Lizbon", "Лиссабон", "리스본"],
+  opo: ["Porto", "Порту", "포르투"],
+  mad: ["Madrid", "Мадрид", "마드리드"],
+  bcn: ["Barselona", "Барселона", "바르셀로나"],
+  par: ["Paris", "Париж", "파리"],
+  lon: ["Londra", "Лондон", "런던"],
+  rom: ["Roma", "Рим", "로마"],
+  ams: ["Amsterdam", "Амстердам", "암스테르담"],
+  edi: ["Edinburgh", "Эдинбург", "에든버러"],
+  man: ["Manchester", "Манчестер", "맨체스터"],
+  gla: ["Glasgow", "Глазго", "글래스고"],
+  liv: ["Liverpool", "Ливерпуль", "리버풀"],
+  bir: ["Birmingham", "Бирмингем", "버밍엄"],
+  ist: ["İstanbul", "Стамбул", "이스탄불"],
+  dxb: ["Dubai", "Дубай", "두바이"],
+  auh: ["Abu Dabi", "Абу-Даби", "아부다비"],
+  doh: ["Doha", "Доха", "도하"],
+  ruh: ["Riyad", "Эр-Рияд", "리야드"],
+  jed: ["Cidde", "Джидда", "제다"],
+  cai: ["Kahire", "Каир", "카이로"],
+  amm: ["Amman", "Амман", "암만"],
+  mct: ["Maskat", "Маскат", "무스카트"]
+} as Record<string, [string, string, string]>)) MORE_NAMES[id] = { ...MORE_NAMES[id], tr, ru, ko };
+
 
 export function cityName(c: City, locale: string): string {
   return c.n[locale] ?? MORE_NAMES[c.id]?.[locale] ?? c.n.en;

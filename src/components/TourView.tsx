@@ -22,6 +22,7 @@ import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
+import { Wallet } from "lucide-react";
 // Separadores carregados só quando abertos.
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
 const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
@@ -169,7 +170,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
           </div>
           <span className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
-            <a className="wl-btn press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}>👛</a>
+            <a className="hb-ic press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}><Wallet size={18} strokeWidth={2} aria-hidden="true" /></a>
             <CurrencyPicker current={fx.cur} label={t.currency} />
           </span>
           {leave && <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>}

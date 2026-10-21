@@ -876,7 +876,7 @@ html,body{overflow-x:clip}
 .wl-next-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:22px;background:var(--cobalt-soft);flex:none}
 .wl-next .wl-open{margin-inline-start:auto}
 .wl-quick{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px}
-.wl-quick>*{overflow-wrap:anywhere;line-height:1.2}
+.wl-quick>*{overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;line-height:1.2;font-size:11.5px}
 .wl-quick>*{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:18px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:12px;font-weight:600;text-decoration:none;cursor:pointer;text-align:center}
 .wl-quick span{font-size:22px}
 .wl-strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;scrollbar-width:none}

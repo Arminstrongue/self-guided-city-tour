@@ -10,7 +10,7 @@
  */
 
 export const VOICE_LANG: Record<string, string> = {
-  pt: "pt-PT", en: "en-GB", es: "es-ES", fr: "fr-FR", de: "de-DE", it: "it-IT", zh: "zh-CN", ar: "ar-SA", ja: "ja-JP"
+  pt: "pt-PT", en: "en-GB", es: "es-ES", fr: "fr-FR", de: "de-DE", it: "it-IT", zh: "zh-CN", ar: "ar-SA", ja: "ja-JP", tr: "tr-TR", ru: "ru-RU", ko: "ko-KR"
 };
 
 /** Limpa símbolos que os motores de voz leem mal (emojis, setas, pontos centrais). */
