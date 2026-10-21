@@ -1887,3 +1887,61 @@ main:focus{outline:none}
   .pqr-img svg{display:block;width:100%;height:100%}
   .pqr figcaption{font-size:11px;font-weight:700;letter-spacing:.01em;white-space:nowrap}
 }
+/* ── Seletor de idioma e moeda (premium) ── */
+.pk-bg{background:rgba(8,10,16,.32);-webkit-backdrop-filter:blur(6px) saturate(140%);backdrop-filter:blur(6px) saturate(140%);z-index:120}
+.pk{display:flex;flex-direction:column;padding:0;overflow:hidden;max-height:86dvh;background:color-mix(in srgb,var(--surface,#fff) 97%,transparent);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:.5px solid color-mix(in srgb,var(--ink) 10%,transparent);box-shadow:0 30px 80px -20px rgba(0,0,0,.45),0 0 0 .5px rgba(255,255,255,.4) inset;animation:pkUp .32s var(--ease) both}
+@keyframes pkUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.pk>*:not(.pk-body){flex-shrink:0}
+.pk-grab{width:38px;height:5px;border-radius:5px;background:color-mix(in srgb,var(--ink) 18%,transparent);margin:8px auto 2px}
+.pk-top{display:flex;align-items:center;gap:10px;padding:8px 14px 10px}
+.pk-seg{position:relative;flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:4px;border-radius:16px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.pk-seg button{position:relative;z-index:1;display:flex;align-items:center;gap:10px;padding:8px 12px;border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;text-align:start;border-radius:12px;transition:color .25s}
+.pk-seg button.on{color:var(--ink)}
+.pk-seg button span{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+.pk-seg small{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
+.pk-seg b{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-cs{width:22px;height:22px;flex:none;border-radius:7px;display:grid;place-items:center;font-size:12px;font-weight:800;line-height:1;color:inherit}
+.pk-cs{background:color-mix(in srgb,currentColor 14%,transparent)}
+.pk-ind{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:12px;background:var(--surface,#fff);box-shadow:0 2px 10px rgba(0,0,0,.08),0 0 0 .5px rgba(0,0,0,.05);transition:transform .35s var(--ease)}
+.pk-seg:not(:has(button:nth-of-type(2))) .pk-ind{width:calc(100% - 8px)}
+.pk-ind.r{transform:translateX(100%)}
+[dir=rtl] .pk-ind{left:auto;right:4px}[dir=rtl] .pk-ind.r{transform:translateX(-100%)}
+.pk-x{width:36px;height:36px;flex:none;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;color:var(--ink);background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.pk-x:hover{background:color-mix(in srgb,var(--ink) 12%,transparent)}
+.pk-q{display:flex;align-items:center;gap:8px;margin:0 14px 6px;padding:0 12px;height:40px;border-radius:12px;color:var(--muted);background:color-mix(in srgb,var(--ink) 5%,transparent);border:1px solid transparent;transition:border-color .2s,background .2s}
+.pk-q:focus-within{border-color:var(--cobalt);background:var(--surface,#fff)}
+.pk-q input{flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:15px;color:var(--ink)}
+.pk-q button{border:0;background:color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink);width:20px;height:20px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+.pk-body{overflow:auto;overscroll-behavior:contain;padding:4px 10px calc(16px + env(safe-area-inset-bottom));scrollbar-width:thin}
+.pk-h{margin:12px 6px 6px;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.pk-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.pk-list{display:grid;gap:2px}
+.pk-chips{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.pk-row{display:flex;align-items:center;gap:12px;min-height:54px;padding:8px 10px;border:0;border-radius:14px;background:none;color:var(--ink);font:inherit;cursor:pointer;text-align:start;transition:background .15s}
+.pk-row:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.pk-row.on{background:var(--cobalt-soft);color:var(--cobalt-ink)}
+.pk-row:disabled{cursor:progress}
+.pk-tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.pk-tx b{font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-tx small{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pk-row.on .pk-tx small{color:inherit;opacity:.7}
+.pk-code{width:34px;height:34px;flex:none;border-radius:11px;display:grid;place-items:center;font-size:11px;font-weight:800;letter-spacing:.05em;color:var(--ink);background:color-mix(in srgb,var(--ink) 6%,transparent);border:.5px solid color-mix(in srgb,var(--ink) 8%,transparent)}
+.pk-row.on .pk-code{background:var(--cobalt-ink);color:#fff;border-color:transparent}
+.pk-flag{width:34px;height:34px;flex:none;border-radius:50%;display:grid;place-items:center;font-size:22px;line-height:1;background:color-mix(in srgb,var(--ink) 5%,transparent);overflow:hidden}
+.pk-sym{min-width:30px;text-align:end;font-size:14px;font-weight:700;color:var(--muted);display:flex;justify-content:flex-end}
+.pk-row.on .pk-sym{color:inherit}
+.pk-ck{flex:none}
+.pk-spin{width:16px;height:16px;flex:none;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:pkSpin .7s linear infinite}
+@keyframes pkSpin{to{transform:rotate(360deg)}}
+.pk-none{text-align:center;color:var(--muted);padding:24px}
+@media (max-width:520px){.pk-grid,.pk-chips{grid-template-columns:1fr}}
+/* Em ecrãs grandes: painel flutuante ancorado ao botão, em vez de folha inferior */
+@media (min-width:720px){
+  .pk-bg{align-items:flex-start;justify-content:flex-end;padding:64px max(16px,calc(50vw - 574px)) 16px;background:rgba(8,10,16,.18)}
+  .pk{width:500px;max-width:100%;max-height:min(680px,calc(100dvh - 88px));border-radius:22px;transform-origin:top right;animation:pkPop .28s var(--ease) both}
+  .pk-grab{display:none}
+  .pk-top{padding-top:14px}
+  .pk-body{padding-bottom:14px}
+}
+@keyframes pkPop{from{transform:scale(.94) translateY(-6px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.pk,.pk-ind{animation:none;transition:none}}
