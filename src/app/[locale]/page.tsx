@@ -32,7 +32,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const from = fmt(t.fromP, { p: p.local ?? p.main });
-  const featured = ["lis", "par", "dxb", "rom", "lon", "cai", "ist", "doh", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
+  const featured = ["lis", "par", "dxb", "rom", "lon", "sin", "ist", "prg", "ber", "cai", "doh", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
   return (
     <main className="app xl">
       <HomeHero cities={featured}>

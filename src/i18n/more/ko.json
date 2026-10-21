@@ -1403,5 +1403,7 @@
 "qrCopied": "링크가 복사되었습니다",
 "achLevel": "🎉 레벨 {n} 달성: {x}",
 "achBadge": "🏅 새 배지: {x}",
-"achReward": "🎁 다음 패스에 쓸 수 있는 {x} 크레딧을 받았어요"
+"achReward": "🎁 다음 패스에 쓸 수 있는 {x} 크레딧을 받았어요",
+"zoneSG": "싱가포르",
+"entryHintSg": "싱가포르 시민을 제외한 모든 사람은 도착 전 3일 이내에 ica.gov.sg에서 무료 SG 입국카드(SG Arrival Card)를 온라인으로 제출해야 해요. 여권 유효기간은 6개월 이상이어야 해요."
 }

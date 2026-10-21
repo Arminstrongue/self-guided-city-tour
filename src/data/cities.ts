@@ -28,12 +28,13 @@ export type City = {
   ap?: Airport;       // aeroporto principal
   tz?: string;        // fuso horário (IANA)
 };
-export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR";
+export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR" | "CZK" | "SGD";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
 export { zoneOf, COUNTRY, type Zone } from "./city-meta";
 
 import { ME_CITIES, ME_NAMES } from "./cities-me";
+import { MORE_CITIES, MORE_CITY_NAMES } from "./cities-more";
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -288,16 +289,17 @@ export const CITIES: City[] = [
       { id: "uskudar", n: "Ferry no Bósforo e Üsküdar", a: "Üsküdar (Ásia)", lat: 41.027, lng: 29.0135, v: 40, x: true, top: true, leg: { m: "ferry", min: 35, line: "A pé até Eminönü → ferry para Üsküdar", r: 1 }, pt: "A travessia mais barata do Bósforo, da Europa para a Ásia, com vista para a cidade e a Torre da Donzela.", en: "The cheapest Bosphorus crossing, Europe to Asia, with city views and the Maiden's Tower." }
     ]
   },
+  ...MORE_CITIES,
   ...ME_CITIES
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
 export const SOON: Record<string, string>[] = [
-  { pt: "Praga", en: "Prague", es: "Praga", fr: "Prague", de: "Prag", it: "Praga", zh: "布拉格", ar: "براغ", ja: "プラハ" },
-  { pt: "Viena", en: "Vienna", es: "Viena", fr: "Vienne", de: "Wien", it: "Vienna", zh: "维也纳", ar: "فيينا", ja: "ウィーン" },
-  { pt: "Berlim", en: "Berlin", es: "Berlín", fr: "Berlin", de: "Berlin", it: "Berlino", zh: "柏林", ar: "برلين", ja: "ベルリン" },
-  { pt: "Atenas", en: "Athens", es: "Atenas", fr: "Athènes", de: "Athen", it: "Atene", zh: "雅典", ar: "أثينا", ja: "アテネ" },
-  { pt: "Dublin", en: "Dublin", es: "Dublín", fr: "Dublin", de: "Dublin", it: "Dublino", zh: "都柏林", ar: "دبلن", ja: "ダブリン" }
+  { pt: "Atenas", en: "Athens", es: "Atenas", fr: "Athènes", de: "Athen", it: "Atene", zh: "雅典", ar: "أثينا", ja: "アテネ", tr: "Atina", ru: "Афины", ko: "아테네" },
+  { pt: "Dublin", en: "Dublin", es: "Dublín", fr: "Dublin", de: "Dublin", it: "Dublino", zh: "都柏林", ar: "دبلن", ja: "ダブリン", tr: "Dublin", ru: "Дублин", ko: "더블린" },
+  { pt: "Zurique", en: "Zurich", es: "Zúrich", fr: "Zurich", de: "Zürich", it: "Zurigo", zh: "苏黎世", ar: "زيورخ", ja: "チューリッヒ", tr: "Zürih", ru: "Цюрих", ko: "취리히" },
+  { pt: "Hong Kong", en: "Hong Kong", es: "Hong Kong", fr: "Hong Kong", de: "Hongkong", it: "Hong Kong", zh: "香港", ar: "هونغ كونغ", ja: "香港", tr: "Hong Kong", ru: "Гонконг", ko: "홍콩" },
+  { pt: "Banguecoque", en: "Bangkok", es: "Bangkok", fr: "Bangkok", de: "Bangkok", it: "Bangkok", zh: "曼谷", ar: "بانكوك", ja: "バンコク", tr: "Bangkok", ru: "Бангкок", ko: "방콕" }
 ];
 
 export function getCity(id: string): City | undefined {
@@ -321,7 +323,8 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   liv: { it: "Liverpool", zh: "利物浦", ar: "ليفربول", ja: "リバプール" },
   bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" },
   ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
-  ...ME_NAMES
+  ...ME_NAMES,
+  ...MORE_CITY_NAMES
 };
 /* Turco, russo e coreano. */
 for (const [id, [tr, ru, ko]] of Object.entries({

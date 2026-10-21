@@ -955,5 +955,7 @@
 "qrCopied": "Enlace copiado",
 "achLevel": "🎉 Has subido al nivel {n}: {x}",
 "achBadge": "🏅 Nueva medalla: {x}",
-"achReward": "🎁 Has desbloqueado {x} de crédito para tu próximo pase"
+"achReward": "🎁 Has desbloqueado {x} de crédito para tu próximo pase",
+"zoneSG": "Singapur",
+"entryHintSg": "Todos, salvo los ciudadanos de Singapur, deben rellenar el SG Arrival Card (gratuito, online) en los 3 días antes de aterrizar, en ica.gov.sg. El pasaporte debe tener 6 meses de validez."
 }

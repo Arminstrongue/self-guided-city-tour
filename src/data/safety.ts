@@ -8,7 +8,7 @@ import type { Locale } from "@/i18n/dictionaries";
 export type AlertKey =
   | "pickpocket" | "snatch" | "petition" | "bracelet" | "rose" | "cups" | "ring" | "stain" | "drugs"
   | "couvert" | "menu" | "taxi" | "bar" | "shoeshine" | "shop" | "photo" | "helpers" | "atm"
-  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law";
+  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law" | "fines";
 
 export type NumK = "sos" | "police" | "ambulance" | "fire" | "health" | "nonurgent";
 export type CountrySafety = { nums: { k: NumK; n: string }[]; help: { lang: string; text: string }; pharmacy: string };
@@ -22,7 +22,9 @@ const HELP = {
   nl: { lang: "nl-NL", text: "Help! Ik heb hulp nodig. Bel alstublieft de politie of een ambulance." },
   tr: { lang: "tr-TR", text: "İmdat! Yardıma ihtiyacım var. Lütfen polisi ya da ambulansı arayın." },
   en: { lang: "en-GB", text: "Help! I need help. Please call the police or an ambulance." },
-  ar: { lang: "ar", text: "النجدة! أحتاج إلى مساعدة. من فضلك اتصل بالشرطة أو الإسعاف." }
+  ar: { lang: "ar", text: "النجدة! أحتاج إلى مساعدة. من فضلك اتصل بالشرطة أو الإسعاف." },
+  de: { lang: "de-DE", text: "Hilfe! Ich brauche Hilfe. Bitte rufen Sie die Polizei oder einen Krankenwagen." },
+  cs: { lang: "cs-CZ", text: "Pomoc! Potřebuji pomoc. Zavolejte prosím policii nebo záchranku." }
 };
 
 export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
@@ -38,7 +40,11 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   SA: { nums: [{ k: "sos", n: "911" }, { k: "police", n: "999" }, { k: "ambulance", n: "997" }, { k: "fire", n: "998" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
   EG: { nums: [{ k: "police", n: "122" }, { k: "ambulance", n: "123" }, { k: "fire", n: "180" }, { k: "nonurgent", n: "126" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
   JO: { nums: [{ k: "sos", n: "911" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
-  OM: { nums: [{ k: "sos", n: "9999" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" }
+  OM: { nums: [{ k: "sos", n: "9999" }], help: HELP.ar, pharmacy: "صيدلية · Pharmacy" },
+  DE: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "110" }, { k: "health", n: "116 117" }], help: HELP.de, pharmacy: "Apotheke (A)" },
+  AT: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "133" }, { k: "ambulance", n: "144" }, { k: "fire", n: "122" }, { k: "health", n: "1450" }], help: HELP.de, pharmacy: "Apotheke (A)" },
+  CZ: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "158" }, { k: "ambulance", n: "155" }, { k: "fire", n: "150" }], help: HELP.cs, pharmacy: "Lékárna ✚" },
+  SG: { nums: [{ k: "police", n: "999" }, { k: "ambulance", n: "995" }, { k: "fire", n: "995" }, { k: "nonurgent", n: "1800 255 0000" }], help: HELP.en, pharmacy: "Pharmacy (Guardian · Watsons · Unity)" }
 };
 
 const UK: AlertKey[] = ["lefttraffic", "pickpocket", "snatch"];
@@ -65,7 +71,13 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   jed: { alerts: ["heat", "law", "dress", "taxi"], hot: ["Al-Balad", "Souq Al Alawi"], night: [] },
   cai: { alerts: ["camel", "shop", "helpers", "taxi", "heat", "pickpocket"], hot: ["Giza plateau", "Khan el-Khalili", "Tahrir Square", "Metro"], night: [], tp: "Tourist Police · 126" },
   amm: { alerts: ["taxi", "dress", "shop", "pickpocket"], hot: ["Downtown (Al-Balad)", "Roman Theatre"], night: [] },
-  mct: { alerts: ["heat", "dress", "law", "taxi"], hot: ["Mutrah Souq", "Corniche"], night: [] }
+  mct: { alerts: ["heat", "dress", "law", "taxi"], hot: ["Mutrah Souq", "Corniche"], night: [] },
+  fra: { alerts: ["pickpocket", "drugs", "bikelane"], hot: ["Hauptbahnhof", "Zeil", "Römerberg", "S-Bahn"], night: ["Bahnhofsviertel"] },
+  ber: { alerts: ["pickpocket", "cups", "petition", "bikelane"], hot: ["Alexanderplatz", "Brandenburger Tor", "Checkpoint Charlie", "U-Bahn U2 / U8", "Warschauer Brücke"], night: ["Görlitzer Park", "Kottbusser Tor", "RAW-Gelände"] },
+  muc: { alerts: ["pickpocket", "bikelane"], hot: ["Marienplatz", "Hauptbahnhof", "Hofbräuhaus", "Theresienwiese (Oktoberfest)"], night: ["Hauptbahnhof"] },
+  vie: { alerts: ["pickpocket", "bikelane"], hot: ["Stephansplatz", "Kärntner Straße", "U1", "Schönbrunn"], night: ["Praterstern"] },
+  prg: { alerts: ["atm", "taxi", "pickpocket", "menu", "fakepolice"], hot: ["Karlův most", "Staroměstské náměstí", "Václavské náměstí", "Tram 22"], night: ["Václavské náměstí"] },
+  sin: { alerts: ["fines", "heat"], hot: [], night: [], tp: "Polícia: 999 · app Police@SG" }
 };
 
 type T = [string, string];
@@ -344,6 +356,17 @@ export const ALERT_TEXT = {
     zh: ["自行车道", "红色车道属于自行车，他们不会减速。走下人行道前先看两边。"],
     ar: ["مسارات الدراجات", "المسارات الحمراء للدراجات ولا تبطئ. انظر في الاتجاهين قبل النزول عن الرصيف."],
     ja: ["自転車レーン", "赤いレーンは自転車用で、減速しません。歩道から出る前に左右を確認して。"]
+  },
+  fines: {
+    pt: ["Multas pesadas", "Multas por deitar lixo ao chão, fumar fora das zonas marcadas, comer ou beber no MRT e atravessar fora da passadeira. Pastilha elástica não pode entrar no país; tolerância zero com drogas."],
+    en: ["Heavy fines", "Fines for littering, smoking outside marked areas, eating or drinking on the MRT and jaywalking. Chewing gum can't be brought in; zero tolerance for drugs."],
+    es: ["Multas elevadas", "Multas por tirar basura, fumar fuera de las zonas marcadas, comer o beber en el MRT y cruzar fuera del paso de peatones. No se puede entrar chicle; tolerancia cero con las drogas."],
+    fr: ["Amendes élevées", "Amendes pour les déchets jetés par terre, la cigarette hors des zones prévues, manger ou boire dans le MRT et traverser hors des passages. Le chewing-gum est interdit à l'entrée ; tolérance zéro pour la drogue."],
+    de: ["Hohe Bußgelder", "Bußgelder für Müll auf dem Boden, Rauchen außerhalb markierter Zonen, Essen oder Trinken in der MRT und Überqueren abseits des Zebrastreifens. Kaugummi darf nicht eingeführt werden; null Toleranz bei Drogen."],
+    it: ["Multe salate", "Multe per rifiuti a terra, fumo fuori dalle aree segnate, cibo o bevande sull'MRT e attraversamenti fuori dalle strisce. Non si può introdurre gomma da masticare; tolleranza zero sulle droghe."],
+    zh: ["重罚", "乱扔垃圾、在指定区域外吸烟、在地铁（MRT）上饮食、乱穿马路都会被罚款。不得携带口香糖入境；对毒品零容忍。"],
+    ar: ["غرامات كبيرة", "غرامات على رمي القمامة، والتدخين خارج الأماكن المخصصة، والأكل أو الشرب في المترو، وعبور الطريق من غير الممر. يُمنع إدخال العلكة؛ ولا تسامح مطلقًا مع المخدرات."],
+    ja: ["高額な罰金", "ポイ捨て、指定場所以外での喫煙、MRT車内での飲食、横断歩道以外の横断には罰金。チューインガムの持ち込みは禁止、薬物は一切容認されません。"]
   }
 } as unknown as Record<AlertKey, Record<Locale, T>>;
 
@@ -373,6 +396,7 @@ const MORE_ALERTS: Record<AlertKey, Record<"tr" | "ru" | "ko", T>> = {
   dress: { tr: ["Kıyafet ve saygı", "Camilerde, çarşılarda ve resmî binalarda omuzları ve dizleri örtün; camilerde kadınlar saçlarını örter. Plaj dışında çok kısa veya transparan kıyafetlerden kaçının."], ru: ["Одежда и уважение", "В мечетях, на базарах и в госучреждениях закрывайте плечи и колени; в мечетях женщины покрывают голову. Вне пляжа избегайте очень короткой или прозрачной одежды."], ko: ["복장과 예의", "모스크, 수크, 공공건물에서는 어깨와 무릎을 가리고, 모스크에서 여성은 머리를 가려요. 해변 밖에서는 아주 짧거나 비치는 옷을 피하세요."] },
   camel: { tr: ["Piramitlerde develer ve «rehberler»", "«Ucuz» deve veya at turu teklif edip inmeniz için çok daha fazlasını isterler. Toplam fiyatı yazılı olarak anlaşın ya da kararlı bir şekilde reddedip plato otobüsünü kullanın."], ru: ["Верблюды и «гиды» у пирамид", "Предлагают «дешёвую» прогулку на верблюде или лошади, а потом требуют намного больше, чтобы отпустить. Договоритесь о полной цене письменно или твёрдо откажитесь и пользуйтесь автобусом по плато."], ko: ["피라미드의 낙타와 «가이드»", "«싼» 낙타나 말 타기를 권한 뒤 내려 주는 대가로 훨씬 많은 돈을 요구해요. 전체 가격을 글로 합의하거나 단호히 거절하고 고원 버스를 이용하세요."] },
   law: { tr: ["Katı yasalar", "Kamuya açık sevgi gösterisi yok, sokakta alkol yok ve uyuşturucuya sıfır tolerans (bazı kodeinli ilaçlar izin gerektirir). İzinsiz insanların veya resmî binaların fotoğrafını çekmeyin."], ru: ["Строгие законы", "Никаких публичных проявлений нежности, алкоголя на улице и нулевая терпимость к наркотикам (некоторые лекарства с кодеином требуют разрешения). Не фотографируйте людей без спроса и государственные здания."], ko: ["엄격한 법", "공공장소 애정 표현과 길거리 음주는 금지이며 마약은 무관용이에요(일부 코데인 약은 허가 필요). 허락 없이 사람이나 정부 건물을 촬영하지 마세요."] },
+  fines: { tr: ["Ağır cezalar", "Yere çöp atmak, işaretli alanlar dışında sigara içmek, MRT'de yiyip içmek ve yaya geçidi dışından karşıya geçmek para cezası gerektirir. Ülkeye sakız sokulamaz; uyuşturucuya sıfır tolerans."], ru: ["Крупные штрафы", "Штрафы за мусор на улице, курение вне отведённых мест, еду и напитки в MRT и переход вне перехода. Жевательную резинку ввозить нельзя; нулевая терпимость к наркотикам."], ko: ["무거운 벌금", "쓰레기 투기, 지정 구역 밖 흡연, MRT 안 음식물 섭취, 무단횡단에는 벌금이 있어요. 껌은 반입할 수 없고 마약은 무관용이에요."] },
   bikelane: { tr: ["Bisiklet yolları", "Kırmızı şeritler bisikletlere aittir ve yavaşlamazlar. Kaldırımdan inmeden önce iki yöne de bakın."], ru: ["Велодорожки", "Красные полосы — для велосипедов, и они не тормозят. Прежде чем сойти с тротуара, посмотрите в обе стороны."], ko: ["자전거 도로", "빨간 차선은 자전거 전용이며 속도를 줄이지 않아요. 보도에서 내려서기 전에 양쪽을 보세요."] }
 };
 for (const [k, v] of Object.entries(MORE_ALERTS) as [AlertKey, Record<"tr" | "ru" | "ko", T>][]) Object.assign(ALERT_TEXT[k], v);

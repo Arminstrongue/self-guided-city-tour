@@ -31,6 +31,14 @@ const GULF_PAY: Tip = { k: "pay", pt: "Cartão e contactless aceites quase em to
 const GULF_WATER: Tip = { k: "water", pt: "A água da torneira é dessalinizada e segura, mas quase todos bebem engarrafada; é barata em qualquer loja.", en: "Tap water is desalinated and safe, but most people drink bottled; it's cheap in any shop." };
 const meBag = (pt: string, en: string): Tip => ({ k: "bag", pt: `${BAG.pt} ${pt}`.trim(), en: `${BAG.en} ${en}`.trim() });
 
+/* ---------- Alemanha e Áustria ---------- */
+const DE_PAY: Tip = { k: "pay", pt: "Cartão e contactless são aceites cada vez mais, mas padarias, bancas e algumas tabernas ainda só aceitam dinheiro: leve algum.", en: "Cards and contactless are increasingly accepted, but bakeries, stalls and some taverns are still cash-only: carry some." };
+const DE_TIP: Tip = { k: "tip", pt: "Arredonde 5–10% e diga o total ao pagar, em vez de deixar dinheiro na mesa.", en: "Round up 5–10% and tell the server the total when paying, rather than leaving money on the table." };
+const DE_WATER: Tip = { k: "water", pt: "A água da torneira é potável, mas nos restaurantes serve-se água engarrafada (paga). Garrafas de plástico têm depósito (Pfand): devolva-as no supermercado.", en: "Tap water is safe, but restaurants serve bottled water (paid). Plastic bottles carry a deposit (Pfand): return them at supermarkets." };
+const DE_SAFETY = (pt: string, en: string): Tip => ({ k: "safety", pt: `Cidade segura. Não ande nas ciclovias e valide o bilhete antes de entrar: os revisores multam em 60 €. ${pt}`, en: `A safe city. Keep out of bike lanes and validate your ticket before boarding: inspectors fine €60. ${en}` });
+const DE_TOILET: Tip = { k: "toilet", pt: "Casas de banho em estações (muitas vezes a 0,50–1 €), centros comerciais e museus.", en: "Toilets in stations (often €0.50–1), shopping centres and museums." };
+const DE_SUNDAY: Tip = { k: "bag", pt: "Ao domingo quase todas as lojas fecham; as das estações e do aeroporto ficam abertas.", en: "Almost all shops close on Sundays; those in stations and at the airport stay open." };
+
 export const PRACTICAL: Record<string, Practical> = {
   ist: { emergency: "112", tips: [
     { k: "bag", pt: `${BAG.pt} Voa com a Turkish Airlines? Pergunte no balcão Touristanbul do aeroporto se a visita gratuita para passageiros em trânsito cabe no seu horário.`, en: `${BAG.en} Flying Turkish Airlines? Ask at the airport's Touristanbul desk whether the free transit tour fits your schedule.` },
@@ -243,5 +251,66 @@ export const PRACTICAL: Record<string, Practical> = {
       { n: "Shuwa", p: 4, pt: "Cordeiro marinado e assado lentamente em forno subterrâneo.", en: "Marinated lamb slow-cooked in an underground oven." },
       { n: "Halwa omani", p: 2, pt: "Doce de açafrão, cardamomo e água de rosas.", en: "Saffron, cardamom and rosewater sweet." },
       { n: "Kahwa", p: 0.5, pt: "Café omani com cardamomo, servido com tâmaras.", en: "Omani cardamom coffee, served with dates." }
+    ] },
+  /* ---------- Alemanha, Áustria, Chéquia e Singapura ---------- */
+  fra: { emergency: "112 / 110", tips: [BAG, EU_SIM, DE_PAY, DE_TIP, DE_WATER, DE_SAFETY("O Bahnhofsviertel, junto à estação central, tem consumo de droga na rua: atravesse de dia e sem parar.", "The Bahnhofsviertel by the main station has open drug use: walk through by day without lingering."), PLUG_EU, DE_TOILET, DE_SUNDAY],
+    food: [
+      { n: "Grüne Soße", p: 12, pt: "O molho verde de sete ervas com batatas e ovos cozidos.", en: "The seven-herb green sauce with potatoes and boiled eggs." },
+      { n: "Apfelwein", p: 3, pt: "Sidra seca servida no copo canelado «Gerippte», em Sachsenhausen.", en: "Dry cider in the ribbed «Gerippte» glass, in Sachsenhausen." },
+      { n: "Frankfurter Würstchen", p: 5, pt: "As salsichas finas originais de Frankfurt, com mostarda e pão.", en: "The original thin Frankfurt sausages, with mustard and bread." },
+      { n: "Handkäs mit Musik", p: 7, pt: "Queijo curado com cebola em vinagre, o petisco das tabernas de sidra.", en: "Tangy cheese with onion vinaigrette, the cider-tavern snack." }
+    ] },
+  ber: { emergency: "112 / 110", tips: [BAG, EU_SIM, DE_PAY, DE_TIP, DE_WATER, DE_SAFETY("Cuidado com o jogo das conchas na Alexanderplatz e na ponte de Warschauer Straße: é sempre um esquema.", "Watch out for shell games at Alexanderplatz and the Warschauer Straße bridge: they're always a scam."), PLUG_EU, DE_TOILET, DE_SUNDAY],
+    food: [
+      { n: "Currywurst", p: 4.5, pt: "Salsicha com molho de caril e ketchup, com ou sem pele (Curry 36, Konnopke's).", en: "Sausage in curry ketchup, with or without skin (Curry 36, Konnopke's)." },
+      { n: "Döner Kebab", p: 7, pt: "Berlim diz ter inventado o döner em pão; filas no Mustafa's e no Rüyam.", en: "Berlin claims the döner in bread; queues at Mustafa's and Rüyam." },
+      { n: "Pfannkuchen", p: 2, pt: "O «Berliner»: bola de Berlim recheada de compota.", en: "The «Berliner»: jam-filled doughnut." },
+      { n: "Berliner Weisse", p: 4, pt: "Cerveja de trigo ácida, servida com xarope vermelho ou verde.", en: "Sour wheat beer, served with red or green syrup." }
+    ] },
+  muc: { emergency: "112 / 110", tips: [BAG, EU_SIM, DE_PAY, DE_TIP, DE_WATER, DE_SAFETY("Na Oktoberfest (fim de setembro a início de outubro) os transportes enchem e os preços sobem: reserve tudo cedo.", "During Oktoberfest (late September to early October) transport is packed and prices rise: book early."), PLUG_EU, DE_TOILET, DE_SUNDAY],
+    food: [
+      { n: "Weißwurst", p: 7, pt: "Salsicha branca de vitela com mostarda doce e pretzel; tradicionalmente antes do meio-dia.", en: "White veal sausage with sweet mustard and a pretzel; traditionally before noon." },
+      { n: "Brezn", p: 2, pt: "O pretzel bávaro, de casca estaladiça e sal grosso.", en: "The Bavarian pretzel, crisp-crusted with coarse salt." },
+      { n: "Schweinshaxe", p: 18, pt: "Joelho de porco assado com knödel, nas cervejarias.", en: "Roast pork knuckle with dumplings, in the beer halls." },
+      { n: "Maß", p: 12, pt: "Caneca de um litro de cerveja num jardim de cerveja.", en: "A litre stein of beer in a beer garden." }
+    ] },
+  vie: { emergency: "112 / 133", tips: [BAG, EU_SIM,
+    { k: "pay", pt: "Cartão aceite em quase todo o lado, mas alguns cafés tradicionais e bancas de salsichas ainda preferem dinheiro.", en: "Cards work almost everywhere, but some traditional cafés and sausage stands still prefer cash." },
+    { k: "tip", pt: "Arredonde 5–10% e diga o total ao pagar («stimmt so»), em vez de deixar na mesa.", en: "Round up 5–10% and say the total when paying («stimmt so») rather than leaving it on the table." },
+    { k: "water", pt: "A água da torneira vem dos Alpes e é excelente; nos cafés serve-se um copo com o café.", en: "Tap water comes from the Alps and is excellent; cafés serve a glass with your coffee." },
+    { k: "safety", pt: "Cidade muito segura. Fique fora das ciclovias e atenção a carteiristas na Stephansplatz e na linha U1.", en: "A very safe city. Stay out of bike lanes and watch for pickpockets at Stephansplatz and on the U1." },
+    PLUG_EU, DE_TOILET, DE_SUNDAY],
+    food: [
+      { n: "Wiener Schnitzel", p: 20, pt: "Escalope de vitela panado, com salada de batata e limão.", en: "Breaded veal escalope with potato salad and lemon." },
+      { n: "Sachertorte", p: 8, pt: "O bolo de chocolate com compota de alperce, no Hotel Sacher ou no Demel.", en: "The chocolate cake with apricot jam, at Hotel Sacher or Demel." },
+      { n: "Käsekrainer", p: 5, pt: "Salsicha com queijo de uma banca «Würstelstand», ao fim da noite.", en: "Cheese-filled sausage from a «Würstelstand», late at night." },
+      { n: "Melange", p: 4.5, pt: "O café vienense com leite e espuma, num café tradicional.", en: "The Viennese coffee with milk foam, in a traditional café." }
+    ] },
+  prg: { emergency: "112", tips: [BAG, EU_SIM,
+    { k: "pay", pt: "Pague em coroas (CZK), não em euros. Recuse sempre a «conversão para a sua moeda» no multibanco ou no terminal e evite as casas de câmbio com «0% commission».", en: "Pay in crowns (CZK), not euros. Always decline «conversion to your currency» at ATMs and card terminals, and avoid exchange offices advertising «0% commission»." },
+    { k: "tip", pt: "Arredonde 10% nos restaurantes e confirme se o serviço já vem na conta.", en: "Round up 10% in restaurants and check whether service is already on the bill." },
+    { k: "water", pt: "A água da torneira é potável; nos restaurantes peça «kohoutková voda».", en: "Tap water is safe; in restaurants ask for «kohoutková voda»." },
+    { k: "safety", pt: "Use os multibancos de bancos (não os Euronet), apps como Bolt/Uber em vez de táxis na rua e valide sempre o bilhete — os revisores multam no ato.", en: "Use bank ATMs (not Euronet), apps like Bolt/Uber instead of street taxis, and always validate your ticket — inspectors fine on the spot." },
+    PLUG_EU, TOILET],
+    food: [
+      { n: "Svíčková", p: 280, pt: "Lombo de vaca em molho de natas com knedlíky e arandos.", en: "Beef sirloin in cream sauce with dumplings and cranberries." },
+      { n: "Pilsner", p: 70, pt: "Meio litro de cerveja de pressão, inventada em Plzeň em 1842.", en: "Half a litre of draught lager, invented in Plzeň in 1842." },
+      { n: "Smažený sýr", p: 200, pt: "Queijo panado e frito com molho tártaro.", en: "Breaded fried cheese with tartar sauce." },
+      { n: "Trdelník", p: 120, pt: "Massa enrolada e assada no espeto; muito turística, mas quente no inverno sabe bem.", en: "Spit-roasted rolled pastry; very touristy, but nice and warm in winter." }
+    ] },
+  sin: { emergency: "999 / 995", tips: [
+    meBag("No aeroporto, a Jewel Changi (cascata interior e jardins) é de acesso livre e fica a pé dos terminais 1–3.", "At the airport, Jewel Changi (indoor waterfall and gardens) is free and a short walk from Terminals 1–3."),
+    ME_SIM,
+    { k: "pay", pt: "Contactless aceite em quase todo o lado, incluindo o MRT e os autocarros (passe o mesmo cartão à entrada e à saída). Alguns hawkers só aceitam dinheiro ou PayNow.", en: "Contactless works almost everywhere, including the MRT and buses (tap the same card in and out). Some hawker stalls take cash or PayNow only." },
+    { k: "tip", pt: "Não há gorjetas: os restaurantes já cobram 10% de serviço mais IVA (os «++» da ementa).", en: "No tipping: restaurants already add 10% service plus GST (the «++» on menus)." },
+    { k: "water", pt: "A água da torneira é potável. Ande com uma garrafa: o calor húmido cansa depressa.", en: "Tap water is safe. Carry a bottle: the humid heat tires you quickly." },
+    { k: "safety", pt: "Uma das cidades mais seguras do mundo, mas com multas pesadas (lixo, fumar, comer no MRT, atravessar fora da passadeira). Chove quase todas as tardes: leve guarda-chuva.", en: "One of the world's safest cities, with heavy fines (litter, smoking, eating on the MRT, jaywalking). It rains most afternoons: carry an umbrella." },
+    G_PLUG,
+    { k: "toilet", pt: "Casas de banho gratuitas e limpas em centros comerciais e estações de MRT; nos hawker centres às vezes custam 0,10–0,20 SGD.", en: "Free, clean toilets in malls and MRT stations; at hawker centres they sometimes cost SGD 0.10–0.20." }],
+    food: [
+      { n: "Hainanese chicken rice", p: 5, pt: "Frango escalfado com arroz cozido no caldo, o prato nacional.", en: "Poached chicken with rice cooked in its stock, the national dish." },
+      { n: "Laksa", p: 6, pt: "Sopa picante de leite de coco com massa e marisco.", en: "Spicy coconut-milk noodle soup with seafood." },
+      { n: "Chilli crab", p: 90, pt: "Caranguejo em molho picante e doce, para partilhar (preço por quilo).", en: "Crab in a sweet-spicy sauce, for sharing (priced per kilo)." },
+      { n: "Kaya toast", p: 4, pt: "Torrada com doce de coco e manteiga, com ovos moles e kopi.", en: "Toast with coconut jam and butter, with soft eggs and kopi." }
     ] }
 };

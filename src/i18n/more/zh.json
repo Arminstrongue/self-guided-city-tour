@@ -898,5 +898,7 @@
 "qrCopied": "链接已复制",
 "achLevel": "🎉 升到第 {n} 级：{x}",
 "achBadge": "🏅 新徽章：{x}",
-"achReward": "🎁 你获得了 {x} 抵扣金，可用于下一张通行证"
+"achReward": "🎁 你获得了 {x} 抵扣金，可用于下一张通行证",
+"zoneSG": "新加坡",
+"entryHintSg": "除新加坡公民外，所有人须在抵达前3天内在 ica.gov.sg 免费在线填写 SG Arrival Card（新加坡入境卡）。护照有效期须超过6个月。"
 }

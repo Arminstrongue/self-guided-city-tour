@@ -33,7 +33,14 @@ const EN: Record<string, string> = {
   gem: "Grand Egyptian Museum (GEM)", pyramids: "Pyramids of Giza", sphinx: "Sphinx & Valley Temple", "egyptian-museum": "Egyptian Museum (Tahrir)",
   khan: "Khan el-Khalili & Al-Muizz Street", "citadel-cai": "Saladin Citadel & Muhammad Ali Mosque", citadel: "Amman Citadel", "roman-theatre": "Roman Theatre",
   "downtown-amm": "Downtown (Al-Balad) & souks", "abdullah-mosque": "King Abdullah I Mosque", "grand-mosque-mct": "Sultan Qaboos Grand Mosque",
-  mutrah: "Mutrah Corniche & Souq", "al-alam": "Al Alam Palace & Old Muscat", "national-museum-om": "National Museum of Oman"
+  mutrah: "Mutrah Corniche & Souq", "al-alam": "Al Alam Palace & Old Muscat", "national-museum-om": "National Museum of Oman",
+  // Alemanha, Áustria, Chéquia e Singapura
+  hauptwache: "Hauptwache & Zeil", "dom-fra": "Cathedral & New Old Town", museumsufer: "Museumsufer & Städel",
+  brandenburger: "Brandenburg Gate", holocaust: "Holocaust Memorial", museumsinsel: "Museum Island & Cathedral", alexanderplatz: "Alexanderplatz & TV Tower",
+  marienplatz: "Marienplatz & Glockenspiel", residenz: "Residenz & Odeonsplatz", "englischer-garten": "English Garden & Eisbach", olympiapark: "Olympic Park & BMW Welt",
+  stephansdom: "St Stephen's Cathedral", graben: "Graben & Kohlmarkt", hofburg: "Hofburg & Michaelerplatz", oper: "State Opera & Albertina", schoenbrunn: "Schönbrunn Palace",
+  hrad: "Prague Castle & St Vitus", "karluv-most": "Charles Bridge", staromestske: "Old Town Square & Astronomical Clock", josefov: "Jewish Quarter (Josefov)", vaclavske: "Wenceslas Square",
+  padang: "National Gallery & Padang", mbs: "Helix Bridge & Marina Bay Sands", chinatown: "Chinatown & Buddha Tooth Relic Temple", "kampong-glam": "Kampong Glam & Sultan Mosque"
 };
 
 export function stopName(s: { id: string; n: string }, locale: string): string {
@@ -49,7 +56,7 @@ const LINE_EN: [RegExp, string][] = [
   [/Autocarro/g, "Bus"], [/autocarro/g, "bus"], [/Comboio/g, "Train"], [/Elétrico/g, "Tram"], [/Escadas a descer/g, "Steps down"], [/A subir/g, "Uphill"],
   [/Beira-rio/g, "Riverside"], [/Pela Corniche/g, "Along the Corniche"], [/Pelo parque/g, "Through the park"], [/Pelo planalto/g, "Across the plateau"],
   [/Tabuleiro inferior/g, "Lower deck"], [/Tabuleiro superior/g, "Upper deck"], [/Passeio marítimo/g, "Seafront"], [/7\.º Círculo/g, "7th Circle"],
-  [/Táxi/g, "Taxi"], [/táxi/g, "taxi"], [/ até /g, " to "]
+  [/Táxi/g, "Taxi"], [/táxi/g, "taxi"], [/ até /g, " to "], [/ a pé/g, " on foot"], [/Pela /g, "Along "], [/Pelo /g, "Through the "]
 ];
 export function lineText(line: string | undefined, locale: string): string {
   if (!line || locale === "pt") return line ?? "";

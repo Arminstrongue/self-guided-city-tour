@@ -5,7 +5,7 @@ import { GUIDE_LANGS } from "./guides";
 import { GUIDE_MAX_HOURLY, GUIDE_MIN_HOURLY } from "./pricing";
 
 /** Países onde os guias podem receber pagamentos pela Stripe Connect (Turquia, Catar, Arábia Saudita, Egito, Jordânia e Omã ainda não). */
-export const GUIDE_PAYOUT_COUNTRIES = ["PT", "ES", "FR", "IT", "NL", "GB", "AE"];
+export const GUIDE_PAYOUT_COUNTRIES = ["PT", "ES", "FR", "IT", "NL", "GB", "AE", "DE", "AT", "CZ", "SG"];
 export const guideCityOk = (id: string) => GUIDE_PAYOUT_COUNTRIES.includes(COUNTRY[id] ?? "");
 
 const photo = z.string().max(110_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).optional().nullable();

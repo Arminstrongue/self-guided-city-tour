@@ -186,6 +186,48 @@ export const MOMENTS: Record<string, Moment[]> = {
     m("dolphins", "🐬", "morning", ["nature", "family"], 23.5900, 58.6100, ["Golfinhos ao amanhecer", "Barcos saem da marina de Mascate para ver golfinhos de manhã cedo."], ["Dolphins at dawn", "Boats leave Muscat marina early to watch dolphins."]),
     m("qurum-beach", "🏖", "morning", ["nature", "sport"], 23.6200, 58.4800, ["Praia de Qurum", "Areia larga e passeio, perto da ópera; ótimo de manhã ou ao fim da tarde."], ["Qurum beach", "A wide beach and promenade near the opera; great early or late in the day."]),
     m("riyam", "📸", "day", ["photo", "history"], 23.6140, 58.5850, ["Miradouro de Riyam", "O queimador de incenso gigante no alto e a vista sobre Mutrah e a baía."], ["Riyam viewpoint", "The giant incense burner on the hill and the view over Mutrah and the bay."])
+  ],
+  fra: [
+    m("steg-sunset", "🌅", "sunset", ["photo"], 50.1087, 8.6834, ["Pôr do sol no Eiserner Steg", "Os arranha-céus de «Mainhattan» a acender as luzes sobre o rio Meno."], ["Sunset on the Eiserner Steg", "The «Mainhattan» skyline lighting up over the river Main."]),
+    m("apfelwein", "🍏", "night", ["food", "night"], 50.1037, 8.6878, ["Noite de Apfelwein", "Mesas corridas em Alt-Sachsenhausen, com o jarro azul «Bembel» e Handkäs."], ["Apfelwein night", "Long tables in Alt-Sachsenhausen, with the blue «Bembel» jug and Handkäs."]),
+    m("kleinmarkthalle", "🥨", "morning", ["food", "shopping"], 50.1129, 8.6837, ["Manhã na Kleinmarkthalle", "O mercado coberto: salsichas da Frau Schreiber, queijos e o terraço de vinhos."], ["Morning at the Kleinmarkthalle", "The covered market: Frau Schreiber's sausages, cheeses and the wine terrace."]),
+    m("mainufer", "🚲", "day", ["nature", "sport"], 50.1035, 8.6800, ["Bicicleta à beira do Meno", "Margens largas e relvadas, com museus de um lado e skyline do outro."], ["Cycling the Main riverbanks", "Wide grassy banks, museums on one side and the skyline on the other."]),
+    m("palmengarten", "🌿", "day", ["nature", "family"], 50.1225, 8.6566, ["Palmengarten", "Estufas tropicais e jardins centenários, a dez minutos do centro."], ["Palmengarten", "Tropical glasshouses and century-old gardens, ten minutes from the centre."])
+  ],
+  ber: [
+    m("reichstag-dusk", "🌅", "sunset", ["photo", "history"], 52.5186, 13.3762, ["Pôr do sol na cúpula do Reichstag", "A rampa em espiral sobre o parlamento, com a cidade inteira à volta (reserva gratuita)."], ["Sunset in the Reichstag dome", "The spiral ramp above parliament, with the whole city around you (free booking)."]),
+    m("mauerpark", "🎤", "weekend", ["music", "shopping"], 52.5435, 13.4024, ["Domingo no Mauerpark", "Mercado de pulgas e karaoke ao ar livre no anfiteatro, onde passava o Muro."], ["Sunday at Mauerpark", "Flea market and open-air karaoke in the amphitheatre where the Wall ran."]),
+    m("tempelhof", "🪁", "day", ["nature", "sport", "family"], 52.4733, 13.4019, ["Pistas do Tempelhof", "Um aeroporto transformado em parque: pedalar ou andar de kite na pista."], ["Tempelhof runways", "An airport turned park: cycle or kite along the runway."]),
+    m("kreuzberg-night", "🌙", "night", ["night", "food"], 52.4990, 13.4180, ["Noite em Kreuzberg", "Bares, döner e o canal Landwehr: a Berlim descontraída."], ["Evening in Kreuzberg", "Bars, döner and the Landwehr canal: laid-back Berlin."]),
+    m("wall-memorial", "🧱", "day", ["history"], 52.5352, 13.3903, ["Memorial do Muro na Bernauer Straße", "O único troço com a «faixa da morte» conservada; gratuito e ao ar livre."], ["Berlin Wall Memorial, Bernauer Straße", "The only stretch with the «death strip» preserved; free and outdoors."])
+  ],
+  muc: [
+    m("glockenspiel", "🔔", "day", ["music", "family"], 48.1374, 11.5755, ["Glockenspiel na Marienplatz", "Às 11h e 12h os bonecos dançam o Schäffler e encenam um torneio real."], ["Glockenspiel at Marienplatz", "At 11:00 and 12:00 the figures dance the coopers' dance and stage a royal joust."]),
+    m("biergarten", "🍺", "day", ["food", "night"], 48.1527, 11.5920, ["Jardim de cerveja da Torre Chinesa", "Sete mil lugares à sombra dos castanheiros no Jardim Inglês; pode levar a sua comida."], ["Chinese Tower beer garden", "Seven thousand seats under the chestnut trees in the English Garden; you may bring your own food."]),
+    m("eisbach", "🏄", "day", ["sport", "photo"], 48.1436, 11.588, ["Surfistas do Eisbach", "Surf em pleno centro da cidade, todo o ano, na onda do rio junto à Haus der Kunst."], ["Eisbach surfers", "Year-round surfing in the city centre, on the river wave by the Haus der Kunst."]),
+    m("olympia-sunset", "🌅", "sunset", ["photo", "nature"], 48.1694, 11.5517, ["Pôr do sol na colina olímpica", "Vista sobre o parque e, em dias limpos, os Alpes no horizonte."], ["Sunset on Olympic Hill", "Views over the park and, on clear days, the Alps on the horizon."]),
+    m("weisswurst", "🥨", "morning", ["food"], 48.1351, 11.5763, ["Pequeno-almoço bávaro", "Weißwurst, pretzel e cerveja de trigo antes do meio-dia, como manda a tradição."], ["Bavarian breakfast", "Weißwurst, pretzel and wheat beer before noon, as tradition demands."])
+  ],
+  vie: [
+    m("kaffeehaus", "☕", "morning", ["food", "history"], 48.2104, 16.3655, ["Manhã num café vienense", "Melange e jornais num Kaffeehaus, Património Imaterial da UNESCO (Café Central, Hawelka)."], ["Morning in a Viennese café", "A melange and newspapers in a Kaffeehaus, UNESCO intangible heritage (Café Central, Hawelka)."]),
+    m("oper-standing", "🎻", "night", ["music"], 48.2038, 16.3688, ["Ópera de pé", "Lugares de pé na Ópera Estatal vendidos no próprio dia por poucos euros."], ["Standing at the opera", "Standing places at the State Opera sold on the day for a few euros."]),
+    m("prater", "🎡", "day", ["family", "photo"], 48.2166, 16.3958, ["Roda Gigante do Prater", "A roda de 1897, com vista sobre a cidade e o parque de diversões."], ["Prater Giant Wheel", "The 1897 wheel, with views over the city and the funfair."]),
+    m("gloriette", "🌅", "sunset", ["photo", "nature"], 48.1784, 16.3088, ["Pôr do sol na Gloriette", "Do alto dos jardins de Schönbrunn, a cidade a dourar."], ["Sunset at the Gloriette", "From the top of the Schönbrunn gardens, the city turning gold."]),
+    m("heuriger", "🍷", "night", ["food", "night"], 48.2580, 16.3420, ["Heuriger em Grinzing", "Tabernas de vinho novo nas vinhas dentro da cidade, com petiscos e música."], ["Heuriger in Grinzing", "New-wine taverns among the city's own vineyards, with snacks and music."])
+  ],
+  prg: [
+    m("bridge-dawn", "☀️", "morning", ["photo", "history"], 50.0865, 14.4114, ["Ponte Carlos ao nascer do sol", "Às 7h a ponte é sua: estátuas, névoa e o castelo ao fundo."], ["Charles Bridge at sunrise", "At 7am the bridge is yours: statues, mist and the castle beyond."]),
+    m("letna", "🍺", "sunset", ["photo", "food"], 50.0952, 14.4183, ["Pôr do sol em Letná", "O jardim de cerveja com vista para as pontes do Vltava."], ["Sunset at Letná", "The beer garden overlooking the bridges of the Vltava."]),
+    m("orloj", "⏰", "day", ["history", "family"], 50.087, 14.4208, ["Relógio Astronómico à hora certa", "Os apóstolos desfilam e a Morte toca o sino, de hora a hora até às 23h."], ["Astronomical Clock on the hour", "The apostles parade and Death rings the bell, hourly until 23:00."]),
+    m("petrin", "🚠", "day", ["nature", "family"], 50.0835, 14.3951, ["Funicular e colina de Petřín", "Jardins, o labirinto de espelhos e uma mini Torre Eiffel."], ["Petřín funicular and hill", "Gardens, the mirror maze and a mini Eiffel Tower."]),
+    m("pivo", "🍻", "night", ["food", "night"], 50.0818, 14.4185, ["Cervejaria tradicional", "Pilsner de pressão e pratos checos em salas de 500 anos (U Fleků, U Medvídků)."], ["Traditional beer hall", "Draught Pilsner and Czech dishes in 500-year-old halls (U Fleků, U Medvídků)."])
+  ],
+  sin: [
+    m("rhapsody", "✨", "night", ["photo", "music", "family"], 1.2816, 103.8636, ["Garden Rhapsody", "As Supertrees acendem-se ao som de música às 19h45 e 20h45. Grátis; deite-se no chão para ver."], ["Garden Rhapsody", "The Supertrees light up to music at 19:45 and 20:45. Free; lie on the ground to watch."]),
+    m("spectra", "💦", "night", ["photo", "music"], 1.2839, 103.8590, ["Spectra na baía", "Espetáculo de água e luz em frente ao Marina Bay Sands, gratuito, às 20h e 21h."], ["Spectra on the bay", "Free water-and-light show in front of Marina Bay Sands at 20:00 and 21:00."]),
+    m("hawker", "🍜", "day", ["food"], 1.2803, 103.8448, ["Almoço num hawker centre", "Comida com estrela Michelin por 5 dólares; marque a mesa com um pacote de lenços, como os locais."], ["Lunch at a hawker centre", "Michelin-listed food for 5 dollars; reserve your table with a tissue packet, like locals."]),
+    m("jewel", "🌧", "day", ["photo", "family"], 1.3602, 103.9898, ["Rain Vortex da Jewel", "A maior cascata interior do mundo, no aeroporto; de noite tem espetáculo de luz."], ["Jewel's Rain Vortex", "The world's tallest indoor waterfall, at the airport; light shows at night."]),
+    m("haji-lane", "🎨", "day", ["art", "shopping"], 1.3007, 103.8588, ["Murais da Haji Lane", "A ruela mais colorida, com lojas independentes e cafés."], ["Haji Lane murals", "The most colourful lane, with indie shops and cafés."])
   ]
 };
 
@@ -198,5 +240,7 @@ export const AGENDA: Record<string, string> = {
   bir: "https://www.timeout.com/birmingham/things-to-do", ist: "https://www.timeout.com/istanbul/things-to-do",
   dxb: "https://www.timeoutdubai.com/things-to-do", auh: "https://www.timeoutabudhabi.com/things-to-do", doh: "https://www.timeoutdoha.com/things-to-do",
   ruh: "https://www.timeoutriyadh.com/things-to-do", jed: "https://www.visitsaudi.com/en/jeddah", cai: "https://www.cairo360.com",
-  amm: "https://www.visitjordan.com", mct: "https://www.experienceoman.om"
+  amm: "https://www.visitjordan.com", mct: "https://www.experienceoman.om",
+  fra: "https://www.frankfurt-tourismus.de/en", ber: "https://www.timeout.com/berlin/things-to-do", muc: "https://www.timeout.com/munich/things-to-do",
+  vie: "https://www.timeout.com/vienna/things-to-do", prg: "https://www.timeout.com/prague/things-to-do", sin: "https://www.timeout.com/singapore/things-to-do"
 };

@@ -955,5 +955,7 @@
 "qrCopied": "Link copiato",
 "achLevel": "🎉 Livello {n} raggiunto: {x}",
 "achBadge": "🏅 Nuovo badge: {x}",
-"achReward": "🎁 Hai sbloccato {x} di credito per il prossimo pass"
+"achReward": "🎁 Hai sbloccato {x} di credito per il prossimo pass",
+"zoneSG": "Singapore",
+"entryHintSg": "Tutti, tranne i cittadini di Singapore, devono compilare la SG Arrival Card (gratuita, online) nei 3 giorni prima dell'atterraggio, su ica.gov.sg. Passaporto valido 6 mesi."
 }

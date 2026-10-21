@@ -11,7 +11,8 @@ import { env } from "./env";
 export const WIKI_TITLE: Record<string, string> = {
   lis: "Lisbon", opo: "Porto", mad: "Madrid", bcn: "Barcelona", par: "Paris", lon: "London", rom: "Rome", ams: "Amsterdam",
   edi: "Edinburgh", man: "Manchester", gla: "Glasgow", liv: "Liverpool", bir: "Birmingham", ist: "Istanbul",
-  dxb: "Dubai", auh: "Abu Dhabi", doh: "Doha", ruh: "Riyadh", jed: "Jeddah", cai: "Cairo", amm: "Amman", mct: "Muscat"
+  dxb: "Dubai", auh: "Abu Dhabi", doh: "Doha", ruh: "Riyadh", jed: "Jeddah", cai: "Cairo", amm: "Amman", mct: "Muscat",
+  fra: "Frankfurt", ber: "Berlin", muc: "Munich", vie: "Vienna", prg: "Prague", sin: "Singapore"
 };
 const UA = { "User-Agent": env.ua, "Api-User-Agent": env.ua };
 const MAX_AGE = 7 * 86400_000;

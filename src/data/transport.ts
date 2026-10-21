@@ -131,5 +131,40 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("ferry", "⛴", "Ferry no Bósforo (Şehir Hatları)", "Bosphorus ferry (Şehir Hatları)", 42, "trip"), T("marmaray", "🚆", "Marmaray (sob o Bósforo)", "Marmaray (under the Bosphorus)", 42, "trip"),
     T("funi", "🚠", "Funicular / Tünel", "Funicular / Tünel", 42, "trip"), T("cruise", "⛴", "Cruzeiro curto no Bósforo", "Short Bosphorus cruise", 300, "trip"),
     T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 450, "ride"), T("bitaksi", "🚗", "BiTaksi/Uber", "BiTaksi/Uber", 500, "ride")
+  ],
+  fra: [
+    T("sbahn", "🚆", "S-Bahn / U-Bahn / elétrico (Frankfurt)", "S-Bahn / U-Bahn / tram (Frankfurt)", 3.8, "trip"), T("air", "✈", "Bilhete aeroporto ↔ cidade (S8/S9)", "Airport ↔ city ticket (S8/S9)", 6.3, "trip"),
+    T("day", "🎫", "Tageskarte Frankfurt com aeroporto", "Frankfurt day ticket incl. airport", 12.0, "day"), T("bus", "🚌", "Autocarro", "Bus", 3.8, "trip"),
+    T("ferry", "⛴", "Barco no Meno (Primus-Linie)", "Main river boat (Primus-Linie)", 13, "trip"), T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 15, "ride"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 13, "ride"), T("bike", "🚲", "Bicicleta Nextbike (30 min)", "Nextbike (30 min)", 1, "trip"), T("scoot", "🛴", "Trotinete elétrica", "E-scooter", 0.25, "min")
+  ],
+  ber: [
+    T("ab", "🚇", "U-Bahn / S-Bahn / elétrico (zona AB)", "U-Bahn / S-Bahn / tram (zone AB)", 3.8, "trip"), T("abc", "✈", "Bilhete ABC (aeroporto BER)", "ABC ticket (BER airport)", 4.7, "trip"),
+    T("short", "🎟", "Kurzstrecke (3 estações de metro)", "Short trip (3 rail stops)", 2.6, "trip"), T("day", "🎫", "24-Stunden-Karte ABC", "24-hour ticket ABC", 12.9, "day"),
+    T("bus100", "🚌", "Autocarro 100/300 (passa pelos monumentos)", "Bus 100/300 (passes the sights)", 3.8, "trip"), T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 18, "ride"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 14, "ride"), T("bike", "🚲", "Bicicleta partilhada", "Shared bike", 1.5, "trip"), T("scoot", "🛴", "Trotinete elétrica", "E-scooter", 0.25, "min")
+  ],
+  muc: [
+    T("m", "🚇", "U-Bahn / S-Bahn / elétrico (zona M)", "U-Bahn / S-Bahn / tram (zone M)", 4.1, "trip"), T("air", "✈", "Bilhete aeroporto ↔ cidade", "Airport ↔ city single", 13.0, "trip"),
+    T("aircity", "🎫", "Airport-City-Day-Ticket", "Airport-City-Day-Ticket", 16.0, "day"), T("day", "🎫", "Bilhete diário zona M", "Zone M day ticket", 9.7, "day"),
+    T("bus", "🚌", "Autocarro", "Bus", 4.1, "trip"), T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 16, "ride"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 14, "ride"), T("bike", "🚲", "MVG Rad (por minuto)", "MVG bike (per minute)", 0.1, "min")
+  ],
+  vie: [
+    T("single", "🚇", "U-Bahn / elétrico / autocarro (Wiener Linien)", "U-Bahn / tram / bus (Wiener Linien)", 3.2, "trip"), T("s7", "✈", "S7 aeroporto ↔ cidade", "S7 airport ↔ city", 4.4, "trip"),
+    T("cat", "🚆", "CAT (City Airport Train, 16 min sem paragens)", "CAT (City Airport Train, 16 min non-stop)", 14.9, "trip"), T("day", "🎫", "Bilhete 24 h", "24-hour ticket", 8.0, "day"),
+    T("tram", "🚋", "Elétricos 1 e 2 no Ring", "Trams 1 and 2 around the Ring", 3.2, "trip"), T("taxi", "🚕", "Táxi no centro", "Taxi in the centre", 15, "ride"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 13, "ride"), T("bike", "🚲", "WienMobil Rad", "WienMobil bike", 0.6, "trip")
+  ],
+  prg: [
+    T("t30", "🚋", "Bilhete 30 min (metro/elétrico/autocarro)", "30-minute ticket (metro/tram/bus)", 30, "trip"), T("t90", "🚇", "Bilhete 90 min (inclui autocarro 119 do aeroporto)", "90-minute ticket (incl. airport bus 119)", 40, "trip"),
+    T("day", "🎫", "Bilhete 24 h", "24-hour ticket", 120, "day"), T("ae", "✈", "Airport Express (AE) → estação central", "Airport Express (AE) → main station", 100, "trip"),
+    T("funi", "🚠", "Funicular de Petřín (bilhete normal)", "Petřín funicular (normal ticket)", 40, "trip"), T("taxi", "🚕", "Táxi no centro (use app)", "Taxi in the centre (use an app)", 250, "ride"),
+    T("bolt", "🚗", "Bolt/Uber no centro", "Bolt/Uber in the centre", 200, "ride")
+  ],
+  sin: [
+    T("mrt", "🚇", "MRT (contactless, conforme a distância)", "MRT (contactless, by distance)", 2.0, "trip"), T("bus", "🚌", "Autocarro (contactless)", "Bus (contactless)", 2.0, "trip"),
+    T("stp", "🎫", "Singapore Tourist Pass 1 dia", "Singapore Tourist Pass, 1 day", 17, "day"), T("grab", "🚗", "Grab/Gojek no centro", "Grab/Gojek in the centre", 15, "ride"),
+    T("taxi", "🚕", "Táxi do aeroporto para o centro", "Taxi from the airport to the centre", 30, "ride"), T("bumboat", "⛵", "Barco no rio Singapura", "Singapore River boat", 28, "trip")
   ]
 };

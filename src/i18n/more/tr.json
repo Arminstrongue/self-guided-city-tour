@@ -1403,5 +1403,7 @@
 "qrCopied": "Bağlantı kopyalandı",
 "achLevel": "🎉 {n}. seviyeye ulaştın: {x}",
 "achBadge": "🏅 Yeni rozet: {x}",
-"achReward": "🎁 Bir sonraki biletin için {x} kredi kazandın"
+"achReward": "🎁 Bir sonraki biletin için {x} kredi kazandın",
+"zoneSG": "Singapur",
+"entryHintSg": "Singapur vatandaşları dışında herkes, inişten önceki 3 gün içinde ica.gov.sg üzerinden ücretsiz SG Arrival Card'ı doldurmalıdır. Pasaport 6 ay geçerli olmalıdır."
 }

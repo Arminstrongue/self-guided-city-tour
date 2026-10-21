@@ -7,6 +7,7 @@
  *  - Turquia: https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa e https://www.evisa.gov.tr
  *  - Emirados: https://u.ae (ICP/GDRFA) · Catar: https://visitqatar.com · Arábia Saudita: https://visa.visitsaudi.com
  *  - Egito: https://visa2egypt.gov.eg · Jordânia: https://www.jordanpass.jo · Omã: https://evisa.rop.gov.om
+ *  - Singapura: https://www.ica.gov.sg/enter-transit-depart/entering-singapore (e SG Arrival Card obrigatório)
  * As regras mudam: a app mostra sempre a ligação oficial para confirmar.
  * Médio Oriente (revisto em outubro de 2026): só marcamos as nacionalidades com regra confirmada; as outras ficam "unknown".
  */
@@ -84,6 +85,12 @@ const OM_FREE = [...EU, ...EEA_CH, "AL", "DZ", "AD", "AR", "AM", "AU", "AZ", "BY
   "NZ", "NI", "PA", "PY", "PE", "RU", "SV", "SM", "RS", "SC", "SG", "ZA", "KR", "SR", "TW", "TJ", "TH", "TN", "TR", "TM", "GB", "UA", "UY", "US",
   "UZ", "VA", "VE", "VN"];
 
+/** Singapura: entrada sem visto (30 ou 90 dias) — principais nacionalidades com regra confirmada. */
+const SG_FREE = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "MY", "BN", "TH", "ID", "PH", "VN", "KH", "LA", "HK", "MO", "TW", "CN",
+  "BR", "AR", "CL", "MX", "ZA", "AE", "IL", "TR"];
+/** Singapura: precisam de visto (pedido antes de viajar). */
+const SG_VISA = ["IN", "PK", "BD", "NG", "EG", "AF", "IR", "IQ", "SY", "YE", "SO", "SD", "SS", "LY", "DZ", "JO", "LB", "TN", "MA", "ML", "KP"];
+
 type MeRule = { free: string[]; voa?: string[]; evisa?: string[]; restricted?: string[]; permitVoa?: string[]; url: string; fee?: string; site?: string };
 const ME: Record<"ae" | "qa" | "sa" | "eg" | "jo" | "om", MeRule> = {
   ae: { free: [...GCC, ...AE_FREE], permitVoa: AE_VOA_PERMIT, url: "https://u.ae/en/information-and-services/visa-and-emirates-id", fee: "100 AED" },
@@ -114,7 +121,7 @@ export type EntryCheck = {
   officialUrl: string;
   fee?: string;               // valor do visto à chegada
   site?: string;              // site do eVisa
-  hint?: "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass";
+  hint?: "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival";
 };
 
 export function checkEntry(city: City, nationality: string, hasPermit = false): EntryCheck {
@@ -146,6 +153,10 @@ export function checkEntry(city: City, nationality: string, hasPermit = false): 
       : zone === "sa" && verdict === "unknown" ? "sa-visa" : zone === "sa" && verdict === "evisa-me" ? "sa-stopover"
       : zone === "jo" && verdict === "voa" ? "jo-pass" : undefined;
     return { verdict, zone, transitVisa: false, officialUrl: r.url, exitMin: local ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check, ...(r.fee ? { fee: r.fee } : {}), ...(r.site ? { site: r.site } : {}), ...(hint ? { hint } : {}) };
+  }
+  if (zone === "sg") {
+    const verdict: EntryVerdict = n === "SG" || hasPermit ? "free" : SG_FREE.includes(n) ? "free-pass" : SG_VISA.includes(n) ? "visa" : "unknown";
+    return { verdict, zone, transitVisa: false, officialUrl: "https://www.ica.gov.sg/enter-transit-depart/entering-singapore", exitMin: n === "SG" ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check, ...(n !== "SG" ? { hint: "sg-arrival" as const } : {}) };
   }
   if (zone === "tr") {
     const verdict: EntryVerdict = hasPermit || TR_FREE.includes(n) || n === "TR" ? "free" : TR_EVISA.includes(n) ? "evisa" : TR_VISA.includes(n) ? "visa" : "unknown";
@@ -182,8 +193,8 @@ export function checkLayover(city: City, nationality: string, arrival: Date, dep
 }
 
 /** Nacionalidades para o seletor (código ISO). Os nomes vêm de Intl.DisplayNames no navegador. */
-export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, ...SCHENGEN_VISA, ...UK_ETA, ...UK_VISA, ...TR_FREE, ...TR_EVISA, ...TR_VISA, "IE", "TR",
+export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, ...SCHENGEN_VISA, ...UK_ETA, ...UK_VISA, ...TR_FREE, ...TR_EVISA, ...TR_VISA, ...SG_FREE, ...SG_VISA, "IE", "TR", "SG",
   ...Object.values(ME).flatMap((r) => [...r.free, ...(r.voa ?? []), ...(r.evisa ?? []), ...(r.restricted ?? []), ...(r.permitVoa ?? [])])])].filter((c) => c !== "GF").sort();
 
 /** Só para testes. */
-export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME };
+export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA };

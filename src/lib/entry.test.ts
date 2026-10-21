@@ -102,3 +102,17 @@ test("Médio Oriente: regras de entrada por país", () => {
   assert.equal(checkEntry(c("mct"), "AO").verdict, "unknown");
   assert.equal(checkEntry(c("mct"), "AO", true).verdict, "free");
 });
+
+test("entrada: Singapura (zona própria, SG Arrival Card) e novas cidades Schengen", () => {
+  const c = (id: string) => getCity(id)!;
+  const sg = checkEntry(c("sin"), "PT");
+  assert.equal(sg.zone, "sg");
+  assert.equal(sg.verdict, "free-pass");
+  assert.equal(sg.hint, "sg-arrival");
+  assert.equal(checkEntry(c("sin"), "IN").verdict, "visa");
+  assert.equal(checkEntry(c("sin"), "SG").verdict, "free");
+  assert.equal(checkEntry(c("sin"), "SG").hint, undefined);
+  assert.equal(checkEntry(c("sin"), "AO").verdict, "unknown");
+  for (const id of ["fra", "ber", "muc", "vie", "prg"]) assert.equal(checkEntry(c(id), "DE").zone, "schengen", id);
+  assert.equal(checkEntry(c("prg"), "US").verdict === "free-ees" || checkEntry(c("prg"), "US").verdict === "etias", true);
+});

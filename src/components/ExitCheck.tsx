@@ -55,7 +55,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
   };
   const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" || v === "evisa" || v === "evisa-me" || v === "voa" ? "warn" : "ok");
   const zone = zoneOf(city);
-  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : zone === "schengen" ? t.zoneSchengen : t.zoneMe[zone];
+  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : zone === "schengen" ? t.zoneSchengen : zone === "sg" ? t.zoneSG : t.zoneMe[zone];
 
   if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle}</button>;
 
@@ -78,7 +78,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
       {res && (
         <div className={`verdict-box ${tone(res.entry.verdict)}`} role="status">
           <p><b>{fmt(msg[res.entry.verdict], { fee: res.entry.fee ?? "", site: res.entry.site ?? "", zone: zoneName })}</b></p>
-          {res.entry.hint && <p className="hint">{t.entryHint[res.entry.hint]}</p>}
+          {res.entry.hint && <p className="hint">{res.entry.hint === "sg-arrival" ? t.entryHintSg : t.entryHint[res.entry.hint]}</p>}
           {res.entry.zone === "schengen" && !ETIAS_LIVE && res.entry.verdict === "free-ees" && !permit && <p className="hint">{t.etiasSoon}</p>}
           {res.entry.transitVisa && <p className="hint">{t.atv}</p>}
           {res.entry.verdict !== "visa" && (
