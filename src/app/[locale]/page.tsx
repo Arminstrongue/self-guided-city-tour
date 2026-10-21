@@ -4,7 +4,8 @@ import { fxContext } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
 import { SOON, cityName, COUNTRY } from "@/data/cities";
 import { DestGrid, HomeHero, type DestCity } from "@/components/Showcase";
-import { fmt, INTL_LOCALE, LOCALES } from "@/i18n/core";
+import { fmt, INTL_LOCALE, LOCALES, isLocale } from "@/i18n/core";
+import { notFound } from "next/navigation";
 import { loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
@@ -21,6 +22,8 @@ const FEATS = [
 ] as const;
 
 export default async function Home({ params }: { params: { locale: Locale } }) {
+  // Pedidos de robôs a caminhos como /wp-login.php caem aqui com um "idioma" inválido: 404 sem erro no log.
+  if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   const region = new Intl.DisplayNames([INTL_LOCALE[params.locale]], { type: "region" });
   const list = await loadCities();
