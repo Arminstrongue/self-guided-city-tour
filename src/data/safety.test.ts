@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { ALERT_TEXT, CITY_SAFETY, safetyFor } from "./safety";
 import { CITIES, COUNTRY } from "./cities";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 
 describe("safety", () => {
   it("covers every city", () => {

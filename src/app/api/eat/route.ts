@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { loadCity } from "@/lib/content";
 import { bestEats, placesEnabled } from "@/lib/places";
 import { rateLimit } from "@/lib/rate-limit";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 export const dynamic = "force-dynamic";
 

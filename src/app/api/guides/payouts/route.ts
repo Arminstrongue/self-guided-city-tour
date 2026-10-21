@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { currentGuide, payoutsDashboard, payoutsLink } from "@/lib/guides";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 export const runtime = "nodejs";
 

@@ -1,7 +1,8 @@
 "use client";
 /** "Escolha o que gosta" — primeira personalização (estilo TikTok): 3 a 10 interesses afinam roteiros, feed e vídeos. */
 import { useState } from "react";
-import { fmt, type Dict } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 
 export const ONBOARDED = "sgct:onboarded";

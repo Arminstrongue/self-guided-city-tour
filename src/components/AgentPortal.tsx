@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
 
 type Lead = { id: string; name: string; kind: string; city: string | null; contact: string | null; email: string | null; phone: string | null; status: string; notes: string | null };

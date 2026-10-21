@@ -11,7 +11,8 @@ import { fmtEur, fmtWhen } from "@/lib/guide-emails";
 import { env } from "@/lib/env";
 import { missingLegal } from "@/lib/guide-input";
 import { GUIDE_FEE } from "@/lib/pricing";
-import { fmt, getDict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 

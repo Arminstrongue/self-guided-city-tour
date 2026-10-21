@@ -2,9 +2,10 @@
 import { track } from "@/lib/track";
 import { useEffect, useState } from "react";
 import { DEP_KEY } from "./ExitCheck";
-import { signIn } from "next-auth/react";
+const signIn = (...a: Parameters<typeof import("next-auth/react").signIn>) => import("next-auth/react").then((m) => m.signIn(...a));
 import type { Dict } from "@/i18n/dictionaries";
-import { fmt, INTL_LOCALE, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Locale } from "@/i18n/dictionaries";
 import { dualMoney, type FxContext } from "@/lib/currency";
 
 type Props = {

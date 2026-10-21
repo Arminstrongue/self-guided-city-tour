@@ -3,7 +3,7 @@ import { loadCity } from "@/lib/content";
 import { cityCenter, placesFor } from "@/lib/explore";
 import { eventsEnabled, eventsNear } from "@/lib/events";
 import { googleExploreEnabled, googlePlacesFor } from "@/lib/gexplore";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";

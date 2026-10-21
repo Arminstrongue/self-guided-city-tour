@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { GUIDE_COOKIE } from "@/lib/guides";
 import { readPurposeToken } from "@/lib/access-token";
 import { env, isProd } from "@/lib/env";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 export const runtime = "nodejs";
 

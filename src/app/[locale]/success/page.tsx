@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { requestCurrency } from "@/lib/fx";
-import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 import { loadCity } from "@/lib/content";
 
 export const dynamic = "force-dynamic";

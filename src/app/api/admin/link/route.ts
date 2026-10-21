@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { ADMIN_COOKIE, isAdminEmail } from "@/lib/auth";
 import { createPurposeToken, readPurposeToken } from "@/lib/access-token";
 import { env, isProd } from "@/lib/env";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 export const runtime = "nodejs";
 const TTL = 7 * 24 * 3600;

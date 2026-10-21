@@ -1,5 +1,6 @@
 /** Email de acesso ao roteiro, na língua do cliente (9 línguas), com botão e texto simples. */
-import { INTL_LOCALE, type Locale } from "@/i18n/dictionaries";
+import { INTL_LOCALE } from "@/i18n/core";
+import type { Locale } from "@/i18n/dictionaries";
 
 type T = { hi: string; hiName: string; ready: string; open: string; until: string; tip: string; help: string };
 const TX: Record<Locale, T> = {

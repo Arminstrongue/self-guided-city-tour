@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { accessEmail } from "./access-email";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 
 test("email de acesso na língua do cliente, com botão e escape do nome", () => {
   const at = new Date("2026-10-20T20:04:00Z");

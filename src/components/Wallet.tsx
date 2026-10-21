@@ -1,29 +1,37 @@
 "use client";
 /** Carteira do viajante: passes, reservas de guias, memórias, carimbos e interesses — na conta, em qualquer dispositivo. */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { deleteMemory, listMemories, syncLocalToAccount, type Memory } from "@/lib/diary";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import type { Wallet } from "@/lib/wallet";
 import { COUNTRY_CODES, flag } from "@/data/countries";
 import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
-import { AddToPlan } from "./Explore";
 import { SearchPick } from "./SearchPick";
-import { CitySheet } from "./CitySheet";
-import { PostSheet, SavedGrid, TagSheet } from "./PostExtras";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { Composer, FeedTab } from "./Feed";
-import { ToolsSheet, type ToolTab } from "./TravelTools";
+import type { ToolTab } from "./TravelTools";
 import { I, House, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
-import { signIn } from "next-auth/react";
-import { VideosTab } from "./Reels";
-import { ChatTab, useUnread } from "./Chat";
-import { NotifsSheet } from "./Notifs";
-import { InviteSheet } from "./Invite";
+import { useUnread } from "@/lib/unread-client";
 import { useLiveConnection } from "@/lib/live-client";
+import dynamic from "next/dynamic";
+// Ecrãs e folhas que só carregam quando são abertos (a carteira abre mais depressa).
+const AddToPlan = dynamic(() => import("./Explore").then((m) => m.AddToPlan), { ssr: false });
+const CitySheet = dynamic(() => import("./CitySheet").then((m) => m.CitySheet), { ssr: false });
+const PostSheet = dynamic(() => import("./PostExtras").then((m) => m.PostSheet), { ssr: false });
+const SavedGrid = dynamic(() => import("./PostExtras").then((m) => m.SavedGrid), { ssr: false });
+const TagSheet = dynamic(() => import("./PostExtras").then((m) => m.TagSheet), { ssr: false });
+const ToolsSheet = dynamic(() => import("./TravelTools").then((m) => m.ToolsSheet), { ssr: false });
+const VideosTab = dynamic(() => import("./Reels").then((m) => m.VideosTab), { ssr: false });
+const ChatTab = dynamic(() => import("./Chat").then((m) => m.ChatTab), { ssr: false });
+const NotifsSheet = dynamic(() => import("./Notifs").then((m) => m.NotifsSheet), { ssr: false });
+const InviteSheet = dynamic(() => import("./Invite").then((m) => m.InviteSheet), { ssr: false });
+const signIn = (...a: Parameters<typeof import("next-auth/react").signIn>) => import("next-auth/react").then((m) => m.signIn(...a));
+
 import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
 
 type Mem = Memory & { local?: boolean };

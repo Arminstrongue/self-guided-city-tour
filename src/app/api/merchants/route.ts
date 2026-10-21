@@ -8,7 +8,7 @@ import { newRefCode } from "@/lib/merchants";
 import { agentByCode } from "@/lib/agents";
 import { rateLimit } from "@/lib/rate-limit";
 import { loadCity } from "@/lib/content";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 
 export const runtime = "nodejs";
 const handle = z.string().max(120).optional().default("").transform((s) => s.trim().replace(/^@/, "") || null);

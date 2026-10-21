@@ -1,5 +1,6 @@
 /** Emails do marketplace de guias: ao turista na sua língua (9), ao guia em português e inglês. */
-import { INTL_LOCALE, isLocale, type Locale } from "@/i18n/dictionaries";
+import { INTL_LOCALE, isLocale } from "@/i18n/core";
+import type { Locale } from "@/i18n/dictionaries";
 
 type T = { req: [string, string]; ok: [string, string]; no: [string, string]; meet: string; contact: string; rate: string; other: string; when: string; charged: string };
 const TX: Record<Locale, T> = {

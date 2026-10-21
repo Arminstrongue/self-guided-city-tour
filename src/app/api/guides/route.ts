@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { sendGuideLink } from "@/lib/guides";
 import { GUIDE_TERMS_VERSION, GuideSignup } from "@/lib/guide-input";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
 import { rateLimit } from "@/lib/rate-limit";
 

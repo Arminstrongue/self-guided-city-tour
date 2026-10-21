@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { City } from "@/data/cities";
-import { zoneOf } from "@/data/cities";
+import { zoneOf } from "@/data/city-meta";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
 import { checkLayover, ETIAS_LIVE, NATIONALITIES, type EntryVerdict } from "@/lib/entry";
 

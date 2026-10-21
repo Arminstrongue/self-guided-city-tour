@@ -4,7 +4,7 @@ import type { City, Stop } from "@/data/cities";
 import type { Museum } from "@/data/museums";
 import { openNow } from "@/data/museums";
 import type { Dict } from "@/i18n/dictionaries";
-import { fmt } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
 
 /** Museus com horário de hoje, estado (aberto/fechado), preço e reserva. */

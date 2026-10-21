@@ -1,10 +1,11 @@
 "use client";
 /** Extras das publicações: texto com @menções/#hashtags/links, partilhar (conversa ou link), abrir uma publicação, hashtags e guardados. */
 import { Fragment, useEffect, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, type PublicProfile } from "./Social";
-import { PostCard, type PostItem } from "./Feed";
+import { PostCard, TileImg, type PostItem } from "./Feed";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -101,7 +102,7 @@ export function SavedGrid({ t, locale, cities }: { t: Dict; locale: Locale; citi
     <div className="pf-grid">{page.posts.map((p) => (
       <button key={p.id} className="pf-tile" onClick={() => setOpen(p.id)} aria-label={p.text.slice(0, 60) || t.pfPost}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {p.video === "ready" ? <img src={`/api/social/video/${p.id}?poster=1`} alt="" loading="lazy" /> : p.photo ? <img src={`/api/social/photo/${p.id}`} alt="" loading="lazy" /> : <span className="pf-tile-t">{p.text}</span>}
+        {p.video === "ready" ? <img src={`/api/social/video/${p.id}?poster=1`} alt="" loading="lazy" /> : p.photo ? <TileImg src={`/api/social/photo/${p.id}`} text={p.text} /> : <span className="pf-tile-t"><span>{p.text}</span></span>}
       </button>
     ))}</div>
     {open && <PostSheet t={t} locale={locale} id={open} cities={cities} onClose={() => setOpen(null)} />}

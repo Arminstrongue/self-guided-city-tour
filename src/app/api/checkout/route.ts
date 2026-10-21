@@ -6,7 +6,7 @@ import { env } from "@/lib/env";
 import { TOUR_PLANS } from "@/lib/pricing";
 import { cityName } from "@/data/cities";
 import { loadCity } from "@/lib/content";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { merchantByRef } from "@/lib/merchants";
 import { normaliseFlightNo, validFlightNo } from "@/lib/flight";
 import { rateLimit } from "@/lib/rate-limit";

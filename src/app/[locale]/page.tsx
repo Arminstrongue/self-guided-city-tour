@@ -4,21 +4,20 @@ import { fxContext } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
 import { SOON, cityName, COUNTRY } from "@/data/cities";
 import { DestGrid, HomeHero, type DestCity } from "@/components/Showcase";
-import { fmt, INTL_LOCALE, LOCALES } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE, LOCALES } from "@/i18n/core";
 import { loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
+import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-const I = {
-  ticket: <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4z M10 5v14" />,
-  audio: <path d="M4 14v-2a8 8 0 0 1 16 0v2 M4 14a2 2 0 0 1 2-2h1v7H6a2 2 0 0 1-2-2z M20 14a2 2 0 0 0-2-2h-1v7h1a2 2 0 0 0 2-2z" />,
-  clock: <path d="M12 7v5l3 2 M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />,
-  star: <path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" />
-};
-const Icon = ({ d }: { d: React.ReactNode }) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>;
+// Ícones das funcionalidades (traço fino, em azulejos de cor).
+const FEATS = [
+  [TicketIcon, "q1"], [Headphones, "q4"], [Clock, "q5"], [Star, "q3"], [CloudDownload, "q2"], [ArrowLeftRight, "q1"],
+  [Receipt, "q3"], [ShieldAlert, "q5"], [Plane, "q4"], [Radar, "q2"], [Users, "q4"], [BadgeCheck, "q1"]
+] as const;
 
 export default async function Home({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
@@ -54,19 +53,20 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
 
       <section className="sec">
         <div className="sec-h reveal"><h2>{t.howTitle}</h2></div>
-        <div className="steps">
-          {([[t.how1t, t.how1s], [t.how2t, t.how2s], [t.how3t, t.how3s]] as const).map(([a, b], i) => (
-            <div key={a} className="step reveal"><span className="n">{i + 1}</span><b>{a}</b><p>{b}</p></div>
+        <ol className="steps2">
+          {([[QrCode, t.how1t, t.how1s], [CreditCard, t.how2t, t.how2s], [Footprints, t.how3t, t.how3s]] as const).map(([Ic, a, b], i) => (
+            <li key={a} className="step2 reveal"><span className="step2-n" aria-hidden="true"><Ic size={20} strokeWidth={2.2} /><i>{i + 1}</i></span><span className="step2-t"><b>{a}</b><small>{b}</small></span></li>
           ))}
-        </div>
+        </ol>
       </section>
 
       <section className="sec">
         <div className="sec-h reveal"><h2>{t.featTitle}</h2></div>
-        <div className="feats">
-          {([[I.ticket, t.f1t, t.f1s], [I.audio, t.f2t, t.f2s], [I.clock, t.f3t, t.f3s], [I.star, t.f4t, t.f4s]] as const).map(([d, a, b]) => (
-            <div key={a} className="feat reveal"><Icon d={d} /><b>{a}</b><span>{b}</span></div>
-          ))}
+        <div className="feats2">
+          {([[t.f1t, t.f1s], [t.f2t, t.f2s], [t.f3t, t.f3s], [t.f4t, t.f4s], [t.f5t, t.f5s], [t.f6t, t.f6s], [t.f7t, t.f7s], [t.f8t, t.f8s], [t.f9t, t.f9s], [t.f10t, t.f10s], [t.f11t, t.f11s], [t.f12t, t.f12s]] as const).map(([a, b], i) => {
+            const [Ic, q] = FEATS[i];
+            return <div key={a} className="feat2 reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={20} strokeWidth={2.1} /></span><b>{a}</b><small>{b}</small></div>;
+          })}
         </div>
       </section>
 

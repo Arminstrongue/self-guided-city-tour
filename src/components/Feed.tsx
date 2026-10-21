@@ -5,15 +5,20 @@
  */
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { SheetX } from "@/components/WinNav";
 import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
-import { StoryReply } from "./Chat";
 import { SearchPick } from "./SearchPick";
-import { RichText, ShareSheet } from "./PostExtras";
+import { RichText } from "./PostExtras";
 import { EmojiButton, emojiLabels } from "./Emoji";
-import { ReelsViewer, FeedVideo, posterUrl } from "./Reels";
+import { FeedVideo, posterUrl } from "./FeedVideo";
+import dynamic from "next/dynamic";
+// Partes pesadas só quando são abertas.
+const ReelsViewer = dynamic(() => import("./Reels").then((m) => m.ReelsViewer), { ssr: false });
+const ShareSheet = dynamic(() => import("./PostExtras").then((m) => m.ShareSheet), { ssr: false });
+const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { ssr: false });
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
 import { useLive, type LiveEvent } from "@/lib/live-client";
 
@@ -270,6 +275,13 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", o
   );
 }
 
+/** Miniatura que, se a foto falhar, mostra o texto da publicação em vez de um ícone partido. */
+export function TileImg({ src, text }: { src: string; text: string }) {
+  const [bad, setBad] = useState(false);
+  // eslint-disable-next-line @next/next/no-img-element
+  return bad ? <span className="pf-tile-t"><span>{text}</span></span> : <img src={src} alt="" loading="lazy" decoding="async" onError={() => setBad(true)} />;
+}
+
 /* ---------- Uma publicação ---------- */
 type Comment = { id: string; text: string; at: string; author: PublicProfile; canDelete: boolean };
 export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Dict; locale: Locale; post: PostItem; author: PublicProfile; cities: Record<string, string>; onDeleted?: () => void }) {
@@ -339,7 +351,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
             <span className="pf-dots">{Array.from({ length: p.photos ?? 1 }, (_, i) => <i key={i} className={i === slide ? "on" : ""} />)}</span>
           </> : <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" />
+            <img src={photoUrl(p.id)} alt={p.text.slice(0, 80)} loading="lazy" decoding="async" onError={(e) => { const box = e.currentTarget.closest(".pf-photo") as HTMLElement | null; if (box) box.style.display = "none"; }} />
           </>}
           {burst && <span className="pf-burst" aria-hidden="true"><I icon={Heart} size={96} solid /></span>}
         </div>
@@ -473,8 +485,8 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true"><I icon={Play} size={14} solid /></span></>
             : p.video ? <span className="pf-tile-t">{p.video === "processing" ? "⏳" : "⚠️"}</span>
-            : p.photo ? <><img src={photoUrl(p.id)} alt="" loading="lazy" />{(p.photos ?? 1) > 1 && <span className="pf-tile-v" aria-hidden="true">❐</span>}</> : <span className="pf-tile-t">{p.text}</span>}
-          {p.likes > 0 && <small className="pf-tile-l">❤️ {p.likes}</small>}
+            : p.photo ? <><TileImg src={photoUrl(p.id)} text={p.text} />{(p.photos ?? 1) > 1 && <span className="pf-tile-v" aria-hidden="true">❐</span>}</> : <span className="pf-tile-t"><span>{p.text}</span></span>}
+          {p.likes > 0 && <small className="pf-tile-l"><I icon={Heart} size={12} solid /> {p.likes}</small>}
         </button>
       ))}</div>}
       {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}

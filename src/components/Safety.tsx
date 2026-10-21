@@ -3,7 +3,8 @@ import { SheetX } from "@/components/WinNav";
 /** Segurança por cidade: SOS, números, partilhar localização, frase de ajuda, burlas e zonas de atenção. */
 import { useEffect, useState } from "react";
 import { ALERT_TEXT, safetyFor } from "@/data/safety";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { ExtLink } from "./ExtLink";
 import { Speak } from "./TourExtras";
 import { track } from "@/lib/track";
@@ -98,33 +99,3 @@ export function SafetyPanel({ cityId, country, cityName, center, t, locale, comp
   );
 }
 
-/** Botão SOS flutuante no roteiro: abre a folha de segurança. */
-export function SosButton(props: { cityId: string; country?: string; cityName: string; center: Pos; t: Dict; locale: Locale }) {
-  const [open, setOpen] = useState(false);
-  useEffect(() => {
-    if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const key = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
-    window.addEventListener("keydown", key);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", key); };
-  }, [open]);
-  if (!safetyFor(props.cityId, props.country)) return null;
-  return (
-    <>
-      <button className="sos-fab press" onClick={() => { setOpen(true); track("sos_open", { city: props.cityId }); }} aria-label={props.t.safety}>{props.t.sosBtn}</button>
-      {open && (
-        <div className="sheet-bg" onClick={() => setOpen(false)}>
-          <div className="sheet" role="dialog" aria-modal="true" aria-label={props.t.safety} onClick={(e) => e.stopPropagation()}>
-            <SheetX onClose={() => setOpen(false)} label={props.t.close} />
-            <div className="row-between" style={{ marginBottom: 12 }}>
-              <h2 style={{ fontSize: 22 }}>{fmt(props.t.safetyTitle, { city: props.cityName })}</h2>
-              <button className="lb-x dark" onClick={() => setOpen(false)} aria-label={props.t.close}>✕</button>
-            </div>
-            <SafetyPanel {...props} compact />
-          </div>
-        </div>
-      )}
-    </>
-  );
-}

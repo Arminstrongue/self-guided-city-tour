@@ -3,7 +3,7 @@ import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
 import { myProfile } from "@/lib/social";
 import { inviteLink, inviteStats, recordInvite, sendEmailInvites, validPhone } from "@/lib/invites";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { rateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";

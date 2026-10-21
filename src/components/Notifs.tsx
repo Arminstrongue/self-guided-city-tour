@@ -1,7 +1,8 @@
 "use client";
 /** Centro de notificações: gostos, comentários, seguidores, pedidos, respostas a histórias. Atualiza em tempo real. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { SheetX } from "@/components/WinNav";
 import { useLive } from "@/lib/live-client";
 import { Avatar, act, type PublicProfile } from "./Social";

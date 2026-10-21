@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { CITIES, COUNTRY } from "@/data/cities";
 import { GUIDE_LANGS } from "./guides";
 import { GUIDE_MAX_HOURLY, GUIDE_MIN_HOURLY } from "./pricing";

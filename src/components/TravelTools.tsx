@@ -1,7 +1,8 @@
 "use client";
 /** Ferramentas de viagem: conversor de moeda (funciona sem rede), cidades offline e dividir despesas com amigos. */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { convert, CURRENCIES, CURRENCY_COOKIE, formatMoney } from "@/lib/currency";
 import { offlineList, offlineReady, removeCity, saveCity, type OfflineInfo } from "@/lib/offline-client";
 import { SheetX } from "@/components/WinNav";

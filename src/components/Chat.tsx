@@ -4,7 +4,8 @@
  * Leve: a caixa de entrada carrega quando abre o separador; a conversa aberta pede só as mensagens novas a cada 4 s.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { Avatar, act, type PublicProfile, type Social } from "./Social";
 import { ago } from "./Feed";
 import { useLive, type LiveEvent } from "@/lib/live-client";
@@ -390,23 +391,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
 }
 
 /** Selos de conversas e notificações por ler: atualizam em tempo real (com um pedido a cada 60 s por segurança). */
-export function useUnread(enabled: boolean) {
-  const [n, setN] = useState({ chats: 0, notifs: 0 });
-  const check = useCallback(() => fetch("/api/me/notifications?count=1", { cache: "no-store" }).then((r) => r.json()).then((j) => setN({ chats: j.chats ?? 0, notifs: j.n ?? 0 })).catch(() => null), []);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useLive(useCallback((ev: LiveEvent) => {
-    if (ev.t === "msg" || ev.t === "notif" || ev.t === "read") { if (timer.current) clearTimeout(timer.current); timer.current = setTimeout(() => void check(), 400); }
-  }, [check]));
-  useEffect(() => {
-    if (!enabled) return;
-    void check();
-    const id = setInterval(() => { if (document.visibilityState === "visible") void check(); }, 60_000);
-    const vis = () => { if (document.visibilityState === "visible") void check(); };
-    document.addEventListener("visibilitychange", vis);
-    return () => { clearInterval(id); document.removeEventListener("visibilitychange", vis); };
-  }, [enabled, check]);
-  return { unread: n.chats, notifs: n.notifs, refreshUnread: check };
-}
+export { useUnread } from "@/lib/unread-client";
 
 /** Responder a uma história (dentro do visualizador). */
 export function StoryReply({ t, storyId, name, onFocus }: { t: Dict; storyId: string; name: string; onFocus: (f: boolean) => void }) {

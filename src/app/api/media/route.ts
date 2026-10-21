@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { loadCity } from "@/lib/content";
 import { rateLimit } from "@/lib/rate-limit";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 import { cityName } from "@/data/cities";
 import { stopName } from "@/data/stop-names";
 import { cityCover, searchNames, stopMedia, wikiPhotos, type Photo } from "@/lib/media";

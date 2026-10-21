@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ACCESS_COOKIE, ACCESS_TTL_S, readAccessToken } from "@/lib/access-token";
 import { env, isProd } from "@/lib/env";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 import { loadCity } from "@/lib/content";
 
 export const runtime = "nodejs";

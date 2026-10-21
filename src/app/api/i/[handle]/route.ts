@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { REF_COOKIE } from "@/lib/invites";
 import { env, isProd } from "@/lib/env";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 
 export const runtime = "nodejs";
 

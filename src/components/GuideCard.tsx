@@ -1,7 +1,8 @@
 /** Cartões de guia (lista, destaque na página da cidade, cabeçalho do perfil). Sem estado: serve no servidor. */
 import Link from "next/link";
 import type { Guide } from "@/lib/db/schema";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 
 export function langNames(codes: string[], locale: Locale) {
   try {

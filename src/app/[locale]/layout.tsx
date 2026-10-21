@@ -5,7 +5,8 @@ import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { NativeChrome } from "@/components/NativeChrome";
-import { isLocale, getDict, RTL } from "@/i18n/dictionaries";
+import { isLocale, RTL } from "@/i18n/core";
+import { getDict } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
   title: "Self Guided City Tour",

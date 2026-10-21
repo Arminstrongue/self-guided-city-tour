@@ -1,7 +1,8 @@
 "use client";
 /** Diário de viagem: carimbos por cidade e memórias (foto, nota, lugar), guardados só no dispositivo. */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { deleteMemory, listMemories, type Memory } from "@/lib/diary";
 
 export function Diary({ t, locale }: { t: Dict; locale: Locale }) {

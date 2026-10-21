@@ -3,7 +3,7 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 import { newAgentCode, sendAgentLink } from "@/lib/agents";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
 import { rateLimit } from "@/lib/rate-limit";
 

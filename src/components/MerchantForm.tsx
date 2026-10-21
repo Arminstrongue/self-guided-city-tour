@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { INTL_LOCALE } from "@/i18n/dictionaries";
+import { INTL_LOCALE } from "@/i18n/core";
 
 type CityOpt = { id: string; name: string; stops: { id: string; name: string }[] };
 type Plan = "basic" | "featured" | "partner";

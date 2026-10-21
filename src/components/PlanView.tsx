@@ -1,7 +1,8 @@
 "use client";
 /** Plano de viagem: dias com lugares reais, criação automática pelos interesses, rota do dia e partilha. */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { PlanItem } from "@/lib/db/schema";
 import { autoPlan, candidates, dayRoute } from "@/lib/autoplan";
 import { CAT_ICON, HOBBIES, type Hobby, type Place } from "@/lib/explore";

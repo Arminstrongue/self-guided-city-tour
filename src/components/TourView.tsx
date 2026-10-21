@@ -2,28 +2,34 @@
 import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { fmt, INTL_LOCALE } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { fitRoute, hasExtension, leaveBy, optionByKey, routeOptions } from "@/lib/route-cost";
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
-import { BackNow, CityGuide, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
+import { BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
 import { ExtLink } from "./ExtLink";
-import { MapView, type Focus } from "./MapView";
-import { DayPlan, MuseumsTab } from "./Museums";
+import type { Focus } from "./MapView";
 import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
-import { SosButton } from "./Safety";
+import { SosButton } from "./SosButton";
 import { RatingCard } from "./Rating";
-import { Explore } from "./Explore";
-import { CostPlanner } from "./CostPlanner";
-import { FxConverter, OfflineButton } from "./TravelTools";
+import { OfflineButton } from "./TravelTools";
 import { SheetX } from "./WinNav";
 import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
-import { COUNTRY } from "@/data/cities";
+import { COUNTRY } from "@/data/city-meta";
+import dynamic from "next/dynamic";
+// Separadores carregados só quando abertos.
+const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
+const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
+const MuseumsTab = dynamic(() => import("./Museums").then((m) => m.MuseumsTab), { ssr: false });
+const Explore = dynamic(() => import("./Explore").then((m) => m.Explore), { ssr: false });
+const CostPlanner = dynamic(() => import("./CostPlanner").then((m) => m.CostPlanner), { ssr: false });
+const CityGuide = dynamic(() => import("./CityGuide").then((m) => m.CityGuide), { ssr: false });
+const FxConverter = dynamic(() => import("./TravelTools").then((m) => m.FxConverter), { ssr: false });
 
 type Props = {
   locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;

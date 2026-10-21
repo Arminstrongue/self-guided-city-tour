@@ -4,7 +4,8 @@
  * (tempo agora, roteiro, o que há para fazer, feed da cidade).
  */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { flag } from "@/data/countries";
 import type { Wallet } from "@/lib/wallet";
 import type { Memory } from "@/lib/diary";

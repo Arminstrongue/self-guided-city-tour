@@ -1,7 +1,8 @@
 "use client";
 /** Avaliação no fim do roteiro: estrelas, "recomendaria a um amigo?" (NPS 0–10) e comentário opcional. */
 import { useEffect, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { track } from "@/lib/track";
 
 export function RatingCard({ cityId, cityLabel, t, locale, onShare }: { cityId: string; cityLabel: string; t: Dict; locale: Locale; onShare?: () => void }) {

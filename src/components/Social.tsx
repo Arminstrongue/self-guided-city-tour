@@ -5,7 +5,8 @@ import { SheetX } from "@/components/WinNav";
  * Tudo leve: só carrega dados quando o viajante abre cada parte.
  */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { ACCENT_HEX, applyTheme, readTheme, type Accent, type Theme } from "@/lib/theme";
 

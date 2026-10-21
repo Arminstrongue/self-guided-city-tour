@@ -8,7 +8,8 @@ import { loadCity } from "@/lib/content";
 import { cityName } from "@/data/cities";
 import { currentGuide, publicGuide } from "@/lib/guides";
 import { isAdmin } from "@/lib/auth";
-import { fmt, getDict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 

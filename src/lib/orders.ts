@@ -8,7 +8,8 @@ import { accessEmail } from "./access-email";
 import { env } from "./env";
 import { cityName } from "@/data/cities";
 import { loadCities } from "./content";
-import { isLocale, type Locale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
+import type { Locale } from "@/i18n/dictionaries";
 
 /**
  * Regista o acesso pago de uma sessão Stripe Checkout. Idempotente: pode ser chamado pelo

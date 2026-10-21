@@ -31,9 +31,7 @@ export type City = {
 export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
-export type Zone = "uk" | "schengen" | "tr" | "ae" | "qa" | "sa" | "eg" | "jo" | "om";
-const CUR_ZONE: Partial<Record<CityCur, Zone>> = { GBP: "uk", TRY: "tr", AED: "ae", QAR: "qa", SAR: "sa", EGP: "eg", JOD: "jo", OMR: "om" };
-export const zoneOf = (c: City): Zone => CUR_ZONE[c.cur] ?? "schengen";
+export { zoneOf, COUNTRY, type Zone } from "./city-meta";
 
 import { ME_CITIES, ME_NAMES } from "./cities-me";
 
@@ -306,11 +304,6 @@ export function getCity(id: string): City | undefined {
   return CITIES.find((c) => c.id === id);
 }
 /** País de cada cidade (código ISO), para agrupar na escolha da cidade. */
-export const COUNTRY: Record<string, string> = {
-  lis: "PT", opo: "PT", mad: "ES", bcn: "ES", par: "FR", rom: "IT", ams: "NL", ist: "TR",
-  lon: "GB", edi: "GB", man: "GB", gla: "GB", liv: "GB", bir: "GB",
-  dxb: "AE", auh: "AE", doh: "QA", ruh: "SA", jed: "SA", cai: "EG", amm: "JO", mct: "OM"
-};
 
 /** Nomes nos idiomas acrescentados depois (IT, ZH, AR, JA). */
 const MORE_NAMES: Record<string, Record<string, string>> = {

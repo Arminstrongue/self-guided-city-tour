@@ -12,7 +12,8 @@
  */
 import { EXIT_AIRPORT_MIN, fitRoute, type RouteOption } from "./route-cost";
 import { AIRPORT_BUFFER_MIN } from "./pricing";
-import { zoneOf, type City, type Zone } from "@/data/cities";
+import type { City } from "@/data/cities";
+import { zoneOf, type Zone } from "@/data/city-meta";
 
 /** ETIAS (autorização de 20 € para quem não precisa de visto Schengen): prevista para o 4.º trimestre de 2026. */
 export const ETIAS_LIVE = process.env.NEXT_PUBLIC_ETIAS_LIVE === "1";

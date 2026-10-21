@@ -6,7 +6,8 @@ import { requestCurrency } from "@/lib/fx";
 import { loadCity } from "@/lib/content";
 import { cityName } from "@/data/cities";
 import { expireStale, listGuides } from "@/lib/guides";
-import { fmt, getDict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 

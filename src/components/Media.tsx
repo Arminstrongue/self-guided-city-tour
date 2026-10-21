@@ -2,7 +2,8 @@
 /** Fotografias (galeria, visualizador em ecrã inteiro, slideshow) e avaliações do Google. */
 import { useEffect, useRef, useState } from "react";
 import type { Media, Photo, Review } from "@/lib/media";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { ExtLink } from "./ExtLink";
 
 export type { Media, Photo, Review };

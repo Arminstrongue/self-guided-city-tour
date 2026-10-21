@@ -1,7 +1,8 @@
 import { Header } from "@/components/Header";
 import { AgentSignup } from "@/components/AgentSignup";
 import { requestCurrency } from "@/lib/fx";
-import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 import { AGENT_COMMISSION, AGENT_MONTHS } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";

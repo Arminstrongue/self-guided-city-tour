@@ -5,7 +5,8 @@ import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishli
 import { useEffect, useMemo, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import type { Map as LMap, LayerGroup } from "leaflet";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { CAT_HOBBIES, CAT_ICON, HOBBIES, HOBBY_ICON, distM, rankCats, type Hobby, type Place, type PlaceCat } from "@/lib/explore";
 import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
 import { WHEN_ICON, type When } from "@/data/moments";

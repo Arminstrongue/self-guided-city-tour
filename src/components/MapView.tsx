@@ -6,7 +6,7 @@ import type { Map as LMap, LayerGroup } from "leaflet";
 import type { Airport, Stop } from "@/data/cities";
 import type { Museum } from "@/data/museums";
 import type { Dict } from "@/i18n/dictionaries";
-import { fmt } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
 import { km, walkMin } from "@/lib/route-cost";
 import { ExtLink } from "./ExtLink";
 import { loadGoogle, type G } from "@/lib/gmaps-client";

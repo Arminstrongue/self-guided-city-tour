@@ -3,7 +3,7 @@ import { stripe } from "@/lib/stripe";
 import { fulfilTourSession } from "@/lib/orders";
 import { ACCESS_COOKIE, ACCESS_TTL_S, createAccessToken } from "@/lib/access-token";
 import { env, isProd } from "@/lib/env";
-import { isLocale } from "@/i18n/dictionaries";
+import { isLocale } from "@/i18n/core";
 
 export const runtime = "nodejs";
 

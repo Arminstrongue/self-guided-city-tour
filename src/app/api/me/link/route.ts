@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sendWalletLink } from "@/lib/wallet";
-import { LOCALES } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
 import { rateLimit } from "@/lib/rate-limit";
 

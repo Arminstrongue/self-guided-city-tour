@@ -1,7 +1,8 @@
 "use client";
 /** Partes interativas do marketplace de guias: registo/edição, link de entrada, reserva, portal e avaliação. */
 import { useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 
 type CityOpt = { id: string; name: string };
 const LANGS = ["pt", "en", "es", "fr", "de", "it", "nl", "zh", "ar", "ja", "ru", "tr", "ko", "hi", "pl", "uk"];

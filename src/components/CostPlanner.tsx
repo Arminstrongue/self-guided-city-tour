@@ -1,7 +1,8 @@
 "use client";
 /** Custos: todos os transportes da cidade e outras atrações/despesas, somados ao total do dia (guardado no dispositivo). */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { Transport } from "@/data/transport";
 import type { Museum } from "@/data/museums";
 

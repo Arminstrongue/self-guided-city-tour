@@ -8,7 +8,8 @@ import { activateFromSession } from "@/lib/merchants";
 import { env } from "@/lib/env";
 import { cityName } from "@/data/cities";
 import { loadCities } from "@/lib/content";
-import { getDict, fmt, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 

@@ -5,19 +5,19 @@
  * Leve: só o vídeo visível e o seguinte carregam; os outros ficam pela capa.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { fmt, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import { HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { Composer, ago, type PostItem } from "./Feed";
 import { EmojiButton, emojiLabels } from "./Emoji";
-import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, Pause, X, Plus, Maximize2 } from "./Ico";
+import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, Pause, X, Plus, Clapperboard } from "./Ico";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
-export const videoUrl = (id: string) => `/api/social/video/${id}`;
-export const posterUrl = (id: string) => `/api/social/video/${id}?poster=1`;
+import { Scrub, videoUrl, posterUrl, compact } from "./FeedVideo";
+export { videoUrl, posterUrl };
 const postAct = (id: string, body: Record<string, string>) =>
   fetch(`/api/social/post/${id}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then((r) => r.json()).catch(() => null);
-const compact = (n: number, locale: Locale) => new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
 /* ---------- Visualizador ---------- */
 export function ReelsViewer({ t, locale, cities, scope: scope0 = "foryou", handle, initial, startId, onClose, showTabs = false, onCreate }: {
@@ -91,7 +91,7 @@ export function ReelsViewer({ t, locale, cities, scope: scope0 = "foryou", handl
       <div className="rl-feed" ref={box}>
         {page === null && <div className="rl-slide"><span className="rl-spin" aria-label={t.exLoading} /></div>}
         {page?.posts.length === 0 && (
-          <div className="rl-slide rl-empty"><span aria-hidden="true">🎬</span><b>{t.rlEmpty}</b><p>{scope === "following" ? t.rlEmptyF : t.rlEmptySub}</p>
+          <div className="rl-slide rl-empty"><span className="rl-empty-ic" aria-hidden="true"><I icon={Clapperboard} size={34} /></span><b>{t.rlEmpty}</b><p>{scope === "following" ? t.rlEmptyF : t.rlEmptySub}</p>
             {onCreate && <button className="btn press" style={{ width: "auto" }} onClick={onCreate}>＋ {t.rlNew}</button>}</div>
         )}
         {page?.posts.map((p, i) => (
@@ -221,95 +221,6 @@ function ReelComments({ t, locale, post, onClose }: { t: Dict; locale: Locale; p
           </form>
         ) : <small className="hint">{t.pfOnlyCircle}</small>}
       </div>
-    </div>
-  );
-}
-
-/* ---------- Vídeo no feed: toca sozinho, toque pausa, duplo toque gosta, som e expandir no próprio vídeo ---------- */
-// Som partilhado por todos os vídeos do feed (ligar num liga nos outros) e só um vídeo a tocar de cada vez.
-let feedMuted = true;
-const muteSubs = new Set<(m: boolean) => void>();
-const setFeedMuted = (m: boolean) => { feedMuted = m; muteSubs.forEach((f) => f(m)); };
-const playing = new Set<HTMLVideoElement>();
-const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
-
-/** Barra de progresso que se pode arrastar para avançar/recuar. */
-export function Scrub({ v, prog, label }: { v: React.RefObject<HTMLVideoElement>; prog: number; label: string }) {
-  const [drag, setDrag] = useState<number | null>(null);
-  const seek = (e: React.PointerEvent<HTMLDivElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    let x = (e.clientX - r.left) / r.width; if (document.dir === "rtl") x = 1 - x;
-    x = Math.min(1, Math.max(0, x)); setDrag(x);
-    const el = v.current; if (el?.duration) el.currentTime = x * el.duration;
-  };
-  return (
-    <div className={`vscrub ${drag !== null ? "on" : ""}`} role="slider" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((drag ?? prog) * 100)}
-      onClick={(e) => e.stopPropagation()}
-      onPointerDown={(e) => { e.stopPropagation(); e.currentTarget.setPointerCapture(e.pointerId); seek(e); }}
-      onPointerMove={(e) => { if (drag !== null) seek(e); }} onPointerUp={() => setDrag(null)} onPointerCancel={() => setDrag(null)}>
-      <i style={{ width: `${(drag ?? prog) * 100}%` }}><b /></i>
-    </div>
-  );
-}
-
-export function FeedVideo({ t, locale, p, onOpen, onLike, onComments, onShare }: {
-  t: Dict; locale: Locale; p: PostItem; onOpen: () => void; onLike: (force?: boolean) => void; onComments: () => void; onShare: () => void;
-}) {
-  const v = useRef<HTMLVideoElement>(null);
-  const [muted, setMuted] = useState(feedMuted);
-  const [paused, setPaused] = useState(true);
-  const [byUser, setByUser] = useState(false);
-  const [prog, setProg] = useState(0);
-  const [left, setLeft] = useState(p.duration ?? 0);
-  const [flash, setFlash] = useState<{ k: "play" | "pause"; at: number } | null>(null);
-  const [burst, setBurst] = useState(0);
-  const lastTap = useRef(0);
-  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => { muteSubs.add(setMuted); return () => { muteSubs.delete(setMuted); }; }, []);
-  useEffect(() => { if (v.current) v.current.muted = muted; }, [muted]);
-  // Toca quando está bem visível (a não ser que o viajante o tenha pausado); pára quando sai do ecrã.
-  useEffect(() => {
-    const el = v.current; if (!el || p.video !== "ready") return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting && !byUser) { playing.forEach((o) => { if (o !== el) o.pause(); }); el.play().catch(() => { el.muted = true; setFeedMuted(true); el.play().catch(() => null); }); }
-      else if (!e.isIntersecting) el.pause();
-    }, { threshold: 0.65 });
-    io.observe(el); return () => io.disconnect();
-  }, [p.video, byUser]);
-  function tap() {
-    const now = Date.now();
-    if (now - lastTap.current < 280) {
-      if (tapTimer.current) clearTimeout(tapTimer.current);
-      lastTap.current = 0; setBurst(now); onLike(true); return;
-    }
-    lastTap.current = now;
-    tapTimer.current = setTimeout(() => {
-      const el = v.current; if (!el) return;
-      if (el.paused) { playing.forEach((o) => { if (o !== el) o.pause(); }); void el.play().catch(() => null); setByUser(false); setFlash({ k: "play", at: Date.now() }); }
-      else { el.pause(); setByUser(true); setFlash({ k: "pause", at: Date.now() }); }
-    }, 280);
-  }
-  if (p.video === "processing") return <div className="pf-vproc"><span className="rl-spin" /> {t.rlProcessing}</div>;
-  if (p.video === "failed") return <div className="pf-vproc">⚠️ {t.rlFailed}</div>;
-  const compactN = (n: number) => compact(n, locale);
-  return (
-    <div className="fv">
-      <video ref={v} src={videoUrl(p.id)} poster={posterUrl(p.id)} muted={muted} playsInline loop preload="metadata" onClick={tap}
-        onPlay={(e) => { playing.add(e.currentTarget); setPaused(false); }} onPause={(e) => { playing.delete(e.currentTarget); setPaused(true); }}
-        onTimeUpdate={(e) => { const el = e.currentTarget; if (el.duration) { setProg(el.currentTime / el.duration); setLeft(el.duration - el.currentTime); } }} />
-      {paused && !flash && <span className="fv-big" aria-hidden="true"><I icon={Play} size={30} solid /></span>}
-      {flash && <span key={flash.at} className="fv-flash" aria-hidden="true" onAnimationEnd={() => setFlash(null)}><I icon={flash.k === "play" ? Play : Pause} size={30} solid /></span>}
-      {burst > 0 && <span key={burst} className="fv-burst" aria-hidden="true"><I icon={Heart} size={96} solid /></span>}
-      <span className="fv-time num">{clock(left)}</span>
-      <button className="fv-btn fv-expand" onClick={(e) => { e.stopPropagation(); onOpen(); }} aria-label={t.rlOpen} title={t.rlOpen}><I icon={Maximize2} size={18} /></button>
-      <button className="fv-btn fv-vol" onClick={(e) => { e.stopPropagation(); setFeedMuted(!muted); }} aria-label={muted ? t.rlUnmute : t.rlMute} title={muted ? t.rlUnmute : t.rlMute}>
-        <I icon={muted ? VolumeX : Volume2} size={18} /></button>
-      <div className="fv-rail">
-        <button className={`fv-act ${p.liked ? "on" : ""}`} aria-pressed={p.liked} aria-label={t.pfLike} onClick={(e) => { e.stopPropagation(); onLike(); }}><I icon={Heart} size={26} solid={p.liked} /><small className="num">{compactN(p.likes)}</small></button>
-        <button className="fv-act" aria-label={t.pfComments} onClick={(e) => { e.stopPropagation(); onComments(); }}><I icon={MessageCircle} size={26} /><small className="num">{compactN(p.comments)}</small></button>
-        <button className="fv-act" aria-label={t.shTitle} onClick={(e) => { e.stopPropagation(); onShare(); }}><I icon={Send} size={24} /><small>{t.rlShare}</small></button>
-      </div>
-      <Scrub v={v} prog={prog} label={t.rlVideo} />
     </div>
   );
 }

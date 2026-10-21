@@ -2,7 +2,8 @@
 import { SheetX } from "@/components/WinNav";
 /** Agenda da cidade dentro da carteira: eventos dos próximos 30 dias e o que vale sempre a pena, sem sair da app. */
 import { useEffect, useMemo, useState } from "react";
-import { fmt, INTL_LOCALE, type Dict, type Locale } from "@/i18n/dictionaries";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { CityEvent } from "@/lib/events";
 import type { MomentView } from "./Explore";
 import { AddToPlan } from "./Explore";
