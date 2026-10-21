@@ -492,3 +492,30 @@ export const placeComments = pgTable("place_comments", {
   reports: integer("reports").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("place_comments_place_idx").on(t.city, t.stop, t.createdAt), index("place_comments_author_idx").on(t.author)]);
+
+/* ---------- Conteúdo das cidades atualizado sozinho ---------- */
+/** Textos de referência por cidade e língua (resumo e história da Wikipédia, CC BY-SA), renovados todas as semanas. */
+export const cityKnowledge = pgTable("city_knowledge", {
+  city: text("city").notNull(),
+  lang: text("lang").notNull(),
+  kind: text("kind").$type<"summary" | "history">().notNull(),
+  title: text("title").notNull(),
+  text: text("text").notNull(),
+  url: text("url").notNull(),
+  srcLang: text("src_lang").notNull(),
+  fetchedAt: timestamp("fetched_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("city_knowledge_key_idx").on(t.city, t.lang, t.kind)]);
+
+export type PulseData = {
+  events?: { name: string; when: string; venue: string; url: string; kind: string }[];
+  weather?: { min: number; max: number; rain: number; code: number } | null;
+  trending?: { stops: { id: string; n: number }[]; tags: { tag: string; n: number }[]; comments: number; posts: number; visitors: number };
+  news?: Record<string, { title: string; url: string; source: string; at: number }[]>;
+};
+/** Resumo diário de cada cidade ("O que há de novo hoje"), recolhido por um processo automático. */
+export const cityPulse = pgTable("city_pulse", {
+  city: text("city").notNull(),
+  day: text("day").notNull(), // AAAA-MM-DD
+  data: jsonb("data").$type<PulseData>().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("city_pulse_key_idx").on(t.city, t.day)]);

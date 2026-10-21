@@ -1857,3 +1857,25 @@ main:focus{outline:none}
 .pt-rules li{display:flex;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface-2);font-size:14px}
 .pt-rules li.got{background:color-mix(in srgb,#30d158 16%,var(--surface))}
 .pt-rules b{white-space:nowrap}
+/* ---------- Página da cidade: tudo o que é útil, hoje, história ---------- */
+.hub-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:420px){.hub-grid{grid-template-columns:repeat(3,1fr)}}
+.hub-t{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:12px 6px;border-radius:18px;background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;font-size:12.5px;line-height:1.2}
+.hub-t span{font-size:24px}
+.hub-t b{font-weight:600}
+.td-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.td-wx{display:flex;flex-direction:column;gap:2px;padding:14px}
+.td-ic{font-size:26px}
+.td-list{gap:8px;padding:14px}
+.td-row{display:flex;gap:12px;align-items:flex-start;color:var(--ink);text-decoration:none;padding:6px 0;border-top:1px solid var(--line)}
+.td-row .num{flex:none;font-weight:700;color:var(--cobalt-ink);min-width:42px}
+.hist-card{padding:18px;display:flex;flex-direction:column;gap:10px;line-height:1.6}
+.hist-card p{margin:0}
+.hist-card details{display:flex;flex-direction:column;gap:10px}
+.hist-card summary{cursor:pointer;font-weight:700;color:var(--cobalt-ink);margin-bottom:8px}
+.hist-card details p+p{margin-top:10px}
+.hist-src a{color:inherit}
+.gk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:520px){.gk-grid{grid-template-columns:1fr}}
+.gk{padding:14px}
+.gk p{margin:4px 0 0}

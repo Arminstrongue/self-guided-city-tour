@@ -23,6 +23,9 @@ import { dualMoney } from "@/lib/currency";
 import { routeOptions } from "@/lib/route-cost";
 import { CityGallery, CityHero, StickyBook } from "@/components/Showcase";
 import { PlaceComments } from "@/components/Comments";
+import { CityHub, CityToday, CityHistory, GoodToKnow } from "@/components/CityInfo";
+import { latestPulse } from "@/lib/city-pulse";
+import { cityKnowledge, ensureKnowledge } from "@/lib/city-knowledge";
 
 /** Página de entrada do QR: fotografias, destaques, plano, voo e pagamento. */
 export const dynamic = "force-dynamic";
@@ -41,6 +44,9 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const guides = (await listGuides(city.id).catch(() => [])).slice(0, 3);
   const free = isFreeCity(city.id);
   const stops = city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top) }));
+  const [pulse, know] = await Promise.all([latestPulse(city.id).catch(() => null), cityKnowledge(city.id, params.locale).catch(() => ({ summary: null, history: null }))]);
+  // Ainda sem história nesta língua: vai buscá-la em segundo plano (a próxima visita já a mostra).
+  if (!know.summary || know.summary.lang !== params.locale) ensureKnowledge(city.id, params.locale);
   return (
     <main className="app xl">
       <Track name="view_city" city={city.id} locale={params.locale} refCode={searchParams.ref} />
@@ -58,7 +64,11 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
+        <CityHub t={t} locale={params.locale} city={city} name={name} />
+        <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />
         <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} {...exploreProps(city, params.locale)} />
+
+        <CityHistory t={t} name={name} k={know} />
 
         <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />
 
@@ -68,6 +78,8 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
             {guides.map((g) => <GuideCard key={g.id} g={g} t={t} locale={params.locale} />)}
           </section>
         )}
+
+        <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
 
         <section className="sec" id="safety">
           <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>

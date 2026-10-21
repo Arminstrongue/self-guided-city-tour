@@ -82,7 +82,7 @@ export function parseRss(xml: string, locale: string, now = Date.now()): NewsIte
     .sort((a, b) => Number(Boolean(b.trusted)) - Number(Boolean(a.trusted)) || b.at - a.at).slice(0, 8);
 }
 
-async function googleNews(q: string, locale: string): Promise<NewsItem[]> {
+export async function googleNews(q: string, locale: string): Promise<NewsItem[]> {
   const r = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(`${q} when:3d`)}&${EDITION[locale] ?? EDITION.en}`, { signal: AbortSignal.timeout(8000), cache: "no-store", headers: { "User-Agent": "Mozilla/5.0 SelfGuidedCityTour/1.0" } });
   if (!r.ok) throw new Error(String(r.status));
   return parseRss(await r.text(), locale);
@@ -116,4 +116,24 @@ export async function safetyNews(cityId: string | null, locale: string): Promise
   const all = [...(off ? [off] : []), ...items].slice(0, 8);
   if (all.length || !hit) cache.set(key, { at: Date.now(), items: all });
   return { items: all.length ? all : hit?.items ?? [], city: city?.id ?? null };
+}
+
+/** Notícias "boas" da cidade para o resumo diário: cultura, eventos, turismo, aberturas. */
+const CULTURE_WORDS: Record<string, string> = {
+  pt: "festival OR exposição OR museu OR concerto OR turismo OR inauguração OR festa",
+  en: "festival OR exhibition OR museum OR concert OR tourism OR opening OR celebration",
+  es: "festival OR exposición OR museo OR concierto OR turismo OR inauguración OR fiesta",
+  fr: "festival OR exposition OR musée OR concert OR tourisme OR ouverture OR fête",
+  de: "Festival OR Ausstellung OR Museum OR Konzert OR Tourismus OR Eröffnung OR Fest",
+  it: "festival OR mostra OR museo OR concerto OR turismo OR inaugurazione OR festa",
+  zh: "节 OR 展览 OR 博物馆 OR 音乐会 OR 旅游",
+  ar: "مهرجان OR معرض OR متحف OR حفل OR سياحة OR افتتاح",
+  ja: "祭り OR 展覧会 OR 美術館 OR コンサート OR 観光",
+  tr: "festival OR sergi OR müze OR konser OR turizm OR açılış",
+  ru: "фестиваль OR выставка OR музей OR концерт OR туризм OR открытие",
+  ko: "축제 OR 전시 OR 박물관 OR 콘서트 OR 관광"
+};
+export async function cultureNews(cityName: string, locale: string): Promise<NewsItem[]> {
+  const lang = CULTURE_WORDS[locale] ? locale : "en";
+  return (await googleNews(`"${cityName}" (${CULTURE_WORDS[lang]})`, lang).catch(() => [])).slice(0, 5);
 }
