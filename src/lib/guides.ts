@@ -80,7 +80,7 @@ export async function payoutsLink(g: schema.Guide, locale: string) {
     const a = await s.accounts.create({
       type: "express", email: g.email, country: COUNTRY[g.city] ?? "PT", business_type: "individual",
       capabilities: { card_payments: { requested: true }, transfers: { requested: true } },
-      business_profile: { product_description: "Walking tours for travellers booked through Self Guided City Tour", mcc: "4722", url: env.appUrl },
+      business_profile: { product_description: "Walking tours for travellers booked through HelloTravell", mcc: "4722", url: env.appUrl },
       metadata: { guideId: g.id }
     });
     acct = a.id;

@@ -22,7 +22,7 @@ export async function remotePhoto(url: string): Promise<{ body: Buffer; type: st
     return { type: raw.subarray(0, nl).toString(), body: raw.subarray(nl + 1) };
   } catch { /* ainda não está guardada */ }
   try {
-    const r = await fetch(url, { headers: { "User-Agent": "SelfGuidedCityTour/1.0 (https://selfguidedcitytour.com; hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(12_000) });
+    const r = await fetch(url, { headers: { "User-Agent": "HelloTravell/1.0 (https://hellotravell.com; hello@hellotravell.com)" }, signal: AbortSignal.timeout(12_000) });
     const type = r.headers.get("content-type") ?? "";
     if (!r.ok || !/^image\/(jpeg|png|webp|gif)/.test(type)) return null;
     const body = Buffer.from(await r.arrayBuffer());

@@ -1,4 +1,4 @@
-# Self Guided City Tour — app
+# HelloTravell — app
 
 App web (PWA) para passageiros em escala: lê o QR, indica o voo, paga e segue sozinho o roteiro da cidade, com o transporte mais barato e a hora de voltar ao aeroporto. Inclui registo de comerciantes com assinatura, comissões do Parceiro QR e painel de administração.
 

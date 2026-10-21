@@ -7,10 +7,10 @@ export const env = {
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   resendKey: process.env.RESEND_API_KEY ?? "",
   replyTo: process.env.EMAIL_REPLY_TO ?? process.env.COMPANY_EMAIL ?? "",
-  emailFrom: process.env.EMAIL_FROM ?? "Self Guided City Tour <hello@selfguidedcitytour.com>",
+  emailFrom: process.env.EMAIL_FROM ?? "HelloTravell <hello@hellotravell.com>",
   vapidPublic: process.env.VAPID_PUBLIC_KEY ?? "",
   vapidPrivate: process.env.VAPID_PRIVATE_KEY ?? "",
-  vapidSubject: process.env.VAPID_SUBJECT ?? "mailto:hello@selfguidedcitytour.com",
+  vapidSubject: process.env.VAPID_SUBJECT ?? "mailto:hello@hellotravell.com",
   mediaDir: process.env.MEDIA_DIR ?? "./.data/media",
   adminEmails: (process.env.ADMIN_EMAILS ?? "").split(",").map((s) => s.trim().toLowerCase()).filter(Boolean)
 };

@@ -128,7 +128,7 @@ async function fetchCat(city: City, cat: PlaceCat): Promise<OsmEl[] | null> {
   const body = new URLSearchParams({ data: overpassQuery(cityCenter(city), cat) }).toString();
   for (const url of ENDPOINTS) {
     try {
-      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "SelfGuidedCityTour/1.0 (hello@selfguidedcitytour.com)" }, signal: AbortSignal.timeout(12_000) });
+      const r = await fetch(url, { method: "POST", body, headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "HelloTravell/1.0 (hello@hellotravell.com)" }, signal: AbortSignal.timeout(12_000) });
       if (!r.ok) { console.warn(`[explore] ${city.id}/${cat} ${url} HTTP ${r.status}`); continue; }
       const j = (await r.json()) as OsmJson;
       // O Overpass responde 200 mesmo quando o pedido falha (tempo ou memória): o erro vem em "remark".

@@ -96,10 +96,10 @@ export async function sendWalletLink(email: string, locale: string, city?: strin
   // Com cidade: depois de entrar, abre logo o roteiro dessa cidade (se tiver acesso) em vez da carteira.
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email))}&locale=${locale}${city ? `&city=${city}` : "&to=wallet"}`;
   const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f;max-width:520px">
-<p style="font-weight:600;color:#0071e3">📍 Self Guided City Tour</p><h2 style="margin:0 0 12px">${t.s}</h2><p>${t.b}</p>
+<p style="font-weight:600;color:#0071e3">📍 HelloTravell</p><h2 style="margin:0 0 12px">${t.s}</h2><p>${t.b}</p>
 <p><a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${t.h}</a></p>
 <p style="color:#6e6e73;font-size:13px">${t.n}</p></div>`;
-  await sendEmail(email, `Self Guided City Tour — ${t.s}`, html, `${t.b}\n${link}`);
+  await sendEmail(email, `HelloTravell — ${t.s}`, html, `${t.b}\n${link}`);
   return link;
 }
 

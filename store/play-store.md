@@ -1,20 +1,20 @@
 # Google Play — ficha da app (copiar e colar no Play Console)
 
 ## Dados principais
-- **Nome da app (30):** Self Guided City Tour
+- **Nome da app (30):** HelloTravell
 - **Pacote:** com.selfguidedcitytour.app
 - **Categoria:** Viagens e locais (Travel & Local)
 - **Tipo:** App · Gratuita (o acesso compra-se no site)
 - **Email de contacto:** o email da empresa
-- **Site:** https://selfguidedcitytour.com
-- **Política de privacidade:** https://selfguidedcitytour.com/en/legal/privacy
+- **Site:** https://hellotravell.com
+- **Política de privacidade:** https://hellotravell.com/en/legal/privacy
 
 ## English (en-GB / en-US)
 **Short description (80):**
 Layover or short break? Explore the city on your own and get back on time.
 
 **Full description:**
-Landed with a few hours to spare? Self Guided City Tour turns your layover or short break into a self-guided walk through the city's most famous sights — and gets you back to the airport on time.
+Landed with a few hours to spare? HelloTravell turns your layover or short break into a self-guided walk through the city's most famous sights — and gets you back to the airport on time.
 
 • The fullest route that fits your free time, linked by the cheapest transport
 • Countdown to when you must head back, with a reminder before it's time
@@ -27,14 +27,14 @@ Landed with a few hours to spare? Self Guided City Tour turns your layover or sh
 
 Cities today: Lisbon, Porto, Madrid, Barcelona, Paris, Rome, Amsterdam, London, Edinburgh, Manchester, Glasgow, Liverpool, Birmingham and Istanbul — with more cities on every continent coming soon.
 
-How it works: scan the QR code at the airport, your hotel or a partner shop, buy your route once on selfguidedcitytour.com, then open it here with the same email.
+How it works: scan the QR code at the airport, your hotel or a partner shop, buy your route once on hellotravell.com, then open it here with the same email.
 
 ## Português (pt-PT)
 **Descrição breve (80):**
 Escala ou férias curtas? Conheça a cidade sozinho e volte ao aeroporto a horas.
 
 **Descrição completa:**
-Aterrou com umas horas livres? A Self Guided City Tour transforma a sua escala ou férias curtas num passeio autoguiado pelos pontos mais famosos da cidade — e leva-o de volta ao aeroporto a horas.
+Aterrou com umas horas livres? A HelloTravell transforma a sua escala ou férias curtas num passeio autoguiado pelos pontos mais famosos da cidade — e leva-o de volta ao aeroporto a horas.
 
 • O roteiro mais completo que cabe no seu tempo, ligado pelo transporte mais barato
 • Contagem decrescente até à hora de voltar, com aviso antes da hora
@@ -47,7 +47,7 @@ Aterrou com umas horas livres? A Self Guided City Tour transforma a sua escala o
 
 Cidades: Lisboa, Porto, Madrid, Barcelona, Paris, Roma, Amesterdão, Londres, Edimburgo, Manchester, Glasgow, Liverpool, Birmingham e Istambul — e em breve mais cidades em todos os continentes.
 
-Como funciona: leia o código QR no aeroporto, no hotel ou numa loja parceira, compre o roteiro uma vez em selfguidedcitytour.com e abra-o aqui com o mesmo email.
+Como funciona: leia o código QR no aeroporto, no hotel ou numa loja parceira, compre o roteiro uma vez em hellotravell.com e abra-o aqui com o mesmo email.
 
 ## Imagens pedidas
 - Ícone 512×512: `assets/icon-only.png` (reduzir para 512)

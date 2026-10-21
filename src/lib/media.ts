@@ -24,7 +24,7 @@ export type Media = {
   wiki: string | null;
 };
 
-const UA = "SelfGuidedCityTour/1.0 (https://selfguidedcitytour.com; hello@selfguidedcitytour.com)";
+const UA = "HelloTravell/1.0 (https://hellotravell.com; hello@hellotravell.com)";
 const WIKI_TTL = 7 * 24 * 3600e3;
 const EMPTY_TTL = 15 * 60e3;          // resultados vazios (falha ou limite da Wikimedia): voltar a tentar em 15 min
 const GOOGLE_TTL = 7 * 24 * 3600e3; // 7 dias: controla o custo do Google (pesquisa com avaliações + fotos)

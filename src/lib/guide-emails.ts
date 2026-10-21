@@ -34,7 +34,7 @@ function shell(locale: Locale, title: string, rows: string) {
   return `<!doctype html><html lang="${locale}" dir="${locale === "ar" ? "rtl" : "ltr"}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:20px;padding:32px">
-<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:16px">📍 Self Guided City Tour</td></tr>
+<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:16px">📍 HelloTravell</td></tr>
 <tr><td style="font-size:22px;font-weight:700;padding-bottom:12px">${title}</td></tr>${rows}
 </table></td></tr></table></body></html>`;
 }
@@ -55,7 +55,7 @@ export function tourist(kind: "req" | "ok" | "no", b: MailBooking, extra: { resp
   }
   if (kind === "no" && extra.othersUrl) rows += btn(extra.othersUrl, t.other);
   const subject = f(title, { g: b.guide });
-  return { subject: `Self Guided City Tour — ${subject}`, html: shell(l, f(esc(title), { g }), rows) };
+  return { subject: `HelloTravell — ${subject}`, html: shell(l, f(esc(title), { g }), rows) };
 }
 
 /** Ao guia (PT + EN): novo pedido, com prazo e link para o portal. */
@@ -70,5 +70,5 @@ export function guideNewRequest(b: MailBooking & { tourist: string; note?: strin
 }
 
 export function guideLinkMail(link: string) {
-  return { subject: "Self Guided City Tour — portal do guia / guide portal", html: shell("pt", "Portal do guia / Guide portal", p("Entre no seu portal / Open your portal:") + btn(link, "Abrir o portal / Open portal") + p(esc(link), true)) };
+  return { subject: "HelloTravell — portal do guia / guide portal", html: shell("pt", "Portal do guia / Guide portal", p("Entre no seu portal / Open your portal:") + btn(link, "Abrir o portal / Open portal") + p(esc(link), true)) };
 }

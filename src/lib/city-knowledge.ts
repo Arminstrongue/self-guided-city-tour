@@ -12,7 +12,7 @@ export const WIKI_TITLE: Record<string, string> = {
   edi: "Edinburgh", man: "Manchester", gla: "Glasgow", liv: "Liverpool", bir: "Birmingham", ist: "Istanbul",
   dxb: "Dubai", auh: "Abu Dhabi", doh: "Doha", ruh: "Riyadh", jed: "Jeddah", cai: "Cairo", amm: "Amman", mct: "Muscat"
 };
-const UA = { "User-Agent": "SelfGuidedCityTour/1.0 (https://selfguidedcitytour.com; hello@selfguidedcitytour.com)", "Api-User-Agent": "SelfGuidedCityTour/1.0" };
+const UA = { "User-Agent": "HelloTravell/1.0 (https://hellotravell.com; hello@hellotravell.com)", "Api-User-Agent": "HelloTravell/1.0" };
 const MAX_AGE = 7 * 86400_000;
 
 type F = typeof fetch;

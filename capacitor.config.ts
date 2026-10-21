@@ -4,11 +4,11 @@ import type { CapacitorConfig } from "@capacitor/cli";
  * App nativa (iOS/Android, Capacitor 8) que abre a app web publicada.
  * Qualquer melhoria publicada no servidor aparece logo nas apps, sem nova submissão às lojas.
  */
-const APP_URL = process.env.APP_URL ?? "https://selfguidedcitytour.com";
+const APP_URL = process.env.APP_URL ?? "https://hellotravell.com";
 
 const config: CapacitorConfig = {
   appId: "com.selfguidedcitytour.app",
-  appName: "City Tour",
+  appName: "HelloTravell",
   webDir: "mobile-shell",
   server: { url: APP_URL, cleartext: false, allowNavigation: [new URL(APP_URL).host, "*.stripe.com", "accounts.google.com", "appleid.apple.com", "*.facebook.com"] },
   backgroundColor: "#000000",

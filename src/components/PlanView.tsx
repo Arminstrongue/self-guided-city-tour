@@ -64,7 +64,7 @@ export function PlanView({ t, locale, plan: initial, moments }: { t: Dict; local
     const lines = [plan.title, ...Array.from({ length: plan.days }, (_, k) => k + 1).flatMap((n) => {
       const its = plan.items.filter((i) => i.day === n).sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
       return its.length ? [`\n${fmt(t.plDay, { n })}${dayDate(n) ? ` · ${dayDate(n)}` : ""}`, ...its.map((i) => `${i.time ?? "—"}  ${i.icon ?? "•"} ${i.title}`)] : [];
-    }), `\nselfguidedcitytour.com${plan.city ? `/${plan.city}` : ""}`];
+    }), `\nhellotravell.com${plan.city ? `/${plan.city}` : ""}`];
     const text = lines.join("\n");
     try { if (navigator.share) await navigator.share({ title: plan.title, text }); else { await navigator.clipboard.writeText(text); toast(t.tsCopied, { icon: "📋" }); } } catch { /* cancelado */ }
   }

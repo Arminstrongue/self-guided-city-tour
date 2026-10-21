@@ -7,7 +7,7 @@ import { db, schema } from "./db";
 import { notify } from "./notify";
 
 export const HANDLE_RE = /^[a-z0-9._]{3,24}$/;
-const RESERVED = new Set(["admin", "support", "help", "selfguided", "selfguidedcitytour", "official", "staff", "guide", "guides", "wallet", "api"]);
+const RESERVED = new Set(["admin", "support", "help", "selfguided", "selfguidedcitytour", "hellotravell", "hellotravel", "official", "staff", "guide", "guides", "wallet", "api"]);
 export const validHandle = (h: string) => HANDLE_RE.test(h) && !RESERVED.has(h) && !/^[._]|[._]$|\.\./.test(h);
 export const THEMES = ["auto", "light", "dark"] as const;
 export const ACCENTS = ["blue", "purple", "green", "orange", "pink", "teal"] as const;
@@ -162,7 +162,7 @@ export async function search(me: string | null, q: string, myCities: string[] = 
   }
   rows = rows.filter((r) => r.email !== me && !blocked.includes(r.email));
   // Sugestões: a conta oficial primeiro.
-  if (term.length < 2) rows.sort((a, b) => Number(b.handle === "selfguidedcitytour") - Number(a.handle === "selfguidedcitytour"));
+  if (term.length < 2) rows.sort((a, b) => Number(b.handle === "hellotravell") - Number(a.handle === "hellotravell"));
   rows = rows.slice(0, 20);
   const rels = me ? await d.select().from(schema.follows).where(and(eq(schema.follows.follower, me), inArray(schema.follows.followee, rows.map((r) => r.email).concat("~")))) : [];
   return rows.map((r) => {

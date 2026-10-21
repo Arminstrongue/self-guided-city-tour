@@ -51,7 +51,7 @@ export function QrSheet({ t, locale, me, onClose }: { t: Dict; locale: string; m
     x.drawImage(qr, 170, 190);
     x.fillStyle = "#fff"; x.textAlign = "center";
     x.font = "800 64px system-ui, -apple-system, sans-serif"; x.fillText(me.name, S / 2, S + 150);
-    x.font = "600 44px system-ui, -apple-system, sans-serif"; x.globalAlpha = .8; x.fillText(`@${me.handle} · Self Guided City Tour`, S / 2, S + 220);
+    x.font = "600 44px system-ui, -apple-system, sans-serif"; x.globalAlpha = .8; x.fillText(`@${me.handle} · HelloTravell`, S / 2, S + 220);
     return await new Promise<Blob>((r) => c.toBlob((b) => r(b!), "image/png"));
   };
   const share = async () => {

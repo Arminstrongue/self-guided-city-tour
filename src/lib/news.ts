@@ -83,7 +83,7 @@ export function parseRss(xml: string, locale: string, now = Date.now()): NewsIte
 }
 
 export async function googleNews(q: string, locale: string): Promise<NewsItem[]> {
-  const r = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(`${q} when:3d`)}&${EDITION[locale] ?? EDITION.en}`, { signal: AbortSignal.timeout(8000), cache: "no-store", headers: { "User-Agent": "Mozilla/5.0 SelfGuidedCityTour/1.0" } });
+  const r = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(`${q} when:3d`)}&${EDITION[locale] ?? EDITION.en}`, { signal: AbortSignal.timeout(8000), cache: "no-store", headers: { "User-Agent": "Mozilla/5.0 HelloTravell/1.0" } });
   if (!r.ok) throw new Error(String(r.status));
   return parseRss(await r.text(), locale);
 }

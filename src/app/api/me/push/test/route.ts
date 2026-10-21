@@ -12,6 +12,6 @@ export async function POST(req: Request) {
   if (!rateLimit(req, "push-test", 5)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const { lang } = await settingsOf(me);
   const pt = lang === "pt";
-  const n = await sendPush(me, { title: "Self Guided City Tour", body: pt ? "As notificações estão ligadas ✓" : "Notifications are on ✓", url: `/${lang}/wallet`, tag: "test" });
+  const n = await sendPush(me, { title: "HelloTravell", body: pt ? "As notificações estão ligadas ✓" : "Notifications are on ✓", url: `/${lang}/wallet`, tag: "test" });
   return NextResponse.json({ sent: n });
 }

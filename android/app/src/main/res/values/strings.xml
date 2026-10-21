@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">City Tour</string>
-    <string name="title_activity_main">Self Guided City Tour</string>
+    <string name="app_name">HelloTravell</string>
+    <string name="title_activity_main">HelloTravell</string>
     <string name="package_name">com.selfguidedcitytour.app</string>
     <string name="custom_url_scheme">com.selfguidedcitytour.app</string>
 </resources>

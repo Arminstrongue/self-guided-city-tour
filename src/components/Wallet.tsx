@@ -146,7 +146,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     void load();
   }
   async function share(x: Mem) {
-    const text = `${x.title} · ${x.cityName}${x.note ? ` — ${x.note}` : ""}\nselfguidedcitytour.com/${x.city}`;
+    const text = `${x.title} · ${x.cityName}${x.note ? ` — ${x.note}` : ""}\nhellotravell.com/${x.city}`;
     try {
       if (x.photo && navigator.canShare) {
         const file = new File([await (await fetch(x.photo)).blob()], "memory.jpg", { type: "image/jpeg" });

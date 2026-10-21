@@ -35,7 +35,7 @@ export async function agentByCode(code: string | null | undefined) {
 /** Envia (ou devolve, em desenvolvimento sem email) o link de entrada no portal. */
 export async function sendAgentLink(email: string, locale: string): Promise<string | null> {
   const link = `${env.appUrl}/api/agents/link?token=${encodeURIComponent(createPurposeToken(email, "agent", 30 * 24 * 3600))}&locale=${locale}`;
-  const sent = await sendEmail(email, "Self Guided City Tour — portal de comerciais / partner portal",
+  const sent = await sendEmail(email, "HelloTravell — portal de comerciais / partner portal",
     `<p>Entre no portal / Open the portal:</p><p><a href="${link}">${link}</a></p>`);
   return sent ? null : link;
 }

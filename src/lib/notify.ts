@@ -103,7 +103,7 @@ export async function notify(to: string, actor: string, type: schema.Notificatio
     : type === "follow" || type === "request" || type === "accepted" || type === "invite_joined" ? `/${lang}/u/${a?.handle ?? ""}`
     : type === "split" ? `/${lang}/wallet#split:${o.postId ?? ""}`
     : `/${lang}/wallet#notifs`;
-  await sendPush(to, { title: type === "message" ? name : "Self Guided City Tour", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
+  await sendPush(to, { title: type === "message" ? name : "HelloTravell", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
 }
 
 /* ---------- Centro de notificações ---------- */

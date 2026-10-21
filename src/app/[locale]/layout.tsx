@@ -12,10 +12,10 @@ import { isLocale, RTL } from "@/i18n/core";
 import { getDict } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
-  title: "Self Guided City Tour",
+  title: "HelloTravell",
   description: "Self-guided city routes for layover travellers, with the cheapest transport and a countdown to your flight.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "City Tour", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "HelloTravell", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
   icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" }
 };

@@ -17,7 +17,7 @@ export function Diary({ t, locale }: { t: Dict; locale: Locale }) {
   const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" });
 
   async function share(x: Memory) {
-    const text = `${x.title} · ${x.cityName}${x.note ? ` — ${x.note}` : ""}\nselfguidedcitytour.com/${x.city}`;
+    const text = `${x.title} · ${x.cityName}${x.note ? ` — ${x.note}` : ""}\nhellotravell.com/${x.city}`;
     try {
       if (x.photo && navigator.canShare) {
         const blob = await (await fetch(x.photo)).blob();

@@ -11,7 +11,7 @@ export function company() {
     name: v("COMPANY_NAME", "[nome da empresa — a preencher]"),
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
-    email: v("COMPANY_EMAIL", "hello@selfguidedcitytour.com"),
+    email: v("COMPANY_EMAIL", "hello@hellotravell.com"),
     updated: "19 de outubro de 2026"
   };
 }
@@ -22,7 +22,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
   if (doc === "terms") return {
     title: "Termos e condições",
     sections: [
-      { h: "Quem somos", p: [`A Self Guided City Tour é explorada por ${who}.`] },
+      { h: "Quem somos", p: [`A HelloTravell é explorada por ${who}.`] },
       { h: "O serviço", p: [
         "Vendemos acesso digital a roteiros autoguiados por cidade, com indicações de transporte, custos estimados e uma contagem até à hora recomendada de regresso ao aeroporto.",
         "O acesso a uma cidade é válido durante 48 horas; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa no momento do pagamento."
@@ -44,10 +44,10 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Reservamo-nos o direito de recusar ou retirar anúncios enganosos, ilegais ou contrários a estes termos."
       ] },
       { h: "Reservas com guias locais", p: [
-        "Os guias apresentados na app são profissionais independentes. O contrato do passeio é celebrado diretamente entre si e o guia. A Self Guided City Tour atua apenas como intermediária: mostra os perfis, gere a reserva e recolhe o pagamento por conta do guia, através da Stripe.",
+        "Os guias apresentados na app são profissionais independentes. O contrato do passeio é celebrado diretamente entre si e o guia. A HelloTravell atua apenas como intermediária: mostra os perfis, gere a reserva e recolhe o pagamento por conta do guia, através da Stripe.",
         "Ao reservar, o valor fica pré-autorizado no cartão. Só é cobrado se o guia aceitar no prazo indicado (até 48 horas); caso contrário, a pré-autorização é libertada e nada é cobrado.",
         "Se o guia cancelar ou não comparecer, devolvemos a totalidade do valor. Se for o viajante a cancelar, contacte-nos: até 24 horas antes do início devolvemos a totalidade; depois disso, o valor é devido ao guia, salvo acordo com ele.",
-        "O passeio, a segurança dos participantes e o cumprimento das regras locais são da responsabilidade do guia, que deve ter a atividade registada e seguro em vigor. A fatura do passeio é emitida pelo guia. A Self Guided City Tour não é organizadora nem agência de viagens deste serviço.",
+        "O passeio, a segurança dos participantes e o cumprimento das regras locais são da responsabilidade do guia, que deve ter a atividade registada e seguro em vigor. A fatura do passeio é emitida pelo guia. A HelloTravell não é organizadora nem agência de viagens deste serviço.",
         "Por se tratar de uma atividade de lazer com data marcada, não se aplica o direito de livre resolução de 14 dias (Decreto-Lei n.º 24/2014, art.º 17.º)."
       ] },
       { h: "Reclamações e litígios", p: [
@@ -60,7 +60,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
     title: "Termos para guias",
     sections: [
       { h: "Quem somos e o nosso papel", p: [
-        `A Self Guided City Tour é explorada por ${who}.`,
+        `A HelloTravell é explorada por ${who}.`,
         "A plataforma é um serviço de intermediação: mostra o seu perfil a viajantes, gere pedidos de reserva e recolhe pagamentos por sua conta. O contrato de cada passeio é celebrado diretamente entre si e o viajante.",
         "Presta os passeios como profissional independente, por sua conta e risco. Não existe relação de trabalho, subordinação nem exclusividade: define o seu preço, a sua disponibilidade e aceita ou recusa cada pedido."
       ] },
@@ -159,7 +159,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
   if (doc === "terms") return {
     title: "Terms and conditions",
     sections: [
-      { h: "Who we are", p: [`Self Guided City Tour is operated by ${who}.`] },
+      { h: "Who we are", p: [`HelloTravell is operated by ${who}.`] },
       { h: "The service", p: [
         "We sell digital access to self-guided city routes with transport directions, estimated costs and a countdown to the recommended time to head back to the airport.",
         "City access lasts 48 hours; the All-Cities Pass lasts 30 days in all available cities, starting at payment."
@@ -181,10 +181,10 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "We may refuse or remove misleading, unlawful or non-compliant listings."
       ] },
       { h: "Bookings with local guides", p: [
-        "Guides listed in the app are independent professionals. The tour contract is made directly between you and the guide. Self Guided City Tour only acts as an intermediary: it shows profiles, handles the booking and collects payment on the guide's behalf via Stripe.",
+        "Guides listed in the app are independent professionals. The tour contract is made directly between you and the guide. HelloTravell only acts as an intermediary: it shows profiles, handles the booking and collects payment on the guide's behalf via Stripe.",
         "When you book, the amount is pre-authorised on your card. It is only charged if the guide accepts within the stated time (up to 48 hours); otherwise the hold is released and nothing is charged.",
         "If the guide cancels or does not show up, you get a full refund. If you cancel, contact us: up to 24 hours before the start we refund in full; after that the amount is due to the guide unless agreed otherwise with them.",
-        "The tour, participants' safety and compliance with local rules are the guide's responsibility; guides must have their activity registered and insurance in force. The guide issues the invoice for the tour. Self Guided City Tour is not the organiser or travel agent for this service.",
+        "The tour, participants' safety and compliance with local rules are the guide's responsibility; guides must have their activity registered and insurance in force. The guide issues the invoice for the tour. HelloTravell is not the organiser or travel agent for this service.",
         "As a leisure activity on a specific date, the 14-day right of withdrawal does not apply."
       ] },
       { h: "Complaints and disputes", p: ["You may file a complaint via the Portuguese Electronic Complaints Book (livroreclamacoes.pt) or use an alternative consumer dispute resolution body. Portuguese law applies."] }
@@ -194,7 +194,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
     title: "Guide terms",
     sections: [
       { h: "Who we are and our role", p: [
-        `Self Guided City Tour is operated by ${who}.`,
+        `HelloTravell is operated by ${who}.`,
         "The platform is an intermediation service: it shows your profile to travellers, handles booking requests and collects payments on your behalf. Each tour contract is made directly between you and the traveller.",
         "You provide tours as an independent professional, on your own account and at your own risk. There is no employment relationship, subordination or exclusivity: you set your price and availability and accept or decline each request."
       ] },

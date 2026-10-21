@@ -1,5 +1,5 @@
-/* Self Guided City Tour — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v4";
+/* HelloTravell — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
+const VERSION = "sgct-v5";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -121,7 +121,7 @@ self.addEventListener("message", (e) => {
 self.addEventListener("push", (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch { d = { body: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.title || "Self Guided City Tour", {
+  e.waitUntil(self.registration.showNotification(d.title || "HelloTravell", {
     body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png", tag: d.tag || undefined, renotify: Boolean(d.tag), data: { url: d.url || "/" }
   }));
 });

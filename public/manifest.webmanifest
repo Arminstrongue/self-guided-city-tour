@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Self Guided City Tour",
-  "short_name": "City Tour",
+  "name": "HelloTravell",
+  "short_name": "HelloTravell",
   "description": "Self-guided city routes for layovers and short trips, with transport, safety tips and a countdown to your flight.",
   "start_url": "/wallet?src=pwa",
   "scope": "/",

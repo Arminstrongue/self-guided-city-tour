@@ -33,10 +33,10 @@ export async function recordInvite(me: string, channel: "sms" | "whatsapp" | "li
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const MAIL: Record<string, { s: string; h: string; b: string; note: string; n: string }> = {
-  en: { s: "{n} invited you to Self Guided City Tour", h: "Join {n}", b: "{n} is using Self Guided City Tour to explore cities on their own — routes, audio guides, a travel wallet and a community of travellers.", note: "Message from {n}:", n: "You got this email because {n} invited you. We won't email you again unless you sign up." },
-  pt: { s: "{n} convidou-o para o Self Guided City Tour", h: "Juntar-me a {n}", b: "{n} usa o Self Guided City Tour para explorar cidades por conta própria — roteiros, áudio-guias, uma carteira de viagem e uma comunidade de viajantes.", note: "Mensagem de {n}:", n: "Recebeu este email porque {n} o convidou. Não voltamos a escrever-lhe, a menos que se registe." },
-  es: { s: "{n} te invitó a Self Guided City Tour", h: "Unirme a {n}", b: "{n} usa Self Guided City Tour para explorar ciudades por su cuenta: rutas, audioguías, una cartera de viaje y una comunidad de viajeros.", note: "Mensaje de {n}:", n: "Recibes este correo porque {n} te invitó. No volveremos a escribirte salvo que te registres." },
-  fr: { s: "{n} vous invite sur Self Guided City Tour", h: "Rejoindre {n}", b: "{n} utilise Self Guided City Tour pour explorer les villes en autonomie : itinéraires, audioguides, un portefeuille de voyage et une communauté de voyageurs.", note: "Message de {n} :", n: "Vous recevez cet e-mail parce que {n} vous a invité. Nous ne vous écrirons plus sauf si vous vous inscrivez." }
+  en: { s: "{n} invited you to HelloTravell", h: "Join {n}", b: "{n} is using HelloTravell to explore cities on their own — routes, audio guides, a travel wallet and a community of travellers.", note: "Message from {n}:", n: "You got this email because {n} invited you. We won't email you again unless you sign up." },
+  pt: { s: "{n} convidou-o para o HelloTravell", h: "Juntar-me a {n}", b: "{n} usa o HelloTravell para explorar cidades por conta própria — roteiros, áudio-guias, uma carteira de viagem e uma comunidade de viajantes.", note: "Mensagem de {n}:", n: "Recebeu este email porque {n} o convidou. Não voltamos a escrever-lhe, a menos que se registe." },
+  es: { s: "{n} te invitó a HelloTravell", h: "Unirme a {n}", b: "{n} usa HelloTravell para explorar ciudades por su cuenta: rutas, audioguías, una cartera de viaje y una comunidad de viajeros.", note: "Mensaje de {n}:", n: "Recibes este correo porque {n} te invitó. No volveremos a escribirte salvo que te registres." },
+  fr: { s: "{n} vous invite sur HelloTravell", h: "Rejoindre {n}", b: "{n} utilise HelloTravell pour explorer les villes en autonomie : itinéraires, audioguides, un portefeuille de voyage et une communauté de voyageurs.", note: "Message de {n} :", n: "Vous recevez cet e-mail parce que {n} vous a invité. Nous ne vous écrirons plus sauf si vous vous inscrivez." }
 };
 
 /**
@@ -65,7 +65,7 @@ export async function sendEmailInvites(me: string, emails: string[], locale: str
     if (recent.length || member.length) continue; // não insistir nem revelar quem já é membro
     const link = inviteLink(prof.handle, locale, "email");
     const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f;max-width:520px">
-<p style="font-weight:600;color:#0071e3">📍 Self Guided City Tour</p><h2 style="margin:0 0 12px">${f(t.s)}</h2><p>${f(t.b)}</p>
+<p style="font-weight:600;color:#0071e3">📍 HelloTravell</p><h2 style="margin:0 0 12px">${f(t.s)}</h2><p>${f(t.b)}</p>
 ${note ? `<p style="background:#f5f5f7;border-radius:12px;padding:12px 14px"><span style="color:#6e6e73;font-size:13px">${f(t.note)}</span><br>${esc(note)}</p>` : ""}
 <p><a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${f(t.h)}</a></p>
 <p style="color:#6e6e73;font-size:13px">${f(t.n)}</p></div>`;

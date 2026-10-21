@@ -1,6 +1,6 @@
 "use client";
 /**
- * Música nas publicações e histórias: biblioteca "Self Guided City Tour Originals" (faixas da casa, sem direitos de terceiros)
+ * Música nas publicações e histórias: biblioteca "HelloTravell Originals" (faixas da casa, sem direitos de terceiros)
  * ou som próprio (o autor confirma que tem os direitos). Um só som a tocar de cada vez, com o som ligado/desligado partilhado.
  */
 import { useEffect, useRef, useState } from "react";

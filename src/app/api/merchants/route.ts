@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       locale: b.locale === "ar" ? "auto" : b.locale,
       line_items: [{ quantity: 1, price_data: {
         currency: "eur", unit_amount: MERCHANT_PLANS[b.plan].amount, recurring: { interval: "month" },
-        product_data: { name: `Self Guided City Tour · ${b.plan === "partner" ? "QR Partner" : "Featured"}` }
+        product_data: { name: `HelloTravell · ${b.plan === "partner" ? "QR Partner" : "Featured"}` }
       } }],
       metadata: { merchantId: m.id },
       subscription_data: { metadata: { merchantId: m.id } },
