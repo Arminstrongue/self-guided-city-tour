@@ -1301,5 +1301,79 @@
 "lAbout": "Quiénes somos",
 "lSupport": "Ayuda",
 "lEco": "Viajar con menos impacto",
-"lContact": "Contacto"
+"lContact": "Contacto",
+"tpStart": "¿Dónde empiezas?",
+"tpLeave": "¿Cómo sales de la ciudad?",
+"tpEnd": "¿Dónde necesitas terminar?",
+"tpNeedStation": "¿De qué estación sale tu tren?",
+"tpNeedPort": "¿De qué terminal de cruceros sale tu barco?",
+"tpSameAsStart": "En el mismo sitio del inicio",
+"tpElsewhere": "En otro sitio",
+"bdTour": "Ruta en la ciudad (visitas y desplazamientos entre paradas)",
+"bdTo": "Ida a la 1.ª parada desde {p}",
+"bdBack": "Vuelta a {p}",
+"bdBuffer": "Margen antes de la salida",
+"bdTotal": "Total necesario antes de la salida",
+"tpToday": "hoy",
+"tpTomorrow": "mañana",
+"tpNeedEnd": "Elige primero dónde empiezas y dónde necesitas terminar.",
+"tpNeedStart": "Elige la fecha y la hora de inicio.",
+"tpWhenStart": "¿Cuándo empiezas?",
+"tpNow": "Ahora",
+"tpLater": "Otro día u hora",
+"tpCityTime": "Hora local de {c}",
+"tpStartsAt": "Inicio: {t}",
+"tpDepAt": "Salida ({m}): {t}",
+"tpFitsOk": "Cabe: la ruta dura {a} y tienes {b} antes de ir a {p}.",
+"tpLate": "Ya deberías ir hacia {p}. Salida prevista: {t}.",
+"tpNotifyTitle": "Hora de ir a {p}",
+"tpOptional": "opcional",
+"tpBuySub": "Paga una vez. El acceso se guarda en este dispositivo y te llega por email.",
+"tpChosen": "Tu ruta elegida: {n} paradas",
+"tpVersions": "Ruta principal: {n} paradas",
+"tpExtVersion": "extensión opcional: +{n} paradas",
+"tpKinds": {
+"airport": "Aeropuerto",
+"station": "Estación de tren",
+"port": "Terminal de cruceros",
+"hotel": "Hotel o dirección",
+"here": "Mi ubicación"
+},
+"tpModes": {
+"plane": "Avión",
+"train": "Tren",
+"ship": "Barco",
+"stay": "Me quedo"
+},
+"tpSearchPh": {
+"station": "Nombre de la estación",
+"port": "Terminal de cruceros o puerto",
+"hotel": "Nombre del hotel o dirección"
+},
+"tpUntilDep": {
+"plane": "Hasta mi vuelo",
+"train": "Hasta mi tren",
+"ship": "Hasta que salga el barco (embarque)",
+"stay": "Hasta la hora de volver"
+},
+"tpReturnSub": {
+"plane": "Sal antes de las {t} para estar en el aeropuerto 2h30 antes del vuelo",
+"train": "Sal antes de las {t} para estar en la estación 45 min antes del tren",
+"ship": "Sal antes de las {t} para estar en la terminal 1 h antes del embarque",
+"stay": "Sal antes de las {t} para volver a tiempo"
+},
+"tpDepField": {
+"plane": "Salida del vuelo",
+"train": "Salida del tren",
+"ship": "Hora de embarque",
+"stay": "Volver antes de"
+},
+"tpDepHint": {
+"plane": "Planificamos para que estés en el aeropuerto 2h30 antes.",
+"train": "Planificamos para que estés en la estación 45 min antes.",
+"ship": "Planificamos para que estés en la terminal 1 h antes del embarque.",
+"stay": "Te avisamos cuándo volver."
+},
+"bdSubtotal": "Tiempo de la ruta, con ida y vuelta",
+"tpStartHere": "Tu ruta empieza aquí"
 }

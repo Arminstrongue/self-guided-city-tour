@@ -1274,5 +1274,79 @@
 "lAbout": "Über uns",
 "lSupport": "Hilfe",
 "lEco": "Nachhaltiger reisen",
-"lContact": "Kontakt"
+"lContact": "Kontakt",
+"tpStart": "Wo starten Sie?",
+"tpLeave": "Wie verlassen Sie die Stadt?",
+"tpEnd": "Wo müssen Sie ankommen?",
+"tpNeedStation": "Von welchem Bahnhof fährt Ihr Zug?",
+"tpNeedPort": "Von welchem Kreuzfahrtterminal legt Ihr Schiff ab?",
+"tpSameAsStart": "Am selben Ort wie der Start",
+"tpElsewhere": "Woanders",
+"bdTour": "Route in der Stadt (Besuche und Wege zwischen den Stopps)",
+"bdTo": "Weg zum 1. Stopp ab {p}",
+"bdBack": "Zurück zu {p}",
+"bdBuffer": "Puffer vor der Abfahrt",
+"bdTotal": "Insgesamt nötig vor der Abfahrt",
+"tpToday": "heute",
+"tpTomorrow": "morgen",
+"tpNeedEnd": "Wählen Sie zuerst Start und Ziel.",
+"tpNeedStart": "Wählen Sie Datum und Uhrzeit des Starts.",
+"tpWhenStart": "Wann starten Sie?",
+"tpNow": "Jetzt",
+"tpLater": "Anderer Tag oder Uhrzeit",
+"tpCityTime": "Ortszeit {c}",
+"tpStartsAt": "Start: {t}",
+"tpDepAt": "Abfahrt ({m}): {t}",
+"tpFitsOk": "Passt: Die Route dauert {a}, und Sie haben {b}, bevor Sie zu {p} aufbrechen.",
+"tpLate": "Sie sollten schon auf dem Weg zu {p} sein. Geplante Abfahrt: {t}.",
+"tpNotifyTitle": "Zeit, zu {p} aufzubrechen",
+"tpOptional": "optional",
+"tpBuySub": "Einmal zahlen. Der Zugang wird auf diesem Gerät gespeichert und per E-Mail gesendet.",
+"tpChosen": "Ihre gewählte Route: {n} Stopps",
+"tpVersions": "Hauptroute: {n} Stopps",
+"tpExtVersion": "optionale Erweiterung: +{n} Stopps",
+"tpKinds": {
+"airport": "Flughafen",
+"station": "Bahnhof",
+"port": "Kreuzfahrtterminal",
+"hotel": "Hotel oder Adresse",
+"here": "Mein Standort"
+},
+"tpModes": {
+"plane": "Flugzeug",
+"train": "Zug",
+"ship": "Schiff",
+"stay": "Ich bleibe"
+},
+"tpSearchPh": {
+"station": "Name des Bahnhofs",
+"port": "Kreuzfahrtterminal oder Hafen",
+"hotel": "Hotelname oder Adresse"
+},
+"tpUntilDep": {
+"plane": "Bis zu meinem Flug",
+"train": "Bis zu meinem Zug",
+"ship": "Bis das Schiff ablegt (Einschiffung)",
+"stay": "Bis ich zurück sein muss"
+},
+"tpReturnSub": {
+"plane": "Brechen Sie bis {t} auf, um 2h30 vor dem Flug am Flughafen zu sein",
+"train": "Brechen Sie bis {t} auf, um 45 Min. vor dem Zug am Bahnhof zu sein",
+"ship": "Brechen Sie bis {t} auf, um 1 Std. vor der Einschiffung am Terminal zu sein",
+"stay": "Brechen Sie bis {t} auf, um rechtzeitig zurück zu sein"
+},
+"tpDepField": {
+"plane": "Abflug",
+"train": "Abfahrt des Zuges",
+"ship": "Einschiffungszeit",
+"stay": "Zurück bis"
+},
+"tpDepHint": {
+"plane": "Wir planen, dass Sie 2h30 vorher am Flughafen sind.",
+"train": "Wir planen, dass Sie 45 Min. vorher am Bahnhof sind.",
+"ship": "Wir planen, dass Sie 1 Std. vor der Einschiffung am Terminal sind.",
+"stay": "Wir sagen Ihnen, wann Sie zurückmüssen."
+},
+"bdSubtotal": "Dauer der Route inkl. Hin- und Rückweg",
+"tpStartHere": "Ihre Route beginnt hier"
 }

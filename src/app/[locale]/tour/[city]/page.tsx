@@ -44,7 +44,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
         preview={preview ? { buy: `/${params.locale}/c/${city.id}#book`, price: fmt(t.fromP, { p: price.local ?? price.main }), signIn: `/${params.locale}/wallet?signin=1&city=${city.id}` } : undefined}
         locale={params.locale} t={t} city={shown} cityLabel={cityName(city, params.locale)}
         flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={fx}
-        flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()}
+        flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()} tripIn={access?.trip ?? null}
         museums={MUSEUMS[city.id] ?? []} plan={access ? access.plan ?? access.scope : preview ? "preview" : "free"}
         explore={exploreProps(city, params.locale)}
         bios={keep(biosFor(city.id, params.locale))} enBios={keep(Object.fromEntries(Object.entries(biosFor(city.id, "en")).map(([k, v]) => [k, v.text])))}

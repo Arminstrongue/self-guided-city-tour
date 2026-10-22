@@ -1246,5 +1246,79 @@
 "lAbout": "关于我们",
 "lSupport": "帮助与支持",
 "lEco": "绿色出行",
-"lContact": "联系我们"
+"lContact": "联系我们",
+"tpStart": "从哪里出发？",
+"tpLeave": "如何离开这座城市？",
+"tpEnd": "最后需要到哪里？",
+"tpNeedStation": "您的火车从哪个车站出发？",
+"tpNeedPort": "您的游轮从哪个码头出发？",
+"tpSameAsStart": "与出发地相同",
+"tpElsewhere": "其他地点",
+"bdTour": "城内路线（参观及各站之间的移动）",
+"bdTo": "从{p}到第 1 站",
+"bdBack": "返回{p}",
+"bdBuffer": "出发前预留时间",
+"bdTotal": "出发前总共需要",
+"tpToday": "今天",
+"tpTomorrow": "明天",
+"tpNeedEnd": "请先选择出发地和终点。",
+"tpNeedStart": "请选择开始的日期和时间。",
+"tpWhenStart": "何时开始？",
+"tpNow": "现在",
+"tpLater": "其他日期或时间",
+"tpCityTime": "{c}当地时间",
+"tpStartsAt": "开始：{t}",
+"tpDepAt": "出发（{m}）：{t}",
+"tpFitsOk": "时间足够：路线需要 {a}，前往{p}之前您还有 {b}。",
+"tpLate": "您现在应该已在前往{p}的路上。计划出发：{t}。",
+"tpNotifyTitle": "该前往{p}了",
+"tpOptional": "可选",
+"tpBuySub": "一次付费。访问权限保存在此设备上，并通过邮件发送给您。",
+"tpChosen": "您选择的路线：{n} 站",
+"tpVersions": "主路线：{n} 站",
+"tpExtVersion": "可选延伸：+{n} 站",
+"tpKinds": {
+"airport": "机场",
+"station": "火车站",
+"port": "游轮码头",
+"hotel": "酒店或地址",
+"here": "我的位置"
+},
+"tpModes": {
+"plane": "飞机",
+"train": "火车",
+"ship": "轮船",
+"stay": "留在城里"
+},
+"tpSearchPh": {
+"station": "车站名称",
+"port": "游轮码头或港口",
+"hotel": "酒店名称或地址"
+},
+"tpUntilDep": {
+"plane": "直到我的航班",
+"train": "直到我的火车",
+"ship": "直到船开（登船时间）",
+"stay": "直到我需要返回"
+},
+"tpReturnSub": {
+"plane": "请在 {t} 前出发，以便在航班前 2.5 小时到达机场",
+"train": "请在 {t} 前出发，以便在火车前 45 分钟到达车站",
+"ship": "请在 {t} 前出发，以便在登船前 1 小时到达码头",
+"stay": "请在 {t} 前出发，以便按时返回"
+},
+"tpDepField": {
+"plane": "航班起飞时间",
+"train": "火车发车时间",
+"ship": "登船时间",
+"stay": "返回时间"
+},
+"tpDepHint": {
+"plane": "我们按提前 2.5 小时到达机场来规划。",
+"train": "我们按提前 45 分钟到达车站来规划。",
+"ship": "我们按登船前 1 小时到达码头来规划。",
+"stay": "我们会提醒您何时返回。"
+},
+"bdSubtotal": "路线总时长（含往返）",
+"tpStartHere": "您的路线从这里开始"
 }

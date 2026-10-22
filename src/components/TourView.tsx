@@ -3,11 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
-import { fitRoute, hasExtension, leaveBy, minutesLeft, optionByKey, planFromBase, routeOptions, type Base, type CityHop } from "@/lib/route-cost";
-import { BasePicker, baseLabel, loadBase } from "./BasePicker";
+import { hasExtension, minutesLeft, optionByKey, routeOptions, type Base, type CityHop } from "@/lib/route-cost";
+import { BUFFER_MIN, breakdown, defaultTrip, endLegs, parseTrip, sameEnd, tripReady, whenLabel, type Endpoint, type Trip } from "@/lib/trip";
+import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
+import { loadTrip, saveTrip, tripKey } from "./trip-store";
 import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
 import { cityCenterOf } from "@/lib/city-center";
-import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
 import { NextCard, BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
@@ -53,6 +54,8 @@ type Props = {
   bios: Record<string, { text: string; lang: string }>; enBios: Record<string, string>;
   /** Amostra grátis: só a 1.ª paragem está aberta. */
   preview?: { buy: string; price: string; signIn: string };
+  /** Plano guardado na compra (para abrir noutro dispositivo com o mesmo início, fim e modalidade). */
+  tripIn?: unknown;
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -64,7 +67,7 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview }: Props) {
+export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview, tripIn }: Props) {
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
@@ -87,10 +90,17 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const [online, setOnline] = useState(true);
   const [notice, setNotice] = useState("");
   const [fxOpen, setFxOpen] = useState(false);
-  // Ponto de partida e de chegada: aeroporto (por defeito), hotel ou onde estou.
-  const [base, setBase] = useState<Base>({ kind: "airport" });
+  // Plano de viagem (início, fim, modalidade, horas): o mesmo do planeador e da compra.
+  const [trip, setTripState] = useState<Trip>(defaultTrip());
   const [baseOpen, setBaseOpen] = useState(false);
-  useEffect(() => { setBase(loadBase(city.id)); }, [city.id]);
+  useEffect(() => {
+    let saved = false; try { saved = Boolean(localStorage.getItem(tripKey(city.id))); } catch { /* ignorar */ }
+    const srv = parseTrip(tripIn);
+    setTripState(!saved && srv ? srv : loadTrip(city.id));
+  }, [city.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  const setTrip = (v: Trip) => { setTripState(v); if (tripReady(v)) saveTrip(city.id, v); };
+  const tz = city.tz ?? "UTC";
+  const toBase = (e: Endpoint): Base => (e.kind === "airport" ? { kind: "airport" } : { kind: "place", lat: e.lat, lng: e.lng, label: e.label, here: e.kind === "here" });
   useEffect(() => {
     const up = () => setOnline(navigator.onLine);
     up(); window.addEventListener("online", up); window.addEventListener("offline", up);
@@ -98,17 +108,18 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   }, []);
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
 
-  // Voo: o que o viajante alterou neste dispositivo tem prioridade sobre o da compra.
-  const flightIso = fo?.at ?? flightAt;
+  // Partida: o voo alterado neste dispositivo, o da compra ou a hora indicada no planeador (comboio, navio, voltar até).
+  const flightIso = fo?.at ?? flightAt ?? (trip.deadline ? zonedToDate(trip.deadline, tz).toISOString() : null);
   const flightNoEff = fo?.no ?? flightNo ?? "";
   const flightDate = useMemo(() => (flightIso ? new Date(flightIso) : null), [flightIso]);
   const options = useMemo(() => routeOptions(city), [city]);
   // Sem escolha guardada: o roteiro mais completo que cabe no tempo até ao voo.
   const autoKey = useMemo(() => {
     if (!flightDate) return hasExtension(city) ? "ext" : "core";
-    const avail = (flightDate.getTime() - Date.now()) / 60000 - AIRPORT_BUFFER_MIN;
-    return fitRoute(city, avail)?.key ?? options[0].key;
-  }, [city, flightDate, options]);
+    const avail = (flightDate.getTime() - Date.now()) / 60000;
+    const fits = options.filter((o) => breakdown(city, o.plan, trip).needed <= avail);
+    return (fits[fits.length - 1] ?? options[0]).key;
+  }, [city, flightDate, options, trip]);
   const chosen = optionByKey(city, lvl) ?? optionByKey(city, autoKey) ?? options[options.length - 1];
   const planAll = chosen.plan;
   const plan = useMemo(() => ({ ...planAll, stops: planAll.stops.filter((x) => !skip[x.id]).length ? planAll.stops.filter((x) => !skip[x.id]) : planAll.stops }), [planAll, skip]);
@@ -117,17 +128,25 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const money = (v: number) => dualMoney(v, city.cur, fx, INTL_LOCALE[locale]).main;
   const both = (v: number) => { const d = dualMoney(v, city.cur, fx, INTL_LOCALE[locale]); return d.local ? <>{d.main} <span className="fx">{d.local}</span></> : d.main; };
   const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
-  const leave = flightDate ? leaveBy(flightDate, plan.ret) : null;
-  const bp = planFromBase(city, plan, base);
+  const legs = endLegs(city, plan, trip.start, trip.end);
+  const bd = breakdown(city, plan, trip);
+  const buffer = BUFFER_MIN[trip.mode];
+  // Hora de sair da última paragem: partida − margem da modalidade − regresso ao ponto final (aeroporto, estação, terminal…).
+  const leave = flightDate ? new Date(flightDate.getTime() - (buffer + bd.back) * 60_000) : null;
+  const bp = { to: legs.toHop, back: legs.backHop, minutesTotal: bd.total };
   const deadline = useMemo(() => {
-    if (flightDate) return new Date(flightDate.getTime() - AIRPORT_BUFFER_MIN * 60_000);
+    if (flightDate) return new Date(flightDate.getTime() - buffer * 60_000);
     if (!endHM) return null;
     const day = new Intl.DateTimeFormat("sv-SE", { timeZone: city.tz ?? "UTC" }).format(new Date(now));
     return zonedToDate(`${day}T${endHM}`, city.tz ?? "UTC");
-  }, [flightDate, endHM, city.tz, now]);
+  }, [flightDate, endHM, city.tz, now, buffer]);
   const leftStops = plan.stops.filter((x) => !done[x.id]);
-  const atPlace = base.kind === "place";
+  const startPlace = trip.start.kind !== "airport";
+  const atPlace = trip.end.kind !== "airport";
   const backAt = atPlace ? new Date(now + minutesLeft(plan, bp, done) * 60_000) : null;
+  const words = { today: t.tpToday, tomorrow: t.tpTomorrow };
+  const when = (d: Date) => whenLabel(d.getTime(), tz, INTL_LOCALE[locale], words, now);
+  const endName = endLabel(trip.end, t);
   const hopView = (h: CityHop) => (
     <div className="leg">
       {h.m === "walk" ? <span className="chip walk">{t.walk} · {t.free.toLowerCase()}</span> : <span className="chip paid num">{t.bpTransit} · ~{money(city.single)}</span>}
@@ -137,7 +156,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const today = weekdayIn(city.tz, now);
   const closedToday = (s: Stop) => Boolean(s.cl?.includes(today));
   const nextStop = plan.stops.find((s) => !done[s.id]) ?? null;
-  const avail = leave ? Math.round((leave.getTime() - now) / 60000) : null;
+  // Tempo até sair da última paragem; antes de começar, desconta a ida até à 1.ª paragem.
+  const avail = leave ? Math.round((leave.getTime() - now) / 60000) - (Object.keys(done).length ? 0 : bd.to) : null;
   const fits = avail === null || avail >= plan.minutesTour;
   const extras = city.stops.filter((s) => s.x);
   const extraMin = extras.reduce((a, s) => a + s.v + s.leg.min, 0) + (city.ret.extra.min - city.ret.core.min);
@@ -199,7 +219,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   async function remind() {
     if (!leave) return;
     const at = new Date(leave.getTime() - 15 * 60_000);
-    const body = fmt(t.notifyBody, { t: hm(leave) });
+    const body = fmt(t.tpReturnSub[trip.mode], { t: when(leave) });
     const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
     try {
       if (cap?.isNativePlatform?.()) {
@@ -207,15 +227,15 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         const { LocalNotifications } = await import("@capacitor/local-notifications");
         const perm = await LocalNotifications.requestPermissions();
         if (perm.display !== "granted") return setNotice(t.notifyDenied);
-        await LocalNotifications.schedule({ notifications: [{ id: 1, title: t.notifyTitle, body, schedule: { at } }] });
+        await LocalNotifications.schedule({ notifications: [{ id: 1, title: fmt(t.tpNotifyTitle, { p: endName }), body, schedule: { at } }] });
       } else {
         // Navegador: aviso enquanto a página estiver aberta.
         if (!("Notification" in window) || (await Notification.requestPermission()) !== "granted") return setNotice(t.notifyDenied);
         const ms = Math.max(0, at.getTime() - Date.now());
         setTimeout(() => {
-          const show = () => { new Notification(t.notifyTitle, { body }); };
+          const show = () => { new Notification(fmt(t.tpNotifyTitle, { p: endName }), { body }); };
           navigator.serviceWorker?.getRegistration()
-            .then((r) => { if (r) void r.showNotification(t.notifyTitle, { body }); else show(); })
+            .then((r) => { if (r) void r.showNotification(fmt(t.tpNotifyTitle, { p: endName }), { body }); else show(); })
             .catch(show);
         }, ms);
       }
@@ -242,8 +262,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             <a className="hb-ic press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}><Wallet size={18} strokeWidth={2} aria-hidden="true" /></a>
             <CurrencyPicker current={fx.cur} label={t.currency} />
           </span>
-          {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>
-            : backAt && <div className="clock"><small>{t.bpBackShort}</small><b className="num">{hm(backAt)}</b></div>}
+          {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{when(leave)}</b></div>
+            : backAt && <div className="clock"><small>{t.bpBackShort}</small><b className="num">{when(backAt)}</b></div>}
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
@@ -265,26 +285,28 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
-            <span>{base.kind === "airport" ? "✈" : base.here ? "📍" : "🏨"} {fmt(t.bpFrom, { p: baseLabel(base, t) })}</span>
+            <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
-          {baseOpen && <BasePicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={base} onChange={(b) => { setBase(b); if (b.kind === "airport" || !b.here) setBaseOpen(false); }} />}
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
+          {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
+          <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
           {accessCount(plan.stops.map((s) => s.id)) > 0 && <p className="hint">♿ {fmt(t.acSum, { n: accessCount(plan.stops.map((s) => s.id)) })}</p>}
           {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
           {avail !== null && leave && (
             <p className={`fit ${fits ? "ok" : "bad"}`}>
-              {fits ? fmt(t.fitsOk, { a: hrs(plan.minutesTour), b: hrs(avail) })
-                : avail <= 0 ? fmt(t.late, { t: hm(leave) })
+              {fits ? fmt(t.tpFitsOk, { a: hrs(plan.minutesTour), b: hrs(avail), p: endName })
+                : avail <= 0 ? fmt(t.tpLate, { p: endName, t: when(leave) })
                   : fmt(t.fitsBad, { a: hrs(plan.minutesTour), b: hrs(avail) }) + (ext && hasExtension(city) ? t.fitsTip : t.fitsTip2)}
             </p>
           )}
           {leave && avail !== null && avail > 15 && (
             notice ? <p className="hint">🔔 {notice}</p> : <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={remind}>🔔 {t.notifyBtn}</button>
           )}
-          <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
-            onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />
+          {trip.mode === "plane" && <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
+            onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />}
           {!online && <p className="note">{t.offline}</p>}
           {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
           {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
@@ -292,19 +314,19 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 
-        {tab === "route" && flightDate && (
+        {tab === "route" && flightDate && trip.mode === "plane" && trip.end.kind === "airport" && (
           <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
             next={nextStop} now={now} t={t} locale={locale} />
         )}
 
         <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
-        {(tab === "map" || tab === "live") && !online && <RouteSketch stops={plan.stops} done={done} base={base} pos={geo.pos} t={t} />}
+        {(tab === "map" || tab === "live") && !online && <RouteSketch stops={plan.stops} done={done} base={toBase(trip.start)} pos={geo.pos} t={t} />}
         {tab === "live" && explore && online && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
           route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
         {tab === "route" && !preview && (
-          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: baseLabel(base, t), t: backAt ? hm(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
@@ -312,13 +334,13 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         {tab === "route" && !preview && leftStops.length > 0 ? (
           <PlanChanged t={t} locale={locale} left={leftStops} remaining={minutesLeft(plan, bp, done)} deadline={deadline} endSet={Boolean(flightDate || endHM)}
             onSetEnd={setEndHM} onSkip={(ids) => setSkip({ ...skip, ...Object.fromEntries(ids.map((x) => [x, true])) })} now={now}
-            back={{ label: atPlace ? baseLabel(base, t) : t.airport, to: base.kind === "place" ? base : (city.ap ?? city.stops[0]), from: geo.pos ?? leftStops[0] ?? null }} />
+            back={{ label: atPlace ? endName : t.airport, to: trip.end.kind !== "airport" ? trip.end : (city.ap ?? city.stops[0]), from: geo.pos ?? leftStops[0] ?? null }} />
         ) : null}
         {tab === "route" && (
           <div className="route">
-            {atPlace && bp.to ? (
+            {startPlace && bp.to ? (
               <>
-                <div className="stop endpoint"><span className="pin">{base.here ? "📍" : "🏨"}</span><div className="body"><h3>{baseLabel(base, t)}</h3><p className="meta">{t.bpStartHere}</p></div></div>
+                <div className="stop endpoint"><span className="pin">{endIcon(trip.start)}</span><div className="body"><h3>{endLabel(trip.start, t)}</h3><p className="meta">{sameEnd(trip.start, trip.end) ? t.bpStartHere : t.tpStartHere}</p></div></div>
                 {hopView(bp.to)}
               </>
             ) : (
@@ -404,15 +426,15 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             {atPlace && bp.back ? (
               <>
                 {hopView(bp.back)}
-                <div className="stop endpoint"><span className="pin">{base.here ? "📍" : "🏨"}</span><div className="body"><h3>{fmt(t.bpBack, { p: baseLabel(base, t) })}</h3>
-                  {backAt && <p className="meta">{fmt(t.bpAround, { t: hm(backAt) })}</p>}
-                  {leave && <p className="meta">✈ {fmt(t.returnSub, { t: hm(leave) })}</p>}</div></div>
+                <div className="stop endpoint"><span className="pin">{endIcon(trip.end)}</span><div className="body"><h3>{fmt(t.bpBack, { p: endName })}</h3>
+                  {backAt && <p className="meta">{fmt(t.bpAround, { t: when(backAt) })}</p>}
+                  {leave && <p className="meta">{endIcon(trip.end)} {fmt(t.tpReturnSub[trip.mode], { t: when(leave) })}</p>}</div></div>
               </>
             ) : (
               <>
                 {legView(plan.ret)}
                 <div className="stop endpoint"><span className="pin">✈</span><div className="body"><h3>{t.returnAirport}</h3>
-                  {leave && <p className="meta">{fmt(t.returnSub, { t: hm(leave) })}</p>}</div></div>
+                  {leave && <p className="meta">{fmt(t.tpReturnSub[trip.mode], { t: when(leave) })}</p>}</div></div>
               </>
             )}
           </div>

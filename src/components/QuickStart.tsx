@@ -1,17 +1,16 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
-import { hop, type Base } from "@/lib/route-cost";
-import { BasePicker, baseLabel, loadBase } from "./BasePicker";
+import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
+import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
+import { loadTrip, saveTrip } from "./trip-store";
 
 type LL = { lat: number; lng: number };
-export type QsOption = { key: string; n: number; min: number; tour: number; first: LL; last: LL; acc: number; cost: string; names: string[] };
-export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; options: QsOption[] };
+export type QsOption = { key: string; n: number; min: number; tour: number; air: number; ret: number; first: LL; last: LL; acc: number; cost: string; names: string[] };
+export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; tz: string; options: QsOption[] };
 
-/** Margem antes da partida (igual à do roteiro: chegar ao aeroporto com tempo). */
-const BUFFER_MIN = { plane: 150, train: 45, ship: 60 } as const;
 type Time = { k: string; min: number };
 const fold = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}`;
@@ -20,17 +19,20 @@ const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60))
 export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string }) {
   const [cityId, setCityId] = useState(pre);
   const [time, setTime] = useState<Time | null>(null);
-  const [dep, setDep] = useState("");
-  const [mode, setMode] = useState<"plane" | "train" | "ship">("plane");
+  const [trip, setTrip] = useState<Trip>(defaultTrip());
+  const [later, setLater] = useState(false);
+  const [err, setErr] = useState("");
   const [q, setQ] = useState("");
   const [shift, setShift] = useState(0); // "mais curto / mais longo" a partir do que cabe
-  const [base, setBase] = useState<Base>({ kind: "airport" });
   const step = !cityId ? 1 : !time ? 2 : 3;
   const city = cities.find((c) => c.id === cityId) ?? null;
-  const hm = (ms: number) => new Date(ms).toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
-  // Tempo total a partir do ponto escolhido (aeroporto: o do roteiro; hotel/onde estou: ida + percurso + volta).
-  const total = (o: QsOption) => (base.kind === "airport" ? o.min : hop(base, o.first).min + o.tour + hop(o.last, base).min);
-  const pickCity = (id: string) => { setCityId(id); setQ(""); try { setBase(loadBase(id)); } catch { /* ignorar */ } };
+  const tz = city?.tz ?? "UTC";
+  const words = { today: t.tpToday, tomorrow: t.tpTomorrow };
+  const when = (ms: number) => whenLabel(ms, tz, INTL_LOCALE[locale], words);
+  const bd = (o: QsOption) => breakdownOf(o, trip);
+  const pickCity = (id: string) => { setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
+  const upd = (v: Trip) => { setTrip(v); setErr(""); };
+  useEffect(() => { if (pre) { const v = loadTrip(pre); setTrip(v); setLater(Boolean(v.startAt)); } }, [pre]);
 
   const list = useMemo(() => { const f = fold(q.trim()); return f ? cities.filter((c) => fold(`${c.name} ${c.country}`).includes(f)) : cities; }, [q, cities]);
   const TIMES: { k: string; label: string; min: number }[] = [
@@ -40,21 +42,36 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
   const fitIdx = useMemo(() => {
     if (!city || !time) return -1;
     let best = -1;
-    city.options.forEach((o, i) => { if (total(o) <= time.min) best = i; });
+    city.options.forEach((o, i) => { if (bd(o).total <= time.min) best = i; });
     return best;
-  }, [city, time, base]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [city, time, trip]); // eslint-disable-line react-hooks/exhaustive-deps
   const idx = city && fitIdx >= 0 ? Math.max(0, Math.min(city.options.length - 1, fitIdx + shift)) : -1;
   const opt = city && idx >= 0 ? city.options[idx] : null;
+  const win = tripWindow(trip, tz);
+
+  /** Avança com um tempo escolhido; o início e o fim têm de estar definidos (comboio → estação, navio → terminal). */
+  function choose(k: string, min: number | null) {
+    if (!tripReady(trip)) { setErr(t.tpNeedEnd); return; }
+    if (later && !trip.startAt) { setErr(t.tpNeedStart); return; }
+    if (min === null) {
+      const a = availableMin(trip, tz);
+      if (a === null) { setErr(t.errDep); return; }
+      setTime({ k, min: a });
+    } else setTime({ k, min });
+    setErr("");
+  }
 
   function go() {
     if (!city || !opt) return;
+    const final: Trip = { ...trip, startAt: later ? trip.startAt : "", deadline: time?.k === "dep" ? trip.deadline : "", key: opt.key };
+    saveTrip(city.id, final);
     try {
       localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); localStorage.setItem("sgct:onboarded", "1");
-      localStorage.setItem("sgct:planned", JSON.stringify({ city: city.id, key: opt.key, n: opt.n, h: hrs(total(opt)), names: opt.names, base: baseLabel(base, t), open: city.open, at: Date.now() }));
+      const b = bd(opt);
+      localStorage.setItem("sgct:planned", JSON.stringify({ city: city.id, key: opt.key, n: opt.n, h: hrs(b.total), tour: hrs(b.tour), names: opt.names, bd: b, base: endLabel(trip.start, t), end: endLabel(trip.end, t), mode: trip.mode, startAt: final.startAt, deadline: final.deadline, cost: opt.cost, open: city.open, at: Date.now() }));
     } catch { /* sem armazenamento */ }
     if (city.open) { location.href = `/${locale}/tour/${city.id}`; return; }
-    const d = time?.k === "dep" && dep && mode === "plane" ? `?dep=${encodeURIComponent(dep)}` : "";
-    location.href = `/${locale}/c/${city.id}${d}#book`;
+    location.href = `/${locale}/c/${city.id}#book`;
   }
   const back = () => { if (step === 3) { setTime(null); setShift(0); } else if (step === 2) setCityId(""); };
 
@@ -87,20 +104,30 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
 
       {step === 2 && city && (
         <div className="qs-times">
-          <BasePicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={base} onChange={setBase} />
-          <span className="bp-h">{t.qsHowLong}</span>
-          {TIMES.map((x) => (
-            <button key={x.k} className="qs-time press" onClick={() => setTime({ k: x.k, min: x.min })}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>
-          ))}
-          <div className="qs-time qs-dep">
-            <span className="qs-dep-l"><Clock size={18} aria-hidden="true" />{t.qsUntil}</span>
-            <div className="bp-seg qs-mode" role="radiogroup" aria-label={t.qsUntil}>
-              {(["plane", "train", "ship"] as const).map((m) => <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? "on" : ""} onClick={() => setMode(m)}>{m === "plane" ? "✈ " + t.qsPlane : m === "train" ? "🚆 " + t.qsTrain : "🛳 " + t.qsShip}</button>)}
-            </div>
-            <input type="datetime-local" value={dep} onChange={(e) => setDep(e.target.value)} aria-label={t.qsUntil} />
-            <button className="btn tram" disabled={!dep} onClick={() => setTime({ k: "dep", min: Math.round((new Date(dep).getTime() - Date.now()) / 60000) - BUFFER_MIN[mode] })}>{t.qsNext}</button>
-            <small className="hint">{mode === "plane" ? t.qsUntilHint : mode === "train" ? t.qsHintTrain : t.qsHintShip}</small>
+          <TripPicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={trip} onChange={upd} />
+
+          <span className="bp-h">{t.tpWhenStart}</span>
+          <div className="bp-seg tp-seg" role="radiogroup" aria-label={t.tpWhenStart}>
+            <button type="button" role="radio" aria-checked={!later} className={!later ? "on" : ""} onClick={() => { setLater(false); upd({ ...trip, startAt: "" }); }}>{t.tpNow}</button>
+            <button type="button" role="radio" aria-checked={later} className={later ? "on" : ""} onClick={() => { setLater(true); if (!trip.startAt) upd({ ...trip, startAt: cityNowLocal(tz, 24 * 60).slice(0, 11) + "09:00" }); }}>{t.tpLater}</button>
           </div>
+          {later && (
+            <label className="field tp-dt"><span className="hint">{fmt(t.tpCityTime, { c: city.name })}</span>
+              <input type="datetime-local" min={cityNowLocal(tz)} value={trip.startAt} onChange={(e) => upd({ ...trip, startAt: e.target.value })} /></label>
+          )}
+
+          <span className="bp-h">{t.qsHowLong}</span>
+          <div className="qs-time qs-dep">
+            <span className="qs-dep-l"><Clock size={18} aria-hidden="true" />{t.tpUntilDep[trip.mode]}</span>
+            <span className="hint">{fmt(t.tpCityTime, { c: city.name })}</span>
+            <input type="datetime-local" min={trip.startAt || cityNowLocal(tz)} value={trip.deadline} onChange={(e) => upd({ ...trip, deadline: e.target.value })} aria-label={t.tpUntilDep[trip.mode]} />
+            <button className="btn tram" disabled={!trip.deadline} onClick={() => choose("dep", null)}>{t.qsNext}</button>
+            {trip.mode !== "stay" && <small className="hint">{trip.mode === "plane" ? t.qsUntilHint : trip.mode === "train" ? t.qsHintTrain : t.qsHintShip}</small>}
+          </div>
+          {TIMES.map((x) => (
+            <button key={x.k} className="qs-time press" onClick={() => choose(x.k, x.min)}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>
+          ))}
+          {err && <p className="err" role="alert">{err}</p>}
         </div>
       )}
 
@@ -110,9 +137,13 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
             <>
               <div className="qs-sum">
                 <b>{city.flag} {city.name}</b>
-                <span>{fmt(t.qsFits, { n: opt.n, h: hrs(total(opt)), c: opt.cost })}</span>
-                <span className="qs-back-at">{base.kind === "airport" ? fmt(t.qsFromAirport, { t: hm(Date.now() + total(opt) * 60000) }) : fmt(t.bpBackAt, { p: baseLabel(base, t), t: hm(Date.now() + total(opt) * 60000) })}</span>
+                <span>{fmt(t.qsFits, { n: opt.n, h: hrs(bd(opt).total), c: opt.cost })}</span>
+                <span className="qs-back-at">{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endLabel(trip.end, t)}</span>
+                <span className="qs-back-at">{fmt(t.tpStartsAt, { t: later && trip.startAt ? when(win.start) : t.tpNow })}</span>
+                <span className="qs-back-at">{fmt(t.bpBackAt, { p: endLabel(trip.end, t), t: when(win.start + bd(opt).total * 60000) })}</span>
+                {time?.k === "dep" && win.dep !== null && <span className="qs-back-at">{fmt(t.tpDepAt, { m: t.tpModes[trip.mode], t: when(win.dep) })}</span>}
               </div>
+              <TimeBreakdown b={bd(opt)} t={t} trip={trip} hrs={hrs} />
               {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
               <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}</ol>
               <div className="qs-adj">
@@ -123,7 +154,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
               {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={() => { try { localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); } catch { /* ignorar */ } }}>🎧 {t.qsTry}</a>}
             </>
           ) : (
-            <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0] ? total(city.options[0]) : 0) })}</p>
+            <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0] ? bd(city.options[0]).total : 0) })}</p>
           )}
           <div className="qs-ess">
             <span className="qs-ess-h">{t.qsEss}</span>

@@ -1301,5 +1301,79 @@
 "lAbout": "Chi siamo",
 "lSupport": "Assistenza",
 "lEco": "Viaggiare leggeri",
-"lContact": "Contatti"
+"lContact": "Contatti",
+"tpStart": "Da dove parti?",
+"tpLeave": "Come lasci la città?",
+"tpEnd": "Dove devi arrivare alla fine?",
+"tpNeedStation": "Da quale stazione parte il tuo treno?",
+"tpNeedPort": "Da quale terminal crociere parte la tua nave?",
+"tpSameAsStart": "Nello stesso posto della partenza",
+"tpElsewhere": "Da un'altra parte",
+"bdTour": "Percorso in città (visite e spostamenti tra le tappe)",
+"bdTo": "Andata alla 1ª tappa da {p}",
+"bdBack": "Ritorno a {p}",
+"bdBuffer": "Margine prima della partenza",
+"bdTotal": "Totale necessario prima della partenza",
+"tpToday": "oggi",
+"tpTomorrow": "domani",
+"tpNeedEnd": "Scegli prima dove parti e dove devi arrivare.",
+"tpNeedStart": "Scegli data e ora di inizio.",
+"tpWhenStart": "Quando inizi?",
+"tpNow": "Adesso",
+"tpLater": "Un altro giorno o ora",
+"tpCityTime": "Ora locale di {c}",
+"tpStartsAt": "Inizio: {t}",
+"tpDepAt": "Partenza ({m}): {t}",
+"tpFitsOk": "Ci sta: il percorso dura {a} e hai {b} prima di andare a {p}.",
+"tpLate": "Dovresti già essere diretto a {p}. Partenza prevista: {t}.",
+"tpNotifyTitle": "È ora di andare a {p}",
+"tpOptional": "facoltativo",
+"tpBuySub": "Paghi una volta. L'accesso resta su questo dispositivo e ti arriva via email.",
+"tpChosen": "Il percorso scelto: {n} tappe",
+"tpVersions": "Percorso principale: {n} tappe",
+"tpExtVersion": "estensione facoltativa: +{n} tappe",
+"tpKinds": {
+"airport": "Aeroporto",
+"station": "Stazione ferroviaria",
+"port": "Terminal crociere",
+"hotel": "Hotel o indirizzo",
+"here": "La mia posizione"
+},
+"tpModes": {
+"plane": "Aereo",
+"train": "Treno",
+"ship": "Nave",
+"stay": "Resto in città"
+},
+"tpSearchPh": {
+"station": "Nome della stazione",
+"port": "Terminal crociere o porto",
+"hotel": "Nome dell'hotel o indirizzo"
+},
+"tpUntilDep": {
+"plane": "Fino al mio volo",
+"train": "Fino al mio treno",
+"ship": "Fino alla partenza della nave (imbarco)",
+"stay": "Fino all'ora del ritorno"
+},
+"tpReturnSub": {
+"plane": "Parti entro le {t} per essere in aeroporto 2h30 prima del volo",
+"train": "Parti entro le {t} per essere in stazione 45 min prima del treno",
+"ship": "Parti entro le {t} per essere al terminal 1 h prima dell'imbarco",
+"stay": "Parti entro le {t} per tornare in tempo"
+},
+"tpDepField": {
+"plane": "Partenza del volo",
+"train": "Partenza del treno",
+"ship": "Ora d'imbarco",
+"stay": "Tornare entro"
+},
+"tpDepHint": {
+"plane": "Pianifichiamo per farti essere in aeroporto 2h30 prima.",
+"train": "Pianifichiamo per farti essere in stazione 45 min prima.",
+"ship": "Pianifichiamo per farti essere al terminal 1 h prima dell'imbarco.",
+"stay": "Ti diciamo quando tornare."
+},
+"bdSubtotal": "Durata del percorso, andata e ritorno inclusi",
+"tpStartHere": "Il tuo percorso inizia qui"
 }

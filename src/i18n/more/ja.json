@@ -1246,5 +1246,79 @@
 "lAbout": "会社概要",
 "lSupport": "サポート",
 "lEco": "環境にやさしい旅",
-"lContact": "お問い合わせ"
+"lContact": "お問い合わせ",
+"tpStart": "どこから出発しますか？",
+"tpLeave": "どの手段で街を出ますか？",
+"tpEnd": "最後はどこに着く必要がありますか？",
+"tpNeedStation": "列車はどの駅から出発しますか？",
+"tpNeedPort": "船はどのクルーズターミナルから出航しますか？",
+"tpSameAsStart": "出発地と同じ場所",
+"tpElsewhere": "別の場所",
+"bdTour": "街なかのルート（見学と立ち寄り先の間の移動）",
+"bdTo": "{p}から最初の立ち寄り先まで",
+"bdBack": "{p}へ戻る",
+"bdBuffer": "出発前の余裕",
+"bdTotal": "出発前に必要な合計時間",
+"tpToday": "今日",
+"tpTomorrow": "明日",
+"tpNeedEnd": "まず出発地と到着地を選んでください。",
+"tpNeedStart": "開始の日時を選んでください。",
+"tpWhenStart": "いつ始めますか？",
+"tpNow": "今すぐ",
+"tpLater": "別の日時",
+"tpCityTime": "{c}の現地時間",
+"tpStartsAt": "開始：{t}",
+"tpDepAt": "出発（{m}）：{t}",
+"tpFitsOk": "間に合います：ルートは {a}、{p}へ向かうまで {b} あります。",
+"tpLate": "もう{p}へ向かう時間です。出発予定：{t}。",
+"tpNotifyTitle": "{p}へ向かう時間です",
+"tpOptional": "任意",
+"tpBuySub": "お支払いは1回だけ。アクセスはこの端末に保存され、メールでも届きます。",
+"tpChosen": "選んだルート：{n} か所",
+"tpVersions": "メインルート：{n} か所",
+"tpExtVersion": "オプションの延長：+{n} か所",
+"tpKinds": {
+"airport": "空港",
+"station": "鉄道駅",
+"port": "クルーズターミナル",
+"hotel": "ホテルまたは住所",
+"here": "現在地"
+},
+"tpModes": {
+"plane": "飛行機",
+"train": "列車",
+"ship": "船",
+"stay": "街に滞在"
+},
+"tpSearchPh": {
+"station": "駅名",
+"port": "クルーズターミナルまたは港",
+"hotel": "ホテル名または住所"
+},
+"tpUntilDep": {
+"plane": "フライトまで",
+"train": "列車の出発まで",
+"ship": "船の出航まで（乗船時刻）",
+"stay": "戻る時刻まで"
+},
+"tpReturnSub": {
+"plane": "フライトの2時間30分前に空港に着くよう {t} までに出発",
+"train": "列車の45分前に駅に着くよう {t} までに出発",
+"ship": "乗船の1時間前にターミナルに着くよう {t} までに出発",
+"stay": "時間どおりに戻れるよう {t} までに出発"
+},
+"tpDepField": {
+"plane": "フライトの出発時刻",
+"train": "列車の出発時刻",
+"ship": "乗船時刻",
+"stay": "戻る時刻"
+},
+"tpDepHint": {
+"plane": "空港に2時間30分前に着く前提で計画します。",
+"train": "駅に45分前に着く前提で計画します。",
+"ship": "乗船の1時間前にターミナルに着く前提で計画します。",
+"stay": "戻るタイミングをお知らせします。"
+},
+"bdSubtotal": "ルートの所要時間（往復含む）",
+"tpStartHere": "ルートはここから始まります"
 }

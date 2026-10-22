@@ -6,14 +6,21 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
 import { checkLayover, ENTRY_CHECKED, ETIAS_LIVE, NATIONALITIES, type EntryVerdict } from "@/lib/entry";
+import { cityNowLocal } from "@/lib/trip";
+import { zonedToDate } from "@/lib/zoned";
+import { loadTrip, saveTrip } from "./trip-store";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
-const local = (d: Date) => { const p = (n: number) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
 
 export const NAT_KEY = "sgct:nat";
-export const DEP_KEY = "sgct:dep";
 
-export function ExitCheck({ city, locale, t, compact = false }: { city: City; locale: Locale; t: Dict; compact?: boolean }) {
+/**
+ * "Posso sair do aeroporto?": ferramenta opcional para quem viaja de avião. A hora de partida é a MESMA do plano
+ * de viagem (planeador e compra), na hora local da cidade.
+ */
+export function ExitCheck({ city, locale, t, compact = false, onlyPlane = false }: { city: City; locale: Locale; t: Dict; compact?: boolean; onlyPlane?: boolean }) {
+  const tz = city.tz ?? "UTC";
+  const [isPlane, setIsPlane] = useState(true);
   const [nat, setNat] = useState("");
   const [arr, setArr] = useState("");
   const [dep, setDep] = useState("");
@@ -21,13 +28,15 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
   const [open, setOpen] = useState(!compact);
 
   useEffect(() => {
-    let n = ""; let d = "";
-    try { n = localStorage.getItem(NAT_KEY) ?? ""; d = localStorage.getItem(DEP_KEY) ?? ""; } catch { /* sem armazenamento */ }
+    let n = "";
+    try { n = localStorage.getItem(NAT_KEY) ?? ""; } catch { /* sem armazenamento */ }
     setNat(n); // sem predefinição: o resultado só aparece depois de o viajante escolher
-    const now = new Date(); now.setSeconds(0, 0);
-    setArr(local(now));
-    setDep(d || local(new Date(now.getTime() + 8 * 3600e3)));
-  }, []);
+    const sync = () => { const tr = loadTrip(city.id); setIsPlane(tr.mode === "plane"); setDep(tr.deadline || cityNowLocal(tz, 8 * 60)); };
+    setArr(cityNowLocal(tz)); sync();
+    const on = (e: Event) => { if ((e as CustomEvent).detail === city.id) sync(); };
+    window.addEventListener("sgct:trip", on);
+    return () => window.removeEventListener("sgct:trip", on);
+  }, [city.id, tz]);
 
   // Nomes dos países só no navegador (o servidor e o navegador podem traduzir de forma diferente).
   const [names, setNames] = useState<{ c: string; n: string }[]>([]);
@@ -37,7 +46,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
     setNames(NATIONALITIES.map((c) => ({ c, n: dn?.of(c) ?? c })).sort((a, b) => a.n.localeCompare(b.n, INTL_LOCALE[locale])));
   }, [locale]);
 
-  const a = arr ? new Date(arr) : null, d = dep ? new Date(dep) : null;
+  const a = arr ? zonedToDate(arr, tz) : null, d = dep ? zonedToDate(dep, tz) : null;
   const timesOk = a && d && !isNaN(a.getTime()) && !isNaN(d.getTime()) && d > a;
   const res = nat && timesOk ? checkLayover(city, nat, a!, d!, permit) : null;
 
@@ -54,11 +63,12 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
     : zc ? (() => { try { return new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }).of(zc) ?? zc; } catch { return zc; } })()
       : t.zoneMe[zone as keyof Dict["zoneMe"]];
 
-  if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle}</button>;
+  if (onlyPlane && !isPlane) return null;
+  if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle} · {t.tpOptional}</button>;
 
   return (
     <section className="card stack exit-check" style={{ gap: 10, padding: 14 }}>
-      <div><b>{t.exitTitle}</b><p className="hint">{t.exitSub}</p></div>
+      <div><b>{t.exitTitle}</b><p className="hint">{t.exitSub}</p><p className="hint">{fmt(t.tpCityTime, { c: (city.n as Record<string, string>)[locale] ?? city.n.en })}</p></div>
       <div className="field"><label htmlFor="nat">{t.nationality}</label>
         <select id="nat" value={nat} onChange={(e) => { setNat(e.target.value); save(NAT_KEY, e.target.value); }}>
           <option value="">—</option>
@@ -68,7 +78,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
         <div className="field"><label htmlFor="arr">{t.arrival}</label>
           <input id="arr" type="datetime-local" value={arr} onChange={(e) => setArr(e.target.value)} /></div>
         <div className="field"><label htmlFor="dep2">{t.departure}</label>
-          <input id="dep2" type="datetime-local" value={dep} onChange={(e) => { setDep(e.target.value); save(DEP_KEY, e.target.value); }} /></div>
+          <input id="dep2" type="datetime-local" value={dep} onChange={(e) => { setDep(e.target.value); saveTrip(city.id, { ...loadTrip(city.id), mode: "plane", end: { kind: "airport" }, deadline: e.target.value }); }} /></div>
       </div>
       <label className="consent"><input type="checkbox" checked={permit} onChange={(e) => setPermit(e.target.checked)} /> <span>{fmt(t.hasPermit, { zone: zoneName })}</span></label>
       {!timesOk && arr && dep && <p className="err">{t.errTimes}</p>}

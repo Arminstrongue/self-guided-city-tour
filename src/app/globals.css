@@ -2269,3 +2269,16 @@ main:focus{outline:none}
 .info-faq summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
 .info-faq summary::-webkit-details-marker{display:none}
 .info-faq details p{margin:0 0 12px;line-height:1.5}
+/* Plano de viagem: início, modalidade, fim, horas e tabela de tempos */
+.tp{display:flex;flex-direction:column;gap:8px}
+.tp-seg{display:flex;flex-wrap:wrap;grid-template-columns:none}
+.tp-seg button{flex:1 1 auto;padding:6px 10px}
+.tp-need{margin:0;padding:8px 12px;border-radius:10px;background:color-mix(in srgb,var(--warn,#ff9f0a) 14%,transparent);font-size:14px;font-weight:600}
+.tp-dt{gap:4px}
+.tp-dt input,.qs-dep input[type=datetime-local]{border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;font-size:16px;width:100%}
+.bd{display:grid;gap:4px;margin:0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 4%,transparent);font-size:14px}
+.bd>div{display:flex;justify-content:space-between;gap:12px}
+.bd dt{color:var(--muted)}
+.bd dd{margin:0;white-space:nowrap;font-weight:600}
+.bd .bd-total{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.bd .bd-total dt{color:var(--ink);font-weight:700}

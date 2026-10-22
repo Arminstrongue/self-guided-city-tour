@@ -41,7 +41,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
     const cc = COUNTRY[c.id];
     const country = (cc && region.of(cc)) || "";
     return {
-      id: c.id, name: cityName(c, params.locale), country, stops: c.stops.length, region: regionOf(c.id),
+      id: c.id, name: cityName(c, params.locale), country, stops: c.stops.filter((s) => !s.x).length, region: regionOf(c.id),
       keys: [...cityNames(c), country, cc ? regionEn.of(cc) ?? "" : ""].join(" "),
       ...(isFreeCity(c.id) ? { free: t.freeBadge } : {})
     };

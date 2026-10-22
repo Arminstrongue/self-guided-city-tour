@@ -1734,5 +1734,79 @@
 "lAbout": "회사 소개",
 "lSupport": "고객 지원",
 "lEco": "가벼운 여행",
-"lContact": "문의"
+"lContact": "문의",
+"tpStart": "어디에서 시작하나요?",
+"tpLeave": "도시를 어떻게 떠나나요?",
+"tpEnd": "마지막에 어디로 가야 하나요?",
+"tpNeedStation": "기차는 어느 역에서 출발하나요?",
+"tpNeedPort": "배는 어느 크루즈 터미널에서 출항하나요?",
+"tpSameAsStart": "출발지와 같은 곳",
+"tpElsewhere": "다른 곳",
+"bdTour": "도시 안 경로 (방문과 장소 간 이동)",
+"bdTo": "{p}에서 첫 장소까지",
+"bdBack": "{p}(으)로 복귀",
+"bdBuffer": "출발 전 여유 시간",
+"bdTotal": "출발 전 필요한 총 시간",
+"tpToday": "오늘",
+"tpTomorrow": "내일",
+"tpNeedEnd": "먼저 출발지와 도착지를 선택하세요.",
+"tpNeedStart": "시작 날짜와 시간을 선택하세요.",
+"tpWhenStart": "언제 시작하나요?",
+"tpNow": "지금",
+"tpLater": "다른 날짜나 시간",
+"tpCityTime": "{c} 현지 시간",
+"tpStartsAt": "시작: {t}",
+"tpDepAt": "출발 ({m}): {t}",
+"tpFitsOk": "충분해요: 경로는 {a} 걸리고 {p}(으)로 출발하기 전까지 {b} 있어요.",
+"tpLate": "지금쯤 {p}(으)로 가고 있어야 해요. 예정 출발: {t}.",
+"tpNotifyTitle": "{p}(으)로 갈 시간이에요",
+"tpOptional": "선택",
+"tpBuySub": "한 번만 결제하세요. 이용권은 이 기기에 저장되고 이메일로도 보내드려요.",
+"tpChosen": "선택한 경로: {n}곳",
+"tpVersions": "기본 경로: {n}곳",
+"tpExtVersion": "선택 연장: +{n}곳",
+"tpKinds": {
+"airport": "공항",
+"station": "기차역",
+"port": "크루즈 터미널",
+"hotel": "호텔 또는 주소",
+"here": "내 위치"
+},
+"tpModes": {
+"plane": "비행기",
+"train": "기차",
+"ship": "배",
+"stay": "도시에 머물러요"
+},
+"tpSearchPh": {
+"station": "역 이름",
+"port": "크루즈 터미널 또는 항구",
+"hotel": "호텔 이름 또는 주소"
+},
+"tpUntilDep": {
+"plane": "비행기 출발까지",
+"train": "기차 출발까지",
+"ship": "배 출항까지 (승선 시간)",
+"stay": "돌아와야 할 시간까지"
+},
+"tpReturnSub": {
+"plane": "비행기 출발 2시간 30분 전 공항 도착을 위해 {t}까지 출발하세요",
+"train": "기차 출발 45분 전 역 도착을 위해 {t}까지 출발하세요",
+"ship": "승선 1시간 전 터미널 도착을 위해 {t}까지 출발하세요",
+"stay": "제시간에 돌아오도록 {t}까지 출발하세요"
+},
+"tpDepField": {
+"plane": "항공편 출발",
+"train": "기차 출발",
+"ship": "승선 시간",
+"stay": "복귀 시간"
+},
+"tpDepHint": {
+"plane": "공항에 2시간 30분 전 도착하도록 계획해요.",
+"train": "역에 45분 전 도착하도록 계획해요.",
+"ship": "승선 1시간 전 터미널 도착하도록 계획해요.",
+"stay": "언제 돌아가야 할지 알려드려요."
+},
+"bdSubtotal": "왕복 포함 경로 시간",
+"tpStartHere": "경로가 여기에서 시작돼요"
 }

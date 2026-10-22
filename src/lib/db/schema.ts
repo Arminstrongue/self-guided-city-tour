@@ -84,6 +84,8 @@ export const accesses = pgTable("accesses", {
   city: text("city"),
   flightAt: timestamp("flight_at", { withTimezone: true }),
   flightNo: text("flight_no"),
+  /** Plano de viagem da compra: início, fim, modalidade (avião, comboio, navio, fica) e horas locais. */
+  trip: jsonb("trip"),
   plan: text("plan"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   amountCents: integer("amount_cents").notNull(),

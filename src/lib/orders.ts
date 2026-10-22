@@ -1,4 +1,5 @@
 import type Stripe from "stripe";
+import { parseTrip } from "./trip";
 import { and, desc, eq, gt, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan } from "./pricing";
@@ -33,6 +34,7 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   const inserted = await d.insert(schema.accesses).values({
     email, userId: user.id, scope: plan === "all" ? "all" : "city", plan, city: m.city || null,
     flightAt: m.flightAt ? new Date(m.flightAt) : null, flightNo: m.flightNo || null, expiresAt,
+    trip: (() => { try { return m.trip ? parseTrip(JSON.parse(m.trip)) : null; } catch { return null; } })(),
     // Com "Adaptive Pricing" o cliente paga na sua moeda; guardamos sempre o valor de origem (EUR).
     amountCents: session.currency_conversion?.amount_total ?? session.amount_total ?? TOUR_PLANS[plan].amount,
     currency: session.currency_conversion?.source_currency ?? session.currency ?? "eur",

@@ -1270,5 +1270,79 @@
 "lAbout": "À propos",
 "lSupport": "Assistance",
 "lEco": "Voyager plus léger",
-"lContact": "Contact"
+"lContact": "Contact",
+"tpStart": "D'où partez-vous ?",
+"tpLeave": "Comment quittez-vous la ville ?",
+"tpEnd": "Où devez-vous terminer ?",
+"tpNeedStation": "De quelle gare part votre train ?",
+"tpNeedPort": "De quel terminal de croisière part votre bateau ?",
+"tpSameAsStart": "Au même endroit qu'au départ",
+"tpElsewhere": "Ailleurs",
+"bdTour": "Parcours en ville (visites et trajets entre les arrêts)",
+"bdTo": "Aller au 1er arrêt depuis {p}",
+"bdBack": "Retour à {p}",
+"bdBuffer": "Marge avant le départ",
+"bdTotal": "Total nécessaire avant le départ",
+"tpToday": "aujourd'hui",
+"tpTomorrow": "demain",
+"tpNeedEnd": "Choisissez d'abord votre point de départ et d'arrivée.",
+"tpNeedStart": "Choisissez la date et l'heure de départ.",
+"tpWhenStart": "Quand commencez-vous ?",
+"tpNow": "Maintenant",
+"tpLater": "Un autre jour ou heure",
+"tpCityTime": "Heure locale de {c}",
+"tpStartsAt": "Début : {t}",
+"tpDepAt": "Départ ({m}) : {t}",
+"tpFitsOk": "Ça passe : l'itinéraire prend {a} et vous avez {b} avant de partir vers {p}.",
+"tpLate": "Vous devriez déjà être en route vers {p}. Départ prévu : {t}.",
+"tpNotifyTitle": "Il est temps d'aller à {p}",
+"tpOptional": "facultatif",
+"tpBuySub": "Payez une fois. L'accès est enregistré sur cet appareil et envoyé par email.",
+"tpChosen": "Votre itinéraire choisi : {n} arrêts",
+"tpVersions": "Itinéraire principal : {n} arrêts",
+"tpExtVersion": "extension facultative : +{n} arrêts",
+"tpKinds": {
+"airport": "Aéroport",
+"station": "Gare",
+"port": "Terminal de croisière",
+"hotel": "Hôtel ou adresse",
+"here": "Ma position"
+},
+"tpModes": {
+"plane": "Avion",
+"train": "Train",
+"ship": "Bateau",
+"stay": "Je reste"
+},
+"tpSearchPh": {
+"station": "Nom de la gare",
+"port": "Terminal de croisière ou port",
+"hotel": "Nom de l'hôtel ou adresse"
+},
+"tpUntilDep": {
+"plane": "Jusqu'à mon vol",
+"train": "Jusqu'à mon train",
+"ship": "Jusqu'au départ du bateau (embarquement)",
+"stay": "Jusqu'à l'heure du retour"
+},
+"tpReturnSub": {
+"plane": "Partez avant {t} pour être à l'aéroport 2h30 avant le vol",
+"train": "Partez avant {t} pour être à la gare 45 min avant le train",
+"ship": "Partez avant {t} pour être au terminal 1 h avant l'embarquement",
+"stay": "Partez avant {t} pour rentrer à temps"
+},
+"tpDepField": {
+"plane": "Départ du vol",
+"train": "Départ du train",
+"ship": "Heure d'embarquement",
+"stay": "Retour avant"
+},
+"tpDepHint": {
+"plane": "Nous prévoyons votre arrivée à l'aéroport 2h30 avant.",
+"train": "Nous prévoyons votre arrivée à la gare 45 min avant.",
+"ship": "Nous prévoyons votre arrivée au terminal 1 h avant l'embarquement.",
+"stay": "Nous vous disons quand rentrer."
+},
+"bdSubtotal": "Durée du parcours, aller et retour compris",
+"tpStartHere": "Votre itinéraire commence ici"
 }

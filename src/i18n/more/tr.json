@@ -1734,5 +1734,79 @@
 "lAbout": "Hakkımızda",
 "lSupport": "Destek",
 "lEco": "Daha hafif seyahat",
-"lContact": "İletişim"
+"lContact": "İletişim",
+"tpStart": "Nereden başlıyorsunuz?",
+"tpLeave": "Şehirden nasıl ayrılıyorsunuz?",
+"tpEnd": "Nerede bitirmeniz gerekiyor?",
+"tpNeedStation": "Treniniz hangi istasyondan kalkıyor?",
+"tpNeedPort": "Geminiz hangi kruvaziyer terminalinden kalkıyor?",
+"tpSameAsStart": "Başlangıçla aynı yer",
+"tpElsewhere": "Başka bir yer",
+"bdTour": "Şehirdeki rota (ziyaretler ve duraklar arası yol)",
+"bdTo": "{p} noktasından 1. durağa gidiş",
+"bdBack": "{p} noktasına dönüş",
+"bdBuffer": "Kalkıştan önceki pay",
+"bdTotal": "Kalkıştan önce toplam gereken",
+"tpToday": "bugün",
+"tpTomorrow": "yarın",
+"tpNeedEnd": "Önce nereden başlayıp nerede bitireceğinizi seçin.",
+"tpNeedStart": "Başlangıç tarihini ve saatini seçin.",
+"tpWhenStart": "Ne zaman başlıyorsunuz?",
+"tpNow": "Şimdi",
+"tpLater": "Başka bir gün veya saat",
+"tpCityTime": "{c} yerel saati",
+"tpStartsAt": "Başlangıç: {t}",
+"tpDepAt": "Kalkış ({m}): {t}",
+"tpFitsOk": "Yetişir: rota {a} sürüyor ve {p} yönüne çıkmadan önce {b} süreniz var.",
+"tpLate": "Şu anda {p} yolunda olmalıydınız. Planlanan kalkış: {t}.",
+"tpNotifyTitle": "{p} yönüne çıkma zamanı",
+"tpOptional": "isteğe bağlı",
+"tpBuySub": "Bir kez ödeyin. Erişim bu cihazda saklanır ve e-postayla gönderilir.",
+"tpChosen": "Seçtiğiniz rota: {n} durak",
+"tpVersions": "Ana rota: {n} durak",
+"tpExtVersion": "isteğe bağlı uzantı: +{n} durak",
+"tpKinds": {
+"airport": "Havalimanı",
+"station": "Tren istasyonu",
+"port": "Kruvaziyer terminali",
+"hotel": "Otel veya adres",
+"here": "Konumum"
+},
+"tpModes": {
+"plane": "Uçak",
+"train": "Tren",
+"ship": "Gemi",
+"stay": "Şehirde kalıyorum"
+},
+"tpSearchPh": {
+"station": "İstasyon adı",
+"port": "Kruvaziyer terminali veya liman",
+"hotel": "Otel adı veya adres"
+},
+"tpUntilDep": {
+"plane": "Uçuşuma kadar",
+"train": "Trenime kadar",
+"ship": "Gemi kalkana kadar (biniş)",
+"stay": "Dönmem gereken saate kadar"
+},
+"tpReturnSub": {
+"plane": "Uçuştan 2,5 saat önce havalimanında olmak için en geç {t}'de çıkın",
+"train": "Trenden 45 dk önce istasyonda olmak için en geç {t}'de çıkın",
+"ship": "Binişten 1 saat önce terminalde olmak için en geç {t}'de çıkın",
+"stay": "Zamanında dönmek için en geç {t}'de çıkın"
+},
+"tpDepField": {
+"plane": "Uçuş kalkışı",
+"train": "Tren kalkışı",
+"ship": "Biniş saati",
+"stay": "Dönüş saati"
+},
+"tpDepHint": {
+"plane": "Havalimanında 2,5 saat önce olacak şekilde planlıyoruz.",
+"train": "İstasyonda 45 dk önce olacak şekilde planlıyoruz.",
+"ship": "Terminalde binişten 1 saat önce olacak şekilde planlıyoruz.",
+"stay": "Ne zaman döneceğinizi söyleriz."
+},
+"bdSubtotal": "Gidiş ve dönüş dahil rota süresi",
+"tpStartHere": "Rotanız burada başlıyor"
 }

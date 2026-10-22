@@ -14,6 +14,7 @@ import { cookies } from "next/headers";
 import { REF_COOKIE } from "@/lib/invites";
 import { quote } from "@/lib/referrals";
 import { currentTraveller } from "@/lib/wallet";
+import { parseTrip } from "@/lib/trip";
 
 export const runtime = "nodejs";
 
@@ -26,7 +27,8 @@ const Body = z.object({
   flightNo: z.string().max(12).optional().transform((v) => (v ? normaliseFlightNo(v) : "")).refine((v) => !v || validFlightNo(v)),
   locale: z.enum(LOCALES),
   ref: z.string().max(16).optional(),
-  consent: z.literal(true) // pedido de acesso imediato (perda do direito de livre resolução)
+  consent: z.literal(true), // pedido de acesso imediato (perda do direito de livre resolução)
+  trip: z.unknown().optional() // plano de viagem (início, fim, modalidade); validado com parseTrip
 });
 
 export async function POST(req: Request) {
@@ -34,7 +36,12 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid", issues: parsed.error.flatten() }, { status: 400 });
   const b = parsed.data;
-  if (b.plan === "city" && !b.flightAt) return NextResponse.json({ error: "flight_required" }, { status: 400 });
+  const trip = parseTrip(b.trip);
+  // Passe de 48 h: precisa da hora de partida, exceto quando o viajante fica na cidade.
+  if (b.plan === "city" && !b.flightAt && trip?.mode !== "stay") return NextResponse.json({ error: "flight_required" }, { status: 400 });
+  // Metadados da Stripe: no máximo 500 caracteres por valor (nomes encurtados).
+  const short = trip ? { ...trip, start: trip.start.kind === "airport" ? trip.start : { ...trip.start, label: trip.start.label.slice(0, 60) }, end: trip.end.kind === "airport" ? trip.end : { ...trip.end, label: trip.end.label.slice(0, 60) } } : null;
+  const tripMeta = short ? JSON.stringify(short).slice(0, 500) : "";
   const city = await loadCity(b.city);
   if (!city) return NextResponse.json({ error: "unknown_city" }, { status: 400 });
   if (b.flightAt && new Date(b.flightAt).getTime() < Date.now()) return NextResponse.json({ error: "flight_in_past" }, { status: 400 });
@@ -50,7 +57,7 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "ar" ? "auto" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: q.amount, product_data: { name: `VOYBU · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed) },
+      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), trip: tripMeta },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

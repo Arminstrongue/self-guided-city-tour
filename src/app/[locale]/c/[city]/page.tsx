@@ -90,20 +90,21 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           </section>
         ) : (
         <section className="sec book" id="book">
-          <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>
-          <div className="card bk-sum">
-            <b>{meta}</b>
-            <span>{fmt(t.bkTransport, { c: formatMoney(core.plan.transport, city.cur, INTL_LOCALE[params.locale]) })}</span>
-            <p className="hint">{t.bkIncl}</p>
-          </div>
-          <ChosenRoute t={t} locale={params.locale} city={city.id} />
-          <ExitCheck city={city} locale={params.locale} t={t} />
+          <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.tpBuySub}</p></div></div>
+          <ChosenRoute t={t} locale={params.locale} city={city.id} tz={city.tz ?? "UTC"} coreN={city.stops.filter((x) => !x.x).length} extN={city.stops.filter((x) => x.x).length}>
+            <div className="card bk-sum">
+              <b>{meta}</b>
+              <span>{fmt(t.bkTransport, { c: formatMoney(core.plan.transport, city.cur, INTL_LOCALE[params.locale]) })}</span>
+              <p className="hint">{t.bkIncl}</p>
+            </div>
+          </ChosenRoute>
+          <ExitCheck city={city} locale={params.locale} t={t} compact onlyPlane />
           <div className="book-card">
             <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>
               <BuyForm
                 locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
                 providers={enabledProviders()} sessionEmail={await sessionEmail()}
-                prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} t={t}
+                prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} t={t} tz={city.tz ?? "UTC"}
               />
             </WebOnly>
           </div>

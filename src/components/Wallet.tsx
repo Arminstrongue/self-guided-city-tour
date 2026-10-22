@@ -166,7 +166,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
   const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
   // Último roteiro escolhido em "Começar em 3 passos" (neste dispositivo): é a viagem do viajante, não a demonstração.
-  const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean } | null>(null);
+  const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null>(null);
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("sgct:planned") ?? "null"); if (v?.city) setPlanned(v); } catch { /* ignorar */ } }, []);
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...(planned ? [planned.city] : [])])].filter(Boolean), [active, signed, wish, social, planned]);
   const prof = social?.profile ?? null;

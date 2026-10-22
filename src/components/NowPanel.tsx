@@ -4,7 +4,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { hop } from "@/lib/route-cost";
 import { loadReservations, type Reservation } from "@/lib/trip-local";
-import { loadBase } from "./BasePicker";
+import { loadTrip } from "./trip-store";
 import { RES_ICON, resWhen, TicketSheet } from "./Reservations";
 
 type LL = { lat: number; lng: number };
@@ -28,7 +28,7 @@ async function quietPos(): Promise<LL | null> {
  */
 export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass }: {
   t: Dict; locale: Locale; cities: Record<string, string>; signed: boolean; bookings: Booking[];
-  planned: { city: string; n: number; h: string; open: boolean } | null; hasPass: boolean;
+  planned: { city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null; hasPass: boolean;
 }) {
   const [res, setRes] = useState<Reservation[]>([]);
   const [prog, setProg] = useState<Progress[]>([]);
@@ -55,7 +55,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   const primary: Item | "tour" | null = soon ?? (tour ? "tour" : items[0] ?? null);
   const later = items.filter((x) => x !== primary).slice(0, 4);
 
-  const fromFor = (city: string): LL | null => { if (pos) return pos; const b = city ? loadBase(city) : null; return b?.kind === "place" ? b : null; };
+  const fromFor = (city: string): LL | null => { if (pos) return pos; const b = city ? loadTrip(city).start : null; return b && b.kind !== "airport" ? b : null; };
   function resCard(r: Reservation) {
     const start = new Date(r.startsAt);
     const w = resWhen(r, locale);
@@ -108,6 +108,8 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
           <div className="card now-card">
             <span className="now-k">⏱ {t.wPlanned}</span>
             <b className="now-t">{cities[planned.city]} · {fmt(t.wPlannedSub, { n: planned.n, h: planned.h })}</b>
+            {planned.base && planned.end && <span className="hint">{planned.base} → {planned.end}{planned.mode ? ` · ${t.tpModes[planned.mode]}` : ""}</span>}
+            {planned.startAt && <span className="hint">{fmt(t.tpStartsAt, { t: planned.startAt.replace("T", " ") })}</span>}
             <div className="now-acts"><a className="btn tram press" href={`/${locale}/${planned.open ? "tour" : "c"}/${planned.city}${planned.open ? "" : "#book"}`}>{planned.open ? t.qsStart : t.bookTitle}</a><a className="btn ghost press" href={`/${locale}/start?city=${planned.city}`}>{t.bpChange}</a></div>
           </div>
         ) : (
