@@ -12,6 +12,9 @@ import type { Locale } from "@/i18n/dictionaries";
 import { GuideAvatar } from "@/components/GuideCard";
 import { missingLegal } from "@/lib/guide-input";
 
+import { listingLiveMail } from "@/lib/booking-emails";
+import { sendEmail } from "@/lib/email";
+
 export const dynamic = "force-dynamic";
 const eur = (c: number) => new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(c / 100);
 
@@ -21,7 +24,12 @@ async function setMerchantStatus(form: FormData) {
   const id = String(form.get("id")); const status = String(form.get("status"));
   if (!["active", "cancelled"].includes(status)) return;
   const d = await db();
-  await d.update(schema.merchants).set({ status: status as "active" | "cancelled" }).where(eq(schema.merchants.id, id));
+  const [m] = await d.update(schema.merchants).set({ status: status as "active" | "cancelled" }).where(eq(schema.merchants.id, id)).returning();
+  // Anúncio grátis aprovado: avisa o negócio (os pagos já recebem a confirmação do pagamento).
+  if (m && status === "active" && m.plan === "basic") {
+    const mail = listingLiveMail(m.name, m.locale);
+    await sendEmail(m.email, mail.subject, mail.html).catch(() => false);
+  }
   revalidatePath("/[locale]/admin", "page");
 }
 

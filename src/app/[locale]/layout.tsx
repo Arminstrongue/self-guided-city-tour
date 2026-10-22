@@ -47,6 +47,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <Toaster />
         <footer className="foot">
           <p>{t.footer}</p>
+          <p className="legal-links"><Link href={`/${params.locale}/about`}>{t.lAbout}</Link> · <Link href={`/${params.locale}/support`}>{t.lSupport}</Link> · <Link href={`/${params.locale}/eco`}>{t.lEco}</Link> · <Link href={`/${params.locale}/contact`}>{t.lContact}</Link></p>
           <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link> · <Link href={`/${params.locale}/guides/join`}>{t.lGuides}</Link> · <Link href={`/${params.locale}/wallet`}>{t.wallet}</Link></p>
         </footer>
       </body>

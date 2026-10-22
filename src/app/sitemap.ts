@@ -7,7 +7,7 @@ import { env } from "@/lib/env";
 
 /** /sitemap.xml: página inicial, começar em 3 passos e cada cidade, nas 12 línguas (com as versões alternativas). */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["", "/start", ...CITIES.map((c) => `/c/${c.id}`), ...CITIES.map((c) => `/guides/${c.id}`)];
+  const paths = ["", "/start", "/about", "/support", "/eco", "/contact", "/merchants", "/agents", ...CITIES.map((c) => `/c/${c.id}`), ...CITIES.map((c) => `/guides/${c.id}`)];
   const now = new Date();
   return paths.flatMap((p) => LOCALES.map((l) => ({
     url: `${env.appUrl}/${l}${p}`, lastModified: now,

@@ -116,3 +116,16 @@ export function travellerMail(d: BookingMailData) {
     .map(([k, v]) => `<tr><td style="font-size:15px;padding:4px 0"><span style="color:#6e6e73">${esc(k)}:</span> <b>${esc(v)}</b></td></tr>`).join("");
   return { subject, html: shell(l, esc(subject), p(esc(f(body, { b: d.business }))) + rows) };
 }
+
+/** Aviso ao negócio quando o anúncio grátis é aprovado (pt/en/es/fr). */
+const LIVE: Record<"pt" | "en" | "es" | "fr", [string, string]> = {
+  pt: ["O seu anúncio já está visível na VOYBU", "{b} já aparece no roteiro, junto à paragem mais próxima. Os pedidos de reserva dos viajantes chegam a este email."],
+  en: ["Your listing is now live on VOYBU", "{b} now shows on the route, at the nearest stop. Booking requests from travellers will arrive at this email."],
+  es: ["Tu anuncio ya está visible en VOYBU", "{b} ya aparece en la ruta, junto a la parada más cercana. Las solicitudes de reserva llegarán a este email."],
+  fr: ["Votre annonce est en ligne sur VOYBU", "{b} apparaît désormais sur l'itinéraire, à l'arrêt le plus proche. Les demandes de réservation arriveront sur cet email."]
+};
+export function listingLiveMail(business: string, locale: string) {
+  const l = (["pt", "es", "fr"] as const).find((x) => x === locale) ?? "en";
+  const [s, b] = LIVE[l];
+  return { subject: s, html: shell(l, esc(s), p(esc(f(b, { b: business })))) };
+}

@@ -2235,3 +2235,37 @@ main:focus{outline:none}
 @media not all and (min-width:900px) and (hover:hover) and (pointer:fine){
   .hero-x .in:has(.pqr){padding-bottom:104px}
 }
+
+/* Chamadas para negócios e parceiros: benefício + botão com texto + ligação secundária */
+.pcta{display:flex;flex-direction:column;gap:14px;border-radius:22px;padding:20px;background:linear-gradient(135deg,#1d1d1f,#3a3a3c);color:#fff;box-shadow:var(--shadow)}
+.pcta.alt{background:linear-gradient(135deg,#0a3d91,#5e5ce6)}
+.pcta b{display:block;font-family:var(--display);font-size:20px;line-height:1.2;margin-bottom:6px}
+.pcta span{font-size:15px;line-height:1.45;color:rgba(255,255,255,.8)}
+.pcta-acts{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px}
+.pcta-btn{background:#fff;color:#0b0b0d;border-radius:999px;padding:12px 20px;font-weight:700;text-decoration:none}
+.pcta-link{color:#fff;font-weight:600;font-size:15px;text-decoration:underline;text-underline-offset:3px}
+@media (min-width:760px){.pcta{flex-direction:row;align-items:center;justify-content:space-between;gap:24px;padding:24px 28px}.pcta>div:first-child{max-width:640px}.pcta-acts{flex:none}}
+.mb-sample{position:relative;padding-top:6px}
+.mb-sample-tag{position:absolute;top:-4px;inset-inline-end:10px;z-index:1;background:var(--cobalt);color:#fff;font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px}
+.mb-thumb-demo{display:grid;place-items:center;font-size:26px;background:linear-gradient(135deg,#ffcf8a,#e0873a)}
+.mb-ways{display:grid;gap:10px}
+@media (min-width:640px){.mb-ways{grid-template-columns:1fr 1fr}}
+.mb-way{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:16px;padding:14px;background:var(--surface)}
+.mb-way b{font-size:16px}
+.mb-way p{margin:0;font-size:14px;color:var(--muted);line-height:1.45}
+.mb-way .btn{margin-top:auto;align-self:flex-start}
+.mb-more{border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+.mb-more>summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none}
+.mb-more>summary::-webkit-details-marker{display:none}
+.mb-more>summary::before{content:"＋ ";color:var(--cobalt)}
+.mb-more[open]>summary::before{content:"－ "}
+.mb-more[open]{padding-bottom:14px}
+.mb-next{margin:0;padding-inline-start:20px;display:grid;gap:6px;font-size:14px;line-height:1.45}
+/* Sobre nós / Apoio / Viajar com menos impacto */
+.info-lead{font-size:17px;line-height:1.5}
+.info-list{margin:0;padding-inline-start:20px;display:grid;gap:6px;line-height:1.5}
+.info-faq{display:grid;gap:8px}
+.info-faq details{border:1px solid var(--line);border-radius:14px;padding:0 14px;background:var(--surface)}
+.info-faq summary{cursor:pointer;font-weight:700;padding:12px 0;list-style:none}
+.info-faq summary::-webkit-details-marker{display:none}
+.info-faq details p{margin:0 0 12px;line-height:1.5}

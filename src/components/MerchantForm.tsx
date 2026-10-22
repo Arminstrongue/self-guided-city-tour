@@ -18,7 +18,7 @@ async function shrink(file: File): Promise<string> {
 type CityOpt = { id: string; name: string; stops: { id: string; name: string }[] };
 type Plan = "basic" | "featured" | "partner";
 
-export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string }) {
+export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string; partnerPct: number }) {
   const [f, setF] = useState({ name: "", category: "food", city: cities[0].id, stopId: cities[0].stops[0].id, offer: "", email: "", instagram: "", tiktok: "", facebook: "", plan: "featured" as Plan });
   const [photos, setPhotos] = useState<string[]>([]);
   const [book, setBook] = useState({ on: true, options: [] as { name: string; price: string }[], url: "", phone: "" });
@@ -51,72 +51,21 @@ export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Loc
     } catch { setError(t.errGeneric); setBusy(false); }
   }
 
+  const pick = (category: string, plan: Plan) => {
+    setF((p) => ({ ...p, category, plan }));
+    document.getElementById("start")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   return (
-    <form className="stack" onSubmit={submit} noValidate>
-      <div className="field"><label htmlFor="m-name">{t.mName}</label><input id="m-name" value={f.name} onChange={(e) => set("name", e.target.value)} /></div>
-      <div className="grid2">
-        <div className="field"><label htmlFor="m-cat">{t.mCat}</label>
-          <select id="m-cat" value={f.category} onChange={(e) => set("category", e.target.value)}>
-            {Object.entries(t.cats).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
-          </select></div>
-        <div className="field"><label htmlFor="m-city">{t.mCity}</label>
-          <select id="m-city" value={f.city} onChange={(e) => { const c = cities.find((x) => x.id === e.target.value)!; setF((p) => ({ ...p, city: c.id, stopId: c.stops[0].id })); }}>
-            {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select></div>
+    <>
+      <span className="label">{t.mWaysT}</span>
+      <div className="mb-ways">
+        <div className="mb-way"><b>🛏 {t.mWay1T}</b><p>{t.mWay1S}</p>
+          <button type="button" className="btn ghost press" onClick={() => pick("hotel", "featured")}>{t.mWay1Btn}</button></div>
+        <div className="mb-way"><b>📱 {t.mWay2T}</b><p>{t.mWay2S.replace("{p}", String(partnerPct))}</p>
+          <button type="button" className="btn ghost press" onClick={() => pick("hotel", "partner")}>{t.mWay2Btn}</button></div>
       </div>
-      <div className="field"><label htmlFor="m-stop">{t.mStop}</label>
-        <select id="m-stop" value={f.stopId} onChange={(e) => set("stopId", e.target.value)}>
-          {city.stops.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-        </select></div>
-      <div className="field"><label htmlFor="m-offer">{t.mOffer}</label><input id="m-offer" placeholder={t.mOfferPh} value={f.offer} onChange={(e) => set("offer", e.target.value)} maxLength={140} /></div>
-      <span className="label">{t.mPhotos}</span>
-      <div className="mb-photos">
-        {photos.map((p, i) => (
-          <div key={i} className="mb-ph">
-            <img src={p} alt="" />
-            <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setPhotos((a) => a.filter((_, j) => j !== i))}>×</button>
-          </div>
-        ))}
-        {photos.length < MAX_PHOTOS && (
-          <label className="mb-ph mb-add press">
-            <input type="file" accept="image/*" multiple hidden onChange={(e) => { void addPhotos(e.target.files); e.target.value = ""; }} />
-            <span>＋</span><small>{t.mPhotoAdd}</small>
-          </label>
-        )}
-      </div>
-      <p className="hint">{t.mPhotosHint}</p>
-      {kind && (
-        <>
-          <span className="label">{t.mBook}</span>
-          <label className="mb-check"><input type="checkbox" checked={book.on} onChange={(e) => setBook((b) => ({ ...b, on: e.target.checked }))} /> {t.mBookOn}</label>
-          {book.on && (
-            <>
-              <p className="hint">{t.mBookHow}</p>
-              <span className="hint" style={{ fontWeight: 600 }}>{t.mBookOpts[kind]}</span>
-              {book.options.map((o, i) => (
-                <div key={i} className="mb-opt">
-                  <input aria-label={t.mBookOpts[kind]} placeholder={t.mOptNamePh[kind]} value={o.name} maxLength={60} onChange={(e) => setOpt(i, "name", e.target.value)} />
-                  <input aria-label={t.mOptPrice} placeholder={t.mOptPricePh} value={o.price} maxLength={40} onChange={(e) => setOpt(i, "price", e.target.value)} />
-                  <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setBook((b) => ({ ...b, options: b.options.filter((_, j) => j !== i) }))}>×</button>
-                </div>
-              ))}
-              {book.options.length < MAX_OPTIONS && (
-                <button type="button" className="btn ghost press" onClick={() => setBook((b) => ({ ...b, options: [...b.options, { name: "", price: "" }] }))}>＋ {t.mOptAdd}</button>
-              )}
-            </>
-          )}
-          <div className="field"><label htmlFor="m-url">{t.mBookUrl}</label><input id="m-url" type="url" inputMode="url" placeholder="https://" value={book.url} onChange={(e) => setBook((b) => ({ ...b, url: e.target.value }))} maxLength={300} /></div>
-        </>
-      )}
-      <div className="field"><label htmlFor="m-phone">{t.mPhone}</label><input id="m-phone" type="tel" inputMode="tel" placeholder="+351 …" value={book.phone} onChange={(e) => setBook((b) => ({ ...b, phone: e.target.value }))} maxLength={30} /></div>
-      <div className="field"><label htmlFor="m-email">{t.mEmail}</label><input id="m-email" type="email" value={f.email} onChange={(e) => set("email", e.target.value)} /></div>
-      <span className="label">{t.mSocial}</span>
-      <div className="grid2">
-        <div className="field"><label htmlFor="m-ig">Instagram</label><input id="m-ig" placeholder="@" value={f.instagram} onChange={(e) => set("instagram", e.target.value)} /></div>
-        <div className="field"><label htmlFor="m-tt">TikTok</label><input id="m-tt" placeholder="@" value={f.tiktok} onChange={(e) => set("tiktok", e.target.value)} /></div>
-      </div>
-      <div className="field"><label htmlFor="m-fb">Facebook</label><input id="m-fb" placeholder="facebook.com/…" value={f.facebook} onChange={(e) => set("facebook", e.target.value)} /></div>
-      <span className="label">{t.mPlan}</span>
+
+      <h2 id="plans" className="gp-h2" style={{ scrollMarginTop: 80, marginTop: 8 }}>{t.mPlansT}</h2>
       <div className="plans">
         {(["basic", "featured", "partner"] as Plan[]).map((k) => {
           const p = t.mPlans[k];
@@ -129,10 +78,88 @@ export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Loc
           );
         })}
       </div>
-      {error && <p className="err" role="alert">{error}</p>}
-      <button className="btn tram" type="submit" disabled={busy}>
-        {busy ? t.redirecting : `${t.mSubmit}${prices[f.plan] ? ` · ${money(prices[f.plan])}${t.perMonth}` : ""}`}
-      </button>
-    </form>
+      <p className="hint">{t.mPlansNote}</p>
+
+      <form id="start" className="stack" style={{ scrollMarginTop: 80 }} onSubmit={submit} noValidate>
+        <h2 className="gp-h2">{t.mStartT}</h2>
+        <div className="field"><label htmlFor="m-name">{t.mName}</label><input id="m-name" value={f.name} onChange={(e) => set("name", e.target.value)} /></div>
+        <div className="grid2">
+          <div className="field"><label htmlFor="m-cat">{t.mCat}</label>
+            <select id="m-cat" value={f.category} onChange={(e) => set("category", e.target.value)}>
+              {Object.entries(t.cats).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            </select></div>
+          <div className="field"><label htmlFor="m-city">{t.mCity}</label>
+            <select id="m-city" value={f.city} onChange={(e) => { const c = cities.find((x) => x.id === e.target.value)!; setF((p) => ({ ...p, city: c.id, stopId: c.stops[0].id })); }}>
+              {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select></div>
+        </div>
+        <div className="field"><label htmlFor="m-stop">{t.mStop}</label>
+          <select id="m-stop" value={f.stopId} onChange={(e) => set("stopId", e.target.value)}>
+            {city.stops.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select></div>
+        <div className="field"><label htmlFor="m-offer">{t.mOffer}</label><input id="m-offer" placeholder={t.mOfferPh} value={f.offer} onChange={(e) => set("offer", e.target.value)} maxLength={140} /></div>
+        <span className="label">{t.mPhotos}</span>
+        <div className="mb-photos">
+          {photos.map((p, i) => (
+            <div key={i} className="mb-ph">
+              <img src={p} alt="" />
+              <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setPhotos((a) => a.filter((_, j) => j !== i))}>×</button>
+            </div>
+          ))}
+          {photos.length < MAX_PHOTOS && (
+            <label className="mb-ph mb-add press">
+              <input type="file" accept="image/*" multiple hidden onChange={(e) => { void addPhotos(e.target.files); e.target.value = ""; }} />
+              <span>＋</span><small>{t.mPhotoAdd}</small>
+            </label>
+          )}
+        </div>
+        <p className="hint">{t.mPhotosHint}</p>
+        <div className="field"><label htmlFor="m-email">{t.mEmail}</label><input id="m-email" type="email" value={f.email} onChange={(e) => set("email", e.target.value)} /></div>
+        <details className="mb-more">
+          <summary>{t.mMore}</summary>
+          <div className="stack">
+            <div className="field"><label htmlFor="m-phone">{t.mPhone}</label><input id="m-phone" type="tel" inputMode="tel" placeholder="+351 …" value={book.phone} onChange={(e) => setBook((b) => ({ ...b, phone: e.target.value }))} maxLength={30} /></div>
+            {kind && (
+              <>
+                <span className="label">{t.mBook}</span>
+                <label className="mb-check"><input type="checkbox" checked={book.on} onChange={(e) => setBook((b) => ({ ...b, on: e.target.checked }))} /> {t.mBookOn}</label>
+                {book.on && (
+                  <>
+                    <p className="hint">{t.mBookHow}</p>
+                    <span className="hint" style={{ fontWeight: 600 }}>{t.mBookOpts[kind]}</span>
+                    {book.options.map((o, i) => (
+                      <div key={i} className="mb-opt">
+                        <input aria-label={t.mBookOpts[kind]} placeholder={t.mOptNamePh[kind]} value={o.name} maxLength={60} onChange={(e) => setOpt(i, "name", e.target.value)} />
+                        <input aria-label={t.mOptPrice} placeholder={t.mOptPricePh} value={o.price} maxLength={40} onChange={(e) => setOpt(i, "price", e.target.value)} />
+                        <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setBook((b) => ({ ...b, options: b.options.filter((_, j) => j !== i) }))}>×</button>
+                      </div>
+                    ))}
+                    {book.options.length < MAX_OPTIONS && (
+                      <button type="button" className="btn ghost press" onClick={() => setBook((b) => ({ ...b, options: [...b.options, { name: "", price: "" }] }))}>＋ {t.mOptAdd}</button>
+                    )}
+                  </>
+                )}
+                <div className="field"><label htmlFor="m-url">{t.mBookUrl}</label><input id="m-url" type="url" inputMode="url" placeholder="https://" value={book.url} onChange={(e) => setBook((b) => ({ ...b, url: e.target.value }))} maxLength={300} /></div>
+              </>
+            )}
+            <span className="label">{t.mSocial}</span>
+            <div className="grid2">
+              <div className="field"><label htmlFor="m-ig">Instagram</label><input id="m-ig" placeholder="@" value={f.instagram} onChange={(e) => set("instagram", e.target.value)} /></div>
+              <div className="field"><label htmlFor="m-tt">TikTok</label><input id="m-tt" placeholder="@" value={f.tiktok} onChange={(e) => set("tiktok", e.target.value)} /></div>
+            </div>
+            <div className="field"><label htmlFor="m-fb">Facebook</label><input id="m-fb" placeholder="facebook.com/…" value={f.facebook} onChange={(e) => set("facebook", e.target.value)} /></div>
+          </div>
+        </details>
+        <span className="label">{t.mNextT}</span>
+        <ul className="mb-next">
+          <li>{f.plan === "basic" ? t.mNextFree : t.mNextPaid}</li>
+          {kind && <li>{t.mNextBook}</li>}
+        </ul>
+        {error && <p className="err" role="alert">{error}</p>}
+        <button className="btn tram" type="submit" disabled={busy}>
+          {busy ? t.redirecting : prices[f.plan] ? `${t.mSubmit} · ${money(prices[f.plan])}${t.perMonth}` : t.bzBtn}
+        </button>
+      </form>
+    </>
   );
 }

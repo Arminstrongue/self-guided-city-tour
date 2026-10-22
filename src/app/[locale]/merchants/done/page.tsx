@@ -7,6 +7,7 @@ import { stripe } from "@/lib/stripe";
 import { activateFromSession } from "@/lib/merchants";
 import { env } from "@/lib/env";
 import { cityName } from "@/data/cities";
+import { bookKind } from "@/lib/booking";
 import { loadCities } from "@/lib/content";
 import { fmt } from "@/i18n/core";
 import { getDict, type Locale } from "@/i18n/dictionaries";
@@ -34,9 +35,11 @@ export default async function MerchantDone({ params, searchParams }: { params: {
         {m.status === "active"
           ? <p>{fmt(t.mDoneSub, { city: cityName(city, params.locale), stop: stop?.n ?? "" })}</p>
           : <p className="note">{m.plan === "basic" ? t.mReview : t.mPending}</p>}
+        {m.bookMode === "request" && bookKind(m.category) && <p className="hint">{fmt(t.mDoneNext, { email: m.email })}</p>}
         <span className="label">{t.mYour}</span>
         <div className="offer" style={{ borderStyle: "solid" }}>
-          <div><span className="cat">{t.cats[m.category as keyof typeof t.cats]}</span><b>{m.name}</b>{m.offer}</div>
+          {m.photoCount > 0 && <img className="mb-thumb" src={`/api/merchants/photo/${m.id}`} alt="" />}
+          <div style={{ flex: 1 }}><span className="cat">{t.cats[m.category as keyof typeof t.cats]}</span><b>{m.name}</b>{m.offer}</div>
           {m.plan !== "basic" && <span className="feat">{t.featured}</span>}
         </div>
         {m.plan === "partner" && (

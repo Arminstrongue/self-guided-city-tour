@@ -97,12 +97,20 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
 
       <WebOnly>
         <section className="sec" style={{ display: "grid", gap: 12 }}>
-          <Link className="merch-cta press reveal" href={`/${params.locale}/merchants`}>
-            <div><b>{t.merchCta}</b><span>{t.merchSub}</span></div><i>→</i>
-          </Link>
-          <Link className="merch-cta alt press reveal" href={`/${params.locale}/agents`}>
-            <div><b>{t.agCtaHome}</b><span>{t.agCtaHomeSub}</span></div><i>→</i>
-          </Link>
+          <div className="pcta reveal">
+            <div><b>{t.bzTitle}</b><span>{t.bzSub}</span></div>
+            <div className="pcta-acts">
+              <Link className="btn press pcta-btn" href={`/${params.locale}/merchants#start`}>{t.bzBtn}</Link>
+              <Link className="pcta-link" href={`/${params.locale}/merchants#plans`}>{t.bzLink}</Link>
+            </div>
+          </div>
+          <div className="pcta alt reveal">
+            <div><b>{t.hpTitle}</b><span>{t.hpSub}</span></div>
+            <div className="pcta-acts">
+              <Link className="btn press pcta-btn" href={`/${params.locale}/agents#join`}>{t.hpBtn}</Link>
+              <Link className="pcta-link" href={`/${params.locale}/agents#how`}>{t.hpLink}</Link>
+            </div>
+          </div>
         </section>
       </WebOnly>
     </main>
