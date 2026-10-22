@@ -34,6 +34,7 @@ import { Wallet } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { CommentsButton } from "./Comments";
 import Portal from "@/components/Portal";
+import { OfferCard } from "@/components/OfferCard";
 import { achievementText } from "@/lib/achievement-text";
 // Separadores carregados só quando abertos.
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
@@ -379,16 +380,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                             <>
                               <span className="label">{t.nearby} · <span className="ad-tag">{t.adPartner}</span></span>
                               <div className="offers">
-                                {here.map((o) => (
-                                  <div key={o.id} className="offer">
-                                    <div>
-                                      <span className="cat">{t.cats[o.category as keyof Dict["cats"]] ?? o.category}</span>
-                                      <b>{o.name}</b>{o.offer}
-                                      {o.instagram && <div className="hint">@{o.instagram}</div>}
-                                    </div>
-                                    {o.featured && <span className="feat">{t.featured}</span>}
-                                  </div>
-                                ))}
+                                {here.map((o) => <OfferCard key={o.id} o={o} t={t} locale={locale} />)}
                               </div>
                             </>
                           )}

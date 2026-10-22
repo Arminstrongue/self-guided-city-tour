@@ -9,13 +9,14 @@ import { agentByCode } from "@/lib/agents";
 import { rateLimit } from "@/lib/rate-limit";
 import { loadCity } from "@/lib/content";
 import { LOCALES } from "@/i18n/core";
+import { MERCHANT_CATS, MerchantExtras, bookKind, cleanPhone, cleanUrl } from "@/lib/booking";
 
 export const runtime = "nodejs";
 const handle = z.string().max(120).optional().default("").transform((s) => s.trim().replace(/^@/, "") || null);
 
 const Body = z.object({
   name: z.string().trim().min(2).max(80),
-  category: z.enum(["food", "cafe", "stay", "hotel", "guesthouse", "shop", "exp", "bag"]),
+  category: z.enum(MERCHANT_CATS),
   city: z.string(),
   stopId: z.string(),
   offer: z.string().trim().min(3).max(140),
@@ -24,7 +25,7 @@ const Body = z.object({
   plan: z.enum(["basic", "featured", "partner"]),
   locale: z.enum(LOCALES),
   agent: z.string().max(12).optional()
-});
+}).merge(MerchantExtras);
 
 export async function POST(req: Request) {
   if (!rateLimit(req, "merchants", 10)) return NextResponse.json({ error: "rate" }, { status: 429 });
@@ -36,10 +37,14 @@ export async function POST(req: Request) {
 
   const agent = await agentByCode(b.agent);
   const d = await db();
+  const bookable = bookKind(b.category) !== null;
   const [m] = await d.insert(schema.merchants).values({
     name: b.name, category: b.category, city: city.id, stopId: b.stopId, offer: b.offer, email: b.email.toLowerCase(),
-    instagram: b.instagram, tiktok: b.tiktok, facebook: b.facebook, plan: b.plan, status: "pending", refCode: newRefCode(), agentId: agent?.status === "active" ? agent.id : null
+    instagram: b.instagram, tiktok: b.tiktok, facebook: b.facebook, plan: b.plan, status: "pending", refCode: newRefCode(), agentId: agent?.status === "active" ? agent.id : null,
+    bookMode: bookable ? b.bookMode : "none", bookOptions: bookable ? b.bookOptions.filter((o) => o.name) : [],
+    bookingUrl: cleanUrl(b.bookingUrl), phone: cleanPhone(b.phone), photoCount: b.photos.length, locale: b.locale
   }).returning();
+  await d.insert(schema.merchantPhotos).values(b.photos.map((data, idx) => ({ merchantId: m.id, idx, data })));
 
   const done = `${env.appUrl}/${b.locale}/merchants/done?id=${m.id}`;
   if (b.plan === "basic") return NextResponse.json({ url: done }); // plano grátis: aprovado no painel de administração

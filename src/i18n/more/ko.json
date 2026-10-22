@@ -776,7 +776,8 @@
 "exp": "체험",
 "bag": "짐 보관",
 "hotel": "호텔",
-"guesthouse": "게스트하우스"
+"guesthouse": "게스트하우스",
+"car": "렌터카"
 },
 "mPlans": {
 "basic": [
@@ -1628,5 +1629,64 @@
 "et": "공항 환승 구역을 벗어나지 않으면 비자가 필요 없어요.",
 "ao": "관광 목적이면 입국 1회당 최대 90일까지 무비자예요. 황열병 예방접종 증명서가 필수예요.",
 "br": "전자비자 승인에 며칠 걸려요. 미리 신청하세요."
+},
+"mPhotos": "매장 사진",
+"mPhotosHint": "직접 찍은 사진 1~4장 — 첫 번째 사진이 경로에 표시돼요.",
+"mPhotoAdd": "사진 추가",
+"mPhotoRemove": "삭제",
+"mPhotoErr": "매장 사진을 1장 이상 추가하세요.",
+"mBook": "예약",
+"mBookOn": "여행자의 예약 요청 받기",
+"mBookHow": "요청은 이메일로 도착해요. 답장으로 여행자와 직접 확정하세요. VOYBU는 예약 수수료를 받지 않아요.",
+"mOptPrice": "가격 (선택)",
+"mOptPricePh": "예: 1박 80유로",
+"mOptAdd": "옵션 추가",
+"mBookUrl": "예약 페이지 (선택)",
+"mPhone": "전화 / WhatsApp (선택)",
+"mbBook": "예약",
+"mbOwnSite": "공식 사이트에서 예약",
+"mbCall": "전화",
+"mbDate": "날짜",
+"mbTime": "시간",
+"mbCheckin": "체크인",
+"mbCheckout": "체크아웃",
+"mbPickup": "픽업",
+"mbReturn": "반납",
+"mbPeople": "인원",
+"mbGuests": "투숙 인원",
+"mbRooms": "객실 수",
+"mbBags": "짐 개수",
+"mbChoose": "선택 (선택 사항)",
+"mbAny": "상관없음",
+"mbName": "이름",
+"mbEmail": "이메일",
+"mbPhone": "전화번호 (선택)",
+"mbNote": "메시지 (선택)",
+"mbSend": "요청 보내기",
+"mbSent": "요청을 보냈어요! {b}에서 이메일로 확정 답장을 보낼 거예요. VOYBU에서는 결제되지 않아요.",
+"mbErr": "날짜를 확인하고 이름과 이메일을 입력하세요.",
+"mbHow": "확정된 예약이 아닌 요청이에요. 매장에서 직접 확정해 드려요.",
+"mbPhotos": "{b} 사진",
+"mbUnavailable": "이 매장은 지금 요청을 받지 않아요.",
+"mBookOpts": {
+"table": "테이블 또는 메뉴 (선택)",
+"room": "객실 유형 (선택)",
+"car": "이용 가능한 차량 (선택)",
+"slot": "체험 또는 시간대 (선택)",
+"bag": "보관함 크기 (선택)"
+},
+"mOptNamePh": {
+"table": "예: 테라스 테이블",
+"room": "예: 더블룸",
+"car": "예: 소형 자동",
+"slot": "예: 일몰 투어",
+"bag": "예: 대형 캐리어"
+},
+"mbReq": {
+"table": "테이블 예약",
+"room": "객실 예약",
+"car": "차량 렌트",
+"slot": "예약",
+"bag": "보관 예약"
 }
 }

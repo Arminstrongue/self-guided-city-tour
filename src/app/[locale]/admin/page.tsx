@@ -158,6 +158,10 @@ export default async function Admin({ params, searchParams }: { params: { locale
 
   const pendingGuides = guides.filter((g) => g.status === "pending");
   const pendingMerchants = merchants.filter((m) => m.status === "pending");
+  const bookReqs = await d.select({ r: schema.bookingRequests, name: schema.merchants.name }).from(schema.bookingRequests)
+    .innerJoin(schema.merchants, eq(schema.merchants.id, schema.bookingRequests.merchantId)).orderBy(desc(schema.bookingRequests.createdAt)).limit(40);
+  const bookCount = new Map<string, number>();
+  for (const x of await d.select({ id: schema.bookingRequests.merchantId, n: sql<number>`count(*)::int` }).from(schema.bookingRequests).groupBy(schema.bookingRequests.merchantId)) bookCount.set(x.id, x.n);
   const pendingAgents = agents.filter((a) => a.status === "pending");
   const openReq = gBookings.reduce((a, b) => a + b.open, 0);
   const openReports = await d.select({ r: schema.reports, handle: schema.travellerProfiles.handle, name: schema.travellerProfiles.name, bio: schema.travellerProfiles.bio, postText: schema.posts.text, postPhoto: schema.posts.photo, postVideo: schema.posts.video })
@@ -277,7 +281,11 @@ export default async function Admin({ params, searchParams }: { params: { locale
           ))}
           {pendingMerchants.map((m) => (
             <div key={m.id} className="card ad-line">
-              <div className="stack" style={{ gap: 2 }}><span className="label" style={{ color: "var(--cobalt)" }}>Parceiro por ativar · plano {m.plan}</span><b>{m.name}</b><span className="hint">{m.email} · {getCity(m.city)?.n.pt}</span></div>
+              <div className="stack" style={{ gap: 2 }}><span className="label" style={{ color: "var(--cobalt)" }}>Parceiro por ativar · plano {m.plan} · {m.category}</span><b>{m.name}</b><span className="hint">{m.email} · {getCity(m.city)?.n.pt}</span>
+                <span className="hint">{m.offer}</span>
+                {m.photoCount > 0 && <div style={{ display: "flex", gap: 6, marginTop: 6 }}>{Array.from({ length: m.photoCount }, (_, i) => (
+                  <a key={i} href={`/api/merchants/photo/${m.id}?i=${i}`} target="_blank" rel="noreferrer"><img src={`/api/merchants/photo/${m.id}?i=${i}`} alt="" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }} /></a>))}</div>}
+              </div>
               <form action={setMerchantStatus}><input type="hidden" name="id" value={m.id} /><button className="btn press" name="status" value="active">Aprovar</button></form>
             </div>
           ))}
@@ -352,7 +360,7 @@ export default async function Admin({ params, searchParams }: { params: { locale
             <div className="table-wrap card"><table className="data"><thead><tr><th>Nome</th><th>Cidade / paragem</th><th>Plano</th><th>Estado</th><th>Código QR</th><th>Ação</th></tr></thead>
               <tbody>{merchants.map((m) => (
                 <tr key={m.id}>
-                  <td>{m.name}<div className="hint">{m.email}</div></td>
+                  <td style={{ display: "flex", gap: 8, alignItems: "center" }}>{m.photoCount > 0 && <img src={`/api/merchants/photo/${m.id}`} alt="" style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 6 }} />}<div>{m.name}<div className="hint">{m.email} · {m.category}{m.bookMode === "request" ? ` · reservas (${bookCount.get(m.id) ?? 0})` : ""}</div></div></td>
                   <td>{getCity(m.city)?.n.pt} · {getCity(m.city)?.stops.find((s) => s.id === m.stopId)?.n}</td>
                   <td>{m.plan}</td>
                   <td><span className={`pill ${m.status}`}>{m.status}</span></td>
@@ -362,6 +370,17 @@ export default async function Admin({ params, searchParams }: { params: { locale
                   </form></td>
                 </tr>))}</tbody></table></div>
           ) : <Empty icon="🏪" text="Ainda sem parceiros. Os comerciantes registam-se em /merchants." />}
+          {bookReqs.length > 0 && (
+            <div className="table-wrap card"><table className="data"><thead><tr><th>Pedido de reserva</th><th>Negócio</th><th>Datas</th><th>Viajante</th><th>Recebido</th></tr></thead>
+              <tbody>{bookReqs.map(({ r, name }) => (
+                <tr key={r.id}>
+                  <td>{r.kind}{r.option ? ` · ${r.option}` : ""}<div className="hint">{r.kind === "room" ? `${r.people} hósp. · ${r.units} quarto(s)` : r.kind === "bag" ? `${r.units} malas` : r.kind === "car" ? "" : `${r.people} pessoas`}</div></td>
+                  <td>{name}</td>
+                  <td>{r.dateFrom}{r.dateTo ? ` → ${r.dateTo}` : ""}{r.time ? ` · ${r.time}` : ""}</td>
+                  <td>{r.name}<div className="hint">{r.email}</div></td>
+                  <td>{fmtDay(r.createdAt)}</td>
+                </tr>))}</tbody></table></div>
+          )}
         </section>
 
         <section id="comerciais" className="stack ad-sec">

@@ -776,7 +776,8 @@
 "exp": "Deneyim",
 "bag": "Bagaj emanet",
 "hotel": "Otel",
-"guesthouse": "Pansiyon"
+"guesthouse": "Pansiyon",
+"car": "Araç kiralama"
 },
 "mPlans": {
 "basic": [
@@ -1628,5 +1629,64 @@
 "et": "Havalimanı transit alanından çıkmazsanız vize gerekmez.",
 "ao": "Turizm için her girişte 90 güne kadar vize muafiyeti. Sarı humma aşı belgesi zorunludur.",
 "br": "E-vizenin onayı birkaç gün sürer: önceden başvurun."
+},
+"mPhotos": "İşletmenizin fotoğrafları",
+"mPhotosHint": "Kendi çektiğiniz 1–4 fotoğraf — ilki rotada görünür.",
+"mPhotoAdd": "Fotoğraf ekle",
+"mPhotoRemove": "Kaldır",
+"mPhotoErr": "İşletmenizin en az bir fotoğrafını ekleyin.",
+"mBook": "Rezervasyonlar",
+"mBookOn": "Gezginlerden rezervasyon talebi al",
+"mBookHow": "Talepler e-postayla gelir; gezginle doğrudan onaylamak için yanıtlayın. VOYBU rezervasyonlardan komisyon almaz.",
+"mOptPrice": "Fiyat (isteğe bağlı)",
+"mOptPricePh": "Örn. gecelik 80 €",
+"mOptAdd": "Seçenek ekle",
+"mBookUrl": "Rezervasyon sayfanız (isteğe bağlı)",
+"mPhone": "Telefon / WhatsApp (isteğe bağlı)",
+"mbBook": "Rezervasyon",
+"mbOwnSite": "Kendi sitelerinden rezervasyon",
+"mbCall": "Ara",
+"mbDate": "Tarih",
+"mbTime": "Saat",
+"mbCheckin": "Giriş",
+"mbCheckout": "Çıkış",
+"mbPickup": "Teslim alma",
+"mbReturn": "İade",
+"mbPeople": "Kişi",
+"mbGuests": "Misafir",
+"mbRooms": "Oda",
+"mbBags": "Bavul",
+"mbChoose": "Seçin (isteğe bağlı)",
+"mbAny": "Fark etmez",
+"mbName": "Adınız",
+"mbEmail": "E-posta",
+"mbPhone": "Telefon (isteğe bağlı)",
+"mbNote": "Mesaj (isteğe bağlı)",
+"mbSend": "Talep gönder",
+"mbSent": "Talep gönderildi! {b} onaylamak için e-postanıza yanıt verecek. VOYBU üzerinden ücret alınmaz.",
+"mbErr": "Tarihleri kontrol edin, adınızı ve e-postanızı yazın.",
+"mbHow": "Bu bir taleptir, onaylı rezervasyon değildir: işletme sizinle doğrudan onaylar.",
+"mbPhotos": "{b} fotoğrafları",
+"mbUnavailable": "Bu işletme şu anda talep kabul etmiyor.",
+"mBookOpts": {
+"table": "Masalar veya menüler (isteğe bağlı)",
+"room": "Oda tipleri (isteğe bağlı)",
+"car": "Mevcut araçlar (isteğe bağlı)",
+"slot": "Deneyimler veya saatler (isteğe bağlı)",
+"bag": "Dolap boyutları (isteğe bağlı)"
+},
+"mOptNamePh": {
+"table": "Örn. Teras masası",
+"room": "Örn. Çift kişilik oda",
+"car": "Örn. Küçük, otomatik",
+"slot": "Örn. Gün batımı turu",
+"bag": "Örn. Büyük bavul"
+},
+"mbReq": {
+"table": "Masa ayırt",
+"room": "Oda ayırt",
+"car": "Araç kirala",
+"slot": "Rezervasyon yap",
+"bag": "Emanet ayırt"
 }
 }

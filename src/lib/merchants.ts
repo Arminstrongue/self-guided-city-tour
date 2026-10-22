@@ -2,6 +2,7 @@ import type Stripe from "stripe";
 import { randomBytes } from "node:crypto";
 import { and, eq } from "drizzle-orm";
 import { db, schema } from "./db";
+import { bookKind } from "./booking";
 
 export function newRefCode(): string {
   return randomBytes(5).toString("base64url").replace(/[-_]/g, "x").slice(0, 7).toUpperCase();
@@ -48,7 +49,9 @@ async function loadOffers(cityId: string) {
   const rank = { partner: 0, featured: 1, basic: 2 } as const;
   return rows.sort((a, b) => rank[a.plan] - rank[b.plan]).map((m) => ({
     id: m.id, stopId: m.stopId, name: m.name, category: m.category, offer: m.offer,
-    instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic"
+    instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic",
+    photos: m.photoCount, book: m.bookMode === "request" ? bookKind(m.category) : null, options: m.bookOptions,
+    bookingUrl: m.bookingUrl, phone: m.phone
   }));
 }
 export type Offer = Awaited<ReturnType<typeof loadOffers>>[number];

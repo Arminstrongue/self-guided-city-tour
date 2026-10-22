@@ -736,7 +736,8 @@
 "acDeleteType": "Escribe DELETE para confirmar",
 "acDeleteBtn": "Eliminar mi cuenta definitivamente",
 "cats": {
-"hotel": "Hotel"
+"hotel": "Hotel",
+"car": "Alquiler de coches"
 },
 "tipK": {
 "sim": "Internet"
@@ -1195,5 +1196,64 @@
 "et": "Si no sales de la zona de tránsito del aeropuerto no necesitas visado.",
 "ao": "Exención de visado de turismo hasta 90 días por entrada. Es obligatorio el certificado de vacuna contra la fiebre amarilla.",
 "br": "El e-visa tarda unos días en aprobarse: solicítalo con antelación."
+},
+"mPhotos": "Fotos de tu negocio",
+"mPhotosHint": "De 1 a 4 fotos propias: la primera aparece en la ruta.",
+"mPhotoAdd": "Añadir foto",
+"mPhotoRemove": "Quitar",
+"mPhotoErr": "Añade al menos una foto de tu negocio.",
+"mBook": "Reservas",
+"mBookOn": "Aceptar solicitudes de reserva de los viajeros",
+"mBookHow": "Las solicitudes llegan por email; responde para confirmar directamente con el viajero. VOYBU no cobra comisión por las reservas.",
+"mOptPrice": "Precio (opcional)",
+"mOptPricePh": "P. ej. 80 €/noche",
+"mOptAdd": "Añadir opción",
+"mBookUrl": "Tu página de reservas (opcional)",
+"mPhone": "Teléfono / WhatsApp (opcional)",
+"mbBook": "Reservar",
+"mbOwnSite": "Reservar en su web",
+"mbCall": "Llamar",
+"mbDate": "Fecha",
+"mbTime": "Hora",
+"mbCheckin": "Entrada",
+"mbCheckout": "Salida",
+"mbPickup": "Recogida",
+"mbReturn": "Devolución",
+"mbPeople": "Personas",
+"mbGuests": "Huéspedes",
+"mbRooms": "Habitaciones",
+"mbBags": "Maletas",
+"mbChoose": "Elige (opcional)",
+"mbAny": "Sin preferencia",
+"mbName": "Tu nombre",
+"mbEmail": "Email",
+"mbPhone": "Teléfono (opcional)",
+"mbNote": "Mensaje (opcional)",
+"mbSend": "Enviar solicitud",
+"mbSent": "¡Solicitud enviada! {b} responderá a tu email para confirmar. VOYBU no cobra nada.",
+"mbErr": "Revisa las fechas y escribe tu nombre y email.",
+"mbHow": "Es una solicitud, no una reserva confirmada: el negocio confirma directamente contigo.",
+"mbPhotos": "Fotos de {b}",
+"mbUnavailable": "Este negocio no acepta solicitudes ahora.",
+"mBookOpts": {
+"table": "Mesas o menús (opcional)",
+"room": "Tipos de habitación (opcional)",
+"car": "Coches disponibles (opcional)",
+"slot": "Experiencias u horarios (opcional)",
+"bag": "Tamaños de taquilla (opcional)"
+},
+"mOptNamePh": {
+"table": "P. ej. Mesa en terraza",
+"room": "P. ej. Habitación doble",
+"car": "P. ej. Compacto automático",
+"slot": "P. ej. Tour al atardecer",
+"bag": "P. ej. Maleta grande"
+},
+"mbReq": {
+"table": "Reservar mesa",
+"room": "Reservar habitación",
+"car": "Alquilar coche",
+"slot": "Reservar",
+"bag": "Reservar consigna"
 }
 }

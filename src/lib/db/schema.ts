@@ -32,6 +32,14 @@ export const merchants = pgTable("merchants", {
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
   agentId: uuid("agent_id"),
+  /** Reservas: "request" = o viajante envia um pedido pela VOYBU (chega por email); "none" = só mostra a oferta. */
+  bookMode: text("book_mode").notNull().default("none"),
+  /** Tipos de quarto, mesa, carro ou experiência que o viajante pode escolher no pedido. */
+  bookOptions: jsonb("book_options").$type<{ name: string; price: string }[]>().notNull().default([]),
+  bookingUrl: text("booking_url"),
+  phone: text("phone"),
+  photoCount: integer("photo_count").notNull().default(0),
+  locale: text("locale").notNull().default("en"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [
   uniqueIndex("merchants_ref_idx").on(t.refCode),
@@ -39,6 +47,34 @@ export const merchants = pgTable("merchants", {
   index("merchants_agent_idx").on(t.agentId),
   index("merchants_city_stop_idx").on(t.city, t.stopId)
 ]);
+
+/** Fotos do negócio (data URL JPEG reduzida no telemóvel, ≤ ~450 KB cada; até 4 por negócio). */
+export const merchantPhotos = pgTable("merchant_photos", {
+  merchantId: uuid("merchant_id").notNull().references(() => merchants.id, { onDelete: "cascade" }),
+  idx: integer("idx").notNull(),
+  data: text("data").notNull()
+}, (t) => [uniqueIndex("merchant_photos_idx").on(t.merchantId, t.idx)]);
+
+/** Pedidos de reserva (mesa, quarto, carro, experiência, bagagem) enviados ao negócio por email. */
+export const bookingRequests = pgTable("booking_requests", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  merchantId: uuid("merchant_id").notNull().references(() => merchants.id, { onDelete: "cascade" }),
+  kind: text("kind").notNull(),
+  option: text("option").notNull().default(""),
+  dateFrom: text("date_from").notNull(),
+  dateTo: text("date_to").notNull().default(""),
+  time: text("time").notNull().default(""),
+  people: integer("people").notNull().default(1),
+  units: integer("units").notNull().default(1),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull().default(""),
+  note: text("note").notNull().default(""),
+  locale: text("locale").notNull().default("en"),
+  status: text("status").notNull().default("new"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("booking_requests_merchant_idx").on(t.merchantId, t.createdAt)]);
+export type BookingRequest = typeof bookingRequests.$inferSelect;
 
 export const accesses = pgTable("accesses", {
   id: uuid("id").primaryKey().defaultRandom(),

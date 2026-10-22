@@ -282,7 +282,8 @@
 },
 "cats": {
 "hotel": "Hotel",
-"food": "Ristorante"
+"food": "Ristorante",
+"car": "Noleggio auto"
 },
 "agKinds": {
 "hotel": "Hotel",
@@ -1195,5 +1196,64 @@
 "et": "Se non esci dall'area di transito dell'aeroporto non serve il visto.",
 "ao": "Esenzione dal visto turistico fino a 90 giorni per ingresso. Obbligatorio il certificato di vaccinazione contro la febbre gialla.",
 "br": "L'e-visa richiede alcuni giorni: chiedilo in anticipo."
+},
+"mPhotos": "Foto della tua attività",
+"mPhotosHint": "Da 1 a 4 foto tue: la prima appare sul percorso.",
+"mPhotoAdd": "Aggiungi foto",
+"mPhotoRemove": "Rimuovi",
+"mPhotoErr": "Aggiungi almeno una foto della tua attività.",
+"mBook": "Prenotazioni",
+"mBookOn": "Accetta richieste di prenotazione dai viaggiatori",
+"mBookHow": "Le richieste arrivano via email; rispondi per confermare direttamente con il viaggiatore. VOYBU non prende commissioni.",
+"mOptPrice": "Prezzo (facoltativo)",
+"mOptPricePh": "Es. 80 €/notte",
+"mOptAdd": "Aggiungi opzione",
+"mBookUrl": "La tua pagina di prenotazione (facoltativa)",
+"mPhone": "Telefono / WhatsApp (facoltativo)",
+"mbBook": "Prenota",
+"mbOwnSite": "Prenota sul loro sito",
+"mbCall": "Chiama",
+"mbDate": "Data",
+"mbTime": "Ora",
+"mbCheckin": "Arrivo",
+"mbCheckout": "Partenza",
+"mbPickup": "Ritiro",
+"mbReturn": "Riconsegna",
+"mbPeople": "Persone",
+"mbGuests": "Ospiti",
+"mbRooms": "Camere",
+"mbBags": "Bagagli",
+"mbChoose": "Scegli (facoltativo)",
+"mbAny": "Nessuna preferenza",
+"mbName": "Il tuo nome",
+"mbEmail": "Email",
+"mbPhone": "Telefono (facoltativo)",
+"mbNote": "Messaggio (facoltativo)",
+"mbSend": "Invia richiesta",
+"mbSent": "Richiesta inviata! {b} risponderà alla tua email per confermare. VOYBU non addebita nulla.",
+"mbErr": "Controlla le date e inserisci nome ed email.",
+"mbHow": "È una richiesta, non una prenotazione confermata: l'attività conferma direttamente con te.",
+"mbPhotos": "Foto di {b}",
+"mbUnavailable": "Questa attività non accetta richieste al momento.",
+"mBookOpts": {
+"table": "Tavoli o menù (facoltativo)",
+"room": "Tipi di camera (facoltativo)",
+"car": "Auto disponibili (facoltativo)",
+"slot": "Esperienze o orari (facoltativo)",
+"bag": "Misure armadietto (facoltativo)"
+},
+"mOptNamePh": {
+"table": "Es. Tavolo in terrazza",
+"room": "Es. Camera doppia",
+"car": "Es. Utilitaria automatica",
+"slot": "Es. Tour al tramonto",
+"bag": "Es. Valigia grande"
+},
+"mbReq": {
+"table": "Prenota un tavolo",
+"room": "Prenota una camera",
+"car": "Noleggia un'auto",
+"slot": "Prenota",
+"bag": "Prenota deposito"
 }
 }

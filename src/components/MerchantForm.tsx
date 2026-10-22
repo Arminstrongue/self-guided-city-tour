@@ -2,24 +2,49 @@
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { INTL_LOCALE } from "@/i18n/core";
+import { MAX_OPTIONS, MAX_PHOTOS, MAX_PHOTO_CHARS, bookKind } from "@/lib/booking";
+
+/** Foto do negócio reduzida no telemóvel: lado maior ≤ 1280 px, JPEG ≤ ~350 KB. */
+async function shrink(file: File): Promise<string> {
+  const img = await createImageBitmap(file);
+  const k = Math.min(1, 1280 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+  c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
+  let q = 0.82, data = c.toDataURL("image/jpeg", q);
+  while (data.length > MAX_PHOTO_CHARS - 10_000 && q > 0.3) { q -= 0.08; data = c.toDataURL("image/jpeg", q); }
+  return data;
+}
 
 type CityOpt = { id: string; name: string; stops: { id: string; name: string }[] };
 type Plan = "basic" | "featured" | "partner";
 
 export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string }) {
   const [f, setF] = useState({ name: "", category: "food", city: cities[0].id, stopId: cities[0].stops[0].id, offer: "", email: "", instagram: "", tiktok: "", facebook: "", plan: "featured" as Plan });
+  const [photos, setPhotos] = useState<string[]>([]);
+  const [book, setBook] = useState({ on: true, options: [] as { name: string; price: string }[], url: "", phone: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const city = cities.find((c) => c.id === f.city) ?? cities[0];
+  const kind = bookKind(f.category);
+  async function addPhotos(files: FileList | null) {
+    if (!files) return;
+    const room = MAX_PHOTOS - photos.length;
+    const out: string[] = [];
+    for (const file of Array.from(files).slice(0, room)) { try { out.push(await shrink(file)); } catch { /* ficheiro inválido */ } }
+    setPhotos((p) => [...p, ...out].slice(0, MAX_PHOTOS));
+  }
+  const setOpt = (i: number, k: "name" | "price", v: string) => setBook((b) => ({ ...b, options: b.options.map((o, j) => (j === i ? { ...o, [k]: v } : o)) }));
   const money = (c: number) => new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(c / 100);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (f.name.trim().length < 2 || f.offer.trim().length < 3 || !/^\S+@\S+\.\S+$/.test(f.email)) return setError(t.mErr);
+    if (!photos.length) return setError(t.mPhotoErr);
     setBusy(true); setError("");
     try {
-      const res = await fetch("/api/merchants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, locale, agent: agent || undefined }) });
+      const res = await fetch("/api/merchants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, locale, agent: agent || undefined, photos,
+        bookMode: kind && book.on ? "request" : "none", bookOptions: kind ? book.options.filter((o) => o.name.trim()) : [], bookingUrl: book.url, phone: book.phone }) });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error();
       window.location.href = data.url;
@@ -44,6 +69,46 @@ export function MerchantForm({ locale, t, cities, prices, agent }: { locale: Loc
           {city.stops.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select></div>
       <div className="field"><label htmlFor="m-offer">{t.mOffer}</label><input id="m-offer" placeholder={t.mOfferPh} value={f.offer} onChange={(e) => set("offer", e.target.value)} maxLength={140} /></div>
+      <span className="label">{t.mPhotos}</span>
+      <div className="mb-photos">
+        {photos.map((p, i) => (
+          <div key={i} className="mb-ph">
+            <img src={p} alt="" />
+            <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setPhotos((a) => a.filter((_, j) => j !== i))}>×</button>
+          </div>
+        ))}
+        {photos.length < MAX_PHOTOS && (
+          <label className="mb-ph mb-add press">
+            <input type="file" accept="image/*" multiple hidden onChange={(e) => { void addPhotos(e.target.files); e.target.value = ""; }} />
+            <span>＋</span><small>{t.mPhotoAdd}</small>
+          </label>
+        )}
+      </div>
+      <p className="hint">{t.mPhotosHint}</p>
+      {kind && (
+        <>
+          <span className="label">{t.mBook}</span>
+          <label className="mb-check"><input type="checkbox" checked={book.on} onChange={(e) => setBook((b) => ({ ...b, on: e.target.checked }))} /> {t.mBookOn}</label>
+          {book.on && (
+            <>
+              <p className="hint">{t.mBookHow}</p>
+              <span className="hint" style={{ fontWeight: 600 }}>{t.mBookOpts[kind]}</span>
+              {book.options.map((o, i) => (
+                <div key={i} className="mb-opt">
+                  <input aria-label={t.mBookOpts[kind]} placeholder={t.mOptNamePh[kind]} value={o.name} maxLength={60} onChange={(e) => setOpt(i, "name", e.target.value)} />
+                  <input aria-label={t.mOptPrice} placeholder={t.mOptPricePh} value={o.price} maxLength={40} onChange={(e) => setOpt(i, "price", e.target.value)} />
+                  <button type="button" className="mb-x" aria-label={t.mPhotoRemove} onClick={() => setBook((b) => ({ ...b, options: b.options.filter((_, j) => j !== i) }))}>×</button>
+                </div>
+              ))}
+              {book.options.length < MAX_OPTIONS && (
+                <button type="button" className="btn ghost press" onClick={() => setBook((b) => ({ ...b, options: [...b.options, { name: "", price: "" }] }))}>＋ {t.mOptAdd}</button>
+              )}
+            </>
+          )}
+          <div className="field"><label htmlFor="m-url">{t.mBookUrl}</label><input id="m-url" type="url" inputMode="url" placeholder="https://" value={book.url} onChange={(e) => setBook((b) => ({ ...b, url: e.target.value }))} maxLength={300} /></div>
+        </>
+      )}
+      <div className="field"><label htmlFor="m-phone">{t.mPhone}</label><input id="m-phone" type="tel" inputMode="tel" placeholder="+351 …" value={book.phone} onChange={(e) => setBook((b) => ({ ...b, phone: e.target.value }))} maxLength={30} /></div>
       <div className="field"><label htmlFor="m-email">{t.mEmail}</label><input id="m-email" type="email" value={f.email} onChange={(e) => set("email", e.target.value)} /></div>
       <span className="label">{t.mSocial}</span>
       <div className="grid2">

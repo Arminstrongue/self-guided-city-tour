@@ -273,7 +273,8 @@
 },
 "cats": {
 "hotel": "Hotel",
-"food": "Restaurant"
+"food": "Restaurant",
+"car": "Autovermietung"
 },
 "agKinds": {
 "hotel": "Hotel",
@@ -1168,5 +1169,64 @@
 "et": "Wer den Transitbereich des Flughafens nicht verlässt, braucht kein Visum.",
 "ao": "Touristen sind bis zu 90 Tage pro Einreise vom Visum befreit. Ein Gelbfieber-Impfnachweis ist Pflicht.",
 "br": "Das E-Visum braucht einige Tage: rechtzeitig beantragen."
+},
+"mPhotos": "Fotos Ihres Betriebs",
+"mPhotosHint": "1 bis 4 eigene Fotos — das erste erscheint auf der Route.",
+"mPhotoAdd": "Foto hinzufügen",
+"mPhotoRemove": "Entfernen",
+"mPhotoErr": "Fügen Sie mindestens ein Foto Ihres Betriebs hinzu.",
+"mBook": "Buchungen",
+"mBookOn": "Buchungsanfragen von Reisenden annehmen",
+"mBookHow": "Anfragen kommen per E-Mail; antworten Sie, um direkt mit dem Reisenden zu bestätigen. VOYBU nimmt keine Provision.",
+"mOptPrice": "Preis (optional)",
+"mOptPricePh": "Z. B. 80 €/Nacht",
+"mOptAdd": "Option hinzufügen",
+"mBookUrl": "Ihre Buchungsseite (optional)",
+"mPhone": "Telefon / WhatsApp (optional)",
+"mbBook": "Buchen",
+"mbOwnSite": "Auf deren Website buchen",
+"mbCall": "Anrufen",
+"mbDate": "Datum",
+"mbTime": "Uhrzeit",
+"mbCheckin": "Anreise",
+"mbCheckout": "Abreise",
+"mbPickup": "Abholung",
+"mbReturn": "Rückgabe",
+"mbPeople": "Personen",
+"mbGuests": "Gäste",
+"mbRooms": "Zimmer",
+"mbBags": "Gepäckstücke",
+"mbChoose": "Auswahl (optional)",
+"mbAny": "Egal",
+"mbName": "Ihr Name",
+"mbEmail": "E-Mail",
+"mbPhone": "Telefon (optional)",
+"mbNote": "Nachricht (optional)",
+"mbSend": "Anfrage senden",
+"mbSent": "Anfrage gesendet! {b} antwortet an Ihre E-Mail, um zu bestätigen. Über VOYBU wird nichts berechnet.",
+"mbErr": "Prüfen Sie die Daten und geben Sie Namen und E-Mail an.",
+"mbHow": "Dies ist eine Anfrage, keine bestätigte Buchung: Der Betrieb bestätigt direkt mit Ihnen.",
+"mbPhotos": "Fotos von {b}",
+"mbUnavailable": "Dieser Betrieb nimmt gerade keine Anfragen an.",
+"mBookOpts": {
+"table": "Tische oder Menüs (optional)",
+"room": "Zimmertypen (optional)",
+"car": "Verfügbare Autos (optional)",
+"slot": "Erlebnisse oder Zeiten (optional)",
+"bag": "Schließfachgrößen (optional)"
+},
+"mOptNamePh": {
+"table": "Z. B. Tisch auf der Terrasse",
+"room": "Z. B. Doppelzimmer",
+"car": "Z. B. Kleinwagen, Automatik",
+"slot": "Z. B. Sonnenuntergangstour",
+"bag": "Z. B. Großer Koffer"
+},
+"mbReq": {
+"table": "Tisch reservieren",
+"room": "Zimmer buchen",
+"car": "Auto mieten",
+"slot": "Buchen",
+"bag": "Schließfach buchen"
 }
 }
