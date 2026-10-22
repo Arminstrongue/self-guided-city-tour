@@ -142,6 +142,35 @@ export const COUNTRY_CUSTOMS: Record<string, Custom[]> = {
     c("💳", ["Pagar", "Sem gorjetas. Contactless em quase tudo; nos hawkers às vezes só dinheiro ou PayNow."], ["Paying", "No tipping. Contactless almost everywhere; hawker stalls sometimes cash or PayNow only."]),
     c("⚖️", ["Regras", "Sem lixo no chão, sem comer no MRT, sem pastilha elástica e fila para tudo — as multas são reais."], ["Rules", "No litter, no eating on the MRT, no chewing gum and queue for everything — the fines are real."]),
     c("🎉", ["Festas", "Ano Novo Chinês, Hari Raya, Deepavali e Natal: as ruas iluminam-se para todas as religiões."], ["Festivals", "Chinese New Year, Hari Raya, Deepavali and Christmas: the streets light up for every faith."])
+  ],
+  CA: [
+    c("👋", ["Cumprimentar", "Aperto de mão e muita cortesia: «sorry» e «thank you» ouvem-se a toda a hora."], ["Greetings", "A handshake and lots of courtesy: «sorry» and «thank you» are heard all the time."]),
+    c("💵", ["Gorjetas", "15–20% à mesa e no táxi; os preços não incluem os 13% de imposto em Ontário."], ["Tipping", "15–20% at table and in taxis; prices exclude Ontario's 13% tax."]),
+    c("🇫🇷", ["Duas línguas", "O país é oficialmente bilingue: os rótulos e as placas aparecem em inglês e francês."], ["Two languages", "The country is officially bilingual: labels and signs appear in English and French."]),
+    c("🍺", ["Álcool", "Só a partir dos 19 anos em Ontário e vendido em lojas próprias (LCBO) ou supermercados autorizados."], ["Alcohol", "Only from 19 in Ontario, sold at dedicated stores (LCBO) or licensed supermarkets."]),
+    c("🗣", ["Frases úteis", "Washroom (casa de banho) · Double-double (café com natas e açúcar) · Eh? (não é?)."], ["Useful phrases", "Washroom · Double-double (coffee with cream and sugar) · Eh? (right?)."])
+  ],
+  MX: [
+    c("👋", ["Cumprimentar", "Aperto de mão e um beijo na face entre conhecidos; diga «buenos días» ao entrar."], ["Greetings", "A handshake and one cheek kiss among acquaintances; say «buenos días» when entering."]),
+    c("🍽", ["Horários", "Pequeno-almoço farto, a «comida» principal entre as 14h e as 16h e jantar ligeiro tarde."], ["Meal times", "A hearty breakfast, the main «comida» between 2 and 4 pm and a light, late dinner."]),
+    c("💵", ["Gorjetas", "10–15% nos restaurantes, umas moedas aos arrumadores e aos que embalam as compras."], ["Tipping", "10–15% in restaurants, a few coins for parking attendants and grocery packers."]),
+    c("🌶", ["Picante", "«¿Pica?» é a pergunta certa: os molhos verdes nem sempre são os mais suaves."], ["Spice", "«¿Pica?» (is it hot?) is the right question: green salsas aren't always the mildest."]),
+    c("💀", ["Dia de Muertos", "A 1 e 2 de novembro, altares, flores cempasúchil e desfiles: celebra-se a memória, não o medo."], ["Day of the Dead", "On 1–2 November, altars, marigolds and parades: it celebrates memory, not fear."]),
+    c("🗣", ["Frases úteis", "Por favor · Gracias · ¿Cuánto cuesta? · La cuenta, por favor · ¡Provecho! (bom apetite)."], ["Useful phrases", "Por favor · Gracias · ¿Cuánto cuesta? (how much?) · La cuenta, por favor · ¡Provecho! (enjoy your meal)."])
+  ],
+  BR: [
+    c("👋", ["Cumprimentar", "Um ou dois beijinhos e abraços até com quem se acabou de conhecer; os brasileiros são calorosos."], ["Greetings", "One or two cheek kisses and hugs even with new acquaintances; Brazilians are warm."]),
+    c("💵", ["Gorjetas", "Os 10% de serviço já vêm na conta; nos táxis arredonde."], ["Tipping", "The 10% service charge is already on the bill; round up in taxis."]),
+    c("⏰", ["Horas", "A pontualidade é flexível em encontros sociais; nos negócios e nos passeios marcados chegue a horas."], ["Time", "Punctuality is relaxed socially; for business and booked tours be on time."]),
+    c("🏖", ["Praia", "A praia é a sala de estar da cidade: alugue cadeira e guarda-sol na barraca e pague no fim."], ["The beach", "The beach is the city's living room: rent a chair and umbrella from a stand and pay at the end."]),
+    c("🗣", ["Frases úteis", "Tudo bem? · Obrigado/obrigada · Quanto custa? · A conta, por favor. O português do Brasil é diferente, mas todos se entendem."], ["Useful phrases", "Tudo bem? (how are you?) · Obrigado/obrigada (thanks) · Quanto custa? · A conta, por favor (the bill)."])
+  ],
+  AR: [
+    c("👋", ["Cumprimentar", "Um beijo na face direita, mesmo entre homens que se conhecem."], ["Greetings", "One kiss on the right cheek, even between men who know each other."]),
+    c("🍽", ["Horários", "Almoço às 13h–15h e jantar a partir das 21h30; muitos restaurantes enchem só às 23h."], ["Meal times", "Lunch 1–3 pm and dinner from 9:30 pm; many restaurants fill only at 11 pm."]),
+    c("🧉", ["Mate", "A infusão partilhada: se lhe oferecerem, beba e devolva ao «cebador»; dizer «gracias» significa que não quer mais."], ["Mate", "The shared infusion: if offered, drink and hand it back to the «cebador»; saying «gracias» means you're done."]),
+    c("💵", ["Gorjetas e dinheiro", "10% nos restaurantes, em dinheiro. A inflação é alta: os preços mudam com frequência."], ["Tipping and money", "10% in restaurants, in cash. Inflation is high: prices change often."]),
+    c("🗣", ["Frases úteis", "Che (ei, amigo) · Dale (combinado) · ¿Cuánto sale? · La cuenta, por favor. Aqui diz-se «vos» em vez de «tú»."], ["Useful phrases", "Che (hey, mate) · Dale (OK) · ¿Cuánto sale? (how much?) · La cuenta, por favor. People say «vos» instead of «tú»."])
   ]
 };
 
@@ -186,5 +215,21 @@ export const CITY_COMMUNITIES: Record<string, Custom[]> = {
   bos: [c("🎓", ["Cidade universitária", "Harvard, MIT e mais de 30 universidades: em setembro a cidade enche-se de estudantes."], ["A university city", "Harvard, MIT and over 30 universities: in September the city fills with students."]),
     c("⚾", ["Desporto é religião", "Red Sox, Celtics, Patriots e Bruins — use o boné certo e não fale bem de Nova Iorque."], ["Sport is religion", "Red Sox, Celtics, Patriots and Bruins — wear the right cap and don't praise New York."])],
   mia: [c("🇨🇺", ["Miami latina", "Mais de metade da cidade fala espanhol em casa; na Little Havana ouve-se mais espanhol do que inglês."], ["Latin Miami", "More than half the city speaks Spanish at home; in Little Havana you'll hear more Spanish than English."]),
-    c("🏖", ["Vida de praia", "Pequeno-almoço ao nascer do sol, praia de manhã e jantar tarde — a cidade aquece à noite."], ["Beach life", "Breakfast at sunrise, beach in the morning and late dinners — the city heats up at night."])]
+    c("🏖", ["Vida de praia", "Pequeno-almoço ao nascer do sol, praia de manhã e jantar tarde — a cidade aquece à noite."], ["Beach life", "Breakfast at sunrise, beach in the morning and late dinners — the city heats up at night."])],
+  lax: [c("🎬", ["Cidade do cinema", "Muitos dos empregados de mesa são atores à espera da grande oportunidade; os estúdios ficam em Burbank e Culver City."], ["Movie town", "Many waiters are actors awaiting their big break; the studios are in Burbank and Culver City."]),
+    c("🌮", ["Los Angeles latina", "Quase metade da cidade é latina: as melhores comidas mexicana e salvadorenha dos EUA estão aqui."], ["Latino LA", "Nearly half the city is Latino: the best Mexican and Salvadoran food in the US is here."])],
+  las: [c("🎰", ["Regras do casino", "Só a partir dos 21 anos; não fotografe as mesas de jogo e dê gorjeta ao croupier quando ganhar."], ["Casino rules", "Only from 21; don't photograph gaming tables and tip the dealer when you win."]),
+    c("🕐", ["Cidade sem relógios", "Os casinos não têm janelas nem relógios e a Strip funciona 24 horas por dia."], ["A city without clocks", "Casinos have no windows or clocks, and the Strip runs 24 hours a day."])],
+  msy: [c("🎭", ["Mardi Gras", "Desfiles de carnaval durante semanas até à Terça-feira Gorda; apanhe os colares lançados dos carros."], ["Mardi Gras", "Carnival parades for weeks until Fat Tuesday; catch the beads thrown from the floats."]),
+    c("🎺", ["Cultura crioula", "Herança francesa, espanhola, africana e caribenha: o jazz nasceu aqui, na Congo Square."], ["Creole culture", "French, Spanish, African and Caribbean heritage: jazz was born here, in Congo Square."])],
+  mco: [c("🎢", ["Capital dos parques", "Mais de 70 milhões de visitantes por ano; a cidade vive ao ritmo dos parques temáticos."], ["Theme park capital", "Over 70 million visitors a year; the city runs on theme park time."]),
+    c("🇵🇷", ["Comunidade porto-riquenha", "Uma das maiores do país continental: procure mofongo e lechón nos restaurantes do leste."], ["Puerto Rican community", "One of the largest on the mainland: look for mofongo and lechón in east-side restaurants."])],
+  yyz: [c("🌍", ["A cidade mais diversa", "Mais de metade dos habitantes nasceu fora do Canadá; bairros grego, português, indiano e coreano."], ["The most diverse city", "Over half the residents were born outside Canada; Greek, Portuguese, Indian and Korean neighbourhoods."]),
+    c("🇵🇹", ["Little Portugal", "Na Dundas West há padarias portuguesas, galos de Barcelos e festas dos santos em junho."], ["Little Portugal", "On Dundas West you'll find Portuguese bakeries, Barcelos roosters and saints' festivals in June."])],
+  mex: [c("🏛", ["Cidade sobre um lago", "A cidade foi construída sobre o lago de Tenochtitlan e afunda alguns centímetros por ano: repare nas igrejas inclinadas."], ["A city on a lake", "The city was built on Tenochtitlan's lake and sinks a few centimetres a year: notice the tilted churches."]),
+    c("🛍", ["Mercados", "Cada bairro tem o seu mercado coberto com comida barata; o de San Juan e o de Coyoacán são os mais conhecidos."], ["Markets", "Every neighbourhood has a covered market with cheap food; San Juan and Coyoacán are the best known."])],
+  rio: [c("🥁", ["Carnaval e samba", "Os ensaios das escolas de samba começam meses antes do Carnaval e são abertos ao público."], ["Carnival and samba", "Samba school rehearsals start months before Carnival and are open to the public."]),
+    c("🏐", ["Cultura de praia", "Futevólei, frescobol e o mergulho ao fim do dia; cada posto de praia tem a sua tribo."], ["Beach culture", "Footvolley, paddleball and a sunset swim; every lifeguard post has its own tribe."])],
+  bue: [c("💃", ["Tango", "O tango nasceu nos bairros do porto; as milongas são bailes onde se dança até de madrugada."], ["Tango", "Tango was born in the port districts; milongas are dances that go on till dawn."]),
+    c("☕", ["Cafés notáveis", "A cidade protege dezenas de «bares notables» históricos; tomar um cortado e ler o jornal é ritual."], ["Notable cafés", "The city protects dozens of historic «bares notables»; a cortado and the newspaper is a ritual."])]
 };

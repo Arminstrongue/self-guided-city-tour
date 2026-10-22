@@ -3,6 +3,14 @@
  * ("Coliseu", "Torre de Belém", "A e B"); nos outros idiomas mostramos o nome internacional.
  */
 const EN: Record<string, string> = {
+  "la-olvera": "Olvera Street & Union Station", "la-gcm": "Grand Central Market & Angels Flight", "la-disney": "Walt Disney Concert Hall & The Broad", "la-hollywood": "Hollywood Walk of Fame", "la-griffith": "Griffith Observatory", "la-santamonica": "Santa Monica Pier & Venice",
+  "lv-sign": "Welcome to Fabulous Las Vegas sign", "lv-bellagio": "Bellagio Fountains", "lv-caesars": "Caesars Palace & Forum Shops", "lv-venetian": "The Venetian & Sphere",
+  "nola-jackson": "Jackson Square & St. Louis Cathedral", "nola-cafe": "Café du Monde & French Market", "nola-bourbon": "Bourbon Street & Preservation Hall", "nola-garden": "St. Charles Streetcar & Garden District",
+  "orl-eola": "Lake Eola", "orl-idrive": "ICON Park & International Drive",
+  "to-nathan": "Nathan Phillips Square & City Hall", "to-kensington": "Kensington Market & Chinatown", "to-rom": "Royal Ontario Museum & Yorkville",
+  "mx-zocalo": "Zócalo & Metropolitan Cathedral", "mx-madero": "Calle Madero & House of Tiles", "mx-bellas": "Palacio de Bellas Artes & Alameda", "mx-antropologia": "National Museum of Anthropology", "mx-condesa": "Condesa & Roma",
+  "rio-selaron": "Selarón Steps", "rio-arcos": "Lapa Arches", "rio-theatro": "Theatro Municipal & Cinelândia", "rio-amanha": "Museum of Tomorrow & Praça Mauá", "rio-cristo": "Christ the Redeemer", "rio-pao": "Sugarloaf Mountain",
+  "ba-mayo": "Plaza de Mayo & Casa Rosada", "ba-tortoni": "Avenida de Mayo & Café Tortoni", "ba-obelisco": "Obelisco & Teatro Colón", "ba-santelmo": "San Telmo & Plaza Dorrego", "ba-boca": "La Boca & Caminito", "ba-recoleta": "Recoleta Cemetery",
   "ny-911": "9/11 Memorial & One World Trade", "ny-wall": "Wall Street & Charging Bull", "ny-brooklyn": "Brooklyn Bridge", "ny-chinatown": "Chinatown & Little Italy",
   "ny-rock": "Rockefeller Center & St Patrick's Cathedral", "ny-highline": "High Line & Chelsea Market",
   "dc-capitol": "US Capitol", "dc-library": "Library of Congress", "dc-mall": "National Mall & Smithsonian museums", "dc-monument": "Washington Monument",
@@ -57,6 +65,7 @@ export function stopName(s: { id: string; n: string }, locale: string): string {
 
 /** Indicações de linhas e percursos (escritas em português em cities.ts) em inglês para os outros idiomas. */
 const LINE_EN: [RegExp, string][] = [
+  [/Pela ponte pedonal/g, "Over the footbridge"], [/Táxi autorizado/g, "Authorised taxi"], [/Desde /g, "From "], [/Trem do Corcovado/g, "Corcovado train"],
   [/Linha Prata/g, "Silver Line"], [/Linha Laranja/g, "Orange Line"], [/Elétrico F \(elétricos históricos\)/g, "F-line streetcar (historic)"], [/grátis desde o aeroporto/g, "free from the airport"],
   [/autocarro do terminal/g, "terminal shuttle"], [/Pelo Reflecting Pool/g, "Along the Reflecting Pool"], [/Pela 5\.ª Avenida/g, "Along Fifth Avenue"], [/Porta do Dragão/g, "Dragon Gate"],
   [/A subir pela/g, "Uphill along"], [/Pelo passeio marítimo/g, "Along the seafront"],

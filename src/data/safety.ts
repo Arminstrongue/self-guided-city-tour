@@ -24,6 +24,9 @@ const HELP = {
   en: { lang: "en-GB", text: "Help! I need help. Please call the police or an ambulance." },
   ar: { lang: "ar", text: "النجدة! أحتاج إلى مساعدة. من فضلك اتصل بالشرطة أو الإسعاف." },
   de: { lang: "de-DE", text: "Hilfe! Ich brauche Hilfe. Bitte rufen Sie die Polizei oder einen Krankenwagen." },
+  mx: { lang: "es-MX", text: "¡Auxilio! Necesito ayuda. Por favor, llame a la policía o a una ambulancia." },
+  ar_es: { lang: "es-AR", text: "¡Auxilio! Necesito ayuda. Por favor, llame a la policía o a una ambulancia." },
+  br: { lang: "pt-BR", text: "Socorro! Preciso de ajuda. Por favor, chame a polícia ou uma ambulância." },
   cs: { lang: "cs-CZ", text: "Pomoc! Potřebuji pomoc. Zavolejte prosím policii nebo záchranku." }
 };
 
@@ -45,7 +48,11 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   AT: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "133" }, { k: "ambulance", n: "144" }, { k: "fire", n: "122" }, { k: "health", n: "1450" }], help: HELP.de, pharmacy: "Apotheke (A)" },
   CZ: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "158" }, { k: "ambulance", n: "155" }, { k: "fire", n: "150" }], help: HELP.cs, pharmacy: "Lékárna ✚" },
   SG: { nums: [{ k: "police", n: "999" }, { k: "ambulance", n: "995" }, { k: "fire", n: "995" }, { k: "nonurgent", n: "1800 255 0000" }], help: HELP.en, pharmacy: "Pharmacy (Guardian · Watsons · Unity)" },
-  US: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }], help: HELP.en, pharmacy: "Pharmacy (CVS · Walgreens)" }
+  US: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }], help: HELP.en, pharmacy: "Pharmacy (CVS · Walgreens)" },
+  CA: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }, { k: "health", n: "811" }], help: HELP.en, pharmacy: "Pharmacy (Shoppers Drug Mart · Rexall)" },
+  MX: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "078" }], help: HELP.mx, pharmacy: "Farmacia (Farmacias del Ahorro · Guadalajara)" },
+  BR: { nums: [{ k: "police", n: "190" }, { k: "ambulance", n: "192" }, { k: "fire", n: "193" }], help: HELP.br, pharmacy: "Farmácia (Drogasil · Pacheco)" },
+  AR: { nums: [{ k: "sos", n: "911" }, { k: "ambulance", n: "107" }, { k: "fire", n: "100" }], help: HELP.ar_es, pharmacy: "Farmacia ✚" }
 };
 
 const UK: AlertKey[] = ["lefttraffic", "pickpocket", "snatch"];
@@ -84,7 +91,15 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   sfo: { alerts: ["snatch", "pickpocket", "nightwalk"], hot: ["Union Square", "Market Street", "Fisherman's Wharf", "Cable cars"], night: ["Tenderloin", "Civic Center", "6th Street (SoMa)"] },
   chi: { alerts: ["pickpocket", "snatch", "nightwalk"], hot: ["Magnificent Mile", "Linha Vermelha e Azul do metro", "Navy Pier"], night: ["Linhas de metro à noite", "Zonas fora do Loop e do Near North"] },
   bos: { alerts: ["pickpocket", "nightwalk"], hot: ["Faneuil Hall", "Downtown Crossing", "Linhas do metro na hora de ponta"], night: ["Boston Common de madrugada"] },
-  mia: { alerts: ["heat", "bar", "snatch", "nightwalk"], hot: ["Ocean Drive", "Lincoln Road", "Praia (pertences sem vigilância)"], night: ["Ocean Drive (bares com contas inflacionadas)", "Overtown"] }
+  mia: { alerts: ["heat", "bar", "snatch", "nightwalk"], hot: ["Ocean Drive", "Lincoln Road", "Praia (pertences sem vigilância)"], night: ["Ocean Drive (bares com contas inflacionadas)", "Overtown"] },
+  lax: { alerts: ["snatch", "pickpocket", "photo", "nightwalk"], hot: ["Hollywood Boulevard (personagens que cobram fotos)", "Metro Linha B e D", "Santa Monica Pier"], night: ["Skid Row (a leste da Main St.)", "MacArthur Park", "Estações de metro vazias"] },
+  las: { alerts: ["heat", "bar", "pickpocket", "photo", "atm"], hot: ["Strip (pontes pedonais)", "Fremont Street", "Casinos"], night: ["Ruas fora da Strip e de Fremont", "Bebidas deixadas sem vigilância"] },
+  msy: { alerts: ["pickpocket", "snatch", "shoeshine", "bar", "nightwalk"], hot: ["Bourbon Street", "Jackson Square", "French Market"], night: ["Ruas desertas fora do French Quarter e Marigny", "Bourbon Street de madrugada"], tp: "Polícia: 911 · NOPD 8.º Distrito (French Quarter): 504-658-6080" },
+  mco: { alerts: ["heat", "pickpocket", "taxi"], hot: ["Parques temáticos (filas)", "International Drive", "Estacionamentos"], night: ["Zonas de estacionamento vazias", "Paragens de autocarro isoladas"] },
+  yyz: { alerts: ["pickpocket", "nightwalk"], hot: ["Union Station", "Yonge-Dundas Square", "Linha 1 do metro na hora de ponta"], night: ["Moss Park e Dundas East de madrugada"] },
+  mex: { alerts: ["pickpocket", "snatch", "taxi", "atm", "drugs", "nightwalk"], hot: ["Metro (linhas 1, 2 e 3 cheias)", "Centro Histórico", "Zócalo em dias de evento"], night: ["Tepito e Doctores", "Centro Histórico depois das 22h", "Táxis apanhados na rua"], tp: "Polícia: 911 · use táxis de sítio, autorizados ou apps" },
+  rio: { alerts: ["snatch", "pickpocket", "atm", "drugs", "bar", "nightwalk"], hot: ["Praias (telemóvel e pertences)", "Lapa à noite", "Centro", "Escadaria Selarón"], night: ["Praias depois do anoitecer", "Centro ao fim de semana", "Comunidades sem guia local"], tp: "Delegacia Especial de Apoio ao Turismo (DEAT): +55 21 2332-2924" },
+  bue: { alerts: ["pickpocket", "snatch", "stain", "atm", "taxi", "nightwalk"], hot: ["Subte e autocarros cheios", "Florida e Lavalle", "San Telmo ao domingo", "La Boca fora do Caminito"], night: ["La Boca", "Constitución", "Retiro (estação)"], tp: "Polícia Turística: 0800-999-5000 · 911" }
 };
 
 type T = [string, string];

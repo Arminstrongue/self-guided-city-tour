@@ -41,6 +41,15 @@ const US_TOILET: Tip = { k: "toilet", pt: "Casas de banho públicas são raras: 
 const usSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Atravesse só nas passadeiras e com o sinal do peão. ${pt}`, en: `Cross only at crosswalks with the walk signal. ${en}` });
 const us = (safety: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency: "911", tips: [BAG, US_SIM, US_PAY, US_TIP, US_WATER, safety, US_PLUG, US_TOILET, ...extra], food });
 
+/* ---------- Canadá e América Latina ---------- */
+const CA_PAY: Tip = { k: "pay", pt: "Contactless em quase tudo, incluindo o metro e o UP Express (PRESTO ou cartão bancário). Os preços não incluem impostos (13% em Ontário).", en: "Contactless almost everywhere, including the subway and UP Express (PRESTO or bank card). Prices exclude tax (13% in Ontario)." };
+const CA_TIP: Tip = { k: "tip", pt: "Gorjeta esperada: 15–20% à mesa e no táxi, 1–2 CAD por bebida.", en: "Tipping is expected: 15–20% at table and in taxis, CAD 1–2 per drink." };
+const LAT_SIM: Tip = { k: "sim", pt: "Fora do roaming da UE: compre um eSIM antes de viajar ou um cartão pré-pago numa loja oficial da operadora (leve o passaporte).", en: "Outside EU roaming: buy an eSIM before you travel or a prepaid SIM at an official carrier shop (bring your passport)." };
+const LAT_WATER: Tip = { k: "water", pt: "Não beba água da torneira: use garrafa ou água filtrada, também para lavar os dentes. O gelo dos restaurantes é normalmente de água purificada.", en: "Don't drink tap water: use bottled or filtered water, also for brushing teeth. Restaurant ice is usually purified." };
+const LAT_TOILET: Tip = { k: "toilet", pt: "Casas de banho em centros comerciais, museus e cafés; nalgumas públicas paga-se pouco e o papel vai no cesto, não na sanita.", en: "Toilets in malls, museums and cafés; some public ones charge a little and paper goes in the bin, not the bowl." };
+const latSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Guarde o telemóvel ao andar na rua e use táxis de app ou autorizados. ${pt}`, en: `Keep your phone away while walking and use app or authorised taxis. ${en}` });
+const lat = (emergency: string, sim: Tip, pay: Tip, tip: Tip, safety: Tip, plug: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency, tips: [BAG, sim, pay, tip, LAT_WATER, safety, plug, LAT_TOILET, ...extra], food });
+
 /* ---------- Alemanha e Áustria ---------- */
 const DE_PAY: Tip = { k: "pay", pt: "Cartão e contactless são aceites cada vez mais, mas padarias, bancas e algumas tabernas ainda só aceitam dinheiro: leve algum.", en: "Cards and contactless are increasingly accepted, but bakeries, stalls and some taverns are still cash-only: carry some." };
 const DE_TIP: Tip = { k: "tip", pt: "Arredonde 5–10% e diga o total ao pagar, em vez de deixar dinheiro na mesa.", en: "Round up 5–10% and tell the server the total when paying, rather than leaving money on the table." };
@@ -358,5 +367,53 @@ export const PRACTICAL: Record<string, Practical> = {
     { n: "Cafecito", p: 2, pt: "O café cubano doce e forte, numa «ventanita».", en: "Sweet, strong Cuban coffee from a «ventanita»." },
     { n: "Stone crab", p: 60, pt: "Garras de caranguejo, de outubro a maio.", en: "Stone crab claws, October to May." },
     { n: "Key lime pie", p: 9, pt: "A tarte de lima da Florida.", en: "Florida's lime pie." }
-  ], [{ k: "dress", pt: "Fato de banho só na praia: na rua e nos restaurantes vista uma t-shirt.", en: "Swimwear is for the beach only: wear a T-shirt in the streets and restaurants." }])
+  ], [{ k: "dress", pt: "Fato de banho só na praia: na rua e nos restaurantes vista uma t-shirt.", en: "Swimwear is for the beach only: wear a T-shirt in the streets and restaurants." }]),
+  lax: us(usSafety("A cidade é enorme: combine metro com Uber e evite andar a pé à noite fora das zonas turísticas.", "The city is huge: combine Metro with rideshare and avoid walking at night outside tourist areas."), [
+    { n: "Tacos al pastor", p: 4, pt: "Tacos de porco marinado de uma banca de rua.", en: "Marinated pork tacos from a street stand." },
+    { n: "In-N-Out Double-Double", p: 8, pt: "O hambúrguer californiano, pedido «animal style».", en: "The Californian burger, ordered «animal style»." },
+    { n: "Korean BBQ", p: 35, pt: "Churrasco coreano em Koreatown.", en: "Korean barbecue in Koreatown." },
+    { n: "Açaí bowl", p: 13, pt: "Taça de açaí com fruta, na praia.", en: "Açaí bowl with fruit, by the beach." }
+  ]),
+  las: us(usSafety("Faz mais de 40 °C no verão: beba água, ande pelos casinos com ar condicionado e confirme a conta no bar.", "It tops 104 °F in summer: drink water, walk through air-conditioned casinos and check your bar tab."), [
+    { n: "Buffet", p: 60, pt: "Buffet de um grande casino ao jantar.", en: "A big-casino buffet at dinner." },
+    { n: "Shrimp cocktail", p: 6, pt: "O clássico cocktail de camarão do Golden Gate, na Fremont.", en: "The classic shrimp cocktail at the Golden Gate on Fremont." },
+    { n: "Steak", p: 70, pt: "Bife num steakhouse da Strip.", en: "Steak at a Strip steakhouse." },
+    { n: "Frozen margarita", p: 20, pt: "A margarita gelada em copo gigante.", en: "The frozen margarita in a giant cup." }
+  ]),
+  msy: us(usSafety("Beber na rua é permitido, mas só em copo de plástico; à noite ande em grupo e fique nas ruas com gente.", "Street drinking is allowed, but only from plastic cups; at night walk in groups and stay on busy streets."), [
+    { n: "Beignets", p: 5, pt: "Três beignets com açúcar em pó.", en: "Three beignets dusted with sugar." },
+    { n: "Gumbo", p: 12, pt: "O guisado crioulo com quiabo, frango e chouriço andouille.", en: "Creole stew with okra, chicken and andouille sausage." },
+    { n: "Po'boy", p: 14, pt: "Sandes de camarão ou ostra frita em pão francês.", en: "Fried shrimp or oyster sandwich on French bread." },
+    { n: "Muffuletta", p: 15, pt: "A sandes siciliana de salada de azeitona da Central Grocery.", en: "The Sicilian olive-salad sandwich from Central Grocery." }
+  ], [{ k: "dress", pt: "No verão o calor húmido é forte: roupa leve, chapéu e guarda-chuva para as trovoadas da tarde.", en: "Summer is hot and humid: light clothes, a hat and an umbrella for afternoon storms." }]),
+  mco: us(usSafety("A cidade é pensada para o carro: use Uber entre zonas e beba muita água nos parques.", "The city is built for cars: use rideshare between areas and drink plenty of water in the parks."), [
+    { n: "Cuban sandwich", p: 12, pt: "A sandes cubana, herança de Tampa e Miami.", en: "The Cuban sandwich, a Tampa and Miami heritage." },
+    { n: "Key lime pie", p: 8, pt: "A tarte de lima da Florida.", en: "Florida's lime pie." },
+    { n: "Gator bites", p: 14, pt: "Pedaços de aligátor fritos, para provar.", en: "Fried alligator bites, for the curious." },
+    { n: "Pho", p: 15, pt: "Sopa vietnamita no Mills 50, o bairro asiático.", en: "Vietnamese soup in Mills 50, the Asian district." }
+  ]),
+  yyz: { emergency: "911", tips: [BAG, US_SIM, CA_PAY, CA_TIP, US_WATER, usSafety("Cidade segura; no inverno, use o PATH, a rede subterrânea do centro, para fugir do frio.", "A safe city; in winter, use PATH, the downtown underground network, to escape the cold."), US_PLUG, US_TOILET], food: [
+    { n: "Peameal bacon sandwich", p: 10, pt: "Lombo de porco panado em farinha de milho, no St. Lawrence.", en: "Cornmeal-crusted back bacon at St. Lawrence." },
+    { n: "Poutine", p: 12, pt: "Batatas fritas com queijo e molho de carne.", en: "Fries with cheese curds and gravy." },
+    { n: "Butter tart", p: 4, pt: "A tartelete canadiana de manteiga e açúcar.", en: "The Canadian butter-and-sugar tart." },
+    { n: "Roti", p: 14, pt: "Roti caribenho, das comunidades de Trinidad e da Jamaica.", en: "Caribbean roti, from the Trinidadian and Jamaican communities." }
+  ] },
+  mex: lat("911", LAT_SIM, { k: "pay", pt: "Cartão nos restaurantes e lojas; dinheiro (pesos) nas bancas, mercados e Metro. Levante em multibancos de bancos, dentro de agências.", en: "Cards in restaurants and shops; cash (pesos) for stalls, markets and the Metro. Withdraw at bank ATMs inside branches." }, { k: "tip", pt: "Gorjeta de 10–15% nos restaurantes (a «propina»); arredonde nos táxis.", en: "Tip 10–15% in restaurants (the «propina»); round up in taxis." }, latSafety("No Metro há carruagens só para mulheres e crianças à frente. A 2.240 m de altitude, vá com calma no primeiro dia.", "The Metro has women-and-children-only cars at the front. At 7,350 ft, take it easy on day one."), { k: "plug", pt: "Tomadas tipo A/B, 127 V: precisa de adaptador.", en: "Type A/B sockets, 127 V: you need an adapter." }, [
+    { n: "Tacos al pastor", p: 20, pt: "Cada taco, de uma taqueria.", en: "Per taco, at a taquería." },
+    { n: "Chilaquiles", p: 120, pt: "Tortilhas fritas em molho verde ou vermelho, ao pequeno-almoço.", en: "Fried tortillas in green or red sauce, for breakfast." },
+    { n: "Churros con chocolate", p: 90, pt: "Churros com chocolate quente no El Moro.", en: "Churros with hot chocolate at El Moro." },
+    { n: "Mezcal", p: 120, pt: "Um mezcal de Oaxaca servido com laranja e sal de gusano.", en: "An Oaxacan mezcal served with orange and worm salt." }
+  ]),
+  rio: lat("190 / 192", LAT_SIM, { k: "pay", pt: "Cartão e Pix em quase todo o lado, até nas bancas da praia; o metrô aceita contactless. Leve pouco dinheiro vivo.", en: "Cards and Pix almost everywhere, even beach vendors; the Metro takes contactless. Carry little cash." }, { k: "tip", pt: "A conta já traz 10% de serviço; não é preciso deixar mais.", en: "The bill already includes 10% service; no need to leave more." }, latSafety("Na praia leve só o essencial; não use o telemóvel à beira da estrada e não suba às favelas sem guia local.", "Take only essentials to the beach; don't use your phone by the roadside and don't visit favelas without a local guide."), { k: "plug", pt: "Tomadas tipo N, 127 V no Rio: leve adaptador e confirme a voltagem.", en: "Type N sockets, 127 V in Rio: bring an adapter and check the voltage." }, [
+    { n: "Feijoada", p: 70, pt: "Feijão preto com carnes, ao sábado.", en: "Black beans with pork, on Saturdays." },
+    { n: "Pão de queijo", p: 8, pt: "Bolinhas de queijo para o lanche.", en: "Cheese bread puffs for a snack." },
+    { n: "Açaí", p: 25, pt: "Taça de açaí gelado com granola.", en: "A bowl of frozen açaí with granola." },
+    { n: "Caipirinha", p: 30, pt: "Cachaça, lima e açúcar, num quiosque da praia.", en: "Cachaça, lime and sugar at a beach kiosk." }
+  ]),
+  bue: lat("911 / 107", LAT_SIM, { k: "pay", pt: "Pague com cartão estrangeiro: aplica uma taxa de câmbio próxima da do mercado. O metro (Subte) e autocarros aceitam cartão SUBE ou contactless.", en: "Pay with your foreign card: it gets a rate close to the market one. The Subte and buses take a SUBE card or contactless." }, { k: "tip", pt: "Gorjeta de 10% nos restaurantes, de preferência em dinheiro; o «cubierto» (pão) é cobrado à parte.", en: "Tip 10% in restaurants, ideally in cash; the «cubierto» (bread) is charged separately." }, latSafety("Atenção ao truque da mancha na roupa e aos motociclistas que arrancam telemóveis; à noite, táxi de app.", "Watch for the stain-on-clothes trick and motorbike phone snatchers; at night, use an app taxi."), { k: "plug", pt: "Tomadas tipo I (argentinas), 220 V: leve adaptador.", en: "Type I (Argentine) sockets, 220 V: bring an adapter." }, [
+    { n: "Bife de chorizo", p: 25000, pt: "O grande bife do vazio numa parrilla.", en: "The big sirloin steak at a parrilla." },
+    { n: "Empanadas", p: 2500, pt: "Cada empanada de carne ou queijo.", en: "Per beef or cheese empanada." },
+    { n: "Medialunas", p: 1500, pt: "Croissants doces ao pequeno-almoço com café.", en: "Sweet croissants with coffee for breakfast." },
+    { n: "Malbec", p: 8000, pt: "Um copo de malbec de Mendoza.", en: "A glass of Mendoza malbec." }
+  ])
 };

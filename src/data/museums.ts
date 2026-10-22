@@ -197,6 +197,51 @@ export const MUSEUMS: Record<string, Museum[]> = {
     { id: "mia-vizcaya-m", n: "Vizcaya Museum & Gardens", lat: 25.7444, lng: -80.2105, price: 25, h: [[[0, 1, 3, 4, 5, 6], "09:30", "16:30"]], book: true, url: "https://vizcaya.org", pt: "Fechado à terça. Reserve hora online.", en: "Closed Tuesdays. Book a time online." },
     { id: "mia-wynwood-m", n: "Wynwood Walls", lat: 25.8011, lng: -80.1994, price: 12, h: [[ALL, "11:00", "19:00"]], url: "https://thewynwoodwalls.com", pt: "O recinto dos murais; as ruas à volta são gratuitas.", en: "The mural enclosure; the surrounding streets are free." },
     { id: "mia-wolfsonian", n: "The Wolfsonian–FIU", lat: 25.7799, lng: -80.1334, price: 15, h: [[[0, 4, 5, 6], "10:00", "18:00"]], url: "https://wolfsonian.org", pt: "Design e Art Déco em South Beach; abre de quinta a domingo.", en: "Design and Art Deco in South Beach; open Thursday to Sunday." }
+  ],
+  lax: [
+    { id: "lax-broad", n: "The Broad", lat: 34.0544, lng: -118.2506, price: 0, h: [[[0, 6], "10:00", "18:00"], [[2, 3, 5], "11:00", "17:00"], [[4], "11:00", "20:00"]], book: true, url: "https://www.thebroad.org", pt: "Gratuito com reserva de hora; fecha à segunda.", en: "Free with a timed reservation; closed Mondays." },
+    { id: "lax-griffith-o", n: "Griffith Observatory", lat: 34.1184, lng: -118.3004, price: 0, h: [[[2, 3, 4, 5], "12:00", "22:00"], [[0, 6], "10:00", "22:00"]], url: "https://griffithobservatory.org", pt: "Entrada gratuita; o planetário é pago. Fecha à segunda.", en: "Free entry; the planetarium is paid. Closed Mondays." },
+    { id: "lax-getty", n: "Getty Center", lat: 34.078, lng: -118.4741, price: 0, h: [[[0, 2, 3, 4, 5], "10:00", "17:30"], [[6], "10:00", "20:00"]], book: true, url: "https://www.getty.edu", pt: "Gratuito com reserva; estacionamento pago. Fecha à segunda.", en: "Free with reservation; paid parking. Closed Mondays." },
+    { id: "lax-lacma", n: "LACMA", lat: 34.0639, lng: -118.3592, price: 28, h: [[[1, 2, 4], "10:00", "18:00"], [[5], "10:00", "20:00"], [[0, 6], "10:00", "19:00"]], url: "https://www.lacma.org", pt: "As «Urban Light», 202 candeeiros antigos à porta, são gratuitas a qualquer hora.", en: "«Urban Light», 202 vintage streetlamps at the entrance, is free at any time." }
+  ],
+  las: [
+    { id: "las-neon-m", n: "The Neon Museum", lat: 36.1771, lng: -115.1353, price: 30, h: [[ALL, "16:00", "23:00"]], book: true, url: "https://www.neonmuseum.org", pt: "Visitas com hora marcada; à noite os letreiros acendem-se.", en: "Timed visits; at night the signs light up." },
+    { id: "las-mob", n: "The Mob Museum", lat: 36.1728, lng: -115.1411, price: 35, h: [[ALL, "09:00", "21:00"]], url: "https://themobmuseum.org", pt: "A história da máfia num antigo tribunal federal, perto da Fremont Street.", en: "The story of the mob in a former federal courthouse near Fremont Street." },
+    { id: "las-eiffel", n: "Eiffel Tower Viewing Deck", lat: 36.1125, lng: -115.1707, price: 30, h: [[ALL, "12:00", "24:00"]], url: "https://www.caesars.com/paris-las-vegas", pt: "À noite custa mais; a melhor vista das fontes do Bellagio.", en: "Costs more at night; the best view of the Bellagio fountains." }
+  ],
+  msy: [
+    { id: "msy-ww2", n: "The National WWII Museum", lat: 29.943, lng: -90.0705, price: 35, h: [[ALL, "09:00", "17:00"]], url: "https://www.nationalww2museum.org", pt: "Um dos museus mais bem avaliados dos EUA; reserve meio dia.", en: "One of the top-rated museums in the US; allow half a day." },
+    { id: "msy-cabildo", n: "The Cabildo (Louisiana State Museum)", lat: 29.9575, lng: -90.0638, price: 10, h: [[[2, 3, 4, 5, 6, 0], "10:00", "16:30"]], url: "https://louisianastatemuseum.org", pt: "Onde se assinou a compra da Luisiana, em 1803; fecha à segunda.", en: "Where the Louisiana Purchase was signed in 1803; closed Mondays." },
+    { id: "msy-preservation", n: "Preservation Hall", lat: 29.9581, lng: -90.065, price: 30, h: [[ALL, "17:00", "23:00"]], book: true, url: "https://www.preservationhall.com", pt: "Concertos de 45 minutos de jazz tradicional; compre bilhete com antecedência.", en: "45-minute traditional jazz sets; buy tickets ahead." }
+  ],
+  mco: [
+    { id: "mco-morse", n: "Morse Museum of American Art", lat: 28.5996, lng: -81.3502, price: 8, h: [[[2, 3, 4, 5, 6], "09:30", "16:00"], [[0], "13:00", "16:00"]], url: "https://www.morsemuseum.org", pt: "A capela Tiffany e vitrais de Louis Comfort Tiffany; fecha à segunda.", en: "The Tiffany Chapel and Louis Comfort Tiffany glass; closed Mondays." },
+    { id: "mco-boat-m", n: "Scenic Boat Tour", lat: 28.5996, lng: -81.3433, price: 20, h: [[ALL, "10:00", "16:00"]], url: "https://www.scenicboattours.com", pt: "Sai de hora a hora; pague em dinheiro ou cartão no cais.", en: "Leaves on the hour; pay by cash or card at the dock." },
+    { id: "mco-wheel", n: "The Wheel at ICON Park", lat: 28.4433, lng: -81.4686, price: 30, h: [[ALL, "12:00", "22:00"]], url: "https://iconparkorlando.com", pt: "Uma volta de cerca de 20 minutos em cabines com ar condicionado.", en: "A ride of about 20 minutes in air-conditioned capsules." }
+  ],
+  yyz: [
+    { id: "yyz-cn-m", n: "CN Tower", lat: 43.6426, lng: -79.3871, price: 45, h: [[ALL, "10:00", "21:30"]], book: true, url: "https://www.cntower.ca", pt: "Bilhete com hora online é mais barato; o EdgeWalk é à parte.", en: "Timed online tickets are cheaper; EdgeWalk is separate." },
+    { id: "yyz-rom-m", n: "Royal Ontario Museum", lat: 43.6677, lng: -79.3948, price: 26, h: [[ALL, "10:00", "17:30"]], url: "https://www.rom.on.ca", pt: "Dinossauros, Egito e arte das Primeiras Nações.", en: "Dinosaurs, Egypt and First Nations art." },
+    { id: "yyz-ago", n: "Art Gallery of Ontario", lat: 43.6536, lng: -79.3925, price: 30, h: [[[2, 4, 6, 0], "10:30", "17:00"], [[3, 5], "10:30", "21:00"]], url: "https://ago.ca", pt: "Gratuito às quartas à noite (18h–21h). A escadaria de Frank Gehry merece a visita. Fecha à segunda.", en: "Free on Wednesday evenings (6–9 pm). Frank Gehry's staircase is worth it. Closed Mondays." },
+    { id: "yyz-stlawrence-m", n: "St. Lawrence Market", lat: 43.6487, lng: -79.3716, price: 0, h: [[[2, 3, 4, 5], "09:00", "19:00"], [[6], "07:00", "17:00"]], url: "https://www.stlawrencemarket.com", pt: "Fecha ao domingo e à segunda.", en: "Closed Sundays and Mondays." }
+  ],
+  mex: [
+    { id: "mex-antro-m", n: "Museo Nacional de Antropología", lat: 19.426, lng: -99.1863, price: 100, h: [[[2, 3, 4, 5, 6, 0], "09:00", "18:00"]], url: "https://www.mna.inah.gob.mx", pt: "Reserve pelo menos 2 horas; fecha à segunda.", en: "Allow at least 2 hours; closed Mondays." },
+    { id: "mex-templo-m", n: "Templo Mayor", lat: 19.4351, lng: -99.1314, price: 100, h: [[[2, 3, 4, 5, 6, 0], "09:00", "17:00"]], url: "https://www.templomayor.inah.gob.mx", pt: "Ruínas e museu; fecha à segunda.", en: "Ruins and museum; closed Mondays." },
+    { id: "mex-bellas-m", n: "Palacio de Bellas Artes", lat: 19.4352, lng: -99.1412, price: 90, h: [[[2, 3, 4, 5, 6, 0], "10:00", "18:00"]], url: "https://museopalaciodebellasartes.gob.mx", pt: "Murais de Rivera, Orozco e Siqueiros; gratuito ao domingo.", en: "Murals by Rivera, Orozco and Siqueiros; free on Sundays." },
+    { id: "mex-frida-m", n: "Museo Frida Kahlo (Casa Azul)", lat: 19.3551, lng: -99.1625, price: 320, h: [[[2, 4, 5, 6, 0], "10:00", "18:00"], [[3], "11:00", "18:00"]], book: true, url: "https://www.museofridakahlo.org.mx", pt: "Só com bilhete online; esgota com dias de avanço. Fecha à segunda.", en: "Online tickets only; sells out days ahead. Closed Mondays." }
+  ],
+  rio: [
+    { id: "rio-cristo-m", n: "Cristo Redentor (Trem do Corcovado)", lat: -22.9519, lng: -43.2105, price: 100, h: [[ALL, "08:00", "19:00"]], book: true, url: "https://www.tremdocorcovado.rio", pt: "Bilhete do comboio com hora; vá de manhã cedo.", en: "Timed train ticket; go early in the morning." },
+    { id: "rio-pao-m", n: "Bondinho Pão de Açúcar", lat: -22.9493, lng: -43.1546, price: 180, h: [[ALL, "08:00", "21:00"]], url: "https://bondinho.com.br", pt: "Compre online para evitar a fila; o pôr do sol é a hora mais concorrida.", en: "Buy online to skip the queue; sunset is the busiest time." },
+    { id: "rio-amanha-m", n: "Museu do Amanhã", lat: -22.8944, lng: -43.1794, price: 30, h: [[[2, 3, 4, 5, 6, 0], "10:00", "18:00"]], url: "https://museudoamanha.org.br", pt: "Gratuito às terças; fecha à segunda.", en: "Free on Tuesdays; closed Mondays." },
+    { id: "rio-theatro-m", n: "Theatro Municipal", lat: -22.909, lng: -43.1765, price: 40, h: [[[2, 3, 4, 5, 6], "10:00", "16:00"]], url: "https://theatromunicipal.rj.gov.br", pt: "Visitas guiadas de 1 hora de terça a sábado.", en: "One-hour guided tours Tuesday to Saturday." }
+  ],
+  bue: [
+    { id: "bue-colon-m", n: "Teatro Colón", lat: -34.6011, lng: -58.3832, price: 40000, h: [[ALL, "09:00", "17:00"]], book: true, url: "https://teatrocolon.org.ar", pt: "Visitas guiadas de 50 minutos; preço em pesos, muda muitas vezes.", en: "50-minute guided tours; peso price changes often." },
+    { id: "bue-recoleta-m", n: "Cementerio de la Recoleta", lat: -34.5875, lng: -58.3934, price: 14000, h: [[ALL, "08:00", "17:00"]], url: "https://buenosaires.gob.ar/cementeriorecoleta", pt: "Entrada paga para estrangeiros; visitas guiadas gratuitas em espanhol e inglês.", en: "Paid entry for foreigners; free guided tours in Spanish and English." },
+    { id: "bue-malba", n: "MALBA", lat: -34.5774, lng: -58.4035, price: 15000, h: [[[0, 1, 4, 5, 6], "12:00", "20:00"], [[3], "12:00", "21:00"]], url: "https://www.malba.org.ar", pt: "Arte latino-americana com Frida Kahlo e Xul Solar; fecha à terça.", en: "Latin American art with Frida Kahlo and Xul Solar; closed Tuesdays." },
+    { id: "bue-mnba", n: "Museo Nacional de Bellas Artes", lat: -34.5838, lng: -58.393, price: 0, h: [[[2, 3, 4, 5], "11:00", "20:00"], [[0, 6], "10:00", "20:00"]], url: "https://www.bellasartes.gob.ar", pt: "Gratuito; fecha à segunda.", en: "Free; closed Mondays." }
   ]
 };
 

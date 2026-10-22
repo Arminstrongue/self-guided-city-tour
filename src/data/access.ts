@@ -27,7 +27,9 @@ export const ACCESS: Record<string, Access[]> = {
   // São Francisco: colinas
   "sf-northbeach": ["hill"], "sf-lombard": ["hill", "steps"], "sf-chinatown": ["hill"],
   // Boston: Beacon Hill
-  "bos-statehouse": ["hill"]
+  "bos-statehouse": ["hill"],
+  "la-griffith": ["hill"], "la-gcm": ["hill"], "nola-royal": ["uneven"], "nola-garden": ["uneven"],
+  "mx-templo": ["steps", "uneven"], "rio-selaron": ["steps"], "rio-arcos": ["uneven"], "rio-cristo": ["steps"], "ba-santelmo": ["uneven"], "ba-boca": ["uneven"]
 };
 export const accessOf = (id: string): Access[] => ACCESS[id] ?? [];
 /** Quantas paragens do percurso têm subidas, escadas ou piso irregular. */

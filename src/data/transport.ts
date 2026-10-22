@@ -197,5 +197,45 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("metrorail", "🚇", "Metrorail / Metrobus", "Metrorail / Metrobus", 2.25, "trip"), T("mover", "🚝", "Metromover no centro (grátis)", "Downtown Metromover (free)", 0, "trip"),
     T("150", "✈", "Autocarro 150 Airport Express → Miami Beach", "Bus 150 Airport Express → Miami Beach", 2.25, "trip"), T("trolley", "🚎", "Trolley de Miami Beach (grátis)", "Miami Beach trolley (free)", 0, "trip"),
     T("day", "🎫", "Passe de 1 dia EASY Card", "EASY Card 1-day pass", 5.65, "day"), T("uber", "🚗", "Uber/Lyft South Beach → Wynwood", "Uber/Lyft South Beach → Wynwood", 25, "ride")
+  ],
+  lax: [
+    T("metro", "🚇", "Metro LA (TAP ou contactless)", "LA Metro (TAP or contactless)", 1.75, "trip"), T("cap", "🎫", "Teto diário TAP", "TAP daily cap", 5, "day"),
+    T("flyaway", "✈", "FlyAway LAX ↔ Union Station", "FlyAway LAX ↔ Union Station", 9.75, "trip"), T("dash", "🚌", "Autocarro DASH", "DASH bus", 0.5, "trip"),
+    T("uber", "🚗", "Uber/Lyft Downtown → Hollywood", "Uber/Lyft Downtown → Hollywood", 25, "ride")
+  ],
+  las: [
+    T("deuce", "🚌", "Autocarro Deuce na Strip (2 horas)", "Deuce bus on the Strip (2 hours)", 6, "trip"), T("day", "🎫", "Passe 24 h RTC", "RTC 24-hour pass", 8, "day"),
+    T("monorail", "🚝", "Monorail de Las Vegas", "Las Vegas Monorail", 6.5, "trip"), T("uber", "🚗", "Uber/Lyft na Strip", "Uber/Lyft on the Strip", 15, "ride"),
+    T("taxi", "🚕", "Táxi aeroporto → Strip", "Taxi airport → Strip", 25, "ride")
+  ],
+  msy: [
+    T("streetcar", "🚋", "Elétrico ou autocarro RTA", "RTA streetcar or bus", 1.25, "trip"), T("jazzy", "🎫", "Jazzy Pass 1 dia", "1-day Jazzy Pass", 3, "day"),
+    T("202", "✈", "Autocarro 202 Airport Express", "Bus 202 Airport Express", 1.5, "trip"), T("ferry", "⛴", "Ferry para Algiers Point", "Ferry to Algiers Point", 2, "trip"),
+    T("uber", "🚗", "Uber/Lyft no centro", "Uber/Lyft in the centre", 15, "ride")
+  ],
+  mco: [
+    T("lynx", "🚌", "Autocarro LYNX", "LYNX bus", 2, "trip"), T("day", "🎫", "Passe 1 dia LYNX", "LYNX 1-day pass", 4.5, "day"),
+    T("sunrail", "🚆", "Comboio SunRail", "SunRail train", 2, "trip"), T("lymmo", "🚌", "LYMMO no centro (grátis)", "Downtown LYMMO (free)", 0, "trip"),
+    T("uber", "🚗", "Uber/Lyft centro → parques", "Uber/Lyft downtown → parks", 35, "ride")
+  ],
+  yyz: [
+    T("ttc", "🚇", "Metro, elétrico ou autocarro TTC (PRESTO ou contactless)", "TTC subway, streetcar or bus (PRESTO or contactless)", 3.3, "trip"), T("day", "🎫", "Passe de 1 dia TTC", "TTC day pass", 13.5, "day"),
+    T("up", "✈", "UP Express Pearson ↔ Union", "UP Express Pearson ↔ Union", 12.35, "trip"), T("ferry", "⛴", "Ferry para as Toronto Islands", "Toronto Islands ferry", 9.11, "trip"),
+    T("bikeshare", "🚲", "Bike Share Toronto (passe de 1 dia)", "Bike Share Toronto (day pass)", 15, "day"), T("uber", "🚗", "Uber/Lyft no centro", "Uber/Lyft in the centre", 18, "ride")
+  ],
+  mex: [
+    T("metro", "🚇", "Metro (cartão de Movilidad Integrada)", "Metro (Movilidad Integrada card)", 5, "trip"), T("metrobus", "🚌", "Metrobús", "Metrobús", 6, "trip"),
+    T("airbus", "✈", "Metrobús Linha 4 desde o aeroporto", "Metrobús Line 4 from the airport", 30, "trip"), T("ecobici", "🚲", "Ecobici (1 dia)", "Ecobici (1 day)", 130, "day"),
+    T("uber", "🚗", "Uber/DiDi no centro", "Uber/DiDi in the centre", 90, "ride"), T("taxi", "🚕", "Táxi autorizado do aeroporto", "Authorised airport taxi", 300, "ride")
+  ],
+  rio: [
+    T("metro", "🚇", "MetrôRio (contactless)", "MetrôRio (contactless)", 7.9, "trip"), T("vlt", "🚋", "VLT Carioca no centro", "VLT Carioca downtown tram", 4.7, "trip"),
+    T("bus", "🚌", "Autocarro municipal", "City bus", 4.7, "trip"), T("bonde", "🚋", "Bondinho de Santa Teresa", "Santa Teresa tram", 20, "trip"),
+    T("uber", "🚗", "Uber/99 Centro → Copacabana", "Uber/99 Centro → Copacabana", 30, "ride")
+  ],
+  bue: [
+    T("subte", "🚇", "Subte (cartão SUBE ou contactless)", "Subte (SUBE card or contactless)", 1400, "trip"), T("colectivo", "🚌", "Autocarro (colectivo)", "City bus (colectivo)", 700, "trip"),
+    T("tiendaleon", "✈", "Tienda León Ezeiza → Puerto Madero", "Tienda León Ezeiza → Puerto Madero", 20000, "trip"), T("ecobici", "🚲", "EcoBici (passe de 1 dia)", "EcoBici (day pass)", 3000, "day"),
+    T("uber", "🚗", "Uber/Cabify no centro", "Uber/Cabify in the centre", 7000, "ride"), T("taxi", "🚕", "Remis Ezeiza → centro", "Remis Ezeiza → centre", 45000, "ride")
   ]
 };

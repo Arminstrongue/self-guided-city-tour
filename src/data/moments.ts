@@ -271,6 +271,62 @@ export const MOMENTS: Record<string, Moment[]> = {
     m("mia-deco-night", "🌙", "night", ["night", "architecture"], 25.7815, -80.1305, ["Néon Art Déco à noite", "Ocean Drive acende-se em néon; passeie, mas confirme os preços antes de se sentar."], ["Art Deco neon by night", "Ocean Drive lights up in neon; stroll, but check prices before sitting down."]),
     m("mia-vizcaya", "🏛", "day", ["history", "architecture"], 25.7444, -80.2105, ["Vizcaya", "Uma villa italiana de 1916 com jardins sobre a baía de Biscayne."], ["Vizcaya", "A 1916 Italianate villa with gardens on Biscayne Bay."]),
     m("mia-kayak", "🛶", "day", ["nature", "adventure"], 25.7701, -80.1351, ["Caiaque ou paddle na baía", "Saídas de South Pointe com água calma e, às vezes, manatins."], ["Kayak or paddleboard on the bay", "Trips from South Pointe on calm water and, sometimes, manatees."])
+  ],
+  lax: [
+    m("lax-griffith-sunset", "🌅", "sunset", ["photo", "nature"], 34.1184, -118.3004, ["Pôr do sol no Observatório Griffith", "A cidade acende-se até ao mar; fique para os telescópios públicos gratuitos."], ["Sunset at Griffith Observatory", "The city lights up all the way to the sea; stay for the free public telescopes."]),
+    m("lax-tacos", "🌮", "night", ["food", "budget"], 34.0407, -118.2468, ["Tacos de rua em Downtown", "Bancas de tacos al pastor e de birria abrem ao fim da tarde perto do Fashion District."], ["Street tacos downtown", "Al pastor and birria stands open in the evening near the Fashion District."]),
+    m("lax-venice", "🛹", "day", ["beach", "sport", "art"], 33.985, -118.4725, ["Venice Beach e o skate park", "Murais, ginásio ao ar livre de Muscle Beach e skaters à beira-mar."], ["Venice Beach and the skate park", "Murals, the Muscle Beach outdoor gym and skaters by the sea."]),
+    m("lax-hollywood-bowl", "🎵", "night", ["music"], 34.1122, -118.3391, ["Concerto no Hollywood Bowl", "O anfiteatro ao ar livre de 1922; leve piquenique, de junho a setembro."], ["A concert at the Hollywood Bowl", "The 1922 open-air amphitheatre; bring a picnic, June to September."]),
+    m("lax-getty", "🏛", "day", ["art", "architecture"], 34.078, -118.4741, ["Getty Center", "Arte europeia, jardins e vista do Pacífico; entrada gratuita, estacionamento pago."], ["The Getty Center", "European art, gardens and Pacific views; free entry, paid parking."])
+  ],
+  las: [
+    m("las-fountains-night", "🌙", "night", ["night", "music", "photo"], 36.1126, -115.1767, ["Fontes do Bellagio à noite", "O espetáculo é a cada 15 minutos depois das 20h; veja da ponte pedonal."], ["Bellagio fountains at night", "Shows run every 15 minutes after 8 pm; watch from the footbridge."]),
+    m("las-neon", "💡", "night", ["history", "photo"], 36.1771, -115.1353, ["Neon Museum", "O cemitério dos letreiros antigos de Las Vegas, aceso à noite (visita paga com hora)."], ["The Neon Museum", "The boneyard of old Las Vegas signs, lit at night (paid timed tour)."]),
+    m("las-redrock", "🏜", "morning", ["nature", "adventure"], 36.1357, -115.4277, ["Red Rock Canyon de manhã", "Rochas vermelhas a 30 minutos da Strip; vá cedo e leve muita água."], ["Red Rock Canyon in the morning", "Red rocks 30 minutes from the Strip; go early and carry plenty of water."]),
+    m("las-buffet", "🍽", "day", ["food"], 36.1162, -115.1745, ["Um buffet de Las Vegas", "Os buffets dos grandes casinos são uma instituição; ao almoço é mais barato."], ["A Las Vegas buffet", "The big casino buffets are an institution; lunch is cheaper."]),
+    m("las-show", "🎭", "night", ["music", "night"], 36.1212, -115.1697, ["Um espetáculo na Strip", "Cirque du Soleil, magia ou concertos na Sphere; bilhetes com desconto no próprio dia."], ["A show on the Strip", "Cirque du Soleil, magic or concerts at the Sphere; same-day discount tickets."])
+  ],
+  msy: [
+    m("msy-jazz", "🎺", "night", ["music", "night"], 29.964, -90.0577, ["Jazz ao vivo na Frenchmen", "Entre de clube em clube; muitos não cobram entrada, mas pedem uma bebida."], ["Live jazz on Frenchmen", "Hop from club to club; many charge no cover but expect a drink."]),
+    m("msy-beignets", "☕", "morning", ["food", "cafe"], 29.9575, -90.0618, ["Beignets ao amanhecer", "Café du Monde abre cedo; antes das 8h não há fila."], ["Beignets at dawn", "Café du Monde opens early; before 8 am there's no queue."]),
+    m("msy-steamboat", "🚢", "day", ["history", "music"], 29.9555, -90.0621, ["Barco a vapor no Mississippi", "O Natchez sai do cais com órgão a vapor e jazz a bordo."], ["Steamboat on the Mississippi", "The Natchez leaves the riverfront with a steam calliope and jazz on board."]),
+    m("msy-po-boy", "🥖", "day", ["food", "budget"], 29.9622, -90.0544, ["Po'boy e gumbo", "Sandes de camarão frito e o guisado crioulo num bar de bairro."], ["Po'boy and gumbo", "Fried shrimp sandwiches and Creole stew at a neighbourhood joint."]),
+    m("msy-second-line", "🎉", "weekend", ["music", "festival"], 29.9667, -90.0731, ["Second line de domingo", "Desfiles de bandas de metais pelos bairros, quase todos os domingos de setembro a junho."], ["Sunday second line", "Brass-band parades through the neighbourhoods, most Sundays from September to June."])
+  ],
+  mco: [
+    m("mco-eola-sunset", "🌅", "sunset", ["photo", "nature"], 28.5434, -81.3727, ["Pôr do sol no Lago Eola", "A fonte acende-se em cores e o horizonte reflete-se no lago."], ["Sunset at Lake Eola", "The fountain lights up in colours and the skyline reflects on the lake."]),
+    m("mco-farmers", "🧺", "weekend", ["food", "shopping"], 28.5434, -81.3727, ["Mercado de domingo no Lago Eola", "Produtores, comida de rua e música todos os domingos de manhã."], ["Sunday market at Lake Eola", "Growers, street food and music every Sunday morning."]),
+    m("mco-springs", "🐢", "day", ["nature", "family"], 28.7106, -81.4581, ["Nascentes de Wekiwa", "Água a 22 °C todo o ano para nadar ou ir de caiaque entre tartarugas."], ["Wekiwa Springs", "Water at 72 °F all year to swim or kayak among turtles."]),
+    m("mco-disney-fireworks", "🎆", "night", ["family", "night"], 28.37, -81.5194, ["Fogo de artifício visto de Disney Springs", "Do cais vê-se o fogo dos parques ao longe, sem bilhete."], ["Fireworks from Disney Springs", "From the waterfront you can see the parks' fireworks in the distance, no ticket needed."]),
+    m("mco-gators", "🐊", "day", ["nature", "adventure"], 28.3608, -81.4073, ["Passeio de hidroplanador nos pântanos", "Aligátores e aves no lago Tohopekaliga, a sul da cidade (pago)."], ["Airboat ride in the swamps", "Alligators and birds on Lake Tohopekaliga, south of the city (paid)."])
+  ],
+  yyz: [
+    m("yyz-islands", "⛴", "day", ["nature", "photo", "family"], 43.6214, -79.3789, ["Ferry para as Toronto Islands", "Dez minutos de barco para praias, bicicletas e a vista mais bonita do horizonte."], ["Ferry to the Toronto Islands", "Ten minutes by boat to beaches, bikes and the finest skyline view."]),
+    m("yyz-peameal", "🥪", "morning", ["food"], 43.6487, -79.3716, ["Peameal bacon no St. Lawrence", "A sanduíche típica de Toronto, ao pequeno-almoço no mercado (terça a sábado)."], ["Peameal bacon at St. Lawrence", "Toronto's signature sandwich, for breakfast at the market (Tuesday to Saturday)."]),
+    m("yyz-hockey", "🏒", "night", ["sport"], 43.6435, -79.3791, ["Hóquei no gelo com os Maple Leafs", "De outubro a abril; os bilhetes são caros, mas um bar à volta da arena também serve."], ["Ice hockey with the Maple Leafs", "October to April; tickets are pricey, but a bar near the arena works too."]),
+    m("yyz-niagara", "💧", "day", ["nature", "adventure"], 43.0896, -79.0849, ["Cataratas do Niágara", "A 1h30 de comboio GO ou autocarro; o barco até às quedas é obrigatório."], ["Niagara Falls", "90 minutes by GO train or coach; the boat to the falls is a must."]),
+    m("yyz-kensington-sunday", "🎨", "weekend", ["art", "music", "food"], 43.6545, -79.4005, ["Pedestrian Sundays em Kensington", "No último domingo do mês, de maio a outubro, as ruas fecham aos carros."], ["Pedestrian Sundays in Kensington", "On the last Sunday of the month, May to October, the streets close to cars."])
+  ],
+  mex: [
+    m("mex-xochimilco", "🛶", "weekend", ["music", "nature", "food"], 19.2575, -99.1036, ["Trajineras em Xochimilco", "Barcos coloridos nos canais astecas com mariachis a bordo; melhor em grupo."], ["Trajineras in Xochimilco", "Colourful boats on Aztec canals with mariachis on board; best in a group."]),
+    m("mex-mariachi", "🎺", "night", ["music", "night"], 19.4405, -99.1394, ["Mariachis na Praça Garibaldi", "Grupos de mariachi tocam por pedido ao fim da noite; vá e volte de táxi."], ["Mariachis at Plaza Garibaldi", "Mariachi bands play on request late into the night; go and return by taxi."]),
+    m("mex-tacos", "🌮", "night", ["food", "budget"], 19.4334, -99.1402, ["Tacos al pastor", "O taco da cidade, do espeto com ananás; as taquerias enchem depois das 21h."], ["Tacos al pastor", "The city's taco, carved from the spit with pineapple; taquerías fill up after 9 pm."]),
+    m("mex-frida", "🎨", "day", ["art", "history"], 19.3551, -99.1625, ["Casa Azul de Frida Kahlo", "A casa-museu em Coyoacán; os bilhetes esgotam, compre online com dias de avanço."], ["Frida Kahlo's Blue House", "The house museum in Coyoacán; tickets sell out, buy online days ahead."]),
+    m("mex-teotihuacan", "🏛", "morning", ["history", "adventure"], 19.6925, -98.8438, ["Pirâmides de Teotihuacan", "A Pirâmide do Sol a uma hora da cidade; chegue à abertura, antes do calor."], ["The pyramids of Teotihuacan", "The Pyramid of the Sun an hour from the city; arrive at opening, before the heat."])
+  ],
+  rio: [
+    m("rio-arpoador", "🌅", "sunset", ["photo", "beach"], -22.9886, -43.1915, ["Pôr do sol no Arpoador", "Os cariocas aplaudem o sol a desaparecer atrás do morro Dois Irmãos."], ["Sunset at Arpoador", "Locals applaud as the sun sinks behind the Dois Irmãos peaks."]),
+    m("rio-samba", "🎵", "night", ["music", "night"], -22.9129, -43.1808, ["Samba na Lapa", "Rodas de samba ao vivo nas casas da Lapa; à sexta é a noite mais animada."], ["Samba in Lapa", "Live samba circles in Lapa's venues; Friday is the liveliest night."]),
+    m("rio-maracana", "⚽", "night", ["sport"], -22.9122, -43.2302, ["Futebol no Maracanã", "Um jogo do Flamengo ou do Fluminense é uma festa; compre bilhetes oficiais."], ["Football at the Maracanã", "A Flamengo or Fluminense match is a party; buy official tickets."]),
+    m("rio-santa-teresa", "🚋", "day", ["art", "history"], -22.9206, -43.1866, ["Bondinho de Santa Teresa", "O elétrico amarelo sobe aos Arcos até ao bairro dos artistas."], ["The Santa Teresa tram", "The yellow tram climbs over the Arches to the artists' quarter."]),
+    m("rio-acai", "🥥", "day", ["food", "beach"], -22.9838, -43.2047, ["Açaí e água de coco em Ipanema", "Na areia ou num quiosque do calçadão, entre o posto 9 e o Leblon."], ["Açaí and coconut water in Ipanema", "On the sand or at a promenade kiosk, between Posto 9 and Leblon."])
+  ],
+  bue: [
+    m("bue-milonga", "💃", "night", ["music", "night"], -34.5988, -58.4355, ["Uma milonga de tango", "Os bailes de tango começam tarde; há aulas para iniciantes antes, perto das 20h."], ["A tango milonga", "Tango dances start late; beginners' classes come first, around 8 pm."]),
+    m("bue-asado", "🥩", "night", ["food"], -34.5885, -58.4302, ["Asado numa parrilla de Palermo", "Bife de chorizo, morcela e malbec; jantar antes das 21h é cedo demais."], ["Asado at a Palermo parrilla", "Bife de chorizo, blood sausage and malbec; dinner before 9 pm is too early."]),
+    m("bue-feria", "🧺", "weekend", ["shopping", "music"], -34.6205, -58.3717, ["Feira de San Telmo ao domingo", "Antiguidades e artesanato pela rua Defensa, com tango improvisado na praça."], ["San Telmo fair on Sunday", "Antiques and crafts along Defensa street, with impromptu tango on the square."]),
+    m("bue-ateneo", "📚", "day", ["art", "architecture"], -34.5959, -58.3943, ["Livraria El Ateneo Grand Splendid", "Um teatro de 1919 transformado numa das livrarias mais bonitas do mundo."], ["El Ateneo Grand Splendid", "A 1919 theatre turned into one of the world's most beautiful bookshops."]),
+    m("bue-puerto-madero", "🌅", "sunset", ["photo", "architecture"], -34.6083, -58.3633, ["Pôr do sol em Puerto Madero", "A Puente de la Mujer de Calatrava e as docas de tijolo ao entardecer."], ["Sunset in Puerto Madero", "Calatrava's Puente de la Mujer and the brick docks at dusk."])
   ]
 };
 
@@ -287,5 +343,8 @@ export const AGENDA: Record<string, string> = {
   fra: "https://www.frankfurt-tourismus.de/en", ber: "https://www.timeout.com/berlin/things-to-do", muc: "https://www.timeout.com/munich/things-to-do",
   vie: "https://www.timeout.com/vienna/things-to-do", prg: "https://www.timeout.com/prague/things-to-do", sin: "https://www.timeout.com/singapore/things-to-do",
   nyc: "https://www.timeout.com/newyork/things-to-do", was: "https://washington.org/events", sfo: "https://www.timeout.com/san-francisco/things-to-do",
-  chi: "https://www.timeout.com/chicago/things-to-do", bos: "https://www.meetboston.com/events", mia: "https://www.timeout.com/miami/things-to-do"
+  chi: "https://www.timeout.com/chicago/things-to-do", bos: "https://www.meetboston.com/events", mia: "https://www.timeout.com/miami/things-to-do",
+  lax: "https://www.timeout.com/los-angeles/things-to-do", las: "https://www.timeout.com/las-vegas/things-to-do", msy: "https://www.neworleans.com/events/",
+  mco: "https://www.visitorlando.com/events/", yyz: "https://www.timeout.com/toronto/things-to-do", mex: "https://www.timeout.com/mexico-city/things-to-do",
+  rio: "https://www.timeout.com/rio-de-janeiro/things-to-do", bue: "https://www.timeout.com/buenos-aires/things-to-do"
 };
