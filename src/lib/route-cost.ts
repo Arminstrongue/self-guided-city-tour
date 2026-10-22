@@ -112,3 +112,51 @@ export function leaveBy(flightAt: Date, ret: Leg): Date {
 }
 
 function round2(v: number) { return Math.round(v * 100) / 100; }
+
+/* ---------- Ponto de partida: aeroporto, hotel ou onde estou ---------- */
+
+/** De onde começa e acaba o percurso. Sem `place`, é o aeroporto (o roteiro clássico de escala). */
+export type Base = { kind: "airport" } | { kind: "place"; lat: number; lng: number; label: string; here?: boolean };
+export type CityHop = { m: "walk" | "metro"; min: number; km: number };
+
+/** Até esta distância vale a pena ir a pé (km em linha reta). */
+export const WALK_MAX_KM = 1.6;
+
+/**
+ * Estimativa de uma deslocação dentro da cidade: a pé até 1,6 km; acima disso transporte público
+ * (10 min de espera e caminho até à estação + ~18 km/h de média). Arredonda a 5 minutos.
+ */
+export function hop(a: { lat: number; lng: number }, b: { lat: number; lng: number }): CityHop {
+  const d = km(a, b);
+  if (d <= WALK_MAX_KM) return { m: "walk", min: Math.max(3, walkMin(d)), km: d };
+  return { m: "metro", min: Math.ceil((10 + (d * 1.3 / 18) * 60) / 5) * 5, km: d };
+}
+
+/** O percurso visto a partir de um ponto: ida até à 1.ª paragem, volta da última e tempo total. */
+export type BasePlan = { to: CityHop | null; back: CityHop | null; minutesTotal: number };
+export function planFromBase(city: City, plan: RoutePlan, base: Base): BasePlan {
+  if (base.kind !== "place" || !plan.stops.length) return { to: null, back: null, minutesTotal: plan.minutesTotal };
+  const to = hop(base, plan.stops[0]);
+  const back = hop(plan.stops[plan.stops.length - 1], base);
+  return { to, back, minutesTotal: to.min + plan.minutesTour + back.min };
+}
+
+/** O roteiro mais completo que cabe no tempo, a partir do ponto escolhido. */
+export function fitFromBase(city: City, base: Base, availableMin: number): RouteOption | null {
+  const fits = routeOptions(city).filter((o) => planFromBase(city, o.plan, base).minutesTotal <= availableMin);
+  return fits.length ? fits[fits.length - 1] : null;
+}
+
+/**
+ * Minutos que faltam até voltar ao ponto de partida, a contar das paragens ainda por fazer
+ * (visita + ligação de cada uma) e da volta. Se ainda não começou, inclui a ida.
+ */
+export function minutesLeft(plan: RoutePlan, bp: BasePlan, done: Record<string, boolean>): number {
+  const left = plan.stops.filter((s) => !done[s.id]);
+  if (!left.length) return bp.back?.min ?? plan.ret.min;
+  const started = left.length < plan.stops.length;
+  let m = 0;
+  left.forEach((s, i) => { m += s.v; if (i > 0 || started) m += s.leg.min; });
+  if (!started) m += bp.to?.min ?? 0;
+  return m + (bp.back?.min ?? plan.ret.min);
+}

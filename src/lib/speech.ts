@@ -115,7 +115,9 @@ export async function speak(text: string, lang: string, fallback?: string): Prom
 
   const s = window.speechSynthesis;
   s.cancel();
-  const voices = await webVoices();
+  // Sem internet, só as vozes do próprio telemóvel funcionam (as "online" ficariam caladas).
+  const all = await webVoices();
+  const voices = typeof navigator !== "undefined" && navigator.onLine === false ? all.filter((v) => v.localService) : all;
   let voice = pickVoice(voices, tag);
   let useText = text, useLang = tag;
   if (!voice && fallback) { voice = pickVoice(voices, VOICE_LANG.en); useText = fallback; useLang = VOICE_LANG.en; }

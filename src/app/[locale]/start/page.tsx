@@ -9,6 +9,8 @@ import { fmt, INTL_LOCALE, isLocale } from "@/i18n/core";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { loadCities } from "@/lib/content";
 import { routeOptions } from "@/lib/route-cost";
+import { cityCenter } from "@/lib/explore";
+import { accessCount } from "@/data/access";
 import { dualMoney, formatMoney } from "@/lib/currency";
 import { fxContext, requestCurrency } from "@/lib/fx";
 import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
@@ -32,9 +34,10 @@ export default async function Start({ params, searchParams }: { params: { locale
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, L);
   const cities: QsCity[] = list.map((c) => ({
     id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", flag: flag(COUNTRY[c.id] ?? ""),
-    open: owned.has(c.id) || isFreeCity(c.id),
+    open: owned.has(c.id) || isFreeCity(c.id), center: cityCenter(c),
     options: routeOptions(c).map((o) => ({
-      key: o.key, n: o.plan.stops.length, min: o.plan.minutesTotal, cost: formatMoney(o.plan.transport, c.cur, L),
+      key: o.key, n: o.plan.stops.length, min: o.plan.minutesTotal, tour: o.plan.minutesTour, acc: accessCount(o.plan.stops.map((s) => s.id)),
+      first: { lat: o.plan.stops[0].lat, lng: o.plan.stops[0].lng }, last: { lat: o.plan.stops[o.plan.stops.length - 1].lat, lng: o.plan.stops[o.plan.stops.length - 1].lng }, cost: formatMoney(o.plan.transport, c.cur, L),
       names: o.plan.stops.map((s) => stopName(s, params.locale))
     }))
   })).sort((a, b) => a.name.localeCompare(b.name, L));

@@ -1,6 +1,6 @@
 /** Meteorologia por cidade (Open-Meteo, sem chave), guardada 30 minutos em memória. */
 export type Hour = { t: string; temp: number; rain: number; code: number };
-export type Weather = { now: Hour | null; hours: Hour[] };
+export type Weather = { now: Hour | null; hours: Hour[]; at?: number };
 
 const cache = new Map<string, { at: number; w: Weather }>();
 
@@ -24,7 +24,7 @@ export async function weatherFor(lat: number, lng: number, tz: string): Promise<
     const all: Hour[] = j.hourly.time.map((t, i) => ({ t, temp: Math.round(j.hourly.temperature_2m[i]), rain: j.hourly.precipitation_probability[i] ?? 0, code: j.hourly.weather_code[i] }));
     const from = Math.max(0, all.findIndex((h) => h.t.slice(0, 13) === nowLocal));
     const hours = all.slice(from, from + 12);
-    const w = { now: hours[0] ?? null, hours };
+    const w = { now: hours[0] ?? null, hours, at: Date.now() };
     cache.set(key, { at: Date.now(), w });
     return w;
   } catch {

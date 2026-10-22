@@ -2,7 +2,7 @@
 import { lineText } from "@/data/stop-names";
 /** Peças do roteiro: escolher o roteiro pelo tempo, GPS e regresso, voo em direto, meteorologia, áudio e guia prático. */
 import { useEffect, useRef, useState } from "react";
-import type { City, Stop } from "@/data/cities";
+import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { FAR_KM, km, returnEstimate, walkMin, type RouteOption } from "@/lib/route-cost";
@@ -159,7 +159,7 @@ export function FlightCard({ city, flightNo, flightAt, enabled, onUse, onEdit, t
 
 /* ---------- Meteorologia ---------- */
 
-export function WeatherCard({ cityId, t }: { cityId: string; t: Dict }) {
+export function WeatherCard({ cityId, t, locale }: { cityId: string; t: Dict; locale?: Locale }) {
   const [w, setW] = useState<Weather | null>(null);
   useEffect(() => {
     fetch(`/api/weather?city=${cityId}`).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && !j.error) setW(j); }).catch(() => undefined);
@@ -172,6 +172,7 @@ export function WeatherCard({ cityId, t }: { cityId: string; t: Dict }) {
     <div className="weather">
       <span className="num"><b>{iconFor(w.now.code)} {fmt(t.wNow, { t: w.now.temp })}</b>{Math.min(...temps) !== Math.max(...temps) ? <> · {fmt(t.wRange, { min: Math.min(...temps), max: Math.max(...temps) })}</> : null}</span>
       <span className="hint">{wet ? fmt(t.wRain, { h: wet.t.slice(11, 16) }) : t.wDry}</span>
+      {w.at && Date.now() - w.at > 45 * 60_000 && <span className="hint stale">{fmt(t.lvUpdated, { t: new Date(w.at).toLocaleTimeString(locale ? INTL_LOCALE[locale] : undefined, { hour: "2-digit", minute: "2-digit" }) })}</span>}
     </div>
   );
 }
@@ -253,8 +254,9 @@ export function EatNearby({ cityId, stopId, locale, t }: { cityId: string; stopI
 
 type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
 
-export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale }: {
+export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel }: {
   city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number;
+  startHop?: { m: "walk" | "metro"; min: number } | null; backLabel?: string;
   money: (v: number) => string; onDone: (id: string) => void; onOpen: (id: string) => void; t: Dict; locale: Locale;
 }) {
   const idx = stops.findIndex((s) => !done[s.id]);
@@ -262,14 +264,14 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
     return (
       <div className="card nx nx-done">
         <b>{t.nxDoneT}</b>
-        <p className="hint">{fmt(t.nxDoneS, { l: lineText(city.ret.core.line, locale) })}</p>
+        <p className="hint">{backLabel ?? fmt(t.nxDoneS, { l: lineText(city.ret.core.line, locale) })}</p>
       </div>
     );
   }
   const s = stops[idx];
-  const leg = idx === 0 ? city.air : s.leg;
+  const leg: Leg = idx === 0 ? (startHop ? { m: startHop.m === "walk" ? "walk" : "metro", min: startHop.min } : city.air) : s.leg;
   const after = stops.slice(idx + 1).find((x) => !done[x.id]);
-  const how = leg.m === "walk" ? `${t.walk} · ${leg.min} min` : `${t[leg.m]}${leg.line ? ` · ${lineText(leg.line, locale)}` : ""} · ${leg.min} min`;
+  const how = leg.m === "walk" ? `${t.walk} · ${leg.min} min` : idx === 0 && startHop ? `${t.bpTransit} · ~${leg.min} min` : `${t[leg.m]}${leg.line ? ` · ${lineText(leg.line, locale)}` : ""} · ${leg.min} min`;
   const mus = museums.map((m) => ({ m, d: km(m, s) })).filter((x) => x.d < 0.35).sort((a, b) => a.d - b.d)[0]?.m;
   const closedToday = Boolean(s.cl?.includes(today));
   let status: { cls: string; txt: string } | null = null;

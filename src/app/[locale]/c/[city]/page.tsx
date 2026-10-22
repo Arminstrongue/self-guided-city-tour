@@ -60,7 +60,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           <div className="stats" tabIndex={0}><span className="num">{meta}</span><span><b>{LOCALES.length}</b> {t.statLangs}</span></div>
           <div className="ctas">{free
             ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>🎁 {t.freeCta}</Link>
-            : <a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a>}<Link className="btn ghost press" href={`/${params.locale}/start?city=${city.id}`}>⏱ {t.qsByTime}</Link></div>
+            : <><a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a><Link className="btn ghost press" href={`/${params.locale}/tour/${city.id}`}>🎧 {t.qsTry}</Link></>}<Link className="btn ghost press" href={`/${params.locale}/start?city=${city.id}`}>⏱ {t.qsByTime}</Link></div>
         </div>
         <PageQR label={t.qrScan} />
       </CityHero>

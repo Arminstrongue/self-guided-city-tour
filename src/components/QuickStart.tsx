@@ -2,10 +2,13 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { fmt } from "@/i18n/core";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
+import { hop, type Base } from "@/lib/route-cost";
+import { BasePicker, baseLabel, loadBase } from "./BasePicker";
 
-export type QsOption = { key: string; n: number; min: number; cost: string; names: string[] };
-export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; options: QsOption[] };
+type LL = { lat: number; lng: number };
+export type QsOption = { key: string; n: number; min: number; tour: number; first: LL; last: LL; acc: number; cost: string; names: string[] };
+export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; options: QsOption[] };
 
 /** Margem antes da partida (igual à do roteiro: chegar ao aeroporto com tempo). */
 const BUFFER_MIN = 150;
@@ -20,8 +23,13 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
   const [dep, setDep] = useState("");
   const [q, setQ] = useState("");
   const [shift, setShift] = useState(0); // "mais curto / mais longo" a partir do que cabe
+  const [base, setBase] = useState<Base>({ kind: "airport" });
   const step = !cityId ? 1 : !time ? 2 : 3;
   const city = cities.find((c) => c.id === cityId) ?? null;
+  const hm = (ms: number) => new Date(ms).toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
+  // Tempo total a partir do ponto escolhido (aeroporto: o do roteiro; hotel/onde estou: ida + percurso + volta).
+  const total = (o: QsOption) => (base.kind === "airport" ? o.min : hop(base, o.first).min + o.tour + hop(o.last, base).min);
+  const pickCity = (id: string) => { setCityId(id); setQ(""); try { setBase(loadBase(id)); } catch { /* ignorar */ } };
 
   const list = useMemo(() => { const f = fold(q.trim()); return f ? cities.filter((c) => fold(`${c.name} ${c.country}`).includes(f)) : cities; }, [q, cities]);
   const TIMES: { k: string; label: string; min: number }[] = [
@@ -31,9 +39,9 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
   const fitIdx = useMemo(() => {
     if (!city || !time) return -1;
     let best = -1;
-    city.options.forEach((o, i) => { if (o.min <= time.min) best = i; });
+    city.options.forEach((o, i) => { if (total(o) <= time.min) best = i; });
     return best;
-  }, [city, time]);
+  }, [city, time, base]); // eslint-disable-line react-hooks/exhaustive-deps
   const idx = city && fitIdx >= 0 ? Math.max(0, Math.min(city.options.length - 1, fitIdx + shift)) : -1;
   const opt = city && idx >= 0 ? city.options[idx] : null;
 
@@ -62,7 +70,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
           <label className="pk-q qs-q"><Search size={16} aria-hidden="true" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.qsSearch} aria-label={t.qsSearch} autoComplete="off" /></label>
           <div className="qs-cities">
             {list.map((c) => (
-              <button key={c.id} className="qs-city press" onClick={() => { setCityId(c.id); setQ(""); }}>
+              <button key={c.id} className="qs-city press" onClick={() => pickCity(c.id)}>
                 <span className="qs-flag" aria-hidden="true">{c.flag}</span>
                 <span className="qs-tx"><b>{c.name}</b><small>{c.country}</small></span>
                 {c.open && <span className="qs-owned">{t.qsOpen}</span>}
@@ -73,8 +81,10 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
         </>
       )}
 
-      {step === 2 && (
+      {step === 2 && city && (
         <div className="qs-times">
+          <BasePicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={base} onChange={setBase} />
+          <span className="bp-h">{t.qsHowLong}</span>
           {TIMES.map((x) => (
             <button key={x.k} className="qs-time press" onClick={() => setTime({ k: x.k, min: x.min })}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>
           ))}
@@ -93,17 +103,20 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
             <>
               <div className="qs-sum">
                 <b>{city.flag} {city.name}</b>
-                <span>{fmt(t.qsFits, { n: opt.n, h: hrs(opt.min), c: opt.cost })}</span>
+                <span>{fmt(t.qsFits, { n: opt.n, h: hrs(total(opt)), c: opt.cost })}</span>
+                <span className="qs-back-at">{base.kind === "airport" ? fmt(t.qsFromAirport, { t: hm(Date.now() + total(opt) * 60000) }) : fmt(t.bpBackAt, { p: baseLabel(base, t), t: hm(Date.now() + total(opt) * 60000) })}</span>
               </div>
+              {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
               <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}</ol>
               <div className="qs-adj">
                 <button className="link-btn" disabled={idx <= 0} onClick={() => setShift(shift - 1)}>− {t.qsShorter}</button>
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>
               </div>
               <button className="btn tram qs-go press" onClick={go}><Play size={18} aria-hidden="true" />{city.open ? t.qsStart : fmt(t.qsBuy, { p: from })}</button>
+              {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={() => { try { localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); } catch { /* ignorar */ } }}>🎧 {t.qsTry}</a>}
             </>
           ) : (
-            <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0]?.min ?? 0) })}</p>
+            <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0] ? total(city.options[0]) : 0) })}</p>
           )}
           <div className="qs-ess">
             <span className="qs-ess-h">{t.qsEss}</span>

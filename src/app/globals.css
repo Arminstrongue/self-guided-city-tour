@@ -2041,3 +2041,62 @@ main:focus{outline:none}
 .nx-done{text-align:center}
 .nx-done b{font-size:20px}
 @media (prefers-color-scheme:dark){.nx-row.ok{color:#4ade80}.nx-row.bad{color:#f87171}.nx-row.warn{color:#fbbf24}}
+
+/* ── Ponto de partida ── */
+.bp{display:flex;flex-direction:column;gap:8px}
+.bp-h{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.qs-times>.bp-h{margin-top:10px}
+.bp-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.bp-seg button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 4px;border:0;border-radius:10px;background:none;color:var(--muted);font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,color .2s}
+.bp-seg button.on{background:var(--surface,#fff);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.bp-q{display:flex;gap:8px}
+.bp-q input{flex:1;min-width:0;height:44px;border-radius:12px;border:1px solid var(--line);padding:0 12px;font:inherit;font-size:15px;background:var(--surface,#fff);color:var(--ink)}
+.bp-q .btn{width:auto;flex:0 0 auto;display:grid;place-items:center;padding:0 14px;height:44px;margin:0}
+.bp-hits{display:flex;flex-direction:column;gap:6px}
+.bp-hit{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface,#fff);color:var(--ink);font:inherit;text-align:start;cursor:pointer}
+.bp-hit.on,.bp-hit:hover{border-color:var(--cobalt)}
+.bp-hit small{color:var(--muted);font-size:12px}
+.bp-ok{margin:0;font-size:14px;font-weight:600;color:#0a7a3f}
+.bp-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px}
+.bp-line span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qs-back-at{font-size:13px;opacity:.85}
+.qs-try{display:flex;align-items:center;justify-content:center;gap:6px;height:48px}
+.weather .stale{color:var(--warn,#a15c00)}
+@media (prefers-color-scheme:dark){.bp-ok{color:#4ade80}}
+
+/* ── Pronto para sair ── */
+.oc-sum{margin:0;padding:12px 14px;border-radius:14px;font-weight:700}
+.oc-sum.ok{background:color-mix(in srgb,#16a34a 14%,transparent);color:#0a7a3f}
+.oc-sum.warn{background:color-mix(in srgb,#f59e0b 16%,transparent);color:#8a4b00}
+.oc-sum.bad{background:color-mix(in srgb,#dc2626 14%,transparent);color:#b42318}
+.oc-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.oc-list li{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45}
+.oc-list li>span:first-child{flex:0 0 20px}
+@media (prefers-color-scheme:dark){.oc-sum.ok{color:#4ade80}.oc-sum.warn{color:#fbbf24}.oc-sum.bad{color:#f87171}}
+
+/* ── Mapa simplificado (offline) ── */
+.sk{margin:0;padding:10px;display:flex;flex-direction:column;gap:6px}
+.sk svg{width:100%;height:auto;display:block}
+.sk-bg{fill:color-mix(in srgb,var(--cobalt) 5%,var(--surface,#fff));stroke:var(--line)}
+.sk-line{fill:none;stroke:var(--cobalt);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.sk-hop{stroke:var(--muted);stroke-width:2;stroke-dasharray:4 5}
+.sk-stop circle{fill:var(--cobalt);stroke:#fff;stroke-width:2}
+.sk-done circle{fill:#16a34a;stroke:#fff;stroke-width:2}
+.sk-stop text,.sk-done text{fill:#fff;font-size:11px;font-weight:700}
+.sk-base{fill:#fff;stroke:var(--ink);stroke-width:1.5}
+.sk-me{fill:#2563eb;stroke:#fff;stroke-width:2}
+.sk-me-halo{fill:rgba(37,99,235,.2)}
+.sk-n path{fill:var(--ink)}.sk-n text{fill:var(--ink);font-size:10px;font-weight:700}
+.sk-scale line{stroke:var(--ink);stroke-width:2}.sk-scale text{fill:var(--ink);font-size:10px}
+
+/* ── Amostra grátis ── */
+.pv{display:flex;flex-direction:column;gap:8px;padding:16px;border:1px solid color-mix(in srgb,var(--cobalt) 30%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--cobalt) 8%,var(--surface,#fff)),var(--surface,#fff))}
+.pv .hint{margin:0}
+.pv .btn{margin:4px 0 0}
+.pv .link-btn{align-self:center}
+.stop.locked .body{opacity:.6}
+.pv-lock{text-decoration:none;color:inherit}
+
+/* ── Acessibilidade e publicidade ── */
+.ac-chip{display:inline-flex;align-items:center;gap:4px;margin:4px 6px 0 0;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--ink) 7%,transparent);color:var(--ink)}
+.ad-tag{font-weight:600;text-transform:none;letter-spacing:0;color:var(--muted)}

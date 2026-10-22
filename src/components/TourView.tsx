@@ -3,7 +3,10 @@ import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
-import { fitRoute, hasExtension, leaveBy, optionByKey, routeOptions } from "@/lib/route-cost";
+import { fitRoute, hasExtension, leaveBy, minutesLeft, optionByKey, planFromBase, routeOptions, type Base, type CityHop } from "@/lib/route-cost";
+import { BasePicker, baseLabel, loadBase } from "./BasePicker";
+import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
+import { cityCenterOf } from "@/lib/city-center";
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
 import { NextCard, BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
@@ -17,6 +20,8 @@ import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
 import { RatingCard } from "./Rating";
 import { OfflineButton } from "./TravelTools";
+import { OfflineCheck } from "./OfflineCheck";
+import { RouteSketch } from "./RouteSketch";
 import { SheetX } from "./WinNav";
 import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
@@ -42,6 +47,8 @@ type Props = {
   flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
   explore?: Omit<React.ComponentProps<typeof Explore>, "cityId" | "cityName" | "locale" | "t">;
   bios: Record<string, { text: string; lang: string }>; enBios: Record<string, string>;
+  /** Amostra grátis: só a 1.ª paragem está aberta. */
+  preview?: { buy: string; price: string; signIn: string };
 };
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
@@ -53,7 +60,7 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore }: Props) {
+export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview }: Props) {
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
@@ -71,6 +78,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const [online, setOnline] = useState(true);
   const [notice, setNotice] = useState("");
   const [fxOpen, setFxOpen] = useState(false);
+  // Ponto de partida e de chegada: aeroporto (por defeito), hotel ou onde estou.
+  const [base, setBase] = useState<Base>({ kind: "airport" });
+  const [baseOpen, setBaseOpen] = useState(false);
+  useEffect(() => { setBase(loadBase(city.id)); }, [city.id]);
   useEffect(() => {
     const up = () => setOnline(navigator.onLine);
     up(); window.addEventListener("online", up); window.addEventListener("offline", up);
@@ -97,6 +108,15 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const both = (v: number) => { const d = dualMoney(v, city.cur, fx, INTL_LOCALE[locale]); return d.local ? <>{d.main} <span className="fx">{d.local}</span></> : d.main; };
   const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
   const leave = flightDate ? leaveBy(flightDate, plan.ret) : null;
+  const bp = planFromBase(city, plan, base);
+  const atPlace = base.kind === "place";
+  const backAt = atPlace ? new Date(now + minutesLeft(plan, bp, done) * 60_000) : null;
+  const hopView = (h: CityHop) => (
+    <div className="leg">
+      {h.m === "walk" ? <span className="chip walk">{t.walk} · {t.free.toLowerCase()}</span> : <span className="chip paid num">{t.bpTransit} · ~{money(city.single)}</span>}
+      <span className="num">~{h.min} min</span>
+    </div>
+  );
   const today = weekdayIn(city.tz, now);
   const closedToday = (s: Stop) => Boolean(s.cl?.includes(today));
   const nextStop = plan.stops.find((s) => !done[s.id]) ?? null;
@@ -196,21 +216,36 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             <a className="hb-ic press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}><Wallet size={18} strokeWidth={2} aria-hidden="true" /></a>
             <CurrencyPicker current={fx.cur} label={t.currency} />
           </span>
-          {leave && <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>}
+          {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{hm(leave)}</b></div>
+            : backAt && <div className="clock"><small>{t.bpBackShort}</small><b className="num">{hm(backAt)}</b></div>}
         </div>
         <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
         <div className="tabs" role="tablist">
-          {(["route", ...(explore ? ["live" as const] : ["map" as const]), "cost", "museums", "guide"] as const).map((k) => (
+          {(preview ? (["route"] as const) : (["route", ...(explore ? ["live" as const] : ["map" as const]), "cost", "museums", "guide"] as const)).map((k) => (
             <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map" || k === "live") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
         </div>
       </header>
 
       <div className="stack" style={{ marginTop: 14 }}>
+        {preview && (
+          <div className="card pv">
+            <b>🎧 {t.pvTitle}</b>
+            <p className="hint">{t.pvSub}</p>
+            <a className="btn tram press" href={preview.buy}>{fmt(t.pvUnlock, { p: preview.price })}</a>
+            <a className="link-btn" href={preview.signIn}>{t.pvHave}</a>
+          </div>
+        )}
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
-          <WeatherCard cityId={city.id} t={t} />
+          <WeatherCard cityId={city.id} t={t} locale={locale} />
+          <div className="bp-line">
+            <span>{base.kind === "airport" ? "✈" : base.here ? "📍" : "🏨"} {fmt(t.bpFrom, { p: baseLabel(base, t) })}</span>
+            <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
+          </div>
+          {baseOpen && <BasePicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={base} onChange={(b) => { setBase(b); if (b.kind === "airport" || !b.here) setBaseOpen(false); }} />}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
+          {accessCount(plan.stops.map((s) => s.id)) > 0 && <p className="hint">♿ {fmt(t.acSum, { n: accessCount(plan.stops.map((s) => s.id)) })}</p>}
           {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
           {avail !== null && leave && (
             <p className={`fit ${fits ? "ok" : "bad"}`}>
@@ -225,35 +260,58 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
             onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />
           {!online && <p className="note">{t.offline}</p>}
-          <OfflineButton t={t} locale={locale} city={city.id} />
+          {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
+          {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
           <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setFxOpen(true)}>💱 {t.ttFx} · {city.cur} → {fx.cur}</button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 
-        {tab === "route" && (
+        {tab === "route" && (!atPlace || flightDate) && (
           <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
             next={nextStop} now={now} t={t} locale={locale} />
         )}
 
         <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
-        {tab === "live" && explore && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
+        {(tab === "map" || tab === "live") && !online && <RouteSketch stops={plan.stops} done={done} base={base} pos={geo.pos} t={t} />}
+        {tab === "live" && explore && online && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
           route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
-        {tab === "route" && (
-          <NextCard city={city} stops={plan.stops} done={done} museums={museums} today={today} money={money} t={t} locale={locale}
+        {tab === "route" && !preview && (
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: baseLabel(base, t), t: backAt ? hm(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
 
         {tab === "route" && (
           <div className="route">
-            <div className="stop endpoint"><span className="pin">✈</span><div className="body"><h3>{t.airport}</h3>
-              {city.cardName && <p className="meta">{fmt(t.fromAirport, { card: city.cardName + (city.card ? ` (${money(city.card)})` : "") })}</p>}</div></div>
-            {legView(city.air)}
+            {atPlace && bp.to ? (
+              <>
+                <div className="stop endpoint"><span className="pin">{base.here ? "📍" : "🏨"}</span><div className="body"><h3>{baseLabel(base, t)}</h3><p className="meta">{t.bpStartHere}</p></div></div>
+                {hopView(bp.to)}
+              </>
+            ) : (
+              <>
+                <div className="stop endpoint"><span className="pin">✈</span><div className="body"><h3>{t.airport}</h3>
+                  {city.cardName && <p className="meta">{fmt(t.fromAirport, { card: city.cardName + (city.card ? ` (${money(city.card)})` : "") })}</p>}</div></div>
+                {legView(city.air)}
+              </>
+            )}
             {plan.stops.map((s, i) => {
               const here = offers.filter((o) => o.stopId === s.id);
               const isOpen = open === s.id;
+              if (preview && i > 0) return (
+                <div key={s.id}>
+                  {legView(s.leg)}
+                  <div className="stop locked">
+                    <span className="pin num">{i + 1}</span>
+                    <div className="body"><a className="head pv-lock" href={preview.buy}>
+                      <div style={{ minWidth: 0 }}><h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3><p className="meta">{s.a} · {s.v} {t.visit}</p></div>
+                      <span aria-label={t.pvLocked}>🔒</span>
+                    </a></div>
+                  </div>
+                </div>
+              );
               return (
                 <div key={s.id}>
                   {i > 0 && legView(s.leg)}
@@ -269,6 +327,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                           <h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3>
                           <p className="meta">{s.a} · {s.v} {t.visit}{s.o ? ` · ${t.optPaid}` : ""}{here.length ? ` · ${here.length} ★` : ""}</p>
                           {closedToday(s) && <span className="closed-chip">{t.closedToday}</span>}
+                          {accessOf(s.id).map((a) => <span key={a} className={`ac-chip ${a}`}>{a === "hill" ? "⛰" : a === "steps" ? "🪜" : "🪨"} {t.ac[a]}</span>)}
                         </div>
                         <span className="cost-tag num" style={{ color: s.c ? "var(--warn)" : "var(--good)" }}>{s.c ? `~${money(s.c)}` : t.free}</span>
                       </button>
@@ -279,7 +338,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                           <StopMedia cityId={city.id} stopId={s.id} name={s.n} t={t} locale={locale} />
                           {here.length > 0 && (
                             <>
-                              <span className="label">{t.nearby}</span>
+                              <span className="label">{t.nearby} · <span className="ad-tag">{t.adPartner}</span></span>
                               <div className="offers">
                                 {here.map((o) => (
                                   <div key={o.id} className="offer">
@@ -310,19 +369,31 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                 </div>
               );
             })}
-            {legView(plan.ret)}
-            <div className="stop endpoint"><span className="pin">✈</span><div className="body"><h3>{t.returnAirport}</h3>
-              {leave && <p className="meta">{fmt(t.returnSub, { t: hm(leave) })}</p>}</div></div>
+            {atPlace && bp.back ? (
+              <>
+                {hopView(bp.back)}
+                <div className="stop endpoint"><span className="pin">{base.here ? "📍" : "🏨"}</span><div className="body"><h3>{fmt(t.bpBack, { p: baseLabel(base, t) })}</h3>
+                  {backAt && <p className="meta">{fmt(t.bpAround, { t: hm(backAt) })}</p>}
+                  {leave && <p className="meta">✈ {fmt(t.returnSub, { t: hm(leave) })}</p>}</div></div>
+              </>
+            ) : (
+              <>
+                {legView(plan.ret)}
+                <div className="stop endpoint"><span className="pin">✈</span><div className="body"><h3>{t.returnAirport}</h3>
+                  {leave && <p className="meta">{fmt(t.returnSub, { t: hm(leave) })}</p>}</div></div>
+              </>
+            )}
           </div>
         )}
 
-        {tab === "map" && <MapView stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} focus={focus} t={t} gmapsKey={explore?.gmapsKey} />}
+        {tab === "map" && online && <MapView stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} focus={focus} t={t} gmapsKey={explore?.gmapsKey} />}
 
         {tab === "museums" && (
           <>
             {(accessPlan === "trip" || accessPlan === "all" || !flightDate) && (
               <DayPlan core={city.stops.filter((s) => !s.x)} extra={extras} museums={museums} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
             )}
+            <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
             <MuseumsTab city={city} museums={museums} t={t} money={both} locale={locale}
               onMap={(m) => showOnMap({ lat: m.lat, lng: m.lng, name: m.n, walk: false })} />
           </>
@@ -349,11 +420,12 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
             </div>
+            <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
             <CostPlanner cityId={city.id} t={t} locale={locale} transport={TRANSPORT[city.id] ?? []} museums={museums} base={plan.transport + plan.entries} money={both} />
           </>
         )}
 
-        {accessPlan !== "free" && doneN >= Math.max(1, Math.ceil(plan.stops.length / 2)) && (
+        {accessPlan !== "free" && accessPlan !== "preview" && doneN >= Math.max(1, Math.ceil(plan.stops.length / 2)) && (
           <RatingCard cityId={city.id} cityLabel={cityLabel} t={t} locale={locale}
             onShare={async () => { try { if (navigator.share) await navigator.share({ text: shareText }); else window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, "_blank", "noopener"); } catch { /* cancelado */ } }} />
         )}
