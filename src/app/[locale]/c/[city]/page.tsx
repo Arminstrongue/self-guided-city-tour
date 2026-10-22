@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { alternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
@@ -7,6 +9,7 @@ import { Explore } from "@/components/Explore";
 import { exploreProps } from "@/lib/explore-props";
 import { WebOnly } from "@/components/WebOnly";
 import { ExitCheck } from "@/components/ExitCheck";
+import { ChosenRoute } from "@/components/ChosenRoute";
 import Link from "next/link";
 import { cityName, COUNTRY } from "@/data/cities";
 import { SafetyPanel } from "@/components/Safety";
@@ -15,7 +18,7 @@ import { GuideCard } from "@/components/GuideCard";
 import { listGuides } from "@/lib/guides";
 import { stopName } from "@/data/stop-names";
 import { loadCity } from "@/lib/content";
-import { fmt, INTL_LOCALE, LOCALES } from "@/i18n/core";
+import { fmt, INTL_LOCALE, LOCALES, isLocale } from "@/i18n/core";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { enabledProviders, sessionEmail } from "@/lib/auth";
 import { TOUR_PLANS } from "@/lib/pricing";
@@ -33,6 +36,17 @@ export const dynamic = "force-dynamic";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
+export async function generateMetadata({ params }: { params: { locale: Locale; city: string } }): Promise<Metadata> {
+  const city = await loadCity(params.city);
+  if (!city || !isLocale(params.locale)) return {};
+  const t = getDict(params.locale);
+  const name = cityName(city, params.locale);
+  const core = routeOptions(city).find((o) => o.key === "core");
+  const title = fmt(t.seoCity, { city: name });
+  const description = fmt(t.seoCityDesc, { n: core?.plan.stops.length ?? city.stops.length, h: hrs(core?.plan.minutesTour ?? 0) });
+  return { title, description, alternates: alternates(params.locale, `/c/${city.id}`), openGraph: { title, description, siteName: "VOYBU", type: "website" } };
+}
+
 export default async function CityEntry({ params, searchParams }: { params: { locale: Locale; city: string }; searchParams: { ref?: string } }) {
   const city = await loadCity(params.city);
   if (!city) notFound();
@@ -40,7 +54,8 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const name = cityName(city, params.locale);
   const fx = await fxContext();
   const opts = routeOptions(city); const core = opts.find((o) => o.key === "core") ?? opts[opts.length - 1];
-  const meta = fmt(t.cityMeta, { n: city.stops.length, h: hrs(core.plan.minutesTour) });
+  // Um só cálculo: paragens e duração do mesmo roteiro (o base, sem extensão), com visitas e deslocações entre paragens.
+  const meta = fmt(t.cityMeta, { n: core.plan.stops.length, h: hrs(core.plan.minutesTour) });
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const guides = (await listGuides(city.id).catch(() => [])).slice(0, 3);
   const free = isFreeCity(city.id);
@@ -101,6 +116,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         ) : (
         <section className="sec book" id="book">
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>
+          <ChosenRoute t={t} locale={params.locale} city={city.id} />
           <ExitCheck city={city} locale={params.locale} t={t} />
           <div className="book-card">
             <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>

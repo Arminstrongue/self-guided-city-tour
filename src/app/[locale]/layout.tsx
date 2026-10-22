@@ -10,8 +10,10 @@ import { SkipLink } from "@/components/SkipLink";
 import { SheetManager } from "@/components/SheetManager";
 import { isLocale, RTL } from "@/i18n/core";
 import { getDict } from "@/i18n/dictionaries";
+import { env } from "@/lib/env";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(env.appUrl),
   title: "VOYBU — Your self-guided tour",
   description: "VOYBU — your self-guided tour. City routes with an audio guide, the cheapest transport and your trip essentials in one place.",
   manifest: "/manifest.webmanifest",

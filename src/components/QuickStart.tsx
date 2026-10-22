@@ -11,7 +11,7 @@ export type QsOption = { key: string; n: number; min: number; tour: number; firs
 export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; options: QsOption[] };
 
 /** Margem antes da partida (igual à do roteiro: chegar ao aeroporto com tempo). */
-const BUFFER_MIN = 150;
+const BUFFER_MIN = { plane: 150, train: 45, ship: 60 } as const;
 type Time = { k: string; min: number };
 const fold = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}`;
@@ -21,6 +21,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
   const [cityId, setCityId] = useState(pre);
   const [time, setTime] = useState<Time | null>(null);
   const [dep, setDep] = useState("");
+  const [mode, setMode] = useState<"plane" | "train" | "ship">("plane");
   const [q, setQ] = useState("");
   const [shift, setShift] = useState(0); // "mais curto / mais longo" a partir do que cabe
   const [base, setBase] = useState<Base>({ kind: "airport" });
@@ -47,9 +48,12 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
 
   function go() {
     if (!city || !opt) return;
-    try { localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); localStorage.setItem("sgct:onboarded", "1"); } catch { /* sem armazenamento */ }
+    try {
+      localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); localStorage.setItem("sgct:onboarded", "1");
+      localStorage.setItem("sgct:planned", JSON.stringify({ city: city.id, key: opt.key, n: opt.n, h: hrs(total(opt)), names: opt.names, base: baseLabel(base, t), open: city.open, at: Date.now() }));
+    } catch { /* sem armazenamento */ }
     if (city.open) { location.href = `/${locale}/tour/${city.id}`; return; }
-    const d = time?.k === "dep" && dep ? `?dep=${encodeURIComponent(dep)}` : "";
+    const d = time?.k === "dep" && dep && mode === "plane" ? `?dep=${encodeURIComponent(dep)}` : "";
     location.href = `/${locale}/c/${city.id}${d}#book`;
   }
   const back = () => { if (step === 3) { setTime(null); setShift(0); } else if (step === 2) setCityId(""); };
@@ -90,9 +94,12 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
           ))}
           <div className="qs-time qs-dep">
             <span className="qs-dep-l"><Clock size={18} aria-hidden="true" />{t.qsUntil}</span>
+            <div className="bp-seg qs-mode" role="radiogroup" aria-label={t.qsUntil}>
+              {(["plane", "train", "ship"] as const).map((m) => <button key={m} type="button" role="radio" aria-checked={mode === m} className={mode === m ? "on" : ""} onClick={() => setMode(m)}>{m === "plane" ? "✈ " + t.qsPlane : m === "train" ? "🚆 " + t.qsTrain : "🛳 " + t.qsShip}</button>)}
+            </div>
             <input type="datetime-local" value={dep} onChange={(e) => setDep(e.target.value)} aria-label={t.qsUntil} />
-            <button className="btn tram" disabled={!dep} onClick={() => setTime({ k: "dep", min: Math.round((new Date(dep).getTime() - Date.now()) / 60000) - BUFFER_MIN })}>{t.qsNext}</button>
-            <small className="hint">{t.qsUntilHint}</small>
+            <button className="btn tram" disabled={!dep} onClick={() => setTime({ k: "dep", min: Math.round((new Date(dep).getTime() - Date.now()) / 60000) - BUFFER_MIN[mode] })}>{t.qsNext}</button>
+            <small className="hint">{mode === "plane" ? t.qsUntilHint : mode === "train" ? t.qsHintTrain : t.qsHintShip}</small>
           </div>
         </div>
       )}

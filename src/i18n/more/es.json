@@ -1067,5 +1067,19 @@
 },
 "acSum": "{n} paradas con cuestas empinadas, escaleras o suelo irregular",
 "adPartner": "Socios (publicidad)",
-"pcChecked": "Precios comprobados en {d}; pueden cambiar."
+"pcChecked": "Precios comprobados en {d}; pueden cambiar.",
+"wDemo": "Ruta de demostración gratis",
+"wPlanned": "Tu ruta planificada",
+"wPlannedSub": "{n} paradas · unas {h}",
+"crTitle": "Tu ruta",
+"crNote": "Esta es la versión que se abre tras el pago. Puedes cambiarla cuando quieras en la ruta.",
+"qsPlane": "Vuelo",
+"qsTrain": "Tren",
+"qsShip": "Crucero",
+"qsHintTrain": "Reservamos 45 min para llegar a la estación y subir.",
+"qsHintShip": "Reservamos 1 h para volver a bordo: confirma la hora de embarque del barco.",
+"enChecked": "Normas comprobadas en {d}. Confírmalo siempre en la web oficial antes de viajar.",
+"planTripDesc": "Para escapadas: ruta completa y plan de museos para 3 días (entradas no incluidas).",
+"seoCity": "{city}: ruta autoguiada a pie con audioguía | VOYBU",
+"seoCityDesc": "{n} paradas en unas {h}: ruta autoguiada con audioguía en 12 idiomas, el transporte más barato y lo esencial del viaje. Prueba la primera parada gratis."
 }

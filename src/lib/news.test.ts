@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseRss, isSafety } from "./news";
+import { parseRss, isSafety, titleNames } from "./news";
+import { getCity } from "@/data/cities";
 
 const now = Date.parse("2026-10-20T12:00:00Z");
 const item = (title: string, src: string, date: string, link = "https://news.google.com/rss/articles/abc") =>
@@ -25,4 +26,11 @@ test("isSafety works per language", () => {
   assert.ok(isSafety("Grève SNCF ce jeudi", "fr"));
   assert.ok(isSafety("羽田空港で欠航", "ja"));
   assert.ok(!isSafety("Novo restaurante abre", "pt"));
+});
+
+test("só notícias cujo título nomeia a cidade", () => {
+  const lis = getCity("lis")!;
+  assert.equal(titleNames("Greve no metro de Lisboa amanhã", lis), true);
+  assert.equal(titleNames("Lisbon airport delays after storm", lis), true);
+  assert.equal(titleNames("Incêndio no Funchal obriga a evacuar hotel", lis), false);
 });

@@ -160,7 +160,10 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
   const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
   const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
   const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
-  const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...free])].filter(Boolean), [active, signed, wish, free, social]);
+  // Último roteiro escolhido em "Começar em 3 passos" (neste dispositivo): é a viagem do viajante, não a demonstração.
+  const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean } | null>(null);
+  useEffect(() => { try { const v = JSON.parse(localStorage.getItem("sgct:planned") ?? "null"); if (v?.city) setPlanned(v); } catch { /* ignorar */ } }, []);
+  const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...(planned ? [planned.city] : [])])].filter(Boolean), [active, signed, wish, social, planned]);
   const prof = social?.profile ?? null;
   const points = usePoints(Boolean(signed));
   // Na app nativa (Capacitor) o Google recusa o login dentro da app ("disallowed_useragent"): fica só a Apple e o email.
@@ -224,7 +227,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         sub={`${d.format(new Date(p.createdAt))} · ${eur(p.amountCents)}${p.flightNo ? ` · ${fmt(t.wFlight, { f: p.flightNo })}` : ""}`}
         right={on ? <><span className="wl-ticket-live">● {fmt(t.wActive, { t: left(new Date(p.expiresAt).getTime() - now, locale) })}</span><b>{t.wOpen} →</b></> : <span>{t.wExpired}</span>} />;
     }),
-    ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wFree}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
+    ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wDemo}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
   ].slice(0, limit);
 
   const section: Section = tab === "chat" || tab === "people" || tab === "explore" || tab === "videos" ? tab : SUB.includes(tab) || tab === "profile" ? "profile" : "home";
@@ -291,13 +294,15 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
         {signed && <InstallApp t={t} />}
         {/* A seguir (passe ativo, guia, plano) */}
-        {(active[0] || nextBooking || nextPlan || (free[0] && cities[free[0]])) && (
+        {(active[0] || nextBooking || nextPlan || planned || (free[0] && cities[free[0]])) && (
           <section className="stack" style={{ gap: 8 }}>
             <h2 className="gp-h2 sm">⚡ {t.wNextUp}</h2>
             {active[0] ? passCards(1) : nextBooking ? (
               <a href={`/${locale}/g/${nextBooking.guideId}`} className="card wl-next press"><span className="wl-next-ic">🧑‍💼</span><span className="stack" style={{ gap: 2 }}><b>{nextBooking.guide}</b><span className="hint">📅 {dt.format(new Date(nextBooking.startAt))} · {cities[nextBooking.city] ?? nextBooking.city}</span></span><b className="wl-open">→</b></a>
             ) : nextPlan ? (
               <a href={`/${locale}/plan/${nextPlan.id}`} className="card wl-next press"><span className="wl-next-ic">🗺</span><span className="stack" style={{ gap: 2 }}><b>{nextPlan.title}</b><span className="hint">📍 {nextPlan.cityName} · {d.format(new Date(`${nextPlan.startDate}T12:00:00`))}</span></span><b className="wl-open">→</b></a>
+            ) : planned && cities[planned.city] ? (
+              <a href={`/${locale}/${planned.open ? "tour" : "c"}/${planned.city}${planned.open ? "" : "#book"}`} className="card wl-next press"><span className="wl-next-ic">⏱</span><span className="stack" style={{ gap: 2 }}><b>{t.wPlanned} · {cities[planned.city]}</b><span className="hint">{fmt(t.wPlannedSub, { n: planned.n, h: planned.h })}</span></span><b className="wl-open">→</b></a>
             ) : passCards(1).slice(-1)}
           </section>
         )}

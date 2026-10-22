@@ -1067,5 +1067,19 @@
 },
 "acSum": "{n} tappe con salite ripide, scale o fondo irregolare",
 "adPartner": "Partner (pubblicità)",
-"pcChecked": "Prezzi verificati a {d}: possono cambiare."
+"pcChecked": "Prezzi verificati a {d}: possono cambiare.",
+"wDemo": "Percorso dimostrativo gratuito",
+"wPlanned": "Il tuo percorso pianificato",
+"wPlannedSub": "{n} tappe · circa {h}",
+"crTitle": "Il tuo percorso",
+"crNote": "È questa la versione che si apre dopo il pagamento. Puoi cambiarla quando vuoi nel percorso.",
+"qsPlane": "Volo",
+"qsTrain": "Treno",
+"qsShip": "Crociera",
+"qsHintTrain": "Teniamo 45 min per arrivare in stazione e salire.",
+"qsHintShip": "Teniamo 1 h per tornare a bordo: verifica l'orario di imbarco della nave.",
+"enChecked": "Regole verificate a {d}. Conferma sempre sul sito ufficiale prima di partire.",
+"planTripDesc": "Per brevi vacanze: percorso completo e piano dei musei per 3 giorni (ingressi non inclusi).",
+"seoCity": "{city}: tour a piedi autoguidato con audioguida | VOYBU",
+"seoCityDesc": "{n} tappe in circa {h}: percorso autoguidato con audioguida in 12 lingue, il trasporto più economico e l'essenziale del viaggio. Prova la prima tappa gratis."
 }

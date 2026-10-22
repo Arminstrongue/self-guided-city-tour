@@ -41,7 +41,7 @@ export async function buildPulse(cityId: string, log: (m: string) => void = () =
   ]);
   const news: Record<string, { title: string; url: string; source: string; at: number }[]> = {};
   for (const l of LOCALES) {
-    news[l] = (await cultureNews(cityName(c, l), l).catch((e) => { log(`news ${c.id}/${l}: ${e}`); return []; })).map((n) => ({ title: n.title, url: n.url, source: n.source, at: n.at }));
+    news[l] = (await cultureNews(cityName(c, l), l, c).catch((e) => { log(`news ${c.id}/${l}: ${e}`); return []; })).map((n) => ({ title: n.title, url: n.url, source: n.source, at: n.at }));
     await new Promise((r) => setTimeout(r, 300));
   }
   const temps = wx?.hours.map((h) => h.temp) ?? [];

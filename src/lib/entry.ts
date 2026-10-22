@@ -198,3 +198,6 @@ export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, 
 
 /** Só para testes. */
 export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA };
+
+/** Mês em que as regras de entrada e trânsito foram verificadas (AAAA-MM). */
+export const ENTRY_CHECKED = "2026-10";

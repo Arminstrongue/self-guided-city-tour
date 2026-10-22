@@ -1093,7 +1093,7 @@
 "modeLayover": "Aktarmadayım",
 "modeTrip": "Tatildeyim",
 "planTrip": "{city}, 3 gün",
-"planTripDesc": "Kısa tatiller için: tam rota, müzeler ve 3 günlük plan.",
+"planTripDesc": "Kısa tatiller için: rotanın tamamı ve 3 günlük müze planı (giriş biletleri dahil değil).",
 "retFlight": "Dönüş uçuşu (isteğe bağlı)",
 "retFlightHint": "Eklerseniz havalimanına ne zaman dönmeniz gerektiğini söyleriz.",
 "museums": "Müzeler",
@@ -1501,5 +1501,18 @@
 },
 "acSum": "Dik yokuş, merdiven veya engebeli zemin olan {n} durak",
 "adPartner": "İş ortakları (reklam)",
-"pcChecked": "Fiyatlar {d} tarihinde kontrol edildi — değişebilir."
+"pcChecked": "Fiyatlar {d} tarihinde kontrol edildi — değişebilir.",
+"wDemo": "Ücretsiz demo rota",
+"wPlanned": "Planladığınız rota",
+"wPlannedSub": "{n} durak · yaklaşık {h}",
+"crTitle": "Rotanız",
+"crNote": "Ödemeden sonra açılan sürüm budur. Rota içinden istediğiniz zaman değiştirebilirsiniz.",
+"qsPlane": "Uçak",
+"qsTrain": "Tren",
+"qsShip": "Kruvaziyer",
+"qsHintTrain": "İstasyona varıp binmek için 45 dk ayırıyoruz.",
+"qsHintShip": "Gemiye dönmek için 1 saat ayırıyoruz — son biniş saatini kontrol edin.",
+"enChecked": "Kurallar {d} tarihinde kontrol edildi. Seyahatten önce resmî sitede mutlaka doğrulayın.",
+"seoCity": "{city}: sesli rehberli kendi kendine yürüyüş turu | VOYBU",
+"seoCityDesc": "Yaklaşık {h} içinde {n} durak: 12 dilde sesli rehberli rota, en ucuz ulaşım ve seyahat için temel bilgiler. İlk durağı ücretsiz deneyin."
 }

@@ -1040,5 +1040,19 @@
 },
 "acSum": "{n} Halte mit steilen Anstiegen, Treppen oder unebenem Boden",
 "adPartner": "Partner (Werbung)",
-"pcChecked": "Preise geprüft im {d} — Änderungen möglich."
+"pcChecked": "Preise geprüft im {d} — Änderungen möglich.",
+"wDemo": "Kostenlose Demo-Route",
+"wPlanned": "Ihre geplante Route",
+"wPlannedSub": "{n} Halte · etwa {h}",
+"crTitle": "Ihre Route",
+"crNote": "Diese Version öffnet sich nach der Zahlung. Sie können sie jederzeit in der Route ändern.",
+"qsPlane": "Flug",
+"qsTrain": "Zug",
+"qsShip": "Kreuzfahrt",
+"qsHintTrain": "Wir planen 45 Min. für den Weg zum Bahnhof und das Einsteigen ein.",
+"qsHintShip": "Wir planen 1 Std. für die Rückkehr an Bord ein — prüfen Sie die All-aboard-Zeit.",
+"enChecked": "Regeln geprüft im {d}. Vor der Reise immer auf der offiziellen Website bestätigen.",
+"planTripDesc": "Für Kurzurlaube: komplette Route und 3-Tage-Museumsplan (Eintritte nicht inklusive).",
+"seoCity": "{city}: Stadtrundgang auf eigene Faust mit Audioguide | VOYBU",
+"seoCityDesc": "{n} Halte in etwa {h}: Route auf eigene Faust mit Audioguide in 12 Sprachen, der günstigste Nahverkehr und das Wichtigste zur Reise. Ersten Halt gratis testen."
 }

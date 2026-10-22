@@ -5,19 +5,13 @@ import { zoneOf } from "@/data/city-meta";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
-import { checkLayover, ETIAS_LIVE, NATIONALITIES, type EntryVerdict } from "@/lib/entry";
+import { checkLayover, ENTRY_CHECKED, ETIAS_LIVE, NATIONALITIES, type EntryVerdict } from "@/lib/entry";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 const local = (d: Date) => { const p = (n: number) => String(n).padStart(2, "0"); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
 
 export const NAT_KEY = "sgct:nat";
 export const DEP_KEY = "sgct:dep";
-
-/** Adivinha a nacionalidade pela região do idioma do navegador (só como ponto de partida). */
-function guessNat(): string {
-  const m = (navigator.language || "").match(/-([A-Z]{2})$/i);
-  return m && NATIONALITIES.includes(m[1].toUpperCase()) ? m[1].toUpperCase() : "";
-}
 
 export function ExitCheck({ city, locale, t, compact = false }: { city: City; locale: Locale; t: Dict; compact?: boolean }) {
   const [nat, setNat] = useState("");
@@ -29,7 +23,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
   useEffect(() => {
     let n = ""; let d = "";
     try { n = localStorage.getItem(NAT_KEY) ?? ""; d = localStorage.getItem(DEP_KEY) ?? ""; } catch { /* sem armazenamento */ }
-    setNat(n || guessNat());
+    setNat(n); // sem predefinição: o resultado só aparece depois de o viajante escolher
     const now = new Date(); now.setSeconds(0, 0);
     setArr(local(now));
     setDep(d || local(new Date(now.getTime() + 8 * 3600e3)));
@@ -89,6 +83,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
             </>
           )}
           <p className="hint"><ExtLink href={res.entry.officialUrl}>{t.official}</ExtLink> · {t.disclaimer}</p>
+          <p className="hint">{fmt(t.enChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${ENTRY_CHECKED}-15`)) })}</p>
         </div>
       )}
     </section>

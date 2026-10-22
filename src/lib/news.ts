@@ -110,8 +110,11 @@ export async function safetyNews(cityId: string | null, locale: string): Promise
   const name = city ? (city.n[lang] ?? city.n.en) : null;
   const q = name ? `"${name}" (${QUERY_WORDS[lang]})` : GENERAL[lang];
   const [news, official] = await Promise.allSettled([googleNews(q, lang), city ? fcdo(COUNTRY[city.id]) : Promise.resolve(null)]);
-  let items = news.status === "fulfilled" ? news.value : [];
-  if (!items.length && lang !== "en" && name) items = await googleNews(`"${city!.n.en}" (${QUERY_WORDS.en})`, "en").catch(() => []);
+  // Só o que diz respeito à cidade e à viagem: o título tem de nomear a cidade e falar de segurança/transportes
+  // (a pesquisa do Google também apanha artigos que só mencionam a cidade no texto, ex. Funchal numa pesquisa de Lisboa).
+  const keep = (n: NewsItem, l: string) => !city || (titleNames(n.title, city) && isSafety(n.title, l));
+  let items = (news.status === "fulfilled" ? news.value : []).filter((n) => keep(n, lang));
+  if (!items.length && lang !== "en" && name) items = (await googleNews(`"${city!.n.en}" (${QUERY_WORDS.en})`, "en").catch(() => [])).filter((n) => keep(n, "en"));
   const off = official.status === "fulfilled" ? official.value : null;
   const all = [...(off ? [off] : []), ...items].slice(0, 8);
   if (all.length || !hit) cache.set(key, { at: Date.now(), items: all });
@@ -133,7 +136,16 @@ const CULTURE_WORDS: Record<string, string> = {
   ru: "фестиваль OR выставка OR музей OR концерт OR туризм OR открытие",
   ko: "축제 OR 전시 OR 박물관 OR 콘서트 OR 관광"
 };
-export async function cultureNews(cityName: string, locale: string): Promise<NewsItem[]> {
+export async function cultureNews(cityName: string, locale: string, city?: City): Promise<NewsItem[]> {
   const lang = CULTURE_WORDS[locale] ? locale : "en";
-  return (await googleNews(`"${cityName}" (${CULTURE_WORDS[lang]})`, lang).catch(() => [])).slice(0, 5);
+  const fold = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const items = await googleNews(`"${cityName}" (${CULTURE_WORDS[lang]})`, lang).catch(() => []);
+  return items.filter((n) => (city ? titleNames(n.title, city) : fold(n.title).includes(fold(cityName)))).slice(0, 5);
+}
+
+/** O título nomeia a cidade (em qualquer das línguas)? */
+export function titleNames(title: string, city: City): boolean {
+  const fold = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  const t = fold(title);
+  return Object.values(city.n).some((n) => n && t.includes(fold(n)));
 }

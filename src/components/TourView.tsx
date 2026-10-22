@@ -266,7 +266,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 
-        {tab === "route" && (!atPlace || flightDate) && (
+        {tab === "route" && flightDate && (
           <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
             next={nextStop} now={now} t={t} locale={locale} />
         )}

@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { alternates } from "@/lib/seo";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
@@ -20,6 +22,13 @@ const FEATS = [
   [TicketIcon, "q1"], [Headphones, "q4"], [Clock, "q5"], [Star, "q3"], [CloudDownload, "q2"], [ArrowLeftRight, "q1"],
   [Receipt, "q3"], [ShieldAlert, "q5"], [Plane, "q4"], [Radar, "q2"], [Users, "q4"], [BadgeCheck, "q1"]
 ] as const;
+
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+  if (!isLocale(params.locale)) return {};
+  const t = getDict(params.locale);
+  const title = `VOYBU — ${t.scanned}`;
+  return { title, description: t.heroSub, alternates: alternates(params.locale), openGraph: { title, description: t.heroSub, siteName: "VOYBU", type: "website" } };
+}
 
 export default async function Home({ params }: { params: { locale: Locale } }) {
   // Pedidos de robôs a caminhos como /wp-login.php caem aqui com um "idioma" inválido: 404 sem erro no log.

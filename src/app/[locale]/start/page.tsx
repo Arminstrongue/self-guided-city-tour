@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { alternates } from "@/lib/seo";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -21,6 +23,12 @@ import { findActiveAccess } from "@/lib/orders";
 export const dynamic = "force-dynamic";
 
 /** Primeira experiência em 3 passos: cidade → tempo disponível → começar. */
+export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+  if (!isLocale(params.locale)) return {};
+  const t = getDict(params.locale);
+  return { title: `${t.qsCta} | VOYBU`, description: t.heroSub, alternates: alternates(params.locale, "/start") };
+}
+
 export default async function Start({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string } }) {
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);

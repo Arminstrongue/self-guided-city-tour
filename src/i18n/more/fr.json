@@ -1034,5 +1034,19 @@
 },
 "acSum": "{n} étapes avec montées raides, escaliers ou sol irrégulier",
 "adPartner": "Partenaires (publicité)",
-"pcChecked": "Prix vérifiés en {d} — ils peuvent changer."
+"pcChecked": "Prix vérifiés en {d} — ils peuvent changer.",
+"wDemo": "Parcours de démonstration gratuit",
+"wPlanned": "Votre parcours prévu",
+"wPlannedSub": "{n} étapes · environ {h}",
+"crTitle": "Votre parcours",
+"crNote": "C'est cette version qui s'ouvre après le paiement. Vous pouvez la modifier à tout moment dans le parcours.",
+"qsPlane": "Vol",
+"qsTrain": "Train",
+"qsShip": "Croisière",
+"qsHintTrain": "Nous gardons 45 min pour rejoindre la gare et monter à bord.",
+"qsHintShip": "Nous gardons 1 h pour remonter à bord — vérifiez l'heure limite du navire.",
+"enChecked": "Règles vérifiées en {d}. Confirmez toujours sur le site officiel avant de voyager.",
+"planTripDesc": "Pour les courts séjours : parcours complet et plan des musées sur 3 jours (entrées non incluses).",
+"seoCity": "{city} : visite à pied autoguidée avec audioguide | VOYBU",
+"seoCityDesc": "{n} étapes en environ {h} : parcours autoguidé avec audioguide en 12 langues, le transport le moins cher et l'essentiel du voyage. Essayez la 1re étape gratuitement."
 }
