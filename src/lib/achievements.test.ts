@@ -14,7 +14,7 @@ test("conquistas: anunciadas uma vez, contas antigas em silêncio, textos", asyn
   const { OFFICIAL_EMAIL, OFFICIAL_HANDLE } = await import("./official");
   const { achievementText } = await import("./achievement-text");
   const { getDict } = await import("@/i18n/dictionaries");
-  await s.saveProfile(OFFICIAL_EMAIL, { handle: OFFICIAL_HANDLE, name: "HelloTravell", bio: "", photo: null, isPrivate: false });
+  await s.saveProfile(OFFICIAL_EMAIL, { handle: OFFICIAL_HANDLE, name: "VOYBU", bio: "", photo: null, isPrivate: false });
   await s.saveProfile("ana@x.com", { handle: "ana", name: "Ana", bio: "", photo: null, isPrivate: false });
 
   // Conta nova: 1.ª cidade → medalha; repetir não volta a avisar.

@@ -1,4 +1,4 @@
-# Cópias de segurança e recuperação — HelloTravell
+# Cópias de segurança e recuperação — VOYBU
 
 ## O que é copiado
 | O quê | Onde | Frequência | Guarda |

@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "HelloTravell",
-  "short_name": "HelloTravell",
-  "description": "Your pocket travel companion: self-guided city routes with an audio guide, transport, safety and your trip essentials in one place.",
+  "name": "VOYBU",
+  "short_name": "VOYBU",
+  "description": "VOYBU — your self-guided tour. City routes with an audio guide, transport, safety and your trip essentials in one place.",
   "start_url": "/wallet?src=pwa",
   "scope": "/",
   "display": "standalone",

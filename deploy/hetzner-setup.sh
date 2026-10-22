@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala a HelloTravell num servidor Ubuntu 24.04 novo (Hetzner).
+# Instala a VOYBU num servidor Ubuntu 24.04 novo (Hetzner).
 # Uso, no servidor como root:  curl -fsSL <url deste ficheiro> | bash -s -- <url do repositório git>
 set -euo pipefail
 REPO="${1:?indique o URL do repositório git}"

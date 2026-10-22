@@ -3,7 +3,7 @@
 const appUrl = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "").replace(/^http:\/\/(?!localhost|127\.0\.0\.1)/, "https://");
 const host = new URL(appUrl).host;
 const contact = process.env.COMPANY_EMAIL ?? `hello@${host.replace(/:\d+$/, "")}`;
-export const BRAND = process.env.BRAND_NAME ?? "HelloTravell";
+export const BRAND = process.env.BRAND_NAME ?? "VOYBU";
 export const env = {
   appUrl, host, contact,
   /** User-Agent educado para Wikipedia/Wikimedia/Overpass (pedem contacto). */

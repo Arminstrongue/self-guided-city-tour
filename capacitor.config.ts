@@ -8,7 +8,7 @@ const APP_URL = process.env.APP_URL ?? "https://hellotravell.com";
 
 const config: CapacitorConfig = {
   appId: "com.selfguidedcitytour.app",
-  appName: "HelloTravell",
+  appName: "VOYBU",
   webDir: "mobile-shell",
   server: { url: APP_URL, cleartext: false, allowNavigation: [new URL(APP_URL).host, "*.stripe.com", "accounts.google.com", "appleid.apple.com", "*.facebook.com"] },
   backgroundColor: "#000000",

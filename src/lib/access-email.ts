@@ -33,7 +33,7 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
   const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:20px;padding:32px">
-<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:20px">📍 HelloTravell</td></tr>
+<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:20px">📍 VOYBU</td></tr>
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:8px">${hello}</td></tr>
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:24px">${f(t.ready, { c: `<b>${esc(o.place)}</b>` })}</td></tr>
 <tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
@@ -42,5 +42,5 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
 <tr><td style="font-size:12px;line-height:1.5;color:#86868b;word-break:break-all;border-top:1px solid #e5e5ea;padding-top:16px"><a href="${o.link}" style="color:#86868b">${o.link}</a><br><br>${t.help}</td></tr>
 </table></td></tr></table></body></html>`;
   const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${f(t.until, { d: when })}\n${t.tip}\n\n${t.help}`;
-  return { subject: `HelloTravell — ${o.place}`, html, text };
+  return { subject: `VOYBU — ${o.place}`, html, text };
 }

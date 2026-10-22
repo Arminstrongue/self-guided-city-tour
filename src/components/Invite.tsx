@@ -56,7 +56,7 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
     } catch { /* cancelado */ }
   }
   async function share() {
-    try { if (navigator.share) { await navigator.share({ title: "HelloTravell", text: fmt(t.ivText, { link: "" }).trim(), url: link }); void record("link"); return; } } catch { return; }
+    try { if (navigator.share) { await navigator.share({ title: "VOYBU", text: fmt(t.ivText, { link: "" }).trim(), url: link }); void record("link"); return; } } catch { return; }
     await navigator.clipboard.writeText(link).catch(() => null); setCopied(true); setTimeout(() => setCopied(false), 2000); void record("link");
   }
   return (

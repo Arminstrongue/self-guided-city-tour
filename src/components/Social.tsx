@@ -26,7 +26,7 @@ export const act = (handle: string, action: string, extra: Record<string, string
   fetch("/api/social/act", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ handle, action, ...extra }) }).then((r) => r.json()).catch(() => null);
 
 /** Selo azul da conta oficial. */
-export const Verified = ({ handle }: { handle: string }) => (handle === "hellotravell" ? <span className="vf" title="Official" aria-label="Official">✓</span> : null);
+export const Verified = ({ handle }: { handle: string }) => (handle === "voybu" ? <span className="vf" title="Official" aria-label="Official">✓</span> : null);
 
 export function Avatar({ p, size = 44 }: { p: { photo: string | null; name: string }; size?: number }) {
   // eslint-disable-next-line @next/next/no-img-element

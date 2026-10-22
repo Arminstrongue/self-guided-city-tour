@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: { locale: Locale; handle: string } }) {
   const p = await profileByHandle(params.handle);
   const t = getDict(params.locale);
-  return { title: p ? `${p.name} — ${t.ivJoinTitle}` : "HelloTravell", robots: { index: false } };
+  return { title: p ? `${p.name} — ${t.ivJoinTitle}` : "VOYBU", robots: { index: false } };
 }
 
 /** Página de boas-vindas de um convite: quem convidou + entrar com email. */

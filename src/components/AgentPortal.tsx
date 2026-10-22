@@ -59,7 +59,7 @@ export function AgentPortal({ locale, t, agent, link, leads: initial, clients, c
         <div className="acts">
           <button type="button" onClick={() => { void navigator.clipboard?.writeText(link); setCopied(true); setTimeout(() => setCopied(false), 1500); }}>{copied ? "✓" : t.copy}</button>
           <ExtLink href={`https://wa.me/?text=${encodeURIComponent(pitch)}`}>WhatsApp</ExtLink>
-          <ExtLink href={`mailto:?subject=${encodeURIComponent("HelloTravell")}&body=${encodeURIComponent(pitch)}`}>Email</ExtLink>
+          <ExtLink href={`mailto:?subject=${encodeURIComponent("VOYBU")}&body=${encodeURIComponent(pitch)}`}>Email</ExtLink>
         </div>
         <p className="hint">{t.agCode}: <b className="num">{agent.code}</b></p>
       </div>

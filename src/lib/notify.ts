@@ -108,7 +108,7 @@ export async function notify(to: string, actor: string, type: schema.Notificatio
     : type === "split" ? `/${lang}/wallet#split:${o.postId ?? ""}`
     : type === "achievement" ? `/${lang}/wallet#points`
     : `/${lang}/wallet#notifs`;
-  await sendPush(to, { title: type === "message" ? name : "HelloTravell", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
+  await sendPush(to, { title: type === "message" ? name : "VOYBU", body, url, tag: type === "message" ? `chat-${a?.handle}` : type });
 }
 
 /* ---------- Centro de notificações ---------- */

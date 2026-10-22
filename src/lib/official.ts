@@ -1,5 +1,5 @@
 /**
- * Conta oficial @hellotravell: dá conteúdo à app desde o primeiro dia (capa de cada cidade + dicas
+ * Conta oficial @voybu: dá conteúdo à app desde o primeiro dia (capa de cada cidade + dicas
  * dos "momentos"), aparece no feed de toda a gente e é sugerida a quem chega. Criada sozinha, uma vez.
  */
 import { readFile } from "node:fs/promises";
@@ -10,7 +10,7 @@ import { MOMENTS } from "@/data/moments";
 import { CITIES } from "@/data/cities";
 
 export const OFFICIAL_EMAIL = "official@selfguidedcitytour.com" // chave interna na base de dados (não é enviado email para aqui): não mudar;
-export const OFFICIAL_HANDLE = "hellotravell";
+export const OFFICIAL_HANDLE = "voybu";
 
 declare global { var __sgctOfficial: Promise<void> | undefined } // eslint-disable-line no-var
 
@@ -29,12 +29,12 @@ async function seed() {
   const d = await db();
   const [p] = await d.select().from(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, OFFICIAL_EMAIL)).limit(1);
   if (p && p.handle !== OFFICIAL_HANDLE) {
-    // Mudança de marca (Self Guided City Tour → HelloTravell): renomeia a conta oficial existente.
-    await d.update(schema.travellerProfiles).set({ handle: OFFICIAL_HANDLE, name: "HelloTravell" }).where(eq(schema.travellerProfiles.email, OFFICIAL_EMAIL));
+    // Mudança de marca (Self Guided City Tour → VOYBU): renomeia a conta oficial existente.
+    await d.update(schema.travellerProfiles).set({ handle: OFFICIAL_HANDLE, name: "VOYBU" }).where(eq(schema.travellerProfiles.email, OFFICIAL_EMAIL));
   }
   if (!p) {
     await d.insert(schema.travellerProfiles).values({
-      email: OFFICIAL_EMAIL, handle: OFFICIAL_HANDLE, name: "HelloTravell", isPrivate: false, photo: await icon(),
+      email: OFFICIAL_EMAIL, handle: OFFICIAL_HANDLE, name: "VOYBU", isPrivate: false, photo: await icon(),
       bio: "✓ Official · City tips, sunsets and hidden spots for travellers on a layover. 🌍"
     }).onConflictDoNothing();
   }

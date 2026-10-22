@@ -1,7 +1,7 @@
 # Google Play — ficha da app (copiar e colar no Play Console)
 
 ## Dados principais
-- **Nome da app (30):** HelloTravell
+- **Nome da app (30):** VOYBU
 - **Pacote:** com.selfguidedcitytour.app
 - **Categoria:** Viagens e locais (Travel & Local)
 - **Tipo:** App · Gratuita (o acesso compra-se no site)
@@ -14,7 +14,7 @@
 Layover or short break? Explore the city on your own and get back on time.
 
 **Full description:**
-Landed with a few hours to spare? HelloTravell turns your layover or short break into a self-guided walk through the city's most famous sights — and gets you back to the airport on time.
+Landed with a few hours to spare? VOYBU turns your layover or short break into a self-guided walk through the city's most famous sights — and gets you back to the airport on time.
 
 • The fullest route that fits your free time, linked by the cheapest transport
 • Countdown to when you must head back, with a reminder before it's time
@@ -34,7 +34,7 @@ How it works: scan the QR code at the airport, your hotel or a partner shop, buy
 Escala ou férias curtas? Conheça a cidade sozinho e volte ao aeroporto a horas.
 
 **Descrição completa:**
-Aterrou com umas horas livres? A HelloTravell transforma a sua escala ou férias curtas num passeio autoguiado pelos pontos mais famosos da cidade — e leva-o de volta ao aeroporto a horas.
+Aterrou com umas horas livres? A VOYBU transforma a sua escala ou férias curtas num passeio autoguiado pelos pontos mais famosos da cidade — e leva-o de volta ao aeroporto a horas.
 
 • O roteiro mais completo que cabe no seu tempo, ligado pelo transporte mais barato
 • Contagem decrescente até à hora de voltar, com aviso antes da hora

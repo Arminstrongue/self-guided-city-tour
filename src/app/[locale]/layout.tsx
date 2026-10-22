@@ -12,10 +12,10 @@ import { isLocale, RTL } from "@/i18n/core";
 import { getDict } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
-  title: "HelloTravell",
-  description: "Your pocket travel companion: self-guided city routes with an audio guide, the cheapest transport and your trip essentials in one place.",
+  title: "VOYBU — Your self-guided tour",
+  description: "VOYBU — your self-guided tour. City routes with an audio guide, the cheapest transport and your trip essentials in one place.",
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "HelloTravell", statusBarStyle: "black-translucent" },
+  appleWebApp: { capable: true, title: "VOYBU", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
   icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" }
 };

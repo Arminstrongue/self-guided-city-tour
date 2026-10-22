@@ -1,4 +1,4 @@
-# Entrar com Google / Apple — configuração (HelloTravell)
+# Entrar com Google / Apple — configuração (VOYBU)
 
 O código já está pronto: os botões "Continuar com Google" e "Continuar com Apple" aparecem na carteira, na compra e no admin **assim que as chaves estiverem no `.env`** do servidor. Sem chaves, fica só a entrada por email (como hoje).
 
@@ -18,7 +18,7 @@ read -rsp "Valor: " V; echo; sed -i "/^NOME=/d" .env; echo "NOME=$V" >> .env; un
 ## Google (pode fazer já)
 1. **console.cloud.google.com** → o mesmo projeto do Maps → menu **Google Auth Platform** (ou "APIs & Services → OAuth consent screen").
 2. **Branding:**
-   - App name: `HelloTravell`
+   - App name: `VOYBU`
    - User support email: hello@hellotravell.com
    - Logo: o ícone da app (opcional — se puser logótipo, a Google faz uma verificação de alguns dias)
    - App domain → Home page: `https://hellotravell.com`
@@ -27,7 +27,7 @@ read -rsp "Valor: " V; echo; sed -i "/^NOME=/d" .env; echo "NOME=$V" >> .env; un
    - Authorized domains: `hellotravell.com`
 3. **Audience:** External → **Publish app** (em produção). Os acessos pedidos (email, nome, foto) não exigem verificação.
 4. **Clients → Create client:**
-   - Application type: **Web application**, nome `HelloTravell web`
+   - Application type: **Web application**, nome `VOYBU web`
    - Authorized JavaScript origins: `https://hellotravell.com`
    - Authorized redirect URIs: `https://hellotravell.com/api/auth/callback/google`
 5. Copie o **Client ID** e o **Client secret** e, no servidor:
@@ -45,12 +45,12 @@ read -rsp "Valor: " V; echo; sed -i "/^NOME=/d" .env; echo "NOME=$V" >> .env; un
 1. **developer.apple.com → Certificates, Identifiers & Profiles → Identifiers:**
    - Abra o App ID `com.selfguidedcitytour.app` → ative **Sign In with Apple** → Save.
 2. **Identifiers → ＋ → Services IDs:**
-   - Description `HelloTravell`, Identifier `com.hellotravell.web` → Register.
+   - Description `VOYBU`, Identifier `com.hellotravell.web` → Register.
    - Abra-o → ative **Sign In with Apple** → **Configure**:
      - Primary App ID: `com.selfguidedcitytour.app`
      - Domains: `hellotravell.com`
      - Return URLs: `https://hellotravell.com/api/auth/callback/apple`
-3. **Keys → ＋:** nome `HelloTravell Sign in`, ative **Sign In with Apple** → Configure → App ID acima → Register → **Download** o ficheiro `AuthKey_XXXXXXXXXX.p8` (só dá para descarregar UMA vez — guarde-o no gestor de passwords). Anote o **Key ID**.
+3. **Keys → ＋:** nome `VOYBU Sign in`, ative **Sign In with Apple** → Configure → App ID acima → Register → **Download** o ficheiro `AuthKey_XXXXXXXXXX.p8` (só dá para descarregar UMA vez — guarde-o no gestor de passwords). Anote o **Key ID**.
 4. O **Team ID** está em developer.apple.com → Membership details.
 5. No Mac, transforme a chave numa linha: `base64 -i ~/Downloads/AuthKey_XXXXXXXXXX.p8 | pbcopy` (fica copiada).
 6. No servidor (método "read" acima para a chave):

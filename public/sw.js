@@ -1,4 +1,4 @@
-/* HelloTravell — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
+/* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
 const VERSION = "sgct-v5";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
@@ -121,7 +121,7 @@ self.addEventListener("message", (e) => {
 self.addEventListener("push", (e) => {
   let d = {};
   try { d = e.data ? e.data.json() : {}; } catch { d = { body: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.title || "HelloTravell", {
+  e.waitUntil(self.registration.showNotification(d.title || "VOYBU", {
     body: d.body || "", icon: "/icon-192.png", badge: "/icon-192.png", tag: d.tag || undefined, renotify: Boolean(d.tag), data: { url: d.url || "/" }
   }));
 });

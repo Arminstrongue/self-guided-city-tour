@@ -2,7 +2,7 @@
   "name": "self-guided-city-tour",
   "version": "0.1.0",
   "private": true,
-  "description": "HelloTravell — roteiros autoguiados para passageiros em escala",
+  "description": "VOYBU — roteiros autoguiados para passageiros em escala",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

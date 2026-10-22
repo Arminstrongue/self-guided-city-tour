@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   if (isAdminEmail(email)) {
     link = `${env.appUrl}/api/admin/link?token=${encodeURIComponent(createPurposeToken(email, "admin-link", 20 * 60))}&locale=${p.data.locale ?? "pt"}`;
     const btn = `<a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">Entrar na administração</a>`;
-    await sendEmail(email, "HelloTravell — entrada na administração",
+    await sendEmail(email, "VOYBU — entrada na administração",
       `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f"><p>Pediu para entrar na administração.</p><p>${btn}</p><p style="color:#6e6e73;font-size:13px">O link vale 20 minutos. Se não foi você, ignore este email.</p></div>`,
       `Entrar na administração (válido 20 min): ${link}`).catch(() => null);
   }
