@@ -28,13 +28,15 @@ export type City = {
   ap?: Airport;       // aeroporto principal
   tz?: string;        // fuso horário (IANA)
 };
-export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR" | "CZK" | "SGD";
+export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR" | "CZK" | "SGD"
+  | "USD" | "CAD" | "MXN" | "BRL" | "ARS" | "MAD" | "ZAR" | "TZS" | "TND" | "ETB" | "KES" | "AOA" | "GHS" | "RWF" | "XOF";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
 export { zoneOf, COUNTRY, type Zone } from "./city-meta";
 
 import { ME_CITIES, ME_NAMES } from "./cities-me";
 import { MORE_CITIES, MORE_CITY_NAMES } from "./cities-more";
+import { US_CITIES, US_NAMES } from "./cities-world";
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -290,7 +292,8 @@ export const CITIES: City[] = [
     ]
   },
   ...MORE_CITIES,
-  ...ME_CITIES
+  ...ME_CITIES,
+  ...US_CITIES
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
@@ -324,7 +327,8 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   bir: { it: "Birmingham", zh: "伯明翰", ar: "برمنغهام", ja: "バーミンガム" },
   ist: { it: "Istanbul", zh: "伊斯坦布尔", ar: "إسطنبول", ja: "イスタンブール" },
   ...ME_NAMES,
-  ...MORE_CITY_NAMES
+  ...MORE_CITY_NAMES,
+  ...US_NAMES
 };
 /* Turco, russo e coreano. */
 for (const [id, [tr, ru, ko]] of Object.entries({

@@ -4,11 +4,13 @@
  * aproximado na moeda de cada viajante, para ele perceber quanto vai pagar.
  */
 
-/** Moedas com taxa diária do Banco Central Europeu (mais o euro) e moedas do Médio Oriente (indexadas ao dólar; libra egípcia com valor de referência). */
+/** Moedas com taxa diária do Banco Central Europeu (mais o euro), do Médio Oriente (indexadas ao dólar) e das cidades das Américas e de África. */
 export const CURRENCIES = [
   "EUR", "GBP", "USD", "CHF", "CAD", "AUD", "NZD", "BRL", "MXN", "JPY", "CNY", "HKD", "SGD", "KRW", "INR",
   "IDR", "MYR", "PHP", "THB", "ILS", "TRY", "ZAR", "SEK", "NOK", "DKK", "ISK", "PLN", "CZK", "HUF", "RON",
-  "AED", "QAR", "SAR", "OMR", "JOD", "EGP"
+  "AED", "QAR", "SAR", "OMR", "JOD", "EGP",
+  // Moedas das cidades das Américas e de África sem taxa do BCE (taxa diária de open.er-api.com; franco CFA indexado ao euro).
+  "ARS", "MAD", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF", "XOF"
 ] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const isCurrency = (v: unknown): v is Currency => typeof v === "string" && (CURRENCIES as readonly string[]).includes(v);
@@ -66,7 +68,7 @@ export function convert(amount: number, from: string, to: string, rates: Partial
 }
 
 /** Moedas sem casas decimais na prática do dia a dia. */
-const NO_DECIMALS = new Set(["JPY", "KRW", "IDR", "HUF", "ISK"]);
+const NO_DECIMALS = new Set(["JPY", "KRW", "IDR", "HUF", "ISK", "ARS", "TZS", "KES", "AOA", "RWF", "XOF"]);
 
 export function formatMoney(amount: number, currency: string, intlLocale: string, opts?: { approx?: boolean }): string {
   const digits = NO_DECIMALS.has(currency) ? 0 : 2;

@@ -166,5 +166,36 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("mrt", "🚇", "MRT (contactless, conforme a distância)", "MRT (contactless, by distance)", 2.0, "trip"), T("bus", "🚌", "Autocarro (contactless)", "Bus (contactless)", 2.0, "trip"),
     T("stp", "🎫", "Singapore Tourist Pass 1 dia", "Singapore Tourist Pass, 1 day", 17, "day"), T("grab", "🚗", "Grab/Gojek no centro", "Grab/Gojek in the centre", 15, "ride"),
     T("taxi", "🚕", "Táxi do aeroporto para o centro", "Taxi from the airport to the centre", 30, "ride"), T("bumboat", "⛵", "Barco no rio Singapura", "Singapore River boat", 28, "trip")
+  ],
+  nyc: [
+    T("subway", "🚇", "Metro/autocarro (OMNY contactless)", "Subway/bus (OMNY contactless)", 3.0, "trip"), T("airtrain", "✈", "AirTrain JFK (mais o metro)", "AirTrain JFK (plus subway)", 8.5, "trip"),
+    T("lirr", "🚆", "Comboio LIRR Jamaica → Penn Station", "LIRR train Jamaica → Penn Station", 7.0, "trip"), T("ferry", "⛴", "Staten Island Ferry", "Staten Island Ferry", 0, "trip"),
+    T("nycferry", "🛥", "NYC Ferry (East River)", "NYC Ferry (East River)", 4.5, "trip"), T("citibike", "🚲", "Citi Bike (passe de 1 dia)", "Citi Bike (day pass)", 25, "day"),
+    T("taxi", "🚕", "Táxi amarelo JFK → Manhattan (tarifa fixa, sem portagens e gorjeta)", "Yellow cab JFK → Manhattan (flat fare, before tolls and tip)", 70, "ride"), T("uber", "🚗", "Uber/Lyft em Manhattan", "Uber/Lyft in Manhattan", 25, "ride")
+  ],
+  was: [
+    T("metro", "🚇", "Metrorail (conforme a distância e a hora)", "Metrorail (by distance and time)", 2.25, "trip"), T("bus", "🚌", "Metrobus", "Metrobus", 2.25, "trip"),
+    T("day", "🎫", "Passe de 1 dia Metro", "Metro 1-day pass", 13.5, "day"), T("iad", "✈", "Linha Prata até Dulles (tarifa máxima)", "Silver Line to Dulles (max fare)", 6.75, "trip"),
+    T("bike", "🚲", "Capital Bikeshare (passe de 1 dia)", "Capital Bikeshare (day pass)", 8, "day"), T("uber", "🚗", "Uber/Lyft no centro", "Uber/Lyft downtown", 15, "ride")
+  ],
+  sfo: [
+    T("muni", "🚌", "Muni autocarro/metro (Clipper ou contactless)", "Muni bus/rail (Clipper or contactless)", 3.0, "trip"), T("cable", "🚋", "Cable car (viagem)", "Cable car (single ride)", 9, "trip"),
+    T("day", "🎫", "Visitor Passport Muni 1 dia (inclui cable car)", "Muni Visitor Passport 1 day (incl. cable car)", 13, "day"), T("bart", "🚆", "BART SFO → centro", "BART SFO → downtown", 11, "trip"),
+    T("ferry", "⛴", "Ferry para Sausalito", "Ferry to Sausalito", 15, "trip"), T("uber", "🚗", "Uber/Lyft no centro", "Uber/Lyft downtown", 18, "ride")
+  ],
+  chi: [
+    T("l", "🚇", "Comboio «L» / autocarro CTA", "CTA «L» train / bus", 2.5, "trip"), T("ohare", "✈", "Linha Azul a partir de O'Hare", "Blue Line from O'Hare", 5, "trip"),
+    T("day", "🎫", "Passe de 1 dia Ventra", "Ventra 1-day pass", 5, "day"), T("divvy", "🚲", "Divvy (passe de 1 dia)", "Divvy (day pass)", 18, "day"),
+    T("watertaxi", "🛥", "Táxi aquático do rio", "River water taxi", 8, "trip"), T("uber", "🚗", "Uber/Lyft no centro", "Uber/Lyft downtown", 15, "ride")
+  ],
+  bos: [
+    T("t", "🚇", "Metro «T» (CharlieCard ou contactless)", "«T» subway (CharlieCard or contactless)", 2.4, "trip"), T("bus", "🚌", "Autocarro MBTA", "MBTA bus", 1.7, "trip"),
+    T("sl1", "✈", "SL1 desde o aeroporto (grátis)", "SL1 from the airport (free)", 0, "trip"), T("day", "🎫", "Passe de 1 dia MBTA", "MBTA 1-day pass", 11, "day"),
+    T("ferry", "⛴", "Ferry do porto (Charlestown)", "Harbour ferry (Charlestown)", 2.4, "trip"), T("bluebikes", "🚲", "Bluebikes (passe de 1 dia)", "Bluebikes (day pass)", 10, "day")
+  ],
+  mia: [
+    T("metrorail", "🚇", "Metrorail / Metrobus", "Metrorail / Metrobus", 2.25, "trip"), T("mover", "🚝", "Metromover no centro (grátis)", "Downtown Metromover (free)", 0, "trip"),
+    T("150", "✈", "Autocarro 150 Airport Express → Miami Beach", "Bus 150 Airport Express → Miami Beach", 2.25, "trip"), T("trolley", "🚎", "Trolley de Miami Beach (grátis)", "Miami Beach trolley (free)", 0, "trip"),
+    T("day", "🎫", "Passe de 1 dia EASY Card", "EASY Card 1-day pass", 5.65, "day"), T("uber", "🚗", "Uber/Lyft South Beach → Wynwood", "Uber/Lyft South Beach → Wynwood", 25, "ride")
   ]
 };

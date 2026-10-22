@@ -31,6 +31,16 @@ const GULF_PAY: Tip = { k: "pay", pt: "Cartão e contactless aceites quase em to
 const GULF_WATER: Tip = { k: "water", pt: "A água da torneira é dessalinizada e segura, mas quase todos bebem engarrafada; é barata em qualquer loja.", en: "Tap water is desalinated and safe, but most people drink bottled; it's cheap in any shop." };
 const meBag = (pt: string, en: string): Tip => ({ k: "bag", pt: `${BAG.pt} ${pt}`.trim(), en: `${BAG.en} ${en}`.trim() });
 
+/* ---------- Estados Unidos ---------- */
+const US_SIM: Tip = { k: "sim", pt: "Fora do roaming da UE: um eSIM de dados dos EUA é barato e funciona logo. Wi‑Fi grátis nos aeroportos, cafés e museus.", en: "Outside EU roaming: a US data eSIM is cheap and works straight away. Free Wi‑Fi at airports, cafés and museums." };
+const US_PAY: Tip = { k: "pay", pt: "Contactless aceite em quase todo o lado, incluindo metro e autocarros (OMNY, Clipper, Ventra…). Os preços não incluem o imposto sobre vendas (6–10%), somado na caixa.", en: "Contactless works almost everywhere, including subways and buses (OMNY, Clipper, Ventra…). Prices exclude sales tax (6–10%), added at the till." };
+const US_TIP: Tip = { k: "tip", pt: "Gorjeta esperada: 18–22% nos restaurantes com serviço à mesa, 1–2 USD por bebida no bar e 15–20% em táxis. No balcão é opcional.", en: "Tipping is expected: 18–22% at table-service restaurants, USD 1–2 per drink at bars and 15–20% for taxis. Optional at counters." };
+const US_WATER: Tip = { k: "water", pt: "A água da torneira é potável e os restaurantes servem-na gratuitamente com gelo.", en: "Tap water is safe and restaurants serve it free with ice." };
+const US_PLUG: Tip = { k: "plug", pt: "Tomadas tipo A/B, 120 V: precisa de adaptador; confirme que o carregador aceita 100–240 V.", en: "Type A/B sockets, 120 V: you need an adapter; check your charger accepts 100–240 V." };
+const US_TOILET: Tip = { k: "toilet", pt: "Casas de banho públicas são raras: use as de museus, centros comerciais, hotéis, bibliotecas e cafés de cadeia.", en: "Public toilets are rare: use those in museums, malls, hotels, libraries and chain cafés." };
+const usSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Atravesse só nas passadeiras e com o sinal do peão. ${pt}`, en: `Cross only at crosswalks with the walk signal. ${en}` });
+const us = (safety: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency: "911", tips: [BAG, US_SIM, US_PAY, US_TIP, US_WATER, safety, US_PLUG, US_TOILET, ...extra], food });
+
 /* ---------- Alemanha e Áustria ---------- */
 const DE_PAY: Tip = { k: "pay", pt: "Cartão e contactless são aceites cada vez mais, mas padarias, bancas e algumas tabernas ainda só aceitam dinheiro: leve algum.", en: "Cards and contactless are increasingly accepted, but bakeries, stalls and some taverns are still cash-only: carry some." };
 const DE_TIP: Tip = { k: "tip", pt: "Arredonde 5–10% e diga o total ao pagar, em vez de deixar dinheiro na mesa.", en: "Round up 5–10% and tell the server the total when paying, rather than leaving money on the table." };
@@ -312,5 +322,41 @@ export const PRACTICAL: Record<string, Practical> = {
       { n: "Laksa", p: 6, pt: "Sopa picante de leite de coco com massa e marisco.", en: "Spicy coconut-milk noodle soup with seafood." },
       { n: "Chilli crab", p: 90, pt: "Caranguejo em molho picante e doce, para partilhar (preço por quilo).", en: "Crab in a sweet-spicy sauce, for sharing (priced per kilo)." },
       { n: "Kaya toast", p: 4, pt: "Torrada com doce de coco e manteiga, com ovos moles e kopi.", en: "Toast with coconut jam and butter, with soft eggs and kopi." }
-    ] }
+    ] },
+  nyc: us(usSafety("O metro funciona 24 horas; à noite escolha a carruagem do condutor (ao meio do comboio).", "The subway runs 24 hours; at night ride in the conductor's car (middle of the train)."), [
+    { n: "Pizza slice", p: 4, pt: "Uma fatia de pizza nova-iorquina, dobrada ao meio.", en: "A New York slice, folded in half." },
+    { n: "Bagel with lox", p: 14, pt: "Bagel com queijo-creme e salmão fumado, ao pequeno-almoço.", en: "Bagel with cream cheese and smoked salmon, for breakfast." },
+    { n: "Pastrami on rye", p: 28, pt: "A sandes gigante de pastrami de uma delicatessen judaica.", en: "The giant pastrami sandwich from a Jewish deli." },
+    { n: "Hot dog", p: 4, pt: "Cachorro de uma carrinha de rua, com mostarda e cebola.", en: "A street-cart hot dog with mustard and onions." }
+  ]),
+  was: us(usSafety("Os museus Smithsonian são gratuitos mas têm controlo de segurança à entrada; leve pouca bagagem.", "Smithsonian museums are free but have security checks; carry little luggage."), [
+    { n: "Half-smoke", p: 9, pt: "A salsicha fumada com chili da cidade, no Ben's Chili Bowl.", en: "The city's smoked sausage with chili, at Ben's Chili Bowl." },
+    { n: "Ethiopian platter", p: 25, pt: "Washington tem uma grande comunidade etíope: injera com guisados para partilhar.", en: "Washington has a big Ethiopian community: injera with stews to share." },
+    { n: "Crab cake", p: 30, pt: "Bolinho de caranguejo da baía de Chesapeake.", en: "A Chesapeake Bay crab cake." },
+    { n: "Food truck lunch", p: 13, pt: "Almoço das carrinhas de comida junto ao Mall.", en: "Lunch from the food trucks by the Mall." }
+  ]),
+  sfo: us(usSafety("Não deixe nada visível dentro de carros e guarde o telemóvel nas ruas de Market Street e do Tenderloin.", "Leave nothing visible in cars and keep your phone away on Market Street and in the Tenderloin."), [
+    { n: "Mission burrito", p: 14, pt: "O burrito gigante embrulhado em alumínio, em Mission.", en: "The giant foil-wrapped burrito, in the Mission." },
+    { n: "Clam chowder in sourdough", p: 15, pt: "Sopa de amêijoa servida dentro de um pão de massa-mãe.", en: "Clam chowder served in a sourdough bread bowl." },
+    { n: "Dim sum", p: 25, pt: "Em Chinatown ou no Richmond, ao almoço.", en: "In Chinatown or the Richmond, at lunchtime." },
+    { n: "Irish coffee", p: 13, pt: "No Buena Vista, onde dizem que chegou aos EUA.", en: "At the Buena Vista, where it's said to have arrived in the US." }
+  ], [{ k: "dress", pt: "Leve camadas: mesmo no verão o nevoeiro e o vento arrefecem muito ao fim da tarde.", en: "Bring layers: even in summer, fog and wind turn chilly in the late afternoon." }]),
+  chi: us(usSafety("No inverno o vento do lago é gelado: casaco, gorro e luvas de novembro a março.", "In winter the lake wind is icy: coat, hat and gloves from November to March."), [
+    { n: "Deep-dish pizza", p: 30, pt: "Pizza de massa alta para partilhar (Lou Malnati's, Giordano's).", en: "Thick-crust pizza for sharing (Lou Malnati's, Giordano's)." },
+    { n: "Chicago-style hot dog", p: 7, pt: "Com mostarda, picles, tomate, pimentos e sal de aipo — nunca ketchup.", en: "With mustard, pickle, tomato, peppers and celery salt — never ketchup." },
+    { n: "Italian beef", p: 13, pt: "Sandes de carne fatiada mergulhada no molho.", en: "Thin-sliced beef sandwich dipped in gravy." },
+    { n: "Garrett popcorn", p: 8, pt: "A mistura de pipocas de caramelo e queijo.", en: "The caramel-and-cheese popcorn mix." }
+  ]),
+  bos: us(usSafety("O centro é compacto e seguro; atenção a ciclistas e ao gelo nas calçadas de tijolo no inverno.", "The centre is compact and safe; watch for cyclists and ice on the brick sidewalks in winter."), [
+    { n: "Lobster roll", p: 35, pt: "Lagosta em pão de cachorro com manteiga ou maionese.", en: "Lobster in a hot-dog bun with butter or mayo." },
+    { n: "Clam chowder", p: 12, pt: "A sopa cremosa de amêijoa da Nova Inglaterra.", en: "New England's creamy clam soup." },
+    { n: "Cannoli", p: 6, pt: "No North End (Mike's ou Modern Pastry).", en: "In the North End (Mike's or Modern Pastry)." },
+    { n: "Oysters", p: 3.5, pt: "Ostras locais, por unidade, num oyster bar.", en: "Local oysters, per piece, at an oyster bar." }
+  ]),
+  mia: us(usSafety("Sol forte o ano todo: protetor, água e sombra. Nas tempestades de verão, saia da praia ao primeiro trovão.", "Strong sun all year: sunscreen, water and shade. In summer storms, leave the beach at the first thunder."), [
+    { n: "Cuban sandwich", p: 12, pt: "Porco assado, fiambre, queijo e picles em pão cubano prensado.", en: "Roast pork, ham, cheese and pickles in pressed Cuban bread." },
+    { n: "Cafecito", p: 2, pt: "O café cubano doce e forte, numa «ventanita».", en: "Sweet, strong Cuban coffee from a «ventanita»." },
+    { n: "Stone crab", p: 60, pt: "Garras de caranguejo, de outubro a maio.", en: "Stone crab claws, October to May." },
+    { n: "Key lime pie", p: 9, pt: "A tarte de lima da Florida.", en: "Florida's lime pie." }
+  ], [{ k: "dress", pt: "Fato de banho só na praia: na rua e nos restaurantes vista uma t-shirt.", en: "Swimwear is for the beach only: wear a T-shirt in the streets and restaurants." }])
 };

@@ -1184,5 +1184,16 @@
 "exMore": "Más opciones",
 "hmFree": "Gratis: planificar, la primera parada de cada ciudad y la ruta de demostración de Mánchester. De pago: la ruta completa de una ciudad, desde 4,99 € — sin suscripción.",
 "bkTransport": "Transporte en la ruta: unos {c}",
-"bkIncl": "Incluido: la ruta completa, la audioguía en 12 idiomas y las herramientas de viaje. No incluido: entradas a museos y monumentos ni billetes de transporte."
+"bkIncl": "Incluido: la ruta completa, la audioguía en 12 idiomas y las herramientas de viaje. No incluido: entradas a museos y monumentos ni billetes de transporte.",
+"vAuth": "Necesitas una autorización electrónica aprobada antes de embarcar ({site}, {fee}). Sin ella, la aerolínea no te deja embarcar.",
+"entryHint2": {
+"us": "EE. UU. no tiene zona de tránsito internacional: incluso para cambiar de avión necesitas ESTA o visado y pasas inmigración y aduana. Cuenta con 1–2 h a la llegada.",
+"ca": "Canadá también exige la eTA o un visado solo para hacer escala (hay excepciones con visado de EE. UU.).",
+"mx": "Con visado o residencia vigentes de EE. UU., Canadá, Reino Unido, el espacio Schengen o Japón entras en México sin visado mexicano.",
+"zan": "Zanzíbar exige su propio seguro de viaje (unos 44 USD, visitzanzibar.go.tz) y certificado de fiebre amarilla si llegas de un país de riesgo.",
+"ke": "Si te quedas en la zona de tránsito del aeropuerto no necesitas eTA. Se recomienda el certificado de fiebre amarilla.",
+"et": "Si no sales de la zona de tránsito del aeropuerto no necesitas visado.",
+"ao": "Exención de visado de turismo hasta 90 días por entrada. Es obligatorio el certificado de vacuna contra la fiebre amarilla.",
+"br": "El e-visa tarda unos días en aprobarse: solicítalo con antelación."
+}
 }

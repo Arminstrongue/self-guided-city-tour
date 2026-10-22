@@ -228,6 +228,49 @@ export const MOMENTS: Record<string, Moment[]> = {
     m("hawker", "🍜", "day", ["food"], 1.2803, 103.8448, ["Almoço num hawker centre", "Comida com estrela Michelin por 5 dólares; marque a mesa com um pacote de lenços, como os locais."], ["Lunch at a hawker centre", "Michelin-listed food for 5 dollars; reserve your table with a tissue packet, like locals."]),
     m("jewel", "🌧", "day", ["photo", "family"], 1.3602, 103.9898, ["Rain Vortex da Jewel", "A maior cascata interior do mundo, no aeroporto; de noite tem espetáculo de luz."], ["Jewel's Rain Vortex", "The world's tallest indoor waterfall, at the airport; light shows at night."]),
     m("haji-lane", "🎨", "day", ["art", "shopping"], 1.3007, 103.8588, ["Murais da Haji Lane", "A ruela mais colorida, com lojas independentes e cafés."], ["Haji Lane murals", "The most colourful lane, with indie shops and cafés."])
+  ],
+  nyc: [
+    m("ny-ferry", "⛴", "sunset", ["photo", "budget"], 40.7014, -74.0132, ["Ferry de Staten Island ao pôr do sol", "Gratuito, 25 minutos para cada lado, a passar ao lado da Estátua da Liberdade."], ["Staten Island Ferry at sunset", "Free, 25 minutes each way, sailing right past the Statue of Liberty."]),
+    m("ny-jazz", "🎷", "night", ["music", "night"], 40.7359, -74.0011, ["Jazz no Village", "Clubes míticos como o Village Vanguard e o Smalls, com sessões até de madrugada."], ["Jazz in the Village", "Legendary clubs like the Village Vanguard and Smalls, with sets until the small hours."]),
+    m("ny-pizza", "🍕", "day", ["food", "budget"], 40.7302, -73.9893, ["Fatia de pizza nova-iorquina", "Uma fatia dobrada ao meio, comida de pé, por poucos dólares."], ["A New York slice", "A slice folded in half and eaten standing up, for a few dollars."]),
+    m("ny-broadway", "🎭", "night", ["music", "art"], 40.759, -73.9845, ["Um musical na Broadway", "Bilhetes do próprio dia com desconto na TKTS ou nas lotarias digitais dos teatros."], ["A Broadway musical", "Same-day discount tickets at TKTS or the theatres' digital lotteries."]),
+    m("ny-dumbo", "📷", "morning", ["photo", "architecture"], 40.7033, -73.9881, ["Manhattan Bridge vista de DUMBO", "A fotografia clássica na Washington Street, cedo, antes da multidão."], ["Manhattan Bridge from DUMBO", "The classic photo on Washington Street, early, before the crowds."]),
+    m("ny-met", "🏛", "day", ["art", "history"], 40.7794, -73.9632, ["Metropolitan Museum", "Do Egito aos impressionistas; o terraço do telhado abre de abril a outubro."], ["The Met", "From Egypt to the Impressionists; the roof garden opens April to October."])
+  ],
+  was: [
+    m("dc-monuments-night", "🌙", "night", ["photo", "history"], 38.8893, -77.0502, ["Monumentos à noite", "O Lincoln e o Jefferson iluminados, sem multidões e com o Potomac ao lado."], ["Monuments by night", "The Lincoln and Jefferson memorials lit up, without crowds and beside the Potomac."]),
+    m("dc-cherry", "🌸", "morning", ["nature", "photo"], 38.8814, -77.0365, ["Cerejeiras do Tidal Basin", "No fim de março e início de abril, as cerejeiras oferecidas pelo Japão florescem à volta do lago."], ["Tidal Basin cherry blossoms", "In late March and early April, the cherry trees gifted by Japan bloom around the basin."]),
+    m("dc-airspace", "🚀", "day", ["family", "history"], 38.8882, -77.0199, ["Museu do Ar e do Espaço", "O avião dos irmãos Wright e a cápsula da Apollo 11. Gratuito, com bilhete por hora."], ["Air and Space Museum", "The Wright brothers' plane and the Apollo 11 capsule. Free, with a timed pass."]),
+    m("dc-eastern", "🧺", "weekend", ["food", "shopping"], 38.8865, -76.9963, ["Eastern Market ao fim de semana", "O mercado de 1873 em Capitol Hill, com bancas de artesãos e panquecas de mirtilo."], ["Eastern Market at the weekend", "The 1873 market on Capitol Hill, with craft stalls and blueberry pancakes."]),
+    m("dc-wharf", "⛵", "sunset", ["food", "night"], 38.8798, -77.0247, ["The Wharf", "O cais renovado com restaurantes de marisco, música ao vivo e o mercado de peixe mais antigo dos EUA."], ["The Wharf", "The revamped waterfront with seafood restaurants, live music and the oldest fish market in the US."])
+  ],
+  sfo: [
+    m("sf-cablecar", "🚋", "morning", ["history", "photo"], 37.7849, -122.4078, ["Cable car da Powell-Hyde", "Viaje de pé no estribo pelas colinas até à baía; apanhe-o cedo para evitar a fila."], ["Powell-Hyde cable car", "Ride on the running board over the hills to the bay; catch it early to skip the queue."]),
+    m("sf-crissy", "🌅", "sunset", ["nature", "photo"], 37.8039, -122.4655, ["Crissy Field ao pôr do sol", "A praia com a Golden Gate de um lado e Alcatraz do outro."], ["Crissy Field at sunset", "The beach with the Golden Gate on one side and Alcatraz on the other."]),
+    m("sf-mission", "🌯", "day", ["food", "art"], 37.7599, -122.4148, ["Burrito e murais em Mission", "O burrito à San Francisco e os murais da Balmy Alley."], ["Burrito and murals in the Mission", "The Mission-style burrito and the murals of Balmy Alley."]),
+    m("sf-coit", "🗼", "day", ["photo", "art"], 37.8024, -122.4058, ["Coit Tower e escadas de Filbert", "Murais dos anos 30 na torre e a descida pelas escadas entre jardins."], ["Coit Tower and the Filbert Steps", "1930s murals in the tower and the walk down the garden-lined steps."]),
+    m("sf-painted", "🏠", "day", ["architecture", "photo"], 37.7762, -122.4328, ["Painted Ladies", "As casas vitorianas coloridas diante do horizonte da cidade, no Alamo Square."], ["Painted Ladies", "The colourful Victorian houses against the skyline, at Alamo Square."])
+  ],
+  chi: [
+    m("chi-boat", "🛥", "day", ["architecture", "history"], 41.8881, -87.6237, ["Passeio de barco de arquitetura", "90 minutos no rio entre arranha-céus, com guias da Chicago Architecture Center."], ["Architecture boat tour", "90 minutes on the river among skyscrapers, with Chicago Architecture Center guides."]),
+    m("chi-blues", "🎸", "night", ["music", "night"], 41.8768, -87.6266, ["Blues ao vivo", "Clubes como o Buddy Guy's Legends e o Kingston Mines, todas as noites."], ["Live blues", "Clubs like Buddy Guy's Legends and Kingston Mines, every night."]),
+    m("chi-deepdish", "🍕", "day", ["food"], 41.8925, -87.6268, ["Pizza deep-dish", "A pizza de massa alta da cidade; conte com 40 minutos de forno."], ["Deep-dish pizza", "The city's thick-crust pizza; allow 40 minutes in the oven."]),
+    m("chi-lakefront", "🚲", "morning", ["nature", "sport"], 41.9002, -87.6197, ["Lakefront Trail", "Ciclovia e passeio de 29 km ao longo do lago Michigan, com praias urbanas."], ["Lakefront Trail", "An 18-mile path along Lake Michigan, with city beaches."]),
+    m("chi-chinatown", "🥟", "day", ["food", "budget"], 41.8527, -87.6324, ["Chinatown e o Riverwalk do Ping Tom", "Dim sum e o parque junto ao rio, com táxi aquático de volta ao centro."], ["Chinatown and Ping Tom Park", "Dim sum and the riverside park, with a water taxi back downtown."])
+  ],
+  bos: [
+    m("bos-freedom", "🧭", "morning", ["history"], 42.355, -71.0656, ["Freedom Trail completo", "Siga a linha de tijolos vermelhos: 4 km e 16 locais da Revolução."], ["The full Freedom Trail", "Follow the red-brick line: 2.5 miles and 16 sites of the Revolution."]),
+    m("bos-fenway", "⚾", "night", ["sport", "family"], 42.3467, -71.0972, ["Jogo no Fenway Park", "O estádio de basebol mais antigo da liga, com o muro verde «Green Monster»."], ["A game at Fenway Park", "The league's oldest ballpark, with the «Green Monster» wall."]),
+    m("bos-lobster", "🦞", "day", ["food"], 42.3633, -71.0526, ["Lobster roll e ostras", "No North End e nos restaurantes do porto; a sopa de amêijoa aquece no inverno."], ["Lobster rolls and oysters", "In the North End and harbour restaurants; clam chowder warms you in winter."]),
+    m("bos-harbor", "🌅", "sunset", ["photo", "nature"], 42.3542, -71.0446, ["Harborwalk ao pôr do sol", "O passeio à beira do porto entre o Seaport e o aquário."], ["Harborwalk at sunset", "The waterfront walk between the Seaport and the aquarium."]),
+    m("bos-library", "📚", "day", ["architecture", "art", "budget"], 42.3493, -71.0782, ["Biblioteca Pública de Boston", "A sala de leitura Bates Hall e o pátio renascentista, gratuitos."], ["Boston Public Library", "The Bates Hall reading room and the Renaissance courtyard, free."])
+  ],
+  mia: [
+    m("mia-sunrise", "🌅", "morning", ["beach", "photo"], 25.7802, -80.1306, ["Nascer do sol em South Beach", "O sol nasce sobre o Atlântico; a praia ainda é dos corredores e das gaivotas."], ["Sunrise on South Beach", "The sun rises over the Atlantic; the beach still belongs to joggers and gulls."]),
+    m("mia-cuban", "☕", "day", ["food", "music"], 25.7655, -80.2192, ["Café cubano na Calle Ocho", "Cafecito na janela de um café da Little Havana e dominó no Parque Máximo Gómez."], ["Cuban coffee on Calle Ocho", "A cafecito at a Little Havana coffee window and dominoes at Máximo Gómez Park."]),
+    m("mia-deco-night", "🌙", "night", ["night", "architecture"], 25.7815, -80.1305, ["Néon Art Déco à noite", "Ocean Drive acende-se em néon; passeie, mas confirme os preços antes de se sentar."], ["Art Deco neon by night", "Ocean Drive lights up in neon; stroll, but check prices before sitting down."]),
+    m("mia-vizcaya", "🏛", "day", ["history", "architecture"], 25.7444, -80.2105, ["Vizcaya", "Uma villa italiana de 1916 com jardins sobre a baía de Biscayne."], ["Vizcaya", "A 1916 Italianate villa with gardens on Biscayne Bay."]),
+    m("mia-kayak", "🛶", "day", ["nature", "adventure"], 25.7701, -80.1351, ["Caiaque ou paddle na baía", "Saídas de South Pointe com água calma e, às vezes, manatins."], ["Kayak or paddleboard on the bay", "Trips from South Pointe on calm water and, sometimes, manatees."])
   ]
 };
 
@@ -242,5 +285,7 @@ export const AGENDA: Record<string, string> = {
   ruh: "https://www.timeoutriyadh.com/things-to-do", jed: "https://www.visitsaudi.com/en/jeddah", cai: "https://www.cairo360.com",
   amm: "https://www.visitjordan.com", mct: "https://www.experienceoman.om",
   fra: "https://www.frankfurt-tourismus.de/en", ber: "https://www.timeout.com/berlin/things-to-do", muc: "https://www.timeout.com/munich/things-to-do",
-  vie: "https://www.timeout.com/vienna/things-to-do", prg: "https://www.timeout.com/prague/things-to-do", sin: "https://www.timeout.com/singapore/things-to-do"
+  vie: "https://www.timeout.com/vienna/things-to-do", prg: "https://www.timeout.com/prague/things-to-do", sin: "https://www.timeout.com/singapore/things-to-do",
+  nyc: "https://www.timeout.com/newyork/things-to-do", was: "https://washington.org/events", sfo: "https://www.timeout.com/san-francisco/things-to-do",
+  chi: "https://www.timeout.com/chicago/things-to-do", bos: "https://www.meetboston.com/events", mia: "https://www.timeout.com/miami/things-to-do"
 };

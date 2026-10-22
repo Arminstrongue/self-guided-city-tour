@@ -3,6 +3,13 @@
  * ("Coliseu", "Torre de Belém", "A e B"); nos outros idiomas mostramos o nome internacional.
  */
 const EN: Record<string, string> = {
+  "ny-911": "9/11 Memorial & One World Trade", "ny-wall": "Wall Street & Charging Bull", "ny-brooklyn": "Brooklyn Bridge", "ny-chinatown": "Chinatown & Little Italy",
+  "ny-rock": "Rockefeller Center & St Patrick's Cathedral", "ny-highline": "High Line & Chelsea Market",
+  "dc-capitol": "US Capitol", "dc-library": "Library of Congress", "dc-mall": "National Mall & Smithsonian museums", "dc-monument": "Washington Monument",
+  "dc-lincoln": "WWII Memorial & Lincoln Memorial", "dc-whitehouse": "White House & Lafayette Square",
+  "sf-union": "Union Square & cable cars", "sf-northbeach": "North Beach & Washington Square", "sf-wharf": "Fisherman's Wharf & Pier 39", "sf-goldengate": "Golden Gate Bridge",
+  "chi-bean": "Millennium Park & Cloud Gate", "chi-mile": "Magnificent Mile & Water Tower",
+  "bos-common": "Boston Common & Public Garden", "bos-faneuil": "Faneuil Hall & Quincy Market", "bos-northend": "North End & Paul Revere House",
   se: "Lisbon Cathedral", "santa-luzia": "Santa Luzia Viewpoint", graca: "Graça Viewpoint",
   carmo: "Largo do Carmo & Chiado", jeronimos: "Jerónimos & Pastéis de Belém", "torre-belem": "Belém Tower",
   clerigos: "Clérigos Tower & Lello Bookshop", "sao-bento": "São Bento Station", "se-porto": "Porto Cathedral",
@@ -50,6 +57,9 @@ export function stopName(s: { id: string; n: string }, locale: string): string {
 
 /** Indicações de linhas e percursos (escritas em português em cities.ts) em inglês para os outros idiomas. */
 const LINE_EN: [RegExp, string][] = [
+  [/Linha Prata/g, "Silver Line"], [/Linha Laranja/g, "Orange Line"], [/Elétrico F \(elétricos históricos\)/g, "F-line streetcar (historic)"], [/grátis desde o aeroporto/g, "free from the airport"],
+  [/autocarro do terminal/g, "terminal shuttle"], [/Pelo Reflecting Pool/g, "Along the Reflecting Pool"], [/Pela 5\.ª Avenida/g, "Along Fifth Avenue"], [/Porta do Dragão/g, "Dragon Gate"],
+  [/A subir pela/g, "Uphill along"], [/Pelo passeio marítimo/g, "Along the seafront"],
   [/A pé até /g, "Walk to "], [/ferry para /g, "ferry to "], [/Abra \(barco tradicional\)/g, "Abra (traditional boat)"], [/em dinheiro/g, "cash"],
   [/Linha Vermelha/g, "Red Line"], [/Linha Verde/g, "Green Line"], [/Linha Azul/g, "Blue Line"], [/Linha Amarela/g, "Yellow Line"], [/Linha Dourada/g, "Gold Line"],
   [/Metro Vermelha/g, "Metro Red"], [/\bVermelha\b/g, "Red"], [/\bVerde\b/g, "Green"], [/\bAzul\b/g, "Blue"], [/Aeroporto/g, "Airport"],

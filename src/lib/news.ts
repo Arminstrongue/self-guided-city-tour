@@ -50,7 +50,9 @@ const EDITION: Record<string, string> = {
 /** Editoras de referência (aparecem primeiro e com um selo). */
 const TRUSTED = /\b(bbc|reuters|associated press|ap news|the guardian|financial times|sky news|euronews|france 24|le monde|le figaro|franceinfo|el país|el pais|rtve|la vanguardia|el mundo|público|publico|rtp|sic notícias|observador|expresso|lusa|jornal de notícias|diário de notícias|corriere|la repubblica|ansa|rai|tagesschau|spiegel|zeit|faz|süddeutsche|dw|nos\.nl|nu\.nl|dutchnews|hürriyet|daily sabah|al jazeera|the national|nhk|asahi|xinhua|cgtn|gov\.uk|manchester evening news|evening standard|the scotsman)\b/i;
 
-const FCDO: Record<string, string> = { PT: "portugal", ES: "spain", FR: "france", IT: "italy", NL: "netherlands", TR: "turkey", AE: "united-arab-emirates", QA: "qatar", SA: "saudi-arabia", EG: "egypt", JO: "jordan", OM: "oman", DE: "germany", AT: "austria", CZ: "czech-republic", SG: "singapore" };
+const FCDO: Record<string, string> = { PT: "portugal", ES: "spain", FR: "france", IT: "italy", NL: "netherlands", TR: "turkey", AE: "united-arab-emirates", QA: "qatar", SA: "saudi-arabia", EG: "egypt", JO: "jordan", OM: "oman", DE: "germany", AT: "austria", CZ: "czech-republic", SG: "singapore",
+  US: "usa", CA: "canada", MX: "mexico", BR: "brazil", AR: "argentina", MA: "morocco", ZA: "south-africa", TZ: "tanzania", TN: "tunisia", ET: "ethiopia",
+  KE: "kenya", AO: "angola", GH: "ghana", RW: "rwanda", SN: "senegal" };
 
 export function isSafety(title: string, locale: string) {
   const t = title.toLowerCase();

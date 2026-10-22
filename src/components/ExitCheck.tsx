@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { City } from "@/data/cities";
-import { zoneOf } from "@/data/city-meta";
+import { ZONE_COUNTRY, zoneOf } from "@/data/city-meta";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
@@ -45,11 +45,14 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
 
   const msg: Record<EntryVerdict, string> = {
     free: t.vFree, "free-ees": t.vFreeEes, etias: t.vEtias, eta: t.vEta, evisa: t.vEvisa, visa: t.vVisa, unknown: t.vUnknown,
-    "free-pass": t.vFreePass, voa: t.vVoa, "evisa-me": t.vEvisaMe
+    "free-pass": t.vFreePass, voa: t.vVoa, "evisa-me": t.vEvisaMe, auth: t.vAuth
   };
   const tone = (v: EntryVerdict) => (v === "visa" ? "bad" : v === "unknown" || v === "eta" || v === "etias" || v === "evisa" || v === "evisa-me" || v === "voa" ? "warn" : "ok");
   const zone = zoneOf(city);
-  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : zone === "schengen" ? t.zoneSchengen : zone === "sg" ? t.zoneSG : t.zoneMe[zone];
+  const zc = ZONE_COUNTRY[zone];
+  const zoneName = zone === "uk" ? t.zoneUK : zone === "tr" ? t.zoneTR : zone === "schengen" ? t.zoneSchengen : zone === "sg" ? t.zoneSG
+    : zc ? (() => { try { return new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }).of(zc) ?? zc; } catch { return zc; } })()
+      : t.zoneMe[zone as keyof Dict["zoneMe"]];
 
   if (!open) return <button type="button" className="btn ghost" onClick={() => setOpen(true)}>{t.exitTitle}</button>;
 
@@ -72,7 +75,7 @@ export function ExitCheck({ city, locale, t, compact = false }: { city: City; lo
       {res && (
         <div className={`verdict-box ${tone(res.entry.verdict)}`} role="status">
           <p><b>{fmt(msg[res.entry.verdict], { fee: res.entry.fee ?? "", site: res.entry.site ?? "", zone: zoneName })}</b></p>
-          {res.entry.hint && <p className="hint">{res.entry.hint === "sg-arrival" ? t.entryHintSg : t.entryHint[res.entry.hint]}</p>}
+          {res.entry.hint && <p className="hint">{res.entry.hint === "sg-arrival" ? t.entryHintSg : res.entry.hint in t.entryHint ? t.entryHint[res.entry.hint as keyof Dict["entryHint"]] : t.entryHint2[res.entry.hint as keyof Dict["entryHint2"]]}</p>}
           {res.entry.zone === "schengen" && !ETIAS_LIVE && res.entry.verdict === "free-ees" && !permit && <p className="hint">{t.etiasSoon}</p>}
           {res.entry.transitVisa && <p className="hint">{t.atv}</p>}
           {res.entry.verdict !== "visa" && (

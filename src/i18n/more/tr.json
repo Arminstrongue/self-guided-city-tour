@@ -1617,5 +1617,16 @@
 "exMore": "Diğer seçenekler",
 "hmFree": "Ücretsiz: planlama, her şehrin ilk durağı ve Manchester demo rotası. Ücretli: bir şehrin tam rotası, 4,99 €'dan başlayan fiyatlarla — abonelik yok.",
 "bkTransport": "Rotadaki ulaşım: yaklaşık {c}",
-"bkIncl": "Dahil: tam rota, 12 dilde sesli rehber ve seyahat araçları. Dahil değil: müze ve anıt girişleri, ulaşım biletleri."
+"bkIncl": "Dahil: tam rota, 12 dilde sesli rehber ve seyahat araçları. Dahil değil: müze ve anıt girişleri, ulaşım biletleri.",
+"vAuth": "Uçağa binmeden önce onaylanmış bir elektronik seyahat izni gerekir ({site}, {fee}). Olmadan havayolu sizi uçağa almaz.",
+"entryHint2": {
+"us": "ABD'de uluslararası transit alanı yoktur: yalnızca uçak değiştirmek için bile ESTA veya vize gerekir ve pasaport kontrolü ile gümrükten geçersiniz. Varışta 1–2 saat ayırın.",
+"ca": "Kanada yalnızca aktarma için de eTA veya vize ister (ABD vizesi olanlara istisnalar var).",
+"mx": "ABD, Kanada, Birleşik Krallık, Schengen bölgesi veya Japonya'dan geçerli vize ya da oturum izniniz varsa Meksika vizesi olmadan girersiniz.",
+"zan": "Zanzibar kendi seyahat sigortasını ister (yaklaşık 44 USD, visitzanzibar.go.tz); riskli bir ülkeden geliyorsanız sarı humma belgesi de gerekir.",
+"ke": "Havalimanı transit alanında kalırsanız eTA gerekmez. Sarı humma belgesi önerilir.",
+"et": "Havalimanı transit alanından çıkmazsanız vize gerekmez.",
+"ao": "Turizm için her girişte 90 güne kadar vize muafiyeti. Sarı humma aşı belgesi zorunludur.",
+"br": "E-vizenin onayı birkaç gün sürer: önceden başvurun."
+}
 }

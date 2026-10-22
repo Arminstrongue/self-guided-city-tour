@@ -1184,5 +1184,16 @@
 "exMore": "Altre opzioni",
 "hmFree": "Gratis: pianificare, la prima tappa di ogni città e il percorso demo di Manchester. A pagamento: il percorso completo di una città, da 4,99 € — senza abbonamento.",
 "bkTransport": "Trasporti sul percorso: circa {c}",
-"bkIncl": "Incluso: percorso completo, audioguida in 12 lingue e strumenti di viaggio. Non incluso: ingressi a musei e monumenti, biglietti dei trasporti."
+"bkIncl": "Incluso: percorso completo, audioguida in 12 lingue e strumenti di viaggio. Non incluso: ingressi a musei e monumenti, biglietti dei trasporti.",
+"vAuth": "Ti serve un'autorizzazione elettronica approvata prima dell'imbarco ({site}, {fee}). Senza, la compagnia non ti fa imbarcare.",
+"entryHint2": {
+"us": "Gli Stati Uniti non hanno un'area di transito internazionale: anche solo per cambiare aereo servono ESTA o visto e si passano immigrazione e dogana. Calcola 1–2 ore all'arrivo.",
+"ca": "Anche il Canada richiede l'eTA o il visto solo per lo scalo (eccezioni con visto USA).",
+"mx": "Con visto o permesso di soggiorno validi di USA, Canada, Regno Unito, area Schengen o Giappone entri in Messico senza visto messicano.",
+"zan": "Zanzibar richiede un'assicurazione di viaggio propria (circa 44 USD, visitzanzibar.go.tz) e il certificato di febbre gialla se arrivi da un paese a rischio.",
+"ke": "Se resti nell'area di transito non serve l'eTA. Consigliato il certificato di febbre gialla.",
+"et": "Se non esci dall'area di transito dell'aeroporto non serve il visto.",
+"ao": "Esenzione dal visto turistico fino a 90 giorni per ingresso. Obbligatorio il certificato di vaccinazione contro la febbre gialla.",
+"br": "L'e-visa richiede alcuni giorni: chiedilo in anticipo."
+}
 }

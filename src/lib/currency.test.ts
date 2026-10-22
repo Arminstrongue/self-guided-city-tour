@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { convert, countryFromAcceptLanguage, dualMoney, formatMoney, pickCurrency } from "./currency";
+import { CURRENCIES, convert, countryFromAcceptLanguage, dualMoney, formatMoney, pickCurrency } from "./currency";
 import { FALLBACK_RATES, parseEcbXml } from "./fx";
 
 test("deteta a moeda do viajante", () => {
@@ -23,7 +23,7 @@ test("converte e formata", () => {
   const d = dualMoney(4.99, "EUR", { cur: "GBP", rates: r, date: "" }, "en-GB");
   assert.equal(d.main, "€4.99"); assert.equal(d.local, "≈ £3.99");
   assert.equal(dualMoney(2, "EUR", { cur: "EUR", rates: r, date: "" }, "en-GB").local, null);
-  assert.equal(Object.keys(FALLBACK_RATES).length, 36);
+  assert.equal(Object.keys(FALLBACK_RATES).length, CURRENCIES.length);
 });
 
 test("lê o ficheiro do Banco Central Europeu", () => {

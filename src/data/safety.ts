@@ -8,7 +8,7 @@ import type { Locale } from "@/i18n/dictionaries";
 export type AlertKey =
   | "pickpocket" | "snatch" | "petition" | "bracelet" | "rose" | "cups" | "ring" | "stain" | "drugs"
   | "couvert" | "menu" | "taxi" | "bar" | "shoeshine" | "shop" | "photo" | "helpers" | "atm"
-  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law" | "fines";
+  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law" | "fines" | "nightwalk";
 
 export type NumK = "sos" | "police" | "ambulance" | "fire" | "health" | "nonurgent";
 export type CountrySafety = { nums: { k: NumK; n: string }[]; help: { lang: string; text: string }; pharmacy: string };
@@ -44,7 +44,8 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   DE: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "110" }, { k: "health", n: "116 117" }], help: HELP.de, pharmacy: "Apotheke (A)" },
   AT: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "133" }, { k: "ambulance", n: "144" }, { k: "fire", n: "122" }, { k: "health", n: "1450" }], help: HELP.de, pharmacy: "Apotheke (A)" },
   CZ: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "158" }, { k: "ambulance", n: "155" }, { k: "fire", n: "150" }], help: HELP.cs, pharmacy: "Lékárna ✚" },
-  SG: { nums: [{ k: "police", n: "999" }, { k: "ambulance", n: "995" }, { k: "fire", n: "995" }, { k: "nonurgent", n: "1800 255 0000" }], help: HELP.en, pharmacy: "Pharmacy (Guardian · Watsons · Unity)" }
+  SG: { nums: [{ k: "police", n: "999" }, { k: "ambulance", n: "995" }, { k: "fire", n: "995" }, { k: "nonurgent", n: "1800 255 0000" }], help: HELP.en, pharmacy: "Pharmacy (Guardian · Watsons · Unity)" },
+  US: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }], help: HELP.en, pharmacy: "Pharmacy (CVS · Walgreens)" }
 };
 
 const UK: AlertKey[] = ["lefttraffic", "pickpocket", "snatch"];
@@ -77,7 +78,13 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   muc: { alerts: ["pickpocket", "bikelane"], hot: ["Marienplatz", "Hauptbahnhof", "Hofbräuhaus", "Theresienwiese (Oktoberfest)"], night: ["Hauptbahnhof"] },
   vie: { alerts: ["pickpocket", "bikelane"], hot: ["Stephansplatz", "Kärntner Straße", "U1", "Schönbrunn"], night: ["Praterstern"] },
   prg: { alerts: ["atm", "taxi", "pickpocket", "menu", "fakepolice"], hot: ["Karlův most", "Staroměstské náměstí", "Václavské náměstí", "Tram 22"], night: ["Václavské náměstí"] },
-  sin: { alerts: ["fines", "heat"], hot: [], night: [], tp: "Polícia: 999 · app Police@SG" }
+  sin: { alerts: ["fines", "heat"], hot: [], night: [], tp: "Polícia: 999 · app Police@SG" },
+  nyc: { alerts: ["pickpocket", "snatch", "photo", "shop", "nightwalk"], hot: ["Times Square", "Metro (linhas cheias)", "Ponte de Brooklyn", "Canal Street"], night: ["Parques depois do anoitecer", "Estações de metro vazias"] },
+  was: { alerts: ["pickpocket", "nightwalk"], hot: ["Metro Center", "Gallery Place-Chinatown", "National Mall (eventos)"], night: ["Zonas fora do centro depois das 22h"] },
+  sfo: { alerts: ["snatch", "pickpocket", "nightwalk"], hot: ["Union Square", "Market Street", "Fisherman's Wharf", "Cable cars"], night: ["Tenderloin", "Civic Center", "6th Street (SoMa)"] },
+  chi: { alerts: ["pickpocket", "snatch", "nightwalk"], hot: ["Magnificent Mile", "Linha Vermelha e Azul do metro", "Navy Pier"], night: ["Linhas de metro à noite", "Zonas fora do Loop e do Near North"] },
+  bos: { alerts: ["pickpocket", "nightwalk"], hot: ["Faneuil Hall", "Downtown Crossing", "Linhas do metro na hora de ponta"], night: ["Boston Common de madrugada"] },
+  mia: { alerts: ["heat", "bar", "snatch", "nightwalk"], hot: ["Ocean Drive", "Lincoln Road", "Praia (pertences sem vigilância)"], night: ["Ocean Drive (bares com contas inflacionadas)", "Overtown"] }
 };
 
 type T = [string, string];
@@ -367,6 +374,17 @@ export const ALERT_TEXT = {
     zh: ["重罚", "乱扔垃圾、在指定区域外吸烟、在地铁（MRT）上饮食、乱穿马路都会被罚款。不得携带口香糖入境；对毒品零容忍。"],
     ar: ["غرامات كبيرة", "غرامات على رمي القمامة، والتدخين خارج الأماكن المخصصة، والأكل أو الشرب في المترو، وعبور الطريق من غير الممر. يُمنع إدخال العلكة؛ ولا تسامح مطلقًا مع المخدرات."],
     ja: ["高額な罰金", "ポイ捨て、指定場所以外での喫煙、MRT車内での飲食、横断歩道以外の横断には罰金。チューインガムの持ち込みは禁止、薬物は一切容認されません。"]
+  },
+  nightwalk: {
+    pt: ["Depois de escurecer", "Fique em ruas movimentadas e iluminadas e use táxi ou app (Uber, Bolt) para trajetos mais longos à noite. Não mostre o telemóvel nem joias em zonas vazias."],
+    en: ["After dark", "Stay on busy, well-lit streets and use a taxi or ride-hailing app (Uber, Bolt) for longer trips at night. Keep phones and jewellery out of sight in empty areas."],
+    es: ["Al anochecer", "Quédate en calles concurridas e iluminadas y usa taxi o app (Uber, Bolt) para trayectos largos de noche. No muestres el móvil ni joyas en zonas vacías."],
+    fr: ["Après la tombée de la nuit", "Restez dans les rues animées et éclairées et prenez un taxi ou une appli (Uber, Bolt) pour les trajets plus longs la nuit. Ne sortez ni téléphone ni bijoux dans les zones désertes."],
+    de: ["Nach Einbruch der Dunkelheit", "Bleiben Sie auf belebten, beleuchteten Straßen und nehmen Sie nachts für längere Strecken ein Taxi oder eine App (Uber, Bolt). Handy und Schmuck in leeren Gegenden nicht zeigen."],
+    it: ["Dopo il tramonto", "Resta in strade animate e illuminate e usa taxi o app (Uber, Bolt) per i tragitti più lunghi di notte. Non mostrare telefono e gioielli nelle zone deserte."],
+    zh: ["天黑以后", "走热闹、照明好的街道；夜间较远的路程请乘出租车或打车软件（Uber、Bolt）。在人少的地方不要拿出手机或佩戴显眼首饰。"],
+    ar: ["بعد حلول الظلام", "ابقَ في الشوارع المزدحمة والمضاءة، واستخدم سيارة أجرة أو تطبيقًا (Uber، Bolt) للمسافات الأطول ليلًا. لا تُظهر الهاتف أو المجوهرات في الأماكن الخالية."],
+    ja: ["暗くなってから", "人通りが多く明るい道を歩き、夜の長い移動はタクシーか配車アプリ（Uber、Bolt）を使いましょう。人けのない場所でスマホや貴金属を見せないでください。"]
   }
 } as unknown as Record<AlertKey, Record<Locale, T>>;
 
@@ -397,6 +415,7 @@ const MORE_ALERTS: Record<AlertKey, Record<"tr" | "ru" | "ko", T>> = {
   camel: { tr: ["Piramitlerde develer ve «rehberler»", "«Ucuz» deve veya at turu teklif edip inmeniz için çok daha fazlasını isterler. Toplam fiyatı yazılı olarak anlaşın ya da kararlı bir şekilde reddedip plato otobüsünü kullanın."], ru: ["Верблюды и «гиды» у пирамид", "Предлагают «дешёвую» прогулку на верблюде или лошади, а потом требуют намного больше, чтобы отпустить. Договоритесь о полной цене письменно или твёрдо откажитесь и пользуйтесь автобусом по плато."], ko: ["피라미드의 낙타와 «가이드»", "«싼» 낙타나 말 타기를 권한 뒤 내려 주는 대가로 훨씬 많은 돈을 요구해요. 전체 가격을 글로 합의하거나 단호히 거절하고 고원 버스를 이용하세요."] },
   law: { tr: ["Katı yasalar", "Kamuya açık sevgi gösterisi yok, sokakta alkol yok ve uyuşturucuya sıfır tolerans (bazı kodeinli ilaçlar izin gerektirir). İzinsiz insanların veya resmî binaların fotoğrafını çekmeyin."], ru: ["Строгие законы", "Никаких публичных проявлений нежности, алкоголя на улице и нулевая терпимость к наркотикам (некоторые лекарства с кодеином требуют разрешения). Не фотографируйте людей без спроса и государственные здания."], ko: ["엄격한 법", "공공장소 애정 표현과 길거리 음주는 금지이며 마약은 무관용이에요(일부 코데인 약은 허가 필요). 허락 없이 사람이나 정부 건물을 촬영하지 마세요."] },
   fines: { tr: ["Ağır cezalar", "Yere çöp atmak, işaretli alanlar dışında sigara içmek, MRT'de yiyip içmek ve yaya geçidi dışından karşıya geçmek para cezası gerektirir. Ülkeye sakız sokulamaz; uyuşturucuya sıfır tolerans."], ru: ["Крупные штрафы", "Штрафы за мусор на улице, курение вне отведённых мест, еду и напитки в MRT и переход вне перехода. Жевательную резинку ввозить нельзя; нулевая терпимость к наркотикам."], ko: ["무거운 벌금", "쓰레기 투기, 지정 구역 밖 흡연, MRT 안 음식물 섭취, 무단횡단에는 벌금이 있어요. 껌은 반입할 수 없고 마약은 무관용이에요."] },
+  nightwalk: { tr: ["Hava karardıktan sonra", "Kalabalık ve aydınlık sokaklarda kalın; gece uzun yollar için taksi veya uygulama (Uber, Bolt) kullanın. Boş yerlerde telefon ve takı göstermeyin."], ru: ["После наступления темноты", "Держитесь людных освещённых улиц, а для дальних поездок ночью берите такси или приложение (Uber, Bolt). В безлюдных местах не доставайте телефон и не носите украшения напоказ."], ko: ["해가 진 뒤에는", "사람이 많고 밝은 거리로 다니고, 밤에 먼 거리는 택시나 차량 호출 앱(Uber, Bolt)을 이용하세요. 인적 드문 곳에서는 휴대폰과 장신구를 드러내지 마세요."] },
   bikelane: { tr: ["Bisiklet yolları", "Kırmızı şeritler bisikletlere aittir ve yavaşlamazlar. Kaldırımdan inmeden önce iki yöne de bakın."], ru: ["Велодорожки", "Красные полосы — для велосипедов, и они не тормозят. Прежде чем сойти с тротуара, посмотрите в обе стороны."], ko: ["자전거 도로", "빨간 차선은 자전거 전용이며 속도를 줄이지 않아요. 보도에서 내려서기 전에 양쪽을 보세요."] }
 };
 for (const [k, v] of Object.entries(MORE_ALERTS) as [AlertKey, Record<"tr" | "ru" | "ko", T>][]) Object.assign(ALERT_TEXT[k], v);

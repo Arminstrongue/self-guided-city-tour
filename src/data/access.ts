@@ -23,7 +23,11 @@ export const ACCESS: Record<string, Access[]> = {
   // Cairo e Amã
   pyramids: ["uneven"], sphinx: ["uneven"], "citadel-cai": ["hill"], citadel: ["hill"], "roman-theatre": ["steps"], rainbow: ["hill"],
   // Liverpool
-  "met-cathedral": ["steps"]
+  "met-cathedral": ["steps"],
+  // São Francisco: colinas
+  "sf-northbeach": ["hill"], "sf-lombard": ["hill", "steps"], "sf-chinatown": ["hill"],
+  // Boston: Beacon Hill
+  "bos-statehouse": ["hill"]
 };
 export const accessOf = (id: string): Access[] => ACCESS[id] ?? [];
 /** Quantas paragens do percurso têm subidas, escadas ou piso irregular. */

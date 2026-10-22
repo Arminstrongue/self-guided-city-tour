@@ -116,3 +116,32 @@ test("entrada: Singapura (zona própria, SG Arrival Card) e novas cidades Scheng
   for (const id of ["fra", "ber", "muc", "vie", "prg"]) assert.equal(checkEntry(c(id), "DE").zone, "schengen", id);
   assert.equal(checkEntry(c("prg"), "US").verdict === "free-ees" || checkEntry(c("prg"), "US").verdict === "etias", true);
 });
+
+test("Américas e África: ESTA, eTA, e-visa, isenções e vistos", async () => {
+  const { checkEntry } = await import("./entry");
+  const city = (cur: string) => ({ cur } as never);
+  assert.equal(checkEntry(city("USD"), "PT").verdict, "auth");
+  assert.equal(checkEntry(city("USD"), "PT").hint, "us");
+  assert.equal(checkEntry(city("USD"), "CA").verdict, "free-pass");
+  assert.equal(checkEntry(city("USD"), "BR").verdict, "visa");
+  assert.equal(checkEntry(city("CAD"), "US").verdict, "free-pass");
+  assert.equal(checkEntry(city("CAD"), "FR").verdict, "auth");
+  assert.equal(checkEntry(city("BRL"), "US").verdict, "auth");
+  assert.equal(checkEntry(city("BRL"), "PT").verdict, "free-pass");
+  assert.equal(checkEntry(city("MXN"), "BR").verdict, "visa");
+  assert.equal(checkEntry(city("MXN"), "BR", true).verdict, "free");
+  assert.equal(checkEntry(city("AOA"), "PT").verdict, "free-pass");
+  assert.equal(checkEntry(city("AOA"), "AO").verdict, "free");
+  assert.equal(checkEntry(city("KES"), "NG").verdict, "free-pass");
+  assert.equal(checkEntry(city("KES"), "DE").verdict, "auth");
+  assert.equal(checkEntry(city("KES"), "SO").verdict, "auth");
+  assert.equal(checkEntry(city("ETB"), "GB").verdict, "evisa-me");
+  assert.equal(checkEntry(city("RWF"), "US").verdict, "voa");
+  assert.equal(checkEntry(city("RWF"), "GB").verdict, "free-pass");
+  assert.equal(checkEntry(city("GHS"), "NG").verdict, "free-pass");
+  assert.equal(checkEntry(city("GHS"), "US").verdict, "visa");
+  assert.equal(checkEntry(city("TZS"), "PT").verdict, "evisa-me");
+  assert.equal(checkEntry(city("MAD"), "PT").verdict, "free-pass");
+  assert.equal(checkEntry(city("XOF"), "US").verdict, "free-pass");
+  assert.equal(checkEntry(city("ZAR"), "IN").verdict, "visa");
+});

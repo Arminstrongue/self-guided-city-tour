@@ -91,6 +91,95 @@ const SG_FREE = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "MY
 /** Singapura: precisam de visto (pedido antes de viajar). */
 const SG_VISA = ["IN", "PK", "BD", "NG", "EG", "AF", "IR", "IQ", "SY", "YE", "SO", "SD", "SS", "LY", "DZ", "JO", "LB", "TN", "MA", "ML", "KP"];
 
+/* ---------- Américas e África (revisto em outubro de 2026; só nacionalidades com regra confirmada) ---------- */
+const AFRICA = ["DZ", "AO", "BJ", "BW", "BF", "BI", "CV", "CM", "CF", "TD", "KM", "CG", "CD", "CI", "DJ", "EG", "GQ", "ER", "SZ", "ET", "GA", "GM", "GH",
+  "GN", "GW", "KE", "LS", "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD",
+  "TZ", "TG", "TN", "UG", "ZM", "ZW"];
+const ECOWAS = ["BJ", "BF", "CV", "CI", "GM", "GH", "GN", "GW", "LR", "ML", "NE", "NG", "SN", "SL", "TG"];
+const MICRO = ["AD", "MC", "SM", "VA"];
+/** EUA: Visa Waiver Program (ESTA). */
+const US_VWP = ["AD", "AU", "AT", "BE", "BN", "CL", "HR", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IL", "IT", "JP", "LV", "LI", "LT", "LU",
+  "MT", "MC", "NL", "NZ", "NO", "PL", "PT", "QA", "SM", "SG", "SK", "SI", "KR", "ES", "SE", "CH", "TW", "GB"];
+const US_VISA = ["BR", "MX", "AR", "CO", "PE", "EC", "CN", "IN", "RU", "TR", "ZA", "NG", "GH", "KE", "AO", "MA", "EG", "PH", "VN", "ID", "TH", "PK", "BD",
+  "UA", "RO", "BG", "CY", "MZ", "ET", "TN", "SN", "RW", "TZ", "AE", "SA", "JO", "UY", "PY", "BO", "VE", "CU"];
+/** Canadá: eTA para quem não precisa de visto. */
+const CA_ETA = [...EU, ...EEA_CH, ...MICRO, "GB", "AU", "NZ", "JP", "KR", "SG", "IL", "CL", "TW", "HK", "BN", "AE", "BS", "BB", "PG", "SB", "WS"];
+const CA_VISA = ["MX", "BR", "AR", "CN", "IN", "NG", "PK", "PH", "VN", "ID", "TH", "ZA", "EG", "MA", "KE", "GH", "AO", "RU", "TR", "CO", "PE", "EC",
+  "UA", "BD", "ET", "TN", "SN", "RW", "TZ", "MZ", "SA", "JO", "CU", "VE"];
+/** México: sem visto (e sem visto também para quem tem visto válido dos EUA, Canadá, Reino Unido, Schengen ou Japão). */
+const MX_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "JP", "KR", "AU", "NZ", "SG", "IL", "AR", "CL", "CO", "CR", "UY", "PA", "PY", "HK", "MY"];
+const MX_VISA = ["BR", "EC", "PE", "VE", "CN", "IN", "NG", "GH", "AO", "MA", "EG", "PK", "PH", "VN", "ID", "KE", "ET", "CU"];
+/** Brasil: e-visa obrigatório para EUA, Canadá e Austrália desde abril de 2025. */
+const BR_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "AR", "CL", "UY", "PY", "BO", "CO", "PE", "EC", "JP", "KR", "NZ", "ZA", "IL", "RU", "TR", "MA", "SG",
+  "MY", "HK", "CR", "PA", "GT", "HN", "SV", "NI", "TT", "BB", "BS"];
+const BR_EVISA = ["US", "CA", "AU"];
+const BR_VISA = ["CN", "IN", "NG", "GH", "AO", "EG", "PK", "PH", "KE", "ET", "MZ"];
+/** Argentina: sem visto. */
+const AR_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "CL", "UY", "PY", "BO", "PE", "EC", "CO", "VE", "MX", "CR",
+  "PA", "GT", "HN", "SV", "NI", "IL", "SG", "MY", "HK", "RU", "TR", "ZA", "TT", "JM"];
+const AR_VISA = ["CN", "IN", "NG", "GH", "AO", "KE", "EG", "MA", "PK", "VN"];
+/** Marrocos: sem visto. */
+const MA_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "AR", "CL", "MX", "PE", "CN", "RU", "TR", "TN", "DZ", "SN",
+  "ML", "NE", "CI", "GN", "CG", "GA", ...GCC, "SG", "MY", "ID", "PH", "HK"];
+const MA_VISA = ["IN", "NG", "GH", "KE", "AO", "EG", "PK", "BD", "CM", "ZA", "ET", "CD"];
+/** África do Sul: sem visto. */
+const ZA_FREE = ["AD", "AR", "AT", "AU", "BE", "BW", "BR", "CA", "CL", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IL", "IT", "JM",
+  "JP", "KR", "LS", "LI", "LU", "MW", "MY", "MT", "MU", "MX", "MC", "MZ", "NA", "NL", "NZ", "NO", "PY", "PE", "PL", "PT", "RU", "SC", "SG", "SK", "ES",
+  "SZ", "SE", "CH", "TZ", "TH", "TT", "TR", "GB", "US", "UY", "VE", "ZM", "ZW", "AO", "KE", "GH", "HK", "SM", "VA", "SI", "LV", "LT", "HR", "BG", "RO"];
+const ZA_VISA = ["IN", "CN", "NG", "PK", "EG", "BD", "MA", "PH", "VN", "CM", "CD", "ET"];
+/** Tanzânia (Zanzibar): sem visto. Os outros pedem eVisa (também há visto à chegada). */
+const TZ_FREE = ["KE", "UG", "RW", "BI", "ZA", "ZW", "ZM", "MZ", "MW", "BW", "NA", "LS", "SZ", "MU", "SC", "SG", "MY"];
+const TZ_EVISA = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "AR", "MX", "CL", "CN", "IN", "RU", "TR", "IL", ...GCC, "AO",
+  "GH", "SN", "MA", "TN", "EG", "ET", "PH", "VN", "ID", "TH"];
+/** Tunísia: sem visto. */
+const TN_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "JP", "KR", "BR", "AR", "CL", "MX", "CN", "RU", "TR", "MA", "DZ", "LY", "SN", "CI", "ML",
+  "NE", "MR", "GN", "ZA", ...GCC, "JO", "MY", "SG", "HK"];
+const TN_VISA = ["IN", "PK", "NG", "GH", "KE", "BD", "EG", "AO", "ET"];
+/** Quénia: isentos da eTA (todos os africanos exceto Somália e Líbia, mais estes); os outros pedem a eTA. */
+const KE_FREE = [...AFRICA.filter((c) => c !== "SO" && c !== "LY"), "BS", "BB", "BZ", "BN", "CY", "DM", "FJ", "GD", "GY", "JM", "KI", "MY", "MV", "NR", "PG",
+  "WS", "SM", "SG", "SB", "KN", "LC", "VC", "TO", "TT", "TV", "VU"];
+/** Angola: isenção de visto de turismo (Decreto 189/23), estadias até 90 dias. */
+const AO_FREE = ["DZ", "BW", "CV", "SZ", "GQ", "MU", "LS", "MG", "MW", "MA", "RW", "SC", "TZ", "ZW", "ZA", "NA", "MZ",
+  "SA", "CN", "AE", "IN", "ID", "IL", "JP", "KR", "QA", "SG", "TL",
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IS", "IE", "IT", "LV", "LT", "LU", "MT", "MC", "NL", "NO", "PL", "PT",
+  "RO", "RU", "SK", "SI", "ES", "SE", "CH", "TR", "GB", "VA",
+  "AR", "BR", "CA", "CL", "MX", "PA", "US", "UY",
+  "AU", "FJ", "MH", "FM", "NR", "NZ", "PW", "PG", "WS", "SB", "TO", "TV", "VU",
+  "AG", "BS", "BB", "BZ", "DM", "DO", "GD", "GY", "HT", "JM", "KI", "KN", "LC", "VC", "SR", "TT"];
+/** Gana: sem visto (CEDEAO e acordos bilaterais). Para a maioria dos outros é preciso visto antes de viajar. */
+const GH_FREE = [...ECOWAS, "KE", "ZA", "RW", "SG", "MY", "TT"];
+const GH_VISA = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "AR", "MX", "CN", "IN", "RU", "TR", "IL", ...GCC, "PK", "EG", "MA", "TN"];
+/** Ruanda: visto gratuito à chegada para africanos, Commonwealth e Francofonia; todos os outros têm visto à chegada pago. */
+const RW_FREE = [...AFRICA, "GB", "CA", "AU", "NZ", "IN", "PK", "BD", "LK", "MY", "SG", "JM", "TT", "BB", "BS", "CY", "MT", "FR", "BE", "CH", "LU", "MC", "RO",
+  "VN", "KH", "LA", "AM", "AL", "MD"];
+/** Senegal: sem visto. */
+const SN_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "JP", "KR", "BR", "AR", "CL", "MX", "IL", "MA", "TN", "DZ", ...ECOWAS, "CM", "GA", "CG", "TD",
+  "CF", "MR", "ZA", "MU", "SC", "SG", "MY"];
+
+/** Regra genérica: sem visto / autorização eletrónica antes de embarcar / eVisa / visto à chegada / visto. */
+type ZoneRule = {
+  local: string; free: string[]; auth?: string[] | "all"; evisa?: string[] | "all"; voa?: string[] | "all"; visa?: string[];
+  url: string; site?: string; fee?: string; authFee?: string; hint?: EntryHint;
+};
+export type EntryHint = "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br";
+const ZONES: Partial<Record<Zone, ZoneRule>> = {
+  us: { local: "US", free: ["CA"], auth: US_VWP, visa: US_VISA, url: "https://esta.cbp.dhs.gov", site: "esta.cbp.dhs.gov", authFee: "40 USD", hint: "us" },
+  ca: { local: "CA", free: ["US"], auth: CA_ETA, visa: CA_VISA, url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html", site: "canada.ca/eta", authFee: "7 CAD", hint: "ca" },
+  mx: { local: "MX", free: MX_FREE, visa: MX_VISA, url: "https://www.gob.mx/sre", hint: "mx" },
+  br: { local: "BR", free: BR_FREE, auth: BR_EVISA, visa: BR_VISA, url: "https://brazil.vfsevisa.com", site: "brazil.vfsevisa.com", authFee: "80,90 USD", hint: "br" },
+  ar: { local: "AR", free: AR_FREE, visa: AR_VISA, url: "https://www.argentina.gob.ar/interior/migraciones" },
+  ma: { local: "MA", free: MA_FREE, visa: MA_VISA, url: "https://www.acces-maroc.ma" },
+  za: { local: "ZA", free: ZA_FREE, visa: ZA_VISA, url: "https://www.dha.gov.za/index.php/immigration-services/exempt-countries" },
+  tz: { local: "TZ", free: TZ_FREE, evisa: TZ_EVISA, url: "https://visa.immigration.go.tz", site: "visa.immigration.go.tz", hint: "zan" },
+  tn: { local: "TN", free: TN_FREE, visa: TN_VISA, url: "https://www.diplomatie.gov.tn" },
+  et: { local: "ET", free: ["KE", "DJ"], evisa: "all", url: "https://www.evisa.gov.et", site: "evisa.gov.et", hint: "et" },
+  ke: { local: "KE", free: KE_FREE, auth: "all", url: "https://www.etakenya.go.ke", site: "etakenya.go.ke", authFee: "30 USD", hint: "ke" },
+  ao: { local: "AO", free: AO_FREE, url: "https://www.smevisa.gov.ao", hint: "ao" },
+  gh: { local: "GH", free: GH_FREE, visa: GH_VISA, url: "https://www.gis.gov.gh" },
+  rw: { local: "RW", free: RW_FREE, voa: "all", url: "https://irembo.gov.rw", fee: "50 USD" },
+  sn: { local: "SN", free: SN_FREE, url: "https://www.dakaraeroport.com" }
+};
+
 type MeRule = { free: string[]; voa?: string[]; evisa?: string[]; restricted?: string[]; permitVoa?: string[]; url: string; fee?: string; site?: string };
 const ME: Record<"ae" | "qa" | "sa" | "eg" | "jo" | "om", MeRule> = {
   ae: { free: [...GCC, ...AE_FREE], permitVoa: AE_VOA_PERMIT, url: "https://u.ae/en/information-and-services/visa-and-emirates-id", fee: "100 AED" },
@@ -110,6 +199,7 @@ export type EntryVerdict =
   | "free-pass"     // pode sair só com o passaporte (sem visto ou visto grátis à chegada; não serve o cartão de cidadão)
   | "voa"           // visto à chegada pago no aeroporto (fee)
   | "evisa-me"      // eVisa pedido online antes de viajar (site)
+  | "auth"          // autorização eletrónica aprovada antes de embarcar (ESTA, eTA, e-visa do Brasil, eTA do Quénia)
   | "visa"          // precisa de visto
   | "unknown";      // sem regra para esta nacionalidade: confirmar na fonte oficial
 
@@ -121,7 +211,7 @@ export type EntryCheck = {
   officialUrl: string;
   fee?: string;               // valor do visto à chegada
   site?: string;              // site do eVisa
-  hint?: "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival";
+  hint?: EntryHint;
 };
 
 export function checkEntry(city: City, nationality: string, hasPermit = false): EntryCheck {
@@ -157,6 +247,21 @@ export function checkEntry(city: City, nationality: string, hasPermit = false): 
   if (zone === "sg") {
     const verdict: EntryVerdict = n === "SG" || hasPermit ? "free" : SG_FREE.includes(n) ? "free-pass" : SG_VISA.includes(n) ? "visa" : "unknown";
     return { verdict, zone, transitVisa: false, officialUrl: "https://www.ica.gov.sg/enter-transit-depart/entering-singapore", exitMin: n === "SG" ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check, ...(n !== "SG" ? { hint: "sg-arrival" as const } : {}) };
+  }
+  const zr = ZONES[zone];
+  if (zr) {
+    const local = n === zr.local;
+    const inList = (l: string[] | "all" | undefined) => l === "all" ? true : Boolean(l?.includes(n));
+    let verdict: EntryVerdict;
+    if (local || hasPermit || zr.free.includes(n)) verdict = local || hasPermit ? "free" : "free-pass";
+    else if (zr.visa?.includes(n)) verdict = "visa";
+    else if (inList(zr.auth)) verdict = "auth";
+    else if (inList(zr.evisa)) verdict = "evisa-me";
+    else if (inList(zr.voa)) verdict = "voa";
+    else verdict = "unknown";
+    const fee = verdict === "auth" ? zr.authFee : verdict === "voa" ? zr.fee : undefined;
+    return { verdict, zone, transitVisa: false, officialUrl: zr.url, exitMin: local ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check,
+      ...(fee ? { fee } : {}), ...(zr.site ? { site: zr.site } : {}), ...(zr.hint && !local ? { hint: zr.hint } : {}) };
   }
   if (zone === "tr") {
     const verdict: EntryVerdict = hasPermit || TR_FREE.includes(n) || n === "TR" ? "free" : TR_EVISA.includes(n) ? "evisa" : TR_VISA.includes(n) ? "visa" : "unknown";
@@ -194,10 +299,12 @@ export function checkLayover(city: City, nationality: string, arrival: Date, dep
 
 /** Nacionalidades para o seletor (código ISO). Os nomes vêm de Intl.DisplayNames no navegador. */
 export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, ...SCHENGEN_VISA, ...UK_ETA, ...UK_VISA, ...TR_FREE, ...TR_EVISA, ...TR_VISA, ...SG_FREE, ...SG_VISA, "IE", "TR", "SG",
-  ...Object.values(ME).flatMap((r) => [...r.free, ...(r.voa ?? []), ...(r.evisa ?? []), ...(r.restricted ?? []), ...(r.permitVoa ?? [])])])].filter((c) => c !== "GF").sort();
+  ...Object.values(ME).flatMap((r) => [...r.free, ...(r.voa ?? []), ...(r.evisa ?? []), ...(r.restricted ?? []), ...(r.permitVoa ?? [])]),
+  ...Object.values(ZONES).flatMap((r) => [r.local, ...r.free, ...(Array.isArray(r.auth) ? r.auth : []), ...(Array.isArray(r.evisa) ? r.evisa : []), ...(Array.isArray(r.voa) ? r.voa : []), ...(r.visa ?? [])])])]
+  .filter((c) => c !== "GF").sort();
 
 /** Só para testes. */
-export const _lists = { EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA };
+export const _lists = { ZONES, EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA };
 
 /** Mês em que as regras de entrada e trânsito foram verificadas (AAAA-MM). */
 export const ENTRY_CHECKED = "2026-10";

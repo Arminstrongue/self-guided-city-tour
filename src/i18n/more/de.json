@@ -1157,5 +1157,16 @@
 "exMore": "Weitere Optionen",
 "hmFree": "Kostenlos: Planen, der erste Halt jeder Stadt und die Demo-Route Manchester. Kostenpflichtig: die ganze Route einer Stadt ab 4,99 € — kein Abo.",
 "bkTransport": "Verkehr auf der Route: etwa {c}",
-"bkIncl": "Inklusive: komplette Route, Audioguide in 12 Sprachen und Reisetools. Nicht inklusive: Eintritt in Museen und Sehenswürdigkeiten, Fahrkarten."
+"bkIncl": "Inklusive: komplette Route, Audioguide in 12 Sprachen und Reisetools. Nicht inklusive: Eintritt in Museen und Sehenswürdigkeiten, Fahrkarten.",
+"vAuth": "Sie brauchen vor dem Abflug eine genehmigte elektronische Reisegenehmigung ({site}, {fee}). Ohne sie lässt die Airline Sie nicht einsteigen.",
+"entryHint2": {
+"us": "Die USA haben keinen internationalen Transitbereich: Auch zum Umsteigen brauchen Sie ESTA oder ein Visum und gehen durch Einreise und Zoll. Rechnen Sie bei Ankunft mit 1–2 Stunden.",
+"ca": "Kanada verlangt die eTA oder ein Visum auch nur zum Umsteigen (Ausnahmen mit US-Visum).",
+"mx": "Mit gültigem Visum oder Aufenthaltstitel der USA, Kanadas, Großbritanniens, des Schengen-Raums oder Japans reisen Sie ohne mexikanisches Visum ein.",
+"zan": "Sansibar verlangt eine eigene Reiseversicherung (ca. 44 USD, visitzanzibar.go.tz) und bei Anreise aus Risikoländern einen Gelbfieber-Nachweis.",
+"ke": "Wer im Transitbereich bleibt, braucht keine eTA. Ein Gelbfieber-Nachweis wird empfohlen.",
+"et": "Wer den Transitbereich des Flughafens nicht verlässt, braucht kein Visum.",
+"ao": "Touristen sind bis zu 90 Tage pro Einreise vom Visum befreit. Ein Gelbfieber-Impfnachweis ist Pflicht.",
+"br": "Das E-Visum braucht einige Tage: rechtzeitig beantragen."
+}
 }
