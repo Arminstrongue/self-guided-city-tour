@@ -54,4 +54,4 @@ rsync -a -e "ssh -p 23 -i ~/.ssh/storagebox_ed25519" u123456@u123456.your-storag
 3. `docker compose up -d db` e espere 10 s.
 4. Traga a cópia mais recente da Storage Box (comando acima) e restaure com `pg_restore` (acima).
 5. Restaure a media (acima) e faça `docker compose up -d --build`.
-6. Cloudflare → DNS: aponte o registo `A` de hellotravell.com para o IP novo.
+6. Cloudflare → DNS: aponte o registo `A` de voybu.com para o IP novo.
