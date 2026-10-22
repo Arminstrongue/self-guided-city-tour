@@ -1375,5 +1375,31 @@
 "stay": "Ti diciamo quando tornare."
 },
 "bdSubtotal": "Durata del percorso, andata e ritorno inclusi",
-"tpStartHere": "Il tuo percorso inizia qui"
+"tpStartHere": "Il tuo percorso inizia qui",
+"ofSub2": "Salva su questo telefono il percorso, la storia di ogni tappa, le foto e il meteo del giorno. Dopo il download vedi esattamente cosa funziona senza internet.",
+"ofWhat": "Cosa funziona senza internet",
+"ocLiveAt": "I dati in tempo reale (stato del volo, aggiornamenti meteo, variazioni dei trasporti) richiedono internet. Senza connessione vedi la versione salvata il {d}.",
+"eatBest2": "Posti dove mangiare ben recensiti qui vicino",
+"eatNone2": "Al momento non ci sono posti ben recensiti aperti qui vicino.",
+"eatNoPrice": "prezzo non indicato",
+"eatSrc2": "Con 4,2★ o più e almeno 50 recensioni, aperti ora, prezzo basso o medio. Recensioni e prezzi: Google Maps (non sponsorizzato).",
+"nwKind": {
+"transport": "gli spostamenti potrebbero risentirne",
+"weather": "potrebbe incidere sulle tappe all'aperto",
+"access": "alcuni luoghi potrebbero essere chiusi o difficili da raggiungere",
+"crime": "tieni vicini i tuoi oggetti di valore"
+},
+"vfCompiled": "Informazioni pratiche raccolte da fonti ufficiali e pubbliche a {d}. Non ancora verificate sul posto in questa città: se qualcosa è cambiato, usa “Segnala un problema”.",
+"vfOnSite": "Verificato sul posto a {d}.",
+"gdVerifiedHow": "Approvato da VOYBU dopo aver verificato registrazione dell'attività e assicurazione indicate dalla guida.",
+"gdMeetTbc": "La guida concorderà con te il punto d'incontro esatto.",
+"gjMeetHint": "Luogo preciso, ad es. “Rossio, vicino alla fontana di fronte al Teatro Nazionale”. Solo “Aeroporto” o “Centro” non basta.",
+"gdReplyBy": "{g} deve confermare entro {t}. Fino ad allora è una richiesta, non una prenotazione confermata.",
+"gdBooked2": "Richiesta inviata — in attesa della conferma di {g}. La carta viene addebitata solo se accetta. Riceverai un'email.",
+"gdTerms2": "Accetto i termini: la guida deve confermare entro la scadenza indicata e la carta viene addebitata solo se accetta.",
+"wNotStarted": "Non iniziato · aprilo entro il {d}",
+"tpActivate": "Le tue {h} iniziano quando apri l'itinerario per la prima volta, non al pagamento. Aprilo entro 30 giorni.",
+"tpDur48": "48 ore",
+"tpDur72": "72 ore",
+"tpDur30d": "30 giorni"
 }

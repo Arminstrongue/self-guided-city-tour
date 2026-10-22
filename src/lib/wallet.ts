@@ -47,7 +47,7 @@ export async function walletFor(email: string) {
   ]);
   return {
     email,
-    passes: accesses.map((a) => ({ id: a.id, city: a.city, scope: a.scope, plan: a.plan, amountCents: a.amountCents, createdAt: a.createdAt.toISOString(), expiresAt: a.expiresAt.toISOString(), flightAt: a.flightAt?.toISOString() ?? null, flightNo: a.flightNo })),
+    passes: accesses.map((a) => ({ id: a.id, city: a.city, scope: a.scope, plan: a.plan, amountCents: a.amountCents, createdAt: a.createdAt.toISOString(), expiresAt: a.expiresAt.toISOString(), activatedAt: a.activatedAt?.toISOString() ?? null, flightAt: a.flightAt?.toISOString() ?? null, flightNo: a.flightNo })),
     bookings: bookings.map(({ b, guide, guidePhone, meeting }) => ({
       id: b.id, guideId: b.guideId, guide, city: b.city, startAt: b.startAt.toISOString(), hours: b.hours, people: b.people, amountCents: b.amountCents, status: b.status,
       // O contacto do guia só aparece depois de ele aceitar.

@@ -1,5 +1,7 @@
 "use client";
 import { SheetX } from "@/components/WinNav";
+import { VerifyNote } from "./VerifyNote";
+import { safetyText } from "@/data/safety-en";
 /** Segurança por cidade: SOS, números, partilhar localização, frase de ajuda, burlas e zonas de atenção. */
 import { useEffect, useState } from "react";
 import { ALERT_TEXT, safetyFor } from "@/data/safety";
@@ -58,7 +60,7 @@ export function SafetyPanel({ cityId, country, cityName, center, t, locale, comp
         {s.nums.slice(1).map((x) => (
           <div key={x.k}><span>{t.nK[x.k]}</span><a className="num" href={tel(x.n)}><b>{x.n}</b></a></div>
         ))}
-        {s.tp && <div><span>{t.touristPolice}</span><span style={{ textAlign: "end" }}>{s.tp}</span></div>}
+        {s.tp && <div><span>{t.touristPolice}</span><span style={{ textAlign: "end" }}>{safetyText(s.tp, locale)}</span></div>}
       </div>
 
       <div className="safety-acts">
@@ -90,11 +92,12 @@ export function SafetyPanel({ cityId, country, cityName, center, t, locale, comp
       </div>
 
       <div className="grid2 zones">
-        <div className="card stack" style={{ gap: 6, padding: 14 }}><span className="label">👜 {t.hotTitle}</span><p>{s.hot.join(" · ")}</p></div>
-        <div className="card stack" style={{ gap: 6, padding: 14 }}><span className="label">🌙 {t.nightTitle}</span><p>{s.night.join(" · ")}</p></div>
+        <div className="card stack" style={{ gap: 6, padding: 14 }}><span className="label">👜 {t.hotTitle}</span><p>{s.hot.map((x) => safetyText(x, locale)).join(" · ")}</p></div>
+        <div className="card stack" style={{ gap: 6, padding: 14 }}><span className="label">🌙 {t.nightTitle}</span><p>{s.night.map((x) => safetyText(x, locale)).join(" · ")}</p></div>
       </div>
 
       <p className="hint">{t.safetyNote}</p>
+      <VerifyNote t={t} locale={locale} city={cityId} />
       <p className="hint">{fmt(t.safetyDisc, { n: sos.n })} · {cityName}</p>
     </div>
   );

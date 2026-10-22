@@ -82,7 +82,7 @@ export function GuideForm({ t, locale, cities, initial, mode, declared = false }
         <div className={`field ${err("maxPeople")}`}><label htmlFor="gm">{t.gjMax}</label><input id="gm" inputMode="numeric" value={v.maxPeople} onChange={set("maxPeople")} /></div>
         <div className={`field ${err("licenseNo")}`}><label htmlFor="gl">{t.gjLicense}</label><input id="gl" value={v.licenseNo} onChange={set("licenseNo")} /></div>
       </div>
-      <div className="field"><label htmlFor="gmp">{t.gjMeet}</label><input id="gmp" value={v.meetingPoint} onChange={set("meetingPoint")} /></div>
+      <div className="field"><label htmlFor="gmp">{t.gjMeet}</label><input id="gmp" value={v.meetingPoint} onChange={set("meetingPoint")} minLength={15} maxLength={200} /><span className="hint">{t.gjMeetHint}</span></div>
       <fieldset className="g-pro">
         <legend>🔒 {t.gjProTitle}</legend>
         <p className="hint">{t.gjProHint}</p>
@@ -130,6 +130,12 @@ export function BookGuide({ t, locale, guide, tz }: { t: Dict; locale: Locale; g
   const [terms, setTerms] = useState(false); const [busy, setBusy] = useState(false); const [msg, setMsg] = useState("");
   const total = new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "EUR" }).format((guide.hourlyCents * hours) / 100);
   const minDate = new Date(Date.now() + 3 * 3600_000).toISOString().slice(0, 10);
+  // Prazo real de resposta do guia: 48 h, mas nunca depois de 1 h antes do passeio (igual ao servidor).
+  const replyBy = (() => {
+    const at = toUtc(); if (!at) return "";
+    const by = Math.min(Date.now() + 48 * 3600_000, at.getTime() - 3600_000);
+    return new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: tz, weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(by));
+  })();
 
   /** Converte "data + hora local da cidade" para instante UTC. */
   function toUtc(): Date | null {
@@ -174,7 +180,8 @@ export function BookGuide({ t, locale, guide, tz }: { t: Dict; locale: Locale; g
       <div className="field"><label htmlFor="bph">{t.gdPhone}</label><input id="bph" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" /></div>
       <div className="field"><label htmlFor="bno">{t.gdNote}</label><textarea id="bno" rows={2} maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} /></div>
       <div className="row-between"><b>{t.gdTotal}</b><b className="num" style={{ fontSize: 22 }}>{total}</b></div>
-      <label className="consent"><input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} /> <span>{t.gdTerms}</span></label>
+      {replyBy && <p className="note">⏳ {fmt(t.gdReplyBy, { g: guide.name, t: replyBy })}</p>}
+      <label className="consent"><input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} /> <span>{t.gdTerms2}</span></label>
       {msg && <p className="err">{msg}</p>}
       <button className="btn tram press" disabled={busy}>{t.gdPay}</button>
       <p className="hint">🔒 {t.gdSafe}</p>

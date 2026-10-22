@@ -1375,5 +1375,31 @@
 "stay": "Te avisamos cuándo volver."
 },
 "bdSubtotal": "Tiempo de la ruta, con ida y vuelta",
-"tpStartHere": "Tu ruta empieza aquí"
+"tpStartHere": "Tu ruta empieza aquí",
+"ofSub2": "Guarda en este móvil la ruta, la historia de cada parada, las fotos y el tiempo del día. Tras descargar, verás exactamente qué funciona sin internet.",
+"ofWhat": "Qué funciona sin internet",
+"ocLiveAt": "Los datos en directo (estado del vuelo, actualizaciones del tiempo, cambios en el transporte) necesitan internet. Sin conexión verás la versión guardada el {d}.",
+"eatBest2": "Sitios para comer bien valorados cerca",
+"eatNone2": "Ahora no hay sitios para comer bien valorados abiertos cerca.",
+"eatNoPrice": "precio no indicado",
+"eatSrc2": "Con 4,2★ o más y al menos 50 reseñas, abiertos ahora, de precio bajo a medio. Valoraciones y precios: Google Maps (no es publicidad).",
+"nwKind": {
+"transport": "puede afectar a los desplazamientos",
+"weather": "puede afectar a las paradas al aire libre",
+"access": "algunos lugares pueden estar cerrados o con acceso difícil",
+"crime": "lleva tus pertenencias cerca"
+},
+"vfCompiled": "Información práctica recopilada de fuentes oficiales y públicas en {d}. Aún no se ha comprobado sobre el terreno en esta ciudad: si algo ha cambiado, usa “Informar de un problema”.",
+"vfOnSite": "Comprobado sobre el terreno en {d}.",
+"gdVerifiedHow": "Aprobado por VOYBU tras comprobar el registro de actividad y el seguro que indicó el guía.",
+"gdMeetTbc": "El guía acordará contigo el punto de encuentro exacto.",
+"gjMeetHint": "Lugar exacto, p. ej. “Rossio, junto a la fuente frente al Teatro Nacional”. Solo “Aeropuerto” o “Centro” no basta.",
+"gdReplyBy": "{g} debe confirmar antes de {t}. Hasta entonces es una solicitud, no una reserva confirmada.",
+"gdBooked2": "Solicitud enviada: falta la confirmación de {g}. Solo se cobra si acepta. Recibirás un email.",
+"gdTerms2": "Acepto los términos: el guía debe confirmar antes del plazo indicado y solo se cobra si acepta.",
+"wNotStarted": "Sin empezar · ábrelo antes del {d}",
+"tpActivate": "Tus {h} empiezan cuando abras la ruta por primera vez, no al pagar. Ábrela en un plazo de 30 días.",
+"tpDur48": "48 horas",
+"tpDur72": "72 horas",
+"tpDur30d": "30 días"
 }

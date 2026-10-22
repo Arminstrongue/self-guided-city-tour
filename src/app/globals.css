@@ -2282,3 +2282,17 @@ main:focus{outline:none}
 .bd dd{margin:0;white-space:nowrap;font-weight:600}
 .bd .bd-total{border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
 .bd .bd-total dt{color:var(--ink);font-weight:700}
+
+/* Offline: o que funciona sem internet, recurso a recurso */
+.of-status{display:flex;flex-direction:column;gap:8px;padding:12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.of-status-h{font-size:14px}
+.of-status .oc-list{gap:6px}
+.of-status .oc-list li{font-size:13px}
+
+/* Funcionalidades da página inicial: cada cartão abre a funcionalidade */
+.feat2-link{color:inherit;text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.feat2-link:hover{transform:translateY(-2px)}
+.feat2-go{color:var(--cobalt);font-weight:600;margin-inline-start:2px}
+[dir="rtl"] .feat2-go{display:inline-block;transform:scaleX(-1)}
+.tk-kind{color:var(--warn,#ff9f0a);font-weight:600;margin-inline-start:6px}
+.vf{margin-top:8px}.vf.ok{color:var(--good)}

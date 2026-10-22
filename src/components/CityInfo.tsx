@@ -3,6 +3,8 @@
  * a história e cultura, e os conselhos práticos. Componentes de servidor (sem JavaScript no telemóvel).
  */
 import Link from "next/link";
+import { VerifyNote } from "./VerifyNote";
+import { emergencyText } from "@/data/practical";
 import type { City } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -89,13 +91,15 @@ export function GoodToKnow({ t, locale, city, name }: { t: Dict; locale: Locale;
     <section className="sec" id="goodtoknow">
       <div className="sec-h"><div><h2>💡 {fmt(t.gkTitle, { city: name })}</h2><p>{t.gkSub}</p></div></div>
       <div className="card rows" style={{ paddingBlock: 6 }}>
-        <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{g.emergency}</b></a></div>
+        <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{emergencyText(g.emergency, t)}</b></a></div>
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}
         <div><span>💶 {t.gkCurrency}</span><span>{city.cur}</span></div>
       </div>
       <div className="gk-grid">{g.tips.map((tip, i) => (
         <div key={i} className="card gk"><span className="label">{(t.tipK as Record<string, string>)[tip.k]}</span><p lang={locale === "pt" ? "pt" : "en"}>{tx(tip)}</p></div>
       ))}</div>
+      <VerifyNote t={t} locale={locale} city={city.id} />
     </section>
   );
 }
+

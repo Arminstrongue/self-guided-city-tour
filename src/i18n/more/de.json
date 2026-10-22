@@ -1348,5 +1348,31 @@
 "stay": "Wir sagen Ihnen, wann Sie zurückmüssen."
 },
 "bdSubtotal": "Dauer der Route inkl. Hin- und Rückweg",
-"tpStartHere": "Ihre Route beginnt hier"
+"tpStartHere": "Ihre Route beginnt hier",
+"ofSub2": "Speichert die Route, die Geschichte jedes Stopps, Fotos und das Wetter des Tages auf diesem Handy. Nach dem Download sehen Sie genau, was ohne Internet funktioniert.",
+"ofWhat": "Was ohne Internet funktioniert",
+"ocLiveAt": "Live-Daten (Flugstatus, Wetter-Updates, Verkehrsänderungen) brauchen Internet. Ohne Verbindung sehen Sie den Stand vom {d}.",
+"eatBest2": "Gut bewertete Lokale in der Nähe",
+"eatNone2": "Gerade hat kein gut bewertetes Lokal in der Nähe geöffnet.",
+"eatNoPrice": "Preis nicht angegeben",
+"eatSrc2": "Mit 4,2★ oder mehr bei mindestens 50 Bewertungen, jetzt geöffnet, günstig bis mittel. Bewertungen und Preise: Google Maps (keine Werbung).",
+"nwKind": {
+"transport": "Wege in der Stadt können betroffen sein",
+"weather": "kann Stopps im Freien beeinträchtigen",
+"access": "manche Orte könnten geschlossen oder schwer erreichbar sein",
+"crime": "Wertsachen nah am Körper tragen"
+},
+"vfCompiled": "Praktische Infos aus offiziellen und öffentlichen Quellen, zusammengestellt im {d}. In dieser Stadt noch nicht vor Ort geprüft – wenn sich etwas geändert hat, nutzen Sie „Problem melden“.",
+"vfOnSite": "Vor Ort geprüft im {d}.",
+"gdVerifiedHow": "Von VOYBU freigegeben nach Prüfung der angegebenen Gewerbeanmeldung und Versicherung.",
+"gdMeetTbc": "Der Guide stimmt den genauen Treffpunkt mit Ihnen ab.",
+"gjMeetHint": "Genauer Ort, z. B. „Rossio, am Brunnen gegenüber dem Nationaltheater“. Nur „Flughafen“ oder „Zentrum“ reicht nicht.",
+"gdReplyBy": "{g} muss bis {t} bestätigen. Bis dahin ist es eine Anfrage, keine bestätigte Buchung.",
+"gdBooked2": "Anfrage gesendet – wartet auf die Bestätigung von {g}. Ihre Karte wird nur belastet, wenn angenommen wird. Sie erhalten eine E-Mail.",
+"gdTerms2": "Ich akzeptiere die Bedingungen: Der Guide muss bis zur angezeigten Frist bestätigen, und meine Karte wird nur belastet, wenn er annimmt.",
+"wNotStarted": "Noch nicht gestartet · öffnen bis {d}",
+"tpActivate": "Ihre {h} beginnen beim ersten Öffnen der Route, nicht bei der Zahlung. Öffnen Sie sie innerhalb von 30 Tagen.",
+"tpDur48": "48 Stunden",
+"tpDur72": "72 Stunden",
+"tpDur30d": "30 Tage"
 }

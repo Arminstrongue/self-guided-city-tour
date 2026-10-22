@@ -30,6 +30,15 @@ test("pagamento regista acesso e comissão uma única vez", async () => {
   assert.equal(comms[0].amountCents, 100); // 20% de 4,99 €
 
   assert.ok(await findActiveAccess(["viajante@exemplo.com"], "lis"));
+  // O passe só começa a contar na primeira abertura: até lá, 30 dias para abrir; depois, 48 h a partir de agora.
+  assert.equal(a1.activatedAt, null);
+  assert.ok(a1.expiresAt.getTime() > Date.now() + 29 * 24 * 3600_000);
+  const { activateAccess } = await import("./orders");
+  const act = await activateAccess(a1);
+  assert.ok(act.activatedAt);
+  assert.ok(Math.abs(act.expiresAt.getTime() - (Date.now() + 48 * 3600_000)) < 60_000);
+  const again = await activateAccess(act);
+  assert.equal(again.expiresAt.getTime(), act.expiresAt.getTime()); // não volta a contar
   assert.equal(await findActiveAccess(["viajante@exemplo.com"], "par"), null); // acesso só de cidade
   const unpaid = { ...(session as object), id: "cs_x", payment_status: "unpaid" } as never;
   assert.equal(await fulfilTourSession(unpaid), null);

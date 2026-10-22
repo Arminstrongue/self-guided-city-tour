@@ -3,6 +3,21 @@ import { INTL_LOCALE } from "@/i18n/core";
 import type { Locale } from "@/i18n/dictionaries";
 
 type T = { hi: string; hiName: string; ready: string; open: string; until: string; tip: string; help: string };
+/** Passe que começa a contar na primeira abertura: "{h}" = duração, "{d}" = prazo para abrir. */
+const START: Record<Locale, string> = {
+ "pt": "O seu acesso de {h} começa quando abrir o roteiro pela primeira vez. Abra-o até {d}.",
+ "en": "Your {h} start when you first open the route. Open it by {d}.",
+ "es": "Tus {h} empiezan cuando abras la ruta por primera vez. Ábrela antes del {d}.",
+ "fr": "Vos {h} commencent à la première ouverture du parcours. Ouvrez-le avant le {d}.",
+ "de": "Ihre {h} beginnen, wenn Sie die Route zum ersten Mal öffnen. Öffnen Sie sie bis {d}.",
+ "it": "Le tue {h} iniziano quando apri l'itinerario per la prima volta. Aprilo entro il {d}.",
+ "zh": "您的 {h} 从首次打开路线时开始计算。请在 {d} 前打开。",
+ "ar": "تبدأ مدة {h} عند فتح المسار لأول مرة. افتحه قبل {d}.",
+ "ja": "{h}の有効期間はルートを初めて開いたときから始まります。{d}までに開いてください。",
+ "tr": "{h} süreniz rotayı ilk açtığınızda başlar. En geç {d} tarihine kadar açın.",
+ "ru": "Ваши {h} начинают отсчитываться при первом открытии маршрута. Откройте его до {d}.",
+ "ko": "이용 기간 {h}은(는) 경로를 처음 열 때부터 시작돼요. {d}까지 열어 주세요."
+};
 const TX: Record<Locale, T> = {
   pt: { hi: "Olá,", hiName: "Olá {n},", ready: "O seu roteiro de {c} está pronto. Abra-o em qualquer dispositivo:", open: "Abrir o roteiro", until: "Acesso válido até {d}.", tip: "Guarde este email: o link volta a abrir o roteiro noutro telemóvel ou computador.", help: "Precisa de ajuda? Responda a este email." },
   en: { hi: "Hello,", hiName: "Hello {n},", ready: "Your {c} route is ready. Open it on any device:", open: "Open the route", until: "Access valid until {d}.", tip: "Keep this email: the link reopens the route on another phone or computer.", help: "Need help? Just reply to this email." },
@@ -21,13 +36,18 @@ const TX: Record<Locale, T> = {
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const f = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? "");
 
-export function accessEmail(o: { locale: Locale; name?: string | null; place: string; link: string; expiresAt: Date; tz?: string }) {
+export function accessEmail(o: { locale: Locale; name?: string | null; place: string; link: string; expiresAt: Date; tz?: string; startsOnOpen?: { hours: number } }) {
   const t = TX[o.locale] ?? TX.en;
   const first = (o.name ?? "").trim().split(/\s+/)[0] ?? "";
   let when: string;
   try {
     when = new Intl.DateTimeFormat(INTL_LOCALE[o.locale], { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: o.tz ?? "UTC", timeZoneName: "short" }).format(o.expiresAt);
   } catch { when = o.expiresAt.toISOString().slice(0, 16).replace("T", " ") + " UTC"; }
+  const dur = (h: number) => {
+    const days = h >= 24 * 7;
+    try { return new Intl.NumberFormat(INTL_LOCALE[o.locale], { style: "unit", unit: days ? "day" : "hour", unitDisplay: "long" }).format(days ? Math.round(h / 24) : h); } catch { return days ? `${Math.round(h / 24)} d` : `${h} h`; }
+  };
+  const validity = o.startsOnOpen ? f(START[o.locale] ?? START.en, { h: dur(o.startsOnOpen.hours), d: when }) : f(t.until, { d: when });
   const hello = first ? f(t.hiName, { n: esc(first) }) : t.hi;
   const dir = o.locale === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
@@ -37,10 +57,10 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:8px">${hello}</td></tr>
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:24px">${f(t.ready, { c: `<b>${esc(o.place)}</b>` })}</td></tr>
 <tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
-<tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:8px">${f(t.until, { d: esc(when) })}</td></tr>
+<tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:8px">${esc(validity)}</td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:20px">${t.tip}</td></tr>
 <tr><td style="font-size:12px;line-height:1.5;color:#86868b;word-break:break-all;border-top:1px solid #e5e5ea;padding-top:16px"><a href="${o.link}" style="color:#86868b">${o.link}</a><br><br>${t.help}</td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${f(t.until, { d: when })}\n${t.tip}\n\n${t.help}`;
+  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${t.help}`;
   return { subject: `VOYBU — ${o.place}`, html, text };
 }

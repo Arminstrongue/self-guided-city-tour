@@ -109,7 +109,7 @@ export function OfflineButton({ t, locale, city, compact = false }: { t: Dict; l
   );
   return (
     <div className="stack" style={{ gap: 6 }}>
-      <button className={`of-btn press ${compact ? "sm" : ""}`} onClick={() => void go()}><span>⬇</span><span className="stack" style={{ gap: 0, flex: 1, textAlign: "start" }}><b>{t.ofBtn}</b>{!compact && <small className="hint">{t.ofSub}</small>}</span></button>
+      <button className={`of-btn press ${compact ? "sm" : ""}`} onClick={() => void go()}><span>⬇</span><span className="stack" style={{ gap: 0, flex: 1, textAlign: "start" }}><b>{t.ofBtn}</b>{!compact && <small className="hint">{t.ofSub2}</small>}</span></button>
       {err && <small className="ch-warn">{t.ofUnavailable}</small>}
     </div>
   );
@@ -120,7 +120,7 @@ export function OfflineTab({ t, locale, cities, mine }: { t: Dict; locale: Local
   const ids = [...new Set([...mine, ...Object.keys(list)])].filter((id) => cities[id]);
   return (
     <div className="stack" style={{ gap: 12 }}>
-      <p className="hint" style={{ margin: 0 }}>{t.ofSub}</p>
+      <p className="hint" style={{ margin: 0 }}>{t.ofSub2}</p>
       {ids.length === 0 && <div className="card gp-empty"><span aria-hidden="true">📴</span><b>{t.ofNone}</b></div>}
       {ids.map((id) => (
         <div key={id} className="card stack" style={{ gap: 8, padding: 12 }}>
@@ -128,7 +128,6 @@ export function OfflineTab({ t, locale, cities, mine }: { t: Dict; locale: Local
           <OfflineButton t={t} locale={locale} city={id} compact />
         </div>
       ))}
-      <small className="hint">🗺 {t.ofMapTip}</small>
     </div>
   );
 }

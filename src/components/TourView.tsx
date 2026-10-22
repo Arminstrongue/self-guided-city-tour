@@ -21,7 +21,7 @@ import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
 import { RatingCard } from "./Rating";
 import { OfflineButton } from "./TravelTools";
-import { OfflineCheck } from "./OfflineCheck";
+import { OfflineCheck, OfflineStatus } from "./OfflineCheck";
 import { PlanChanged } from "./PlanChanged";
 import { StopReport } from "./StopReport";
 import { zonedToDate } from "@/lib/zoned";
@@ -309,6 +309,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />}
           {!online && <p className="note">{t.offline}</p>}
           {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
+          {!preview && <OfflineStatus t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
           {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
           <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setFxOpen(true)}>💱 {t.ttFx} · {city.cur} → {fx.cur}</button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
@@ -413,7 +414,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                             <ExtLink href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`}>🍽 {t.eatNear}</ExtLink>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
-                          <EatNearby cityId={city.id} stopId={s.id} locale={locale} t={t} />
+                          <EatNearby cityId={city.id} stopId={s.id} locale={locale} t={t} cur={city.cur} />
                           <StopReport t={t} city={city.id} stop={s.id} name={s.n} />
                           <CommentsButton t={t} locale={locale} city={city.id} stop={s.id} title={stopName(s, locale)} count={cmCounts[s.id] ?? 0} />
                         </div>

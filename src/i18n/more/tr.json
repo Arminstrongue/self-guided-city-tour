@@ -1808,5 +1808,31 @@
 "stay": "Ne zaman döneceğinizi söyleriz."
 },
 "bdSubtotal": "Gidiş ve dönüş dahil rota süresi",
-"tpStartHere": "Rotanız burada başlıyor"
+"tpStartHere": "Rotanız burada başlıyor",
+"ofSub2": "Rotayı, her durağın hikâyesini, fotoğrafları ve günün hava durumunu bu telefona kaydeder. İndirdikten sonra internetsiz neyin çalıştığını tam olarak görürsünüz.",
+"ofWhat": "İnternetsiz çalışanlar",
+"ocLiveAt": "Canlı veriler (uçuş durumu, hava güncellemeleri, ulaşım değişiklikleri) internet gerektirir. Bağlantı yoksa {d} tarihinde kaydedilen sürümü görürsünüz.",
+"eatBest2": "Yakındaki yüksek puanlı yeme-içme yerleri",
+"eatNone2": "Şu anda yakında açık yüksek puanlı yeme-içme yeri yok.",
+"eatNoPrice": "fiyat belirtilmemiş",
+"eatSrc2": "En az 50 değerlendirmeyle 4,2★ ve üzeri, şu an açık, uygun-orta fiyatlı. Puanlar ve fiyatlar: Google Haritalar (reklam değildir).",
+"nwKind": {
+"transport": "ulaşım etkilenebilir",
+"weather": "açık hava duraklarını etkileyebilir",
+"access": "bazı yerler kapalı veya ulaşılması zor olabilir",
+"crime": "değerli eşyalarınızı yakınınızda tutun"
+},
+"vfCompiled": "Pratik bilgiler {d} tarihinde resmî ve açık kaynaklardan derlendi. Bu şehirde henüz yerinde doğrulanmadı — bir şey değiştiyse “Sorun bildir”i kullanın.",
+"vfOnSite": "{d} tarihinde yerinde doğrulandı.",
+"gdVerifiedHow": "Rehberin verdiği faaliyet kaydı ve sigorta bilgileri kontrol edildikten sonra VOYBU tarafından onaylandı.",
+"gdMeetTbc": "Rehber kesin buluşma noktasını sizinle netleştirecek.",
+"gjMeetHint": "Kesin yer, örn. “Rossio, Ulusal Tiyatro'nun karşısındaki çeşmenin yanı”. Yalnızca “Havalimanı” veya “Merkez” yetmez.",
+"gdReplyBy": "{g} en geç {t} tarihine kadar onaylamalı. O zamana kadar bu bir taleptir, onaylı rezervasyon değildir.",
+"gdBooked2": "Talep gönderildi — {g} onayı bekleniyor. Kartınızdan yalnızca kabul ederse ücret alınır. E-posta alacaksınız.",
+"gdTerms2": "Şartları kabul ediyorum: rehber gösterilen süreye kadar onaylamalı; kartımdan yalnızca kabul ederse ücret alınır.",
+"wNotStarted": "Başlamadı · en geç {d} açın",
+"tpActivate": "{h} süreniz ödemede değil, rotayı ilk açtığınızda başlar. 30 gün içinde açın.",
+"tpDur48": "48 saat",
+"tpDur72": "72 saat",
+"tpDur30d": "30 gün"
 }

@@ -1,6 +1,7 @@
 "use client";
 /** Guia prático da cidade (separador "Guia"): carrega só quando é aberto. */
 import { useEffect, useState } from "react";
+import { emergencyText } from "@/data/practical";
 import type { City } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -27,7 +28,7 @@ export function CityGuide({ city, cityLabel, t, locale, money }: {
     <div className="stack">
       <h2 style={{ fontSize: 22 }}>{fmt(t.guideTitle, { city: cityLabel })}</h2>
       <div className="card rows" style={{ paddingBlock: 6 }}>
-        {g && <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{g.emergency}</b></a></div>}
+        {g && <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{emergencyText(g.emergency, t)}</b></a></div>}
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}
         <div><span>🏛 {t.embassy}</span><ExtLink href={embassy}>{natLocal || "Google Maps"} ↗</ExtLink></div>
       </div>

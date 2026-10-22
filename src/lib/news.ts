@@ -6,7 +6,34 @@
  */
 import { CITIES, COUNTRY, type City } from "@/data/cities";
 
-export type NewsItem = { title: string; url: string; source: string; at: number; site?: string; official?: boolean; trusted?: boolean };
+export type SafetyKind = "transport" | "weather" | "access" | "crime";
+export type NewsItem = { title: string; url: string; source: string; at: number; site?: string; official?: boolean; trusted?: boolean; kind?: SafetyKind };
+
+/**
+ * Só entra o que pode mudar a viagem: transportes, meteorologia, acessos/encerramentos e criminalidade de rua.
+ * Palavras genéricas ("alerta", "segurança") já não chegam: um alerta de segurança informática não é um aviso para o viajante.
+ */
+const KINDS: Record<string, Record<SafetyKind, string[]>> = {
+  pt: { transport: ["greve", "metro", "comboio", "autocarro", "aeroporto", "voo", "cancelad", "atraso", "trânsito", "ponte", "ferry"], weather: ["tempestade", "chuva forte", "inundaç", "calor extremo", "onda de calor", "vento forte", "neve", "furacão", "aviso vermelho", "aviso laranja"], access: ["protesto", "manifestação", "encerrad", "fechad", "evacua", "incêndio", "sismo", "terramoto", "cortad", "interdit"], crime: ["roubo", "assalto", "carteirista", "burla", "esfaque", "tiroteio"] },
+  en: { transport: ["strike", "metro", "subway", "tube", "train", "rail", "bus ", "airport", "flight", "cancel", "delay", "disruption", "traffic", "bridge", "ferry"], weather: ["storm", "flood", "heatwave", "heat wave", "extreme heat", "high winds", "snow", "hurricane", "typhoon", "red warning", "amber warning"], access: ["protest", "demonstration", "closure", "closed", "evacuat", "fire", "earthquake", "cordon", "shut"], crime: ["theft", "robbery", "pickpocket", "scam", "stabbing", "shooting", "mugging"] },
+  es: { transport: ["huelga", "metro", "tren", "autobús", "aeropuerto", "vuelo", "cancela", "retraso", "tráfico", "ferry"], weather: ["tormenta", "inundaci", "ola de calor", "calor extremo", "viento fuerte", "nieve", "huracán", "alerta roja", "alerta naranja"], access: ["protesta", "manifestación", "cerrad", "cierre", "evacua", "incendio", "terremoto", "cortad"], crime: ["robo", "carterista", "estafa", "apuñal", "tiroteo", "atraco"] },
+  fr: { transport: ["grève", "métro", "train", "sncf", "bus", "aéroport", "vol annulé", "annul", "retard", "trafic", "perturbation", "ferry"], weather: ["tempête", "inondation", "canicule", "vents violents", "neige", "ouragan", "vigilance rouge", "vigilance orange"], access: ["manifestation", "fermé", "fermeture", "évacu", "incendie", "séisme", "bouclé"], crime: ["vol ", "pickpocket", "arnaque", "agression", "coups de couteau", "fusillade"] },
+  de: { transport: ["streik", "u-bahn", "s-bahn", "zug", "bahn", "bus", "flughafen", "flug", "ausfall", "verspätung", "verkehr", "fähre"], weather: ["sturm", "unwetter", "hochwasser", "hitzewelle", "schnee", "orkan"], access: ["protest", "demonstration", "gesperrt", "sperrung", "geschlossen", "evakui", "brand", "erdbeben"], crime: ["diebstahl", "taschendieb", "betrug", "raub", "messer", "schüsse"] },
+  it: { transport: ["sciopero", "metro", "treno", "bus", "aeroporto", "volo", "cancellat", "ritard", "traffico", "traghetto"], weather: ["tempesta", "maltempo", "alluvione", "ondata di calore", "neve", "allerta rossa", "allerta arancione"], access: ["protesta", "manifestazione", "chius", "evacua", "incendio", "terremoto"], crime: ["furto", "borseggi", "truffa", "rapina", "accoltell", "sparatoria"] },
+  zh: { transport: ["罢工", "地铁", "火车", "公交", "机场", "航班", "取消", "延误"], weather: ["风暴", "暴雨", "洪水", "高温", "台风", "大雪"], access: ["抗议", "示威", "关闭", "疏散", "火灾", "地震"], crime: ["盗窃", "抢劫", "扒手", "诈骗"] },
+  ar: { transport: ["إضراب", "مترو", "قطار", "حافلة", "مطار", "رحلة", "إلغاء", "تأخير"], weather: ["عاصفة", "فيضان", "موجة حر", "أمطار غزيرة"], access: ["احتجاج", "مظاهرة", "إغلاق", "إخلاء", "حريق", "زلزال"], crime: ["سرقة", "نشل", "احتيال"] },
+  ja: { transport: ["ストライキ", "スト", "地下鉄", "電車", "バス", "空港", "欠航", "遅延", "運休"], weather: ["嵐", "台風", "大雨", "洪水", "猛暑", "大雪", "警報"], access: ["抗議", "デモ", "閉鎖", "避難", "火災", "地震"], crime: ["盗難", "スリ", "詐欺", "強盗"] }
+};
+/** Temas que mencionam "segurança" mas não mudam a viagem (informática, finanças, desporto). */
+const OFF_TOPIC = /vulnerab|cyber|ciber|hacker|malware|ransomware|\bphp\b|software|data breach|phishing|exploit|\bcve-|bitcoin|crypto|stock market|shares|sicherheitslücke|faille|premier league|champions league|football|futebol|fútbol/i;
+
+export function safetyKind(title: string, locale: string): SafetyKind | null {
+  if (OFF_TOPIC.test(title)) return null;
+  const t = title.toLowerCase();
+  const k = KINDS[locale] ?? KINDS.en;
+  for (const kind of ["transport", "weather", "access", "crime"] as const) if (k[kind].some((w) => t.includes(w.toLowerCase()))) return kind;
+  return null;
+}
 
 /** Palavras de segurança por idioma (usadas na pesquisa e para filtrar os títulos). */
 const SAFETY: Record<string, string[]> = {
@@ -55,8 +82,7 @@ const FCDO: Record<string, string> = { PT: "portugal", ES: "spain", FR: "france"
   KE: "kenya", AO: "angola", GH: "ghana", RW: "rwanda", SN: "senegal" };
 
 export function isSafety(title: string, locale: string) {
-  const t = title.toLowerCase();
-  return (SAFETY[locale] ?? SAFETY.en).some((w) => t.includes(w.toLowerCase()));
+  return safetyKind(title, locale) !== null;
 }
 
 const decode = (s: string) => s.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n))).trim();
@@ -77,7 +103,7 @@ export function parseRss(xml: string, locale: string, now = Date.now()): NewsIte
     if (!title || !/^https:\/\//.test(url) || !Number.isFinite(at)) continue;
     if (now - at > 72 * 3600_000 || !isSafety(title, locale)) continue;
     if (!source && site) source = site;
-    out.push({ title: title.slice(0, 200), url, source: source || new URL(url).hostname, at, ...(site ? { site } : {}), ...(TRUSTED.test(source) ? { trusted: true } : {}) });
+    out.push({ title: title.slice(0, 200), url, source: source || new URL(url).hostname, at, kind: safetyKind(title, locale) ?? undefined, ...(site ? { site } : {}), ...(TRUSTED.test(source) ? { trusted: true } : {}) });
   }
   const seen = new Set<string>();
   return out.filter((n) => { const k = n.title.toLowerCase().slice(0, 60); return !seen.has(k) && (seen.add(k), true); })

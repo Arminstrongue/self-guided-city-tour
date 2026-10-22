@@ -23,6 +23,22 @@ const FEATS = [
   [Receipt, "q3"], [ShieldAlert, "q5"], [Plane, "q4"], [Radar, "q2"], [Users, "q4"], [BadgeCheck, "q1"]
 ] as const;
 
+// Cada funcionalidade abre onde está na app (a demonstração gratuita de Manchester quando é preciso um roteiro).
+const FEAT_HREF = [
+  "/start",                // transporte mais barato: o planeador mostra o custo do roteiro
+  "/tour/man",             // áudio-guia: roteiro de demonstração
+  "/start",                // contagem até à partida: planear com a hora de partida
+  "/c/lis",                // avaliações e fotos de cada paragem
+  "/wallet#offline",       // descarregar para offline
+  "/wallet#tools",         // conversor de moeda
+  "/wallet#split",         // dividir despesas
+  "/c/man#safety",         // SOS e segurança
+  "/c/lis#book",           // posso sair do aeroporto?
+  "/wallet#trip",          // estado do voo na minha viagem
+  "/wallet#home",          // comunidade
+  "/guides/lis"            // guias locais
+] as const;
+
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
@@ -90,7 +106,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
         <div className="feats2">
           {([[t.f1t, t.f1s], [t.f2t, t.f2s], [t.f3t, t.f3s], [t.f4t, t.f4s], [t.f5t, t.f5s], [t.f6t, t.f6s], [t.f7t, t.f7s], [t.f8t, t.f8s], [t.f9t, t.f9s], [t.f10t, t.f10s], [t.f11t, t.f11s], [t.f12t, t.f12s]] as const).map(([a, b], i) => {
             const [Ic, q] = FEATS[i];
-            return <div key={a} className="feat2 reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={20} strokeWidth={2.1} /></span><b>{a}</b><small>{b}</small></div>;
+            return <Link key={a} href={`/${params.locale}${FEAT_HREF[i]}`} className="feat2 feat2-link press reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={20} strokeWidth={2.1} /></span><b>{a} <span aria-hidden="true" className="feat2-go">→</span></b><small>{b}</small></Link>;
           })}
         </div>
       </section>

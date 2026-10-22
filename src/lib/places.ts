@@ -23,12 +23,15 @@ export function bayes(rating: number, count: number, m = 200, prior = 4.2): numb
 }
 
 type ApiPlace = {
-  id: string; displayName?: { text: string }; rating?: number; userRatingCount?: number; priceLevel?: string;
+  id: string; displayName?: { text: string }; rating?: number; userRatingCount?: number; priceLevel?: string; primaryType?: string; types?: string[];
   currentOpeningHours?: { openNow?: boolean }; primaryTypeDisplayName?: { text: string }; googleMapsUri?: string;
   location?: { latitude: number; longitude: number };
 };
 
 /** Filtra (avaliação ≥ 4,2, ≥ 50 avaliações, preço até moderado) e ordena por qualidade e preço. */
+const LODGING = /(^|_)(lodging|hotel|motel|hostel|guest_house|bed_and_breakfast|inn|resort_hotel|campground)($|_)/;
+const isLodging = (p: ApiPlace) => LODGING.test(p.primaryType ?? "") || (p.types ?? []).some((x) => LODGING.test(x) && !/restaurant|cafe|bakery/.test(p.primaryType ?? ""));
+
 export function rankEats(list: ApiPlace[], limit = 5): Eat[] {
   return list
     .map((p) => {
@@ -42,6 +45,8 @@ export function rankEats(list: ApiPlace[], limit = 5): Eat[] {
         lat: p.location?.latitude ?? 0, lng: p.location?.longitude ?? 0, score: Math.round(score * 1000) / 1000
       };
     })
+    // Só sítios para comer: fora hotéis e alojamentos (restaurantes de hotel incluídos na pesquisa da Google).
+    .filter((e, i) => !isLodging(list[i]))
     .filter((e) => e.name && e.rating >= 4.2 && e.reviews >= 50 && (e.price === null || e.price <= 2) && e.openNow !== false)
     .sort((a, b) => b.score - a.score)
     .slice(0, limit);
@@ -60,7 +65,7 @@ export async function bestEats(lat: number, lng: number, lang: string): Promise<
     headers: {
       "Content-Type": "application/json",
       "X-Goog-Api-Key": process.env.GOOGLE_PLACES_API_KEY ?? "",
-      "X-Goog-FieldMask": "places.id,places.displayName,places.rating,places.userRatingCount,places.priceLevel,places.currentOpeningHours.openNow,places.primaryTypeDisplayName,places.googleMapsUri,places.location"
+      "X-Goog-FieldMask": "places.id,places.displayName,places.rating,places.userRatingCount,places.priceLevel,places.currentOpeningHours.openNow,places.primaryType,places.types,places.primaryTypeDisplayName,places.googleMapsUri,places.location"
     },
     body: JSON.stringify({
       includedTypes: ["restaurant", "cafe", "bakery", "fast_food_restaurant"],

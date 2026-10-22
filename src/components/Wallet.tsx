@@ -194,7 +194,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
       // Atalhos da app instalada e "partilhar para a app": #compose[:texto] e #search.
       if (h === "compose" || h.startsWith("compose:")) { setPendingCompose(h.slice(8)); history.replaceState(null, "", window.location.pathname); }
       if (h === "search") { setSearching(true); history.replaceState(null, "", window.location.pathname); }
-      if (h.startsWith("split:")) setTools({ tab: "split", split: h.slice(6) }); else if (h === "tools" || h === "split") setTools({ tab: h === "split" ? "split" : "fx" });
+      if (h.startsWith("split:")) setTools({ tab: "split", split: h.slice(6) }); else if (h === "tools" || h === "split" || h === "offline") setTools({ tab: h === "split" ? "split" : h === "offline" ? "offline" : "fx" });
     };
     read(); window.addEventListener("popstate", read); window.addEventListener("hashchange", read);
     return () => { window.removeEventListener("popstate", read); window.removeEventListener("hashchange", read); };
@@ -230,7 +230,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
       return <Pass key={p.id} href={p.scope === "all" ? `/${locale}#cities` : `/${locale}/tour/${p.city}`} city={p.city ?? "all"} off={!on}
         label={p.scope === "all" ? t.wAllCities : p.plan === "trip" ? "3 days" : "48 h"} title={p.scope === "all" ? `🌍 ${t.wAllCities}` : cities[p.city ?? ""] ?? p.city ?? ""}
         sub={`${d.format(new Date(p.createdAt))} · ${eur(p.amountCents)}${p.flightNo ? ` · ${fmt(t.wFlight, { f: p.flightNo })}` : ""}`}
-        right={on ? <><span className="wl-ticket-live">● {fmt(t.wActive, { t: left(new Date(p.expiresAt).getTime() - now, locale) })}</span><b>{t.wOpen} →</b></> : <span>{t.wExpired}</span>} />;
+        right={on ? <>{p.activatedAt === null ? <span className="wl-ticket-live">○ {fmt(t.wNotStarted, { d: d.format(new Date(p.expiresAt)) })}</span> : <span className="wl-ticket-live">● {fmt(t.wActive, { t: left(new Date(p.expiresAt).getTime() - now, locale) })}</span>}<b>{t.wOpen} →</b></> : <span>{t.wExpired}</span>} />;
     }),
     ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wDemo}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
   ].slice(0, limit);
@@ -439,7 +439,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
       </nav>
 
       {tools && <ToolsSheet t={t} locale={locale} cities={cities} mine={myCities} localCur={myCities[0] ? currencyForCountry(countryOf[myCities[0]]) : null} tab={tools.tab} split={tools.split ?? null} signed={Boolean(signed)}
-        onClose={() => { setTools(null); if (/^#(split|tools)/.test(window.location.hash)) history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); }} />}
+        onClose={() => { setTools(null); if (/^#(split|tools|offline)/.test(window.location.hash)) history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); }} />}
       {deep?.post && signed && <PostSheet t={t} locale={locale} id={deep.post} cities={cities} onClose={closeDeep} />}
       {deep?.tag && signed && <TagSheet t={t} locale={locale} tag={deep.tag} cities={cities} onClose={closeDeep} />}
       {composing && social && <Composer t={t} social={social} cities={cities} defaultCity={myCities[0] ?? null} initialText={composeText} onClose={(c) => { setComposing(false); setComposeText(""); if (c) { setRefreshKey((k) => k + 1); if (section !== "home") setTab("home"); } }} />}

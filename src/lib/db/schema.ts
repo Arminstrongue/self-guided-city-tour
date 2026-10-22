@@ -86,6 +86,8 @@ export const accesses = pgTable("accesses", {
   flightNo: text("flight_no"),
   /** Plano de viagem da compra: início, fim, modalidade (avião, comboio, navio, fica) e horas locais. */
   trip: jsonb("trip"),
+  /** Quando o passe começou a contar (primeira abertura de um roteiro). Antes disso, expiresAt é o prazo para ativar. */
+  activatedAt: timestamp("activated_at", { withTimezone: true }),
   plan: text("plan"),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   amountCents: integer("amount_cents").notNull(),

@@ -43,7 +43,11 @@ test("plano de 3 dias (férias) sem voo", async () => {
   } as never);
   assert.ok(a);
   assert.equal(a.plan, "trip"); assert.equal(a.flightAt, null);
-  assert.ok(Math.abs(a.expiresAt.getTime() - Date.now() - 72 * 3600e3) < 60e3);
+  // 30 dias para abrir; na primeira abertura conta 72 h.
+  assert.ok(Math.abs(a.expiresAt.getTime() - Date.now() - 30 * 24 * 3600e3) < 60e3);
+  const { activateAccess } = await import("./orders");
+  const b = await activateAccess(a);
+  assert.ok(Math.abs(b.expiresAt.getTime() - Date.now() - 72 * 3600e3) < 60e3);
 });
 
 test("museus: aberto agora na hora local", async () => {

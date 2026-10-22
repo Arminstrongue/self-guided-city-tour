@@ -5,6 +5,8 @@ export const TOUR_PLANS = {
   all: { amount: 999, hours: 24 * 30, label: "all" }
 } as const;
 export type TourPlan = keyof typeof TOUR_PLANS;
+/** O passe começa a contar na primeira abertura do roteiro; tem de ser aberto até este número de dias após a compra. */
+export const ACTIVATE_DAYS = 30;
 
 /** Convites: o amigo convidado tem desconto no primeiro passe; quem convidou ganha crédito quando ele compra. */
 export const REFERRAL_FRIEND_PCT = 20;

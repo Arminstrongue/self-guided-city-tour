@@ -2,6 +2,7 @@ import { dedupeText } from "@/lib/guide-input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
+import { vagueMeeting } from "@/lib/guide-input";
 import { GuideAvatar, GuideStars, eurH, langNames } from "@/components/GuideCard";
 import { BookGuide } from "@/components/Guides";
 import { requestCurrency } from "@/lib/fx";
@@ -32,20 +33,23 @@ export default async function GuidePage({ params, searchParams }: { params: { lo
       <Header locale={params.locale} currency={requestCurrency()} />
       <div className="stack">
         {preview && <div className="card" style={{ padding: 14, borderInlineStart: "4px solid var(--warn)" }}><b>👁 Pré-visualização</b><div className="hint">Este perfil ainda não está visível para os viajantes ({g.status === "pending" ? "à espera de aprovação" : g.status}). As reservas ficam ativas depois de aprovado.</div></div>}
-        {searchParams.booked && <div className="card" style={{ padding: 16, borderInlineStart: "4px solid #34c759" }}><b>✓ {fmt(t.gdBooked, { g: g.name })}</b></div>}
+        {searchParams.booked && <div className="card" style={{ padding: 16, borderInlineStart: "4px solid #34c759" }}><b>✓ {fmt(t.gdBooked2, { g: g.name })}</b></div>}
         <div className="g-hero">
           <GuideAvatar g={g} size={88} />
           <div className="stack" style={{ gap: 4 }}>
             <h1 style={{ fontSize: 28 }}>{g.name}</h1>
             <GuideStars g={g} t={t} />
             <span className="g-badge">✓ {t.gdVerified}{city ? ` · ${cityName(city, params.locale)}` : ""}</span>
+            <span className="hint">{t.gdVerifiedHow}</span>
           </div>
         </div>
         <div className="card rows" style={{ paddingBlock: 6 }}>
           <div><span>💶</span><b className="num">{fmt(t.gdPerH, { p: eurH(g.hourlyCents, params.locale) })}</b></div>
           <div><span>🗣 {t.gdLangs}</span><span style={{ textAlign: "end" }}>{langNames(g.languages, params.locale).join(" · ")}</span></div>
           <div><span>👥</span><span>{fmt(t.gdUpTo, { n: g.maxPeople })}</span></div>
-          {g.meetingPoint && <div><span>📍 {t.gdMeet}</span><span style={{ textAlign: "end" }}>{g.meetingPoint}</span></div>}
+          <div><span>📍 {t.gdMeet}</span><span style={{ textAlign: "end" }}>{g.meetingPoint && !vagueMeeting(g.meetingPoint)
+            ? <>{g.meetingPoint}<br /><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${g.meetingPoint}, ${city ? cityName(city, "en") : ""}`)}`} target="_blank" rel="noopener noreferrer">{t.seeOnMaps} ↗</a></>
+            : <span className="hint">{t.gdMeetTbc}</span>}</span></div>
         </div>
         <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2><p style={{ whiteSpace: "pre-line" }}>{dedupeText(g.bio)}</p></section>
         {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide t={t} locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}

@@ -1,8 +1,8 @@
 import type Stripe from "stripe";
 import { parseTrip } from "./trip";
-import { and, desc, eq, gt, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, or, sql, isNull } from "drizzle-orm";
 import { db, schema } from "./db";
-import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan } from "./pricing";
+import { PARTNER_COMMISSION, TOUR_PLANS, type TourPlan, ACTIVATE_DAYS } from "./pricing";
 import { createAccessToken } from "./access-token";
 import { sendEmail } from "./email";
 import { accessEmail } from "./access-email";
@@ -30,7 +30,8 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   const [user] = await d.insert(schema.users).values({ email, name: m.name || null, locale: m.locale || null })
     .onConflictDoUpdate({ target: schema.users.email, set: { name: sql`coalesce(excluded.name, ${schema.users.name})` } }).returning();
 
-  const expiresAt = new Date(Date.now() + TOUR_PLANS[plan].hours * 3600_000);
+  // Ainda não começou a contar: expiresAt é o prazo para abrir o roteiro (a contagem começa na primeira abertura).
+  const expiresAt = new Date(Date.now() + ACTIVATE_DAYS * 24 * 3600_000);
   const inserted = await d.insert(schema.accesses).values({
     email, userId: user.id, scope: plan === "all" ? "all" : "city", plan, city: m.city || null,
     flightAt: m.flightAt ? new Date(m.flightAt) : null, flightNo: m.flightNo || null, expiresAt,
@@ -62,7 +63,7 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   const locale: Locale = m.locale && isLocale(m.locale) ? m.locale : "en";
   const city = access.city ? (await loadCities({ includeInactive: true })).find((c) => c.id === access.city) : undefined;
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email))}&locale=${locale}${city ? `&city=${city.id}` : ""}`;
-  const mail = accessEmail({ locale, name: m.name, place: city ? cityName(city, locale) : "All-Cities Pass", link, expiresAt, tz: city?.tz });
+  const mail = accessEmail({ locale, name: m.name, place: city ? cityName(city, locale) : "All-Cities Pass", link, expiresAt, tz: city?.tz, startsOnOpen: { hours: TOUR_PLANS[plan].hours } });
   await sendEmail(email, mail.subject, mail.html, mail.text);
   return access;
 }
@@ -80,3 +81,17 @@ export async function findActiveAccess(emails: string[], cityId: string): Promis
   return rows[0] ?? null;
 }
 
+
+/**
+ * Primeira abertura de um roteiro: o passe começa a contar agora (48 h, 72 h ou 30 dias). Idempotente.
+ * Um passe antigo (já ativado) fica como está.
+ */
+export async function activateAccess(a: schema.Access): Promise<schema.Access> {
+  if (a.activatedAt) return a;
+  const plan = (a.plan && a.plan in TOUR_PLANS ? a.plan : a.scope === "all" ? "all" : "city") as keyof typeof TOUR_PLANS;
+  const now = new Date();
+  const d = await db();
+  const [u] = await d.update(schema.accesses).set({ activatedAt: now, expiresAt: new Date(now.getTime() + TOUR_PLANS[plan].hours * 3600_000) })
+    .where(and(eq(schema.accesses.id, a.id), isNull(schema.accesses.activatedAt))).returning();
+  return u ?? a;
+}

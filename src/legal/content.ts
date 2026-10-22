@@ -26,7 +26,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Quem somos", p: [`A VOYBU é explorada por ${who}.`] },
       { h: "O serviço", p: [
         "Vendemos acesso digital a roteiros autoguiados por cidade, com indicações de transporte, custos estimados e uma contagem até à hora recomendada de regresso ao aeroporto.",
-        "O acesso a uma cidade é válido durante 48 horas; o passe de férias curtas (3 dias) é válido durante 72 horas nessa cidade; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa no momento do pagamento. Os passes incluem o roteiro, o áudio-guia e as ferramentas da app; as entradas em museus e monumentos e os bilhetes de transporte não estão incluídos, salvo indicação expressa."
+        "O acesso a uma cidade é válido durante 48 horas; o passe de férias curtas (3 dias) é válido durante 72 horas nessa cidade; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa quando abre um roteiro pela primeira vez, o que tem de acontecer até 30 dias depois do pagamento; se não o abrir nesse prazo, o passe expira. Os passes incluem o roteiro, o áudio-guia e as ferramentas da app; as entradas em museus e monumentos e os bilhetes de transporte não estão incluídos, salvo indicação expressa."
       ] },
       { h: "Preços e pagamento", p: ["Os preços incluem IVA à taxa aplicável. O pagamento é processado pela Stripe; não guardamos dados de cartões."] },
       { h: "Direito de livre resolução", p: [
@@ -163,7 +163,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Who we are", p: [`VOYBU is operated by ${who}.`] },
       { h: "The service", p: [
         "We sell digital access to self-guided city routes with transport directions, estimated costs and a countdown to the recommended time to head back to the airport.",
-        "City access lasts 48 hours; the short-break pass (3 days) lasts 72 hours in that city; the All-Cities Pass lasts 30 days in all available cities. Validity starts at payment. Passes include the route, the audio guide and the app tools; museum and monument entry and transport tickets are not included unless expressly stated."
+        "City access lasts 48 hours; the short-break pass (3 days) lasts 72 hours in that city; the All-Cities Pass lasts 30 days in all available cities. Validity starts when you first open a route, which must happen within 30 days of payment; if you don't open it within that time, the pass expires. Passes include the route, the audio guide and the app tools; museum and monument entry and transport tickets are not included unless expressly stated."
       ] },
       { h: "Prices and payment", p: ["Prices include VAT at the applicable rate. Payments are processed by Stripe; we do not store card details."] },
       { h: "Right of withdrawal", p: [

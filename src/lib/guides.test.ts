@@ -54,10 +54,12 @@ test("pedido → expira sem resposta; recusa liberta; avaliação só depois do 
 
 import { GuideSignup, missingLegal } from "./guide-input";
 test("registo de guia exige dados profissionais e a declaração de independente", () => {
-  const base = { name: "Ana Silva", email: "ana@x.pt", city: "lis", languages: ["pt"], bio: "x".repeat(60), hourly: 30, maxPeople: 6, locale: "pt", terms: true };
+  const base = { name: "Ana Silva", email: "ana@x.pt", city: "lis", languages: ["pt"], bio: "x".repeat(60), hourly: 30, maxPeople: 6, locale: "pt", terms: true, meetingPoint: "Rossio, junto à fonte em frente ao Teatro Nacional" };
   const legal = { activityRegNo: "RNAAT 1234", insurer: "Fidelidade", policyNo: "AP-1", taxId: "123456789", taxCountry: "pt", address: "Rua A, 1, Lisboa", birthDate: "1990-01-31" };
   assert.equal(GuideSignup.safeParse(base).success, false);
   assert.equal(GuideSignup.safeParse({ ...base, ...legal }).success, false); // falta a declaração
+  // Ponto de encontro vago ("Aeroporto") não é aceite.
+  assert.equal(GuideSignup.safeParse({ ...base, ...legal, independent: true, meetingPoint: "Aeroporto" }).success, false);
   const ok = GuideSignup.safeParse({ ...base, ...legal, independent: true });
   assert.ok(ok.success);
   assert.equal(ok.success && ok.data.taxCountry, "PT");

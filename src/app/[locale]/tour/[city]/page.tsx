@@ -8,7 +8,7 @@ import { loadCity, loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { ACCESS_COOKIE, readAccessToken } from "@/lib/access-token";
 import { sessionEmail } from "@/lib/auth";
-import { findActiveAccess } from "@/lib/orders";
+import { activateAccess, findActiveAccess } from "@/lib/orders";
 import { activeOffers } from "@/lib/merchants";
 import { flightApiEnabled } from "@/lib/flight";
 import { MUSEUMS } from "@/data/museums";
@@ -26,7 +26,9 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   const t = getDict(params.locale);
   const emails = [readAccessToken(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
   const free = isFreeCity(city.id);
-  const access = await findActiveAccess(emails, city.id);
+  const found = await findActiveAccess(emails, city.id);
+  // Primeira abertura: o passe começa a contar agora.
+  const access = found ? await activateAccess(found).catch(() => found) : null;
 
   // Sem acesso: amostra grátis — a 1.ª paragem completa (texto e áudio); as outras só com nome, sem texto.
   const preview = !access && !free;

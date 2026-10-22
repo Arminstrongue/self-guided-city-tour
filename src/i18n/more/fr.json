@@ -1344,5 +1344,31 @@
 "stay": "Nous vous disons quand rentrer."
 },
 "bdSubtotal": "Durée du parcours, aller et retour compris",
-"tpStartHere": "Votre itinéraire commence ici"
+"tpStartHere": "Votre itinéraire commence ici",
+"ofSub2": "Enregistre sur ce téléphone l'itinéraire, l'histoire de chaque arrêt, les photos et la météo du jour. Après le téléchargement, vous voyez exactement ce qui marche sans internet.",
+"ofWhat": "Ce qui marche sans internet",
+"ocLiveAt": "Les données en direct (état du vol, mises à jour météo, perturbations des transports) nécessitent internet. Sans connexion, vous voyez la version enregistrée le {d}.",
+"eatBest2": "Restaurants bien notés à proximité",
+"eatNone2": "Aucun restaurant bien noté n'est ouvert à proximité pour le moment.",
+"eatNoPrice": "prix non indiqué",
+"eatSrc2": "Notés 4,2★ ou plus par au moins 50 personnes, ouverts maintenant, prix bas à moyens. Notes et prix : Google Maps (non sponsorisé).",
+"nwKind": {
+"transport": "les déplacements peuvent être perturbés",
+"weather": "peut gêner les arrêts en plein air",
+"access": "certains lieux peuvent être fermés ou difficiles d'accès",
+"crime": "gardez vos affaires près de vous"
+},
+"vfCompiled": "Informations pratiques compilées à partir de sources officielles et publiques en {d}. Pas encore vérifiées sur place dans cette ville — si quelque chose a changé, utilisez « Signaler un problème ».",
+"vfOnSite": "Vérifié sur place en {d}.",
+"gdVerifiedHow": "Approuvé par VOYBU après vérification de l'immatriculation et de l'assurance indiquées par le guide.",
+"gdMeetTbc": "Le guide conviendra avec vous du point de rendez-vous exact.",
+"gjMeetHint": "Lieu précis, par ex. « Rossio, près de la fontaine face au Théâtre national ». « Aéroport » ou « Centre » seul ne suffit pas.",
+"gdReplyBy": "{g} doit confirmer avant {t}. D'ici là, c'est une demande, pas une réservation confirmée.",
+"gdBooked2": "Demande envoyée — en attente de la confirmation de {g}. Votre carte n'est débitée que s'il accepte. Vous recevrez un email.",
+"gdTerms2": "J'accepte les conditions : le guide doit confirmer avant la date indiquée et ma carte n'est débitée que s'il accepte.",
+"wNotStarted": "Pas commencé · à ouvrir avant le {d}",
+"tpActivate": "Vos {h} commencent à la première ouverture du parcours, pas au paiement. Ouvrez-le dans les 30 jours.",
+"tpDur48": "48 heures",
+"tpDur72": "72 heures",
+"tpDur30d": "30 jours"
 }

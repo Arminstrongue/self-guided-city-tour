@@ -26,6 +26,10 @@ test("isSafety works per language", () => {
   assert.ok(isSafety("Grève SNCF ce jeudi", "fr"));
   assert.ok(isSafety("羽田空港で欠航", "ja"));
   assert.ok(!isSafety("Novo restaurante abre", "pt"));
+  // Segurança informática ou palavras genéricas não são avisos de viagem.
+  assert.ok(!isSafety("PHP security vulnerability affects Lisbon startups", "en"));
+  assert.ok(!isSafety("Lisbon: new safety rules for e-scooters approved", "en"));
+  assert.ok(isSafety("Lisbon metro strike on Friday", "en"));
 });
 
 test("só notícias cujo título nomeia a cidade", () => {
@@ -33,4 +37,16 @@ test("só notícias cujo título nomeia a cidade", () => {
   assert.equal(titleNames("Greve no metro de Lisboa amanhã", lis), true);
   assert.equal(titleNames("Lisbon airport delays after storm", lis), true);
   assert.equal(titleNames("Incêndio no Funchal obriga a evacuar hotel", lis), false);
+});
+
+test("segurança: nenhuma descrição em português aparece nas páginas noutras línguas", async () => {
+  const { CITY_SAFETY } = await import("@/data/safety");
+  const { safetyText } = await import("@/data/safety-en");
+  const PT = /\b(polícia|paragens?|estaç(ão|ões)|zonas?|praias?|ruas?|ruelas|depois|noite|madrugada|comboios?|multibancos|andar|mercados?|não|linhas?|centro ao|cheias|sem )\b/i;
+  for (const [id, v] of Object.entries(CITY_SAFETY)) {
+    for (const x of [...v.hot, ...v.night, ...(v.tp ? [v.tp] : [])]) {
+      const en = safetyText(x, "en");
+      assert.ok(!PT.test(en) || /Rua |Praça|Paço|Ponte Luís|Centro Histórico|Mercado |Medina/.test(en), `${id}: "${en}"`);
+    }
+  }
 });

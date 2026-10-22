@@ -494,3 +494,9 @@ export const PRACTICAL: Record<string, Practical> = {
     { n: "Café Touba", p: 200, pt: "Café com pimenta-da-guiné, numa banca de rua.", en: "Coffee with Guinea pepper from a street stall." }
   ])
 };
+
+/** Números de emergência com as palavras no idioma da página ("999 (polícia)" → "999 (Police)"). */
+export function emergencyText(s: string, t: { nK: { police: string; ambulance: string; fire: string }; touristPolice: string }): string {
+  return s.replace(/\(polícia turística\)/gi, `(${t.touristPolice})`).replace(/\(polícia\)/gi, `(${t.nK.police})`)
+    .replace(/\(ambulância\)/gi, `(${t.nK.ambulance})`).replace(/\(bombeiros\)/gi, `(${t.nK.fire})`);
+}

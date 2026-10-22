@@ -18,7 +18,8 @@ export const GuideProfile = z.object({
   bio: z.string().trim().min(40).max(1200).transform((b) => dedupeText(b)),
   hourly: z.coerce.number().refine((v) => v * 100 >= GUIDE_MIN_HOURLY && v * 100 <= GUIDE_MAX_HOURLY),
   maxPeople: z.coerce.number().int().min(1).max(20),
-  meetingPoint: z.string().trim().max(200).optional().default(""),
+  // Ponto de encontro preciso (não basta "Aeroporto" ou "Centro"): o viajante tem de o encontrar sem perguntar.
+  meetingPoint: z.string().trim().min(15).max(200).refine((m) => !vagueMeeting(m), "vague"),
   licenseNo: z.string().trim().max(60).optional().default(""),
   photo,
   // Dados profissionais (não públicos). Opcionais na edição para guias antigos; obrigatórios no registo.
@@ -71,4 +72,10 @@ export function dedupeText(text: string): string {
     const parts = para.match(/[^.!?。！？]+[.!?。！？]*\s*/g) ?? [para];
     return parts.filter((p) => { const k = norm(p); if (k.length < 12) return true; if (seen.has(k)) return false; seen.add(k); return true; }).join("").trim();
   }).filter(Boolean).join("\n\n");
+}
+
+/** "Aeroporto", "Centro", "Hotel"… sem mais nada não chega para um ponto de encontro. */
+export function vagueMeeting(m: string): boolean {
+  const k = m.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+  return k.length < 15 || /^(o |the |el |le |l |il |der |die |das )?(aeroporto|airport|aeropuerto|aeroport|flughafen|centro|center|centre|city centre|downtown|hotel|seu hotel|your hotel|a combinar|to be agreed|tbc|estacao|station)( da cidade| do hotel)?$/.test(k);
 }

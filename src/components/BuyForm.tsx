@@ -118,6 +118,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
         </button>
       </div>
       {chosen.local && <p className="hint">{fmt(t.fxNote, { cur: fx.cur, base: chosen.main })}</p>}
+      <p className="hint">⏱ {fmt(t.tpActivate, { h: plan === "all" ? t.tpDur30d : plan === "trip" ? t.tpDur72 : t.tpDur48 })}</p>
       <div className="field"><label htmlFor="email">{t.email}</label>
         <input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
       <div className="field"><label htmlFor="name">{t.name}</label>
