@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Globe, Wallet, Check, X, Search } from "lucide-react";
+import { Globe, Luggage, Check, X, Search } from "lucide-react";
 import { LOCALES } from "@/i18n/core";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 import Portal from "@/components/Portal";
@@ -22,6 +22,8 @@ const UI: Record<string, [string, string, string, string, string]> = {
   ko: ["언어", "통화", "검색", "추천", "전체"], hi: ["भाषा", "मुद्रा", "खोजें", "सुझाई गई", "सभी"], nl: ["Taal", "Valuta", "Zoeken", "Voorgesteld", "Alle"]
 };
 const SUGGESTED = ["EUR", "GBP", "USD", "CHF"];
+/** Nome da área pessoal ("My Trip") por idioma, para o botão do topo. */
+const TRIP: Record<string, string> = { en: "My Trip", pt: "A minha viagem", es: "Mi viaje", fr: "Mon voyage", de: "Meine Reise", it: "Il mio viaggio", zh: "我的行程", ar: "رحلتي", ja: "マイトリップ", tr: "Seyahatim", ru: "Моя поездка", ko: "내 여행" };
 const SYM: Record<string, string> = { EUR: "€", GBP: "£", USD: "$", JPY: "¥", CNY: "¥", KRW: "₩", INR: "₹", TRY: "₺", ILS: "₪", BRL: "R$", CHF: "CHF", THB: "฿", PHP: "₱" };
 
 /** Barra superior em vidro. `over` = transparente por cima de uma fotografia (página inicial e da cidade). */
@@ -41,7 +43,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
     <div className={`bar${over ? " over" : ""}`}>
       <Link className="brand" href={`/${locale}`} aria-label="HelloTravell"><span className="mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path fillRule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 4.9 5.6 11.6 6.3 12.4a.9.9 0 0 0 1.4 0C13.4 20.6 19 13.9 19 9a7 7 0 0 0-7-7zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z" /></svg></span><span className="word">Hello<span>Travell</span></span></Link>
       <div className="bar-end">
-        <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label="Wallet" title="Wallet"><Wallet size={18} strokeWidth={2} aria-hidden="true" /></Link>
+        <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
           <Globe size={14} strokeWidth={2.2} aria-hidden="true" /><b>{locale.toUpperCase()}</b>{currency && <><i aria-hidden="true" /><span>{SYM[currency] ?? currency}</span></>}
         </button>

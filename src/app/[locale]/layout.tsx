@@ -13,7 +13,7 @@ import { getDict } from "@/i18n/dictionaries";
 
 export const metadata: Metadata = {
   title: "HelloTravell",
-  description: "Self-guided city routes for layover travellers, with the cheapest transport and a countdown to your flight.",
+  description: "Your pocket travel companion: self-guided city routes with an audio guide, the cheapest transport and your trip essentials in one place.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "HelloTravell", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },

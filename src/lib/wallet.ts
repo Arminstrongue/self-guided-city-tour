@@ -84,10 +84,18 @@ export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: W
 }
 
 const MAIL: Record<string, { s: string; h: string; b: string; n: string }> = {
-  pt: { s: "A sua carteira de viagem", h: "Entrar na carteira", b: "Abra a sua carteira com os passes, reservas e memórias de viagem.", n: "Se não pediu este email, ignore-o." },
-  en: { s: "Your travel wallet", h: "Open my wallet", b: "Open your wallet with your passes, bookings and travel memories.", n: "If you didn't request this email, ignore it." },
-  es: { s: "Tu cartera de viaje", h: "Abrir mi cartera", b: "Abre tu cartera con tus pases, reservas y recuerdos de viaje.", n: "Si no pediste este correo, ignóralo." },
-  fr: { s: "Votre portefeuille de voyage", h: "Ouvrir mon portefeuille", b: "Ouvrez votre portefeuille avec vos pass, réservations et souvenirs de voyage.", n: "Si vous n'avez pas demandé cet e-mail, ignorez-le." }
+  pt: { s: "A minha viagem — entrar", h: "Abrir A minha viagem", b: "Abra A minha viagem com os seus passes, planos, bilhetes e memórias de viagem.", n: "Se não pediu este email, ignore-o." },
+  en: { s: "My Trip — sign in", h: "Open My Trip", b: "Open My Trip with your passes, plans, tickets and travel memories.", n: "If you didn't request this email, ignore it." },
+  es: { s: "Mi viaje — acceder", h: "Abrir Mi viaje", b: "Abre Mi viaje con tus pases, planes, billetes y recuerdos de viaje.", n: "Si no pediste este correo, ignóralo." },
+  fr: { s: "Mon voyage — connexion", h: "Ouvrir Mon voyage", b: "Ouvrez Mon voyage avec vos pass, plans, billets et souvenirs de voyage.", n: "Si vous n'avez pas demandé cet e-mail, ignorez-le." },
+  de: { s: "Meine Reise — Anmeldung", h: "Meine Reise öffnen", b: "Öffnen Sie Meine Reise mit Ihren Pässen, Plänen, Tickets und Reiseerinnerungen.", n: "Wenn Sie diese E-Mail nicht angefordert haben, ignorieren Sie sie." },
+  it: { s: "Il mio viaggio — accesso", h: "Apri Il mio viaggio", b: "Apri Il mio viaggio con pass, piani, biglietti e ricordi di viaggio.", n: "Se non hai richiesto questa email, ignorala." },
+  zh: { s: "我的行程 — 登录", h: "打开我的行程", b: "打开“我的行程”，查看您的通行证、计划、票券和旅行回忆。", n: "如果您没有申请这封邮件，请忽略。" },
+  ar: { s: "رحلتي — تسجيل الدخول", h: "افتح رحلتي", b: "افتح رحلتي لتجد تذاكرك وخططك وبطاقاتك وذكريات سفرك.", n: "إذا لم تطلب هذه الرسالة، فتجاهلها." },
+  ja: { s: "マイトリップ — ログイン", h: "マイトリップを開く", b: "パス、プラン、チケット、旅の思い出が入ったマイトリップを開きましょう。", n: "このメールに心当たりがない場合は無視してください。" },
+  tr: { s: "Seyahatim — giriş", h: "Seyahatim'i aç", b: "Kartlarınız, planlarınız, biletleriniz ve seyahat anılarınızla Seyahatim'i açın.", n: "Bu e-postayı siz istemediyseniz yok sayın." },
+  ru: { s: "Моя поездка — вход", h: "Открыть «Мою поездку»", b: "Откройте «Мою поездку» с пропусками, планами, билетами и воспоминаниями о путешествиях.", n: "Если вы не запрашивали это письмо, просто проигнорируйте его." },
+  ko: { s: "내 여행 — 로그인", h: "내 여행 열기", b: "패스, 일정, 티켓, 여행 추억이 담긴 내 여행을 열어 보세요.", n: "이 이메일을 요청하지 않았다면 무시하세요." }
 };
 
 /** Link de entrada (vale 31 dias, igual ao link do acesso pago). */

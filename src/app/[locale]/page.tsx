@@ -38,14 +38,14 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
       <HomeHero cities={featured}>
         <Header locale={params.locale} currency={fx.cur} over />
         <div className="in rise">
-          <span className="eyebrow">▣ {t.scanned}</span>
+          <span className="eyebrow">✦ {t.scanned}</span>
           <h1>{t.heroA} <em>{t.europe}</em> {t.heroB}</h1>
           <p>{t.heroSub}</p>
           <div className="stats" tabIndex={0}>
             <span><b>{list.length}</b> {t.statCities}</span><span><b>{stops}</b> {t.stops}</span>
             <span><b>{LOCALES.length}</b> {t.statLangs}</span><span>{t.f2t}</span>
           </div>
-          <div className="ctas"><a className="btn tram press" href="#cities">{t.explore}</a></div>
+          <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.qsCta}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
         </div>
         <PageQR label={t.qrScan} />
       </HomeHero>

@@ -248,3 +248,64 @@ export function EatNearby({ cityId, stopId, locale, t }: { cityId: string; stopI
     </div>
   );
 }
+
+/* ---------- "A seguir": a próxima paragem com tudo o que é preciso para lá chegar ---------- */
+
+type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
+
+export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale }: {
+  city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number;
+  money: (v: number) => string; onDone: (id: string) => void; onOpen: (id: string) => void; t: Dict; locale: Locale;
+}) {
+  const idx = stops.findIndex((s) => !done[s.id]);
+  if (idx < 0) {
+    return (
+      <div className="card nx nx-done">
+        <b>{t.nxDoneT}</b>
+        <p className="hint">{fmt(t.nxDoneS, { l: lineText(city.ret.core.line, locale) })}</p>
+      </div>
+    );
+  }
+  const s = stops[idx];
+  const leg = idx === 0 ? city.air : s.leg;
+  const after = stops.slice(idx + 1).find((x) => !done[x.id]);
+  const how = leg.m === "walk" ? `${t.walk} · ${leg.min} min` : `${t[leg.m]}${leg.line ? ` · ${lineText(leg.line, locale)}` : ""} · ${leg.min} min`;
+  const mus = museums.map((m) => ({ m, d: km(m, s) })).filter((x) => x.d < 0.35).sort((a, b) => a.d - b.d)[0]?.m;
+  const closedToday = Boolean(s.cl?.includes(today));
+  let status: { cls: string; txt: string } | null = null;
+  if (closedToday) status = { cls: "bad", txt: t.nxClosedToday };
+  else if (mus) {
+    const block = mus.h.find(([d]) => d.includes(today));
+    const hm = new Intl.DateTimeFormat("en-GB", { timeZone: city.tz ?? "UTC", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date()).replace(/^24/, "00");
+    if (!block) status = { cls: "bad", txt: t.nxClosedToday };
+    else if (hm >= block[1] && hm < block[2]) status = { cls: "ok", txt: fmt(t.nxOpenUntil, { t: block[2] }) };
+    else status = { cls: "warn", txt: fmt(t.nxClosedNow, { a: block[1], b: block[2] }) };
+  }
+  const mode = leg.m === "walk" ? "walking" : "transit";
+  const dir = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=${mode}`;
+  return (
+    <div className="card nx" aria-live="polite">
+      <div className="nx-top">
+        <span className="nx-label">{t.nxLabel}</span>
+        <span className="nx-step">{fmt(t.nxStep, { n: idx + 1, N: stops.length })}</span>
+      </div>
+      <button className="nx-name" onClick={() => onOpen(s.id)}><b>{s.n}</b><small>{s.a} · {s.v} min</small></button>
+      <div className="nx-rows">
+        <div className="nx-row"><span aria-hidden="true">{leg.m === "walk" ? "🚶" : leg.m === "car" ? "🚕" : "🚇"}</span><span><small>{t.nxHow}</small>{how}</span></div>
+        {status && <div className={`nx-row ${status.cls}`}><span aria-hidden="true">🕒</span><span>{status.txt}</span></div>}
+        {(s.o || (mus && mus.price > 0)) && (
+          <div className="nx-row"><span aria-hidden="true">🎟</span><span>
+            {t.nxEntry}{mus && mus.price > 0 ? ` · ${money(mus.price)}` : ` · ${t.optPaid}`}
+            {mus?.book ? ` · ${t.nxBook}` : ""}
+            {mus && <> · <ExtLink href={mus.url}>{t.nxTickets}</ExtLink></>}
+          </span></div>
+        )}
+        {after && <div className="nx-row dim"><span aria-hidden="true">↪</span><span>{fmt(t.nxThen, { s: after.n })}</span></div>}
+      </div>
+      <div className="nx-acts">
+        <ExtLink className="btn tram" href={dir}>{t.directions}</ExtLink>
+        <button className="btn ghost" onClick={() => onDone(s.id)}>{t.nxHere}</button>
+      </div>
+    </div>
+  );
+}

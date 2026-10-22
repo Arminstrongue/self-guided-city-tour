@@ -2,7 +2,7 @@
   "id": "/",
   "name": "HelloTravell",
   "short_name": "HelloTravell",
-  "description": "Self-guided city routes for layovers and short trips, with transport, safety tips and a countdown to your flight.",
+  "description": "Your pocket travel companion: self-guided city routes with an audio guide, transport, safety and your trip essentials in one place.",
   "start_url": "/wallet?src=pwa",
   "scope": "/",
   "display": "standalone",

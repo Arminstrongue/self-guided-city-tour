@@ -5,7 +5,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { fitRoute, hasExtension, leaveBy, optionByKey, routeOptions } from "@/lib/route-cost";
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
-import { BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
+import { NextCard, BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
@@ -239,6 +239,12 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
         {tab === "live" && explore && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
           route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
+
+        {tab === "route" && (
+          <NextCard city={city} stops={plan.stops} done={done} museums={museums} today={today} money={money} t={t} locale={locale}
+            onDone={(id) => toggleDone(id)}
+            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
+        )}
 
         {tab === "route" && (
           <div className="route">

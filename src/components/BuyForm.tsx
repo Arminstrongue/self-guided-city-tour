@@ -28,6 +28,8 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
   const [email, setEmail] = useState(sessionEmail ?? "");
   const [name, setName] = useState("");
   const [flight, setFlight] = useState("");
+  // Vindo de "Começar em 3 passos" com hora de partida: já preenchida.
+  useEffect(() => { try { const d = new URLSearchParams(location.search).get("dep"); if (d && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(d)) setFlight(d.slice(0, 16)); } catch { /* ignorar */ } }, []);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
