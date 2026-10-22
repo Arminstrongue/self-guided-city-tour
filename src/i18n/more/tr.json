@@ -1689,5 +1689,12 @@
 "slot": "Rezervasyon yap",
 "bag": "Emanet ayırt"
 },
-"qrShow": "VOYBU'yu açması için bu kodu bir arkadaşınıza gösterin"
+"qrShow": "VOYBU'yu açması için bu kodu bir arkadaşınıza gösterin",
+"dShowAll": "{n} şehrin tümünü gör",
+"dRegions": {
+"europe": "Avrupa",
+"americas": "Amerika",
+"africa": "Afrika",
+"asia": "Asya ve Orta Doğu"
+}
 }

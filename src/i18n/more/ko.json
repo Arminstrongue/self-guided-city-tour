@@ -1689,5 +1689,12 @@
 "slot": "예약",
 "bag": "보관 예약"
 },
-"qrShow": "친구에게 이 코드를 보여 주면 VOYBU가 열려요"
+"qrShow": "친구에게 이 코드를 보여 주면 VOYBU가 열려요",
+"dShowAll": "{n}개 도시 모두 보기",
+"dRegions": {
+"europe": "유럽",
+"americas": "아메리카",
+"africa": "아프리카",
+"asia": "아시아·중동"
+}
 }

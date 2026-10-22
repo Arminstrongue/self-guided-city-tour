@@ -1256,5 +1256,12 @@
 "slot": "Reservar",
 "bag": "Reservar consigna"
 },
-"qrShow": "Enseña este código a un amigo para abrir VOYBU"
+"qrShow": "Enseña este código a un amigo para abrir VOYBU",
+"dShowAll": "Ver las {n} ciudades",
+"dRegions": {
+"europe": "Europa",
+"americas": "Américas",
+"africa": "África",
+"asia": "Asia y Oriente Medio"
+}
 }

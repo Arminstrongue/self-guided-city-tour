@@ -1225,5 +1225,12 @@
 "cats": {
 "car": "Location de voitures"
 },
-"qrShow": "Montrez ce code à un ami pour ouvrir VOYBU"
+"qrShow": "Montrez ce code à un ami pour ouvrir VOYBU",
+"dShowAll": "Voir les {n} villes",
+"dRegions": {
+"europe": "Europe",
+"americas": "Amériques",
+"africa": "Afrique",
+"asia": "Asie et Moyen-Orient"
+}
 }

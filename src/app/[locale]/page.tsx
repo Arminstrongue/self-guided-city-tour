@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
-import { SOON, cityName, COUNTRY } from "@/data/cities";
+import { SOON, cityName, cityNames, regionOf, COUNTRY } from "@/data/cities";
 import { DestGrid, HomeHero, type DestCity } from "@/components/Showcase";
 import { fmt, INTL_LOCALE, LOCALES, isLocale } from "@/i18n/core";
 import { notFound } from "next/navigation";
@@ -36,7 +36,16 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
   const region = new Intl.DisplayNames([INTL_LOCALE[params.locale]], { type: "region" });
   const list = await loadCities();
-  const cities: DestCity[] = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", stops: c.stops.length, ...(isFreeCity(c.id) ? { free: t.freeBadge } : {}) }));
+  const regionEn = new Intl.DisplayNames(["en"], { type: "region" });
+  const cities: DestCity[] = list.map((c) => {
+    const cc = COUNTRY[c.id];
+    const country = (cc && region.of(cc)) || "";
+    return {
+      id: c.id, name: cityName(c, params.locale), country, stops: c.stops.length, region: regionOf(c.id),
+      keys: [...cityNames(c), country, cc ? regionEn.of(cc) ?? "" : ""].join(" "),
+      ...(isFreeCity(c.id) ? { free: t.freeBadge } : {})
+    };
+  });
   const stops = list.reduce((a, c) => a + c.stops.length, 0);
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
@@ -56,13 +65,14 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
           </div>
           <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.qsCta}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
           <p className="hm-free">{t.hmFree}</p>
-          <PageQR label={t.qrScan} mobileLabel={t.qrShow} />
+          <PageQR label={t.qrScan} mobileLabel={t.qrShare} />
         </div>
       </HomeHero>
 
       <section className="sec" id="cities" style={{ scrollMarginTop: 70 }}>
         <div className="sec-h reveal"><div><h2>{t.topDest}</h2><p>{t.topDestSub}</p></div></div>
-        <DestGrid locale={params.locale} cities={cities} from={from} labels={{ stops: t.stops }} />
+        <DestGrid locale={params.locale} cities={cities} from={from}
+          labels={{ stops: t.stops, search: t.qsSearch, all: t.exAll, none: t.gsNone, showAll: t.dShowAll, regions: t.dRegions }} />
         {SOON.length > 0 && <div className="soon-row"><span style={{ background: "none", boxShadow: "none", paddingInline: 0 }}>{t.soon}:</span>{SOON.map((n) => <span key={n.en}>{n[params.locale] ?? n.en}</span>)}</div>}
       </section>
 

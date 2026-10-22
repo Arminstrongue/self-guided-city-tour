@@ -1229,5 +1229,12 @@
 "slot": "Buchen",
 "bag": "Schließfach buchen"
 },
-"qrShow": "Zeigen Sie diesen Code einem Freund, um VOYBU zu öffnen"
+"qrShow": "Zeigen Sie diesen Code einem Freund, um VOYBU zu öffnen",
+"dShowAll": "Alle {n} Städte anzeigen",
+"dRegions": {
+"europe": "Europa",
+"americas": "Amerika",
+"africa": "Afrika",
+"asia": "Asien & Nahost"
+}
 }

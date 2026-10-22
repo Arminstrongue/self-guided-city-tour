@@ -21,7 +21,8 @@ export function HomeHero({ cities, children }: { cities: string[]; children: Rea
   return <section className="hero-x"><Slides photos={photos} />{children}</section>;
 }
 
-export type DestCity = { id: string; name: string; country: string; stops: number; free?: string };
+export type DestCity = { id: string; name: string; country: string; stops: number; free?: string; region?: "europe" | "americas" | "africa" | "asia"; keys?: string };
+type DestLabels = { stops: string; search: string; all: string; none: string; showAll: string; regions: Record<"europe" | "americas" | "africa" | "asia", string> };
 
 function DestCard({ c, href, from, labels, i }: { c: DestCity; href: string; from: string; labels: { stops: string }; i: number }) {
   const [ref, near] = useNear<HTMLAnchorElement>("400px");
@@ -37,8 +38,45 @@ function DestCard({ c, href, from, labels, i }: { c: DestCity; href: string; fro
   );
 }
 
-export function DestGrid({ locale, cities, from, labels }: { locale: string; cities: DestCity[]; from: string; labels: { stops: string } }) {
-  return <div className="dest">{cities.map((c, i) => <DestCard key={c.id} c={c} i={i} href={`/${locale}/c/${c.id}`} from={from} labels={labels} />)}</div>;
+/** Sem acentos e em minúsculas, para "sao paulo" encontrar "São Paulo" e "zurich" encontrar "Zürich". */
+const fold = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const REGIONS = ["europe", "americas", "africa", "asia"] as const;
+const FIRST = 8;
+
+/** Destinos: pesquisa por nome (em qualquer idioma) ou país, filtro por região e só 8 cartões até pedir "ver todas". */
+export function DestGrid({ locale, cities, from, labels }: { locale: string; cities: DestCity[]; from: string; labels: DestLabels }) {
+  const [q, setQ] = useState("");
+  const [reg, setReg] = useState<(typeof REGIONS)[number] | "">("");
+  const [more, setMore] = useState(false);
+  const shown = useMemo(() => {
+    const words = fold(q.trim()).split(/\s+/).filter(Boolean);
+    return cities.filter((c) => (!reg || c.region === reg) && words.every((w) => fold(`${c.name} ${c.country} ${c.keys ?? ""}`).includes(w)));
+  }, [cities, q, reg]);
+  const filtering = Boolean(q.trim() || reg);
+  const list = filtering || more ? shown : shown.slice(0, FIRST);
+  const count = (r: string) => cities.filter((c) => c.region === r).length;
+  return (
+    <>
+      <div className="dest-tools">
+        <label className="dest-search">
+          <span aria-hidden="true">⌕</span>
+          <input type="search" inputMode="search" enterKeyHint="search" placeholder={labels.search} aria-label={labels.search} value={q} onChange={(e) => setQ(e.target.value)} />
+          {q && <button type="button" aria-label="×" onClick={() => setQ("")}>×</button>}
+        </label>
+        <div className="dest-chips" role="radiogroup">
+          <button type="button" role="radio" aria-checked={!reg} className={`press ${!reg ? "on" : ""}`} onClick={() => setReg("")}>{labels.all} <small>{cities.length}</small></button>
+          {REGIONS.filter((r) => count(r)).map((r) => (
+            <button key={r} type="button" role="radio" aria-checked={reg === r} className={`press ${reg === r ? "on" : ""}`} onClick={() => setReg(reg === r ? "" : r)}>{labels.regions[r]} <small>{count(r)}</small></button>
+          ))}
+        </div>
+      </div>
+      {list.length ? <div className="dest">{list.map((c, i) => <DestCard key={c.id} c={c} i={i} href={`/${locale}/c/${c.id}`} from={from} labels={labels} />)}</div>
+        : <p className="hint" style={{ textAlign: "center", padding: "24px 0" }}>{labels.none}</p>}
+      {!filtering && !more && shown.length > FIRST && (
+        <button type="button" className="btn ghost press dest-more" onClick={() => setMore(true)}>{labels.showAll.replace("{n}", String(cities.length))}</button>
+      )}
+    </>
+  );
 }
 
 /* ---------- Página da cidade ---------- */

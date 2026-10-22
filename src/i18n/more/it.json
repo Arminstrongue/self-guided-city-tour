@@ -1256,5 +1256,12 @@
 "slot": "Prenota",
 "bag": "Prenota deposito"
 },
-"qrShow": "Mostra questo codice a un amico per aprire VOYBU"
+"qrShow": "Mostra questo codice a un amico per aprire VOYBU",
+"dShowAll": "Mostra tutte le {n} città",
+"dRegions": {
+"europe": "Europa",
+"americas": "Americhe",
+"africa": "Africa",
+"asia": "Asia e Medio Oriente"
+}
 }

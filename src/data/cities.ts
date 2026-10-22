@@ -33,6 +33,7 @@ export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "J
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
 export { zoneOf, COUNTRY, type Zone } from "./city-meta";
+import { COUNTRY as COUNTRY_OF } from "./city-meta";
 
 import { ME_CITIES, ME_NAMES } from "./cities-me";
 import { MORE_CITIES, MORE_CITY_NAMES } from "./cities-more";
@@ -362,6 +363,19 @@ for (const [id, [tr, ru, ko]] of Object.entries({
   mct: ["Maskat", "Маскат", "무스카트"]
 } as Record<string, [string, string, string]>)) MORE_NAMES[id] = { ...MORE_NAMES[id], tr, ru, ko };
 
+
+/** Todos os nomes da cidade (12 idiomas), para a pesquisa. */
+export function cityNames(c: City): string[] {
+  return [...new Set([...Object.values(c.n), ...Object.values(MORE_NAMES[c.id] ?? {})].filter(Boolean) as string[])];
+}
+
+export type Region = "europe" | "americas" | "africa" | "asia";
+const REGION_OF: Record<string, Region> = {
+  US: "americas", CA: "americas", MX: "americas", BR: "americas", AR: "americas",
+  EG: "africa", MA: "africa", ZA: "africa", TZ: "africa", TN: "africa", ET: "africa", KE: "africa", AO: "africa", GH: "africa", RW: "africa", SN: "africa",
+  SG: "asia", AE: "asia", QA: "asia", SA: "asia", JO: "asia", OM: "asia"
+};
+export const regionOf = (id: string): Region => REGION_OF[COUNTRY_OF[id] ?? ""] ?? "europe";
 
 export function cityName(c: City, locale: string): string {
   return c.n[locale] ?? MORE_NAMES[c.id]?.[locale] ?? c.n.en;
