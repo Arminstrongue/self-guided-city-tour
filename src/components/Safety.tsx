@@ -67,6 +67,7 @@ export function SafetyPanel({ cityId, country, cityName, center, t, locale, comp
         <ExtLink className="btn ghost" href={near("hospital")}>🏥 {t.nearHosp}</ExtLink>
         <ExtLink className="btn ghost" href={near("pharmacy")}>✚ {t.nearPharm}</ExtLink>
       </div>
+      <p className="hint">{geo.pos ? t.sfNearPos : t.sfNearCenter}</p>
       {geo.st === "fail" && <p className="hint bad-txt">{t.geoFail}</p>}
       <p className="hint">{fmt(t.pharmLook, { w: s.pharmacy })}</p>
 

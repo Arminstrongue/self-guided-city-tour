@@ -11,11 +11,13 @@ export const dynamic = "force-dynamic";
 
 export default async function WalletPage({ params }: { params: { locale: Locale } }) {
   const t = getDict(params.locale);
-  const cities = Object.fromEntries((await loadCities()).map((c) => [c.id, cityName(c, params.locale)]));
+  const all = await loadCities();
+  const cities = Object.fromEntries(all.map((c) => [c.id, cityName(c, params.locale)]));
+  const tzOf = Object.fromEntries(all.map((c) => [c.id, c.tz ?? "UTC"]));
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <WalletView t={t} locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} providers={enabledProviders()} />
+      <WalletView t={t} locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} providers={enabledProviders()} />
     </main>
   );
 }

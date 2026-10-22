@@ -7,7 +7,7 @@ import type { LucideIcon } from "lucide-react";
 export {
   House, Compass, Clapperboard, Plus, Bell, MessageCircle, Heart, Send, Bookmark, Volume2, VolumeX, Maximize2, Play, Pause,
   Settings, Menu, Map as MapIcon, Globe, Sparkles, CalendarDays, Wrench, Ticket, BookOpen, Mic, Image as ImageIcon, MapPin, Ellipsis,
-  ArrowLeftRight, CloudDownload, Receipt, Search, X, ChevronLeft, Camera, Users, SendHorizontal, LayoutGrid
+  ArrowLeftRight, CloudDownload, Receipt, Search, X, ChevronLeft, Camera, Users, SendHorizontal, LayoutGrid, Luggage, Zap
 } from "lucide-react";
 
 export function I({ icon: Icon, size = 24, on = false, solid = false, className, stroke = 2 }: {

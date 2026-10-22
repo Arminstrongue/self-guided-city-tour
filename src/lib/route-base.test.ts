@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { getCity } from "@/data/cities";
-import { fitFromBase, fitRoute, hop, minutesLeft, planFromBase, routeOptions, type Base } from "./route-cost";
+import { dropToFit, fitFromBase, fitRoute, hop, minutesLeft, planFromBase, routeOptions, type Base } from "./route-cost";
 
 const lis = getCity("lis")!;
 const near: Base = { kind: "place", lat: lis.stops[0].lat + 0.003, lng: lis.stops[0].lng, label: "Hotel" };
@@ -37,4 +37,15 @@ test("minutos que faltam descem à medida que se fazem paragens", () => {
   assert.ok(one < all);
   const none = minutesLeft(core.plan, bp, Object.fromEntries(core.plan.stops.map((s) => [s.id, true])));
   assert.equal(none, bp.back!.min);
+});
+
+test("o plano mudou: retira as últimas paragens não-Top até recuperar o tempo, nunca a próxima", () => {
+  const core = routeOptions(lis).find((o) => o.key === "core")!;
+  const left = core.plan.stops;
+  const r = dropToFit(left, 20)!;
+  assert.ok(r.saved >= 20);
+  assert.ok(!r.ids.includes(left[0].id));
+  for (const id of r.ids) assert.ok(left.find((s) => s.id === id));
+  assert.deepEqual(dropToFit(left, 0), { ids: [], saved: 0 });
+  assert.equal(dropToFit(left, 100000), null);
 });

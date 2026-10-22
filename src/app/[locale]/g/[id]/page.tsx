@@ -1,3 +1,4 @@
+import { dedupeText } from "@/lib/guide-input";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -46,7 +47,7 @@ export default async function GuidePage({ params, searchParams }: { params: { lo
           <div><span>👥</span><span>{fmt(t.gdUpTo, { n: g.maxPeople })}</span></div>
           {g.meetingPoint && <div><span>📍 {t.gdMeet}</span><span style={{ textAlign: "end" }}>{g.meetingPoint}</span></div>}
         </div>
-        <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2><p style={{ whiteSpace: "pre-line" }}>{g.bio}</p></section>
+        <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2><p style={{ whiteSpace: "pre-line" }}>{dedupeText(g.bio)}</p></section>
         {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide t={t} locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
         {reviews.length > 0 && (
           <section className="stack" style={{ gap: 8 }}>

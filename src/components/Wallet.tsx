@@ -13,7 +13,7 @@ import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { Composer, FeedTab } from "./Feed";
 import type { ToolTab } from "./TravelTools";
-import { I, House, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
+import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
@@ -37,6 +37,8 @@ const InviteSheet = dynamic(() => import("./Invite").then((m) => m.InviteSheet),
 const signIn = (...a: Parameters<typeof import("next-auth/react").signIn>) => import("next-auth/react").then((m) => m.signIn(...a));
 
 import { Avatar, PeopleTab, ProfileEditor, SettingsSheet, loadSocial, type Social } from "./Social";
+import { NowPanel } from "./NowPanel";
+import { Reservations } from "./Reservations";
 
 type Mem = Memory & { local?: boolean };
 
@@ -46,10 +48,13 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
-type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "passes" | "plans" | "wish" | "places" | "memories" | "saved";
-type Section = "home" | "explore" | "videos" | "chat" | "people" | "profile";
-const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "passes", "plans", "wish", "places", "memories", "saved"];
-const SUB: Tab[] = ["passes", "plans", "wish", "places", "memories", "saved"];
+type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "trip" | "passes" | "res" | "plans" | "wish" | "places" | "memories" | "saved";
+type Section = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "trip";
+const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "trip", "passes", "res", "plans", "wish", "places", "memories", "saved"];
+/** Minha viagem: passes, reservas e bilhetes, planos, wishlist, memórias. Perfil: cidades e guardados. */
+const TRIP_SUB: Tab[] = ["passes", "res", "plans", "wish", "memories"];
+const PROFILE_SUB: Tab[] = ["places", "saved"];
+const SUB: Tab[] = [...TRIP_SUB, ...PROFILE_SUB];
 /** Vibração curta ao tocar (Android); no iPhone não faz nada. */
 const buzz = () => { try { navigator.vibrate?.(8); } catch { /* ignorar */ } };
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
@@ -57,7 +62,7 @@ const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nív
 /** Cor do bilhete de cada cidade (estável). */
 function hue(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
 
-export function WalletView({ t, locale, cities, free, countryOf, providers = [] }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; providers?: { id: string; name: string }[] }) {
+export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, providers = [] }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; tzOf?: Record<string, string>; providers?: { id: string; name: string }[] }) {
   const [composing, setComposing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [pulling, setPulling] = useState(0);
@@ -209,8 +214,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     window.addEventListener("touchstart", start, { passive: true }); window.addEventListener("touchmove", move, { passive: true }); window.addEventListener("touchend", end);
     return () => { window.removeEventListener("touchstart", start); window.removeEventListener("touchmove", move); window.removeEventListener("touchend", end); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, saved: null, videos: null, chat: unread || null, people: social?.count.requests || null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
-  const icon: Record<Tab, LucideIcon> = { home: LayoutGrid, explore: Search, profile: Users, saved: Bookmark, videos: Clapperboard, chat: MessageCircle, people: Users, passes: Ticket, plans: MapIcon, wish: Heart, places: Globe, memories: BookOpen };
+  const counts: Record<Tab, number | null> = { home: null, explore: null, profile: null, saved: null, videos: null, chat: unread || null, people: social?.count.requests || null, trip: null, res: null, passes: passes.length + free.length, plans: signed?.plans.length ?? 0, wish: wish?.length ?? 0, places: world.cities, memories: memories.length };
+  const icon: Record<Tab, LucideIcon> = { trip: Luggage, res: Ticket, home: LayoutGrid, explore: Search, profile: Users, saved: Bookmark, videos: Clapperboard, chat: MessageCircle, people: Users, passes: Ticket, plans: MapIcon, wish: Heart, places: Globe, memories: BookOpen };
 
   const Pass = ({ href, city, label, title, sub, right, off }: { href: string; city: string; label: string; title: string; sub?: string; right: React.ReactNode; off?: boolean }) => (
     <a href={href} className={`wl-ticket press ${off ? "off" : ""}`} style={{ ["--h" as string]: hue(city) }}>
@@ -230,8 +235,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     ...free.filter((id) => cities[id]).map((id) => <Pass key={`f-${id}`} href={`/${locale}/tour/${id}`} city={id} label={`🎁 ${t.wDemo}`} title={cities[id]} right={<b>{t.wOpen} →</b>} />)
   ].slice(0, limit);
 
-  const section: Section = tab === "chat" || tab === "people" || tab === "explore" || tab === "videos" ? tab : SUB.includes(tab) || tab === "profile" ? "profile" : "home";
-  const sub: Tab = SUB.includes(tab) ? tab : "passes";
+  const section: Section = tab === "chat" || tab === "people" || tab === "explore" || tab === "videos" ? tab : TRIP_SUB.includes(tab) || tab === "trip" ? "trip" : PROFILE_SUB.includes(tab) || tab === "profile" ? "profile" : "home";
+  const sub: Tab = SUB.includes(tab) ? tab : section === "profile" ? "places" : "passes";
   const go = (x: Tab) => { buzz(); setTab(x); };
   useEffect(() => {
     if (pendingCompose === null || w === null || (w !== "anon" && !social)) return;
@@ -246,8 +251,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
     try { if (n > 0) void nav.setAppBadge?.(n).catch(() => null); else void nav.clearAppBadge?.().catch(() => null); } catch { /* sem suporte */ }
   }, [unread, notifs]);
   const create = () => { buzz(); if (!signed) return goSignIn(); if (!prof) return setEditing(true); setComposing(true); };
-  const title = section === "home" ? null : section === "profile" ? (prof ? `@${prof.handle}` : t.wallet) : section === "explore" ? t.nvExplore : section === "chat" ? t.chTab : section === "people" ? t.wTabs.people : t.rlTitle;
-  const profileSubs: Tab[] = ["passes", "plans", "wish", "places", "memories", "saved"];
+  const title = section === "home" ? null : section === "trip" ? t.wallet : section === "profile" ? (prof ? `@${prof.handle}` : t.nvProfile) : section === "explore" ? t.nvExplore : section === "chat" ? t.chTab : section === "people" ? t.wTabs.people : t.rlTitle;
+  const profileSubs: Tab[] = section === "trip" ? TRIP_SUB : PROFILE_SUB;
 
   return (
     <div className="stack wl wl-app" style={{ gap: 14 }}>
@@ -268,8 +273,10 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
       {/* ---------- Início: o que vem a seguir + histórias + feed ---------- */}
       {section === "home" && <>
-        <div id="wl-stories" className="wl-stories" />
         {w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
+        {/* Agora: o próximo passo (reserva, visita com guia, roteiro em curso ou roteiro planeado) */}
+        <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned} hasPass={active.length > 0}
+          bookings={(signed?.bookings ?? []).map((b) => ({ id: b.id, guide: b.guide, guideId: b.guideId, startAt: b.startAt, city: b.city, status: b.status, meeting: "meeting" in b ? (b.meeting as string | null) : null }))} />
         {w === "anon" && (
           <section className="card stack wl-sign">
             <b style={{ fontSize: 17 }}>🔐 {t.wSignTitle}</b>
@@ -293,19 +300,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
         )}
 
         {signed && <InstallApp t={t} />}
-        {/* A seguir (passe ativo, guia, plano) */}
-        {(active[0] || nextBooking || nextPlan || planned || (free[0] && cities[free[0]])) && (
-          <section className="stack" style={{ gap: 8 }}>
-            <h2 className="gp-h2 sm">⚡ {t.wNextUp}</h2>
-            {active[0] ? passCards(1) : nextBooking ? (
-              <a href={`/${locale}/g/${nextBooking.guideId}`} className="card wl-next press"><span className="wl-next-ic">🧑‍💼</span><span className="stack" style={{ gap: 2 }}><b>{nextBooking.guide}</b><span className="hint">📅 {dt.format(new Date(nextBooking.startAt))} · {cities[nextBooking.city] ?? nextBooking.city}</span></span><b className="wl-open">→</b></a>
-            ) : nextPlan ? (
-              <a href={`/${locale}/plan/${nextPlan.id}`} className="card wl-next press"><span className="wl-next-ic">🗺</span><span className="stack" style={{ gap: 2 }}><b>{nextPlan.title}</b><span className="hint">📍 {nextPlan.cityName} · {d.format(new Date(`${nextPlan.startDate}T12:00:00`))}</span></span><b className="wl-open">→</b></a>
-            ) : planned && cities[planned.city] ? (
-              <a href={`/${locale}/${planned.open ? "tour" : "c"}/${planned.city}${planned.open ? "" : "#book"}`} className="card wl-next press"><span className="wl-next-ic">⏱</span><span className="stack" style={{ gap: 2 }}><b>{t.wPlanned} · {cities[planned.city]}</b><span className="hint">{fmt(t.wPlannedSub, { n: planned.n, h: planned.h })}</span></span><b className="wl-open">→</b></a>
-            ) : passCards(1).slice(-1)}
-          </section>
-        )}
+        {active[0] && <section className="stack" style={{ gap: 8 }}>{passCards(1)}</section>}
         <div className="wl-quick">
           <button className="press" onClick={() => go("plans")}><span className="qi q1"><I icon={MapIcon} size={22} /></span>{t.wQuickPlan}</button>
           <button className="press" onClick={() => go("places")}><span className="qi q2"><I icon={Globe} size={22} /></span>{t.wQuickCity}</button>
@@ -313,12 +308,17 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
           <a className="press" href={`/${locale}#cities`}><span className="qi q4"><I icon={Sparkles} size={22} /></span>{t.wQuickExplore}</a>
           <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
         </div>
-        {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
       </>}
 
       {/* ---------- Explorar: pessoas, cidades e o que há ---------- */}
       {section === "explore" && <>
+        <div id="wl-stories" className="wl-stories" />
+        <div className="ex-top">
+          <button className="btn press" onClick={create}><I icon={Plus} size={18} stroke={2.6} /> {t.pfNew}</button>
+          <button className="btn ghost press" onClick={() => go("videos")}><I icon={Clapperboard} size={18} /> {t.rlTitle}</button>
+        </div>
+        {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         <button className="gs-fake press" onClick={() => setSearching(true)}><I icon={Search} size={18} /><span>{t.gsPlaceholder}</span></button>
         <div className="nv-cities">
           <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
@@ -337,8 +337,8 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
       {section === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={goSignIn} />)}
 
       {/* ---------- Perfil: cartão + passes, planos, wishlist, cidades, memórias ---------- */}
-      {section === "profile" && <>
-        <section className="wl-card wl-card-sm">
+      {(section === "profile" || section === "trip") && <>
+        {section === "profile" && <><section className="wl-card wl-card-sm">
           {prof ? <>
             <div className="wl-me">
               <button className="wl-me-av" onClick={() => setEditing(true)} aria-label={t.scEdit}><Avatar p={prof} size={68} /></button>
@@ -368,11 +368,11 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
             {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
           </div>}
         </section>
-        {signed && <PointsCard t={t} locale={locale} s={points} onOpen={() => setPointsOpen(true)} />}
+        {signed && <PointsCard t={t} locale={locale} s={points} onOpen={() => setPointsOpen(true)} />}</>}
         <nav className="wl-seg" role="tablist">
           {profileSubs.map((k) => (
             <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
-              <span aria-hidden="true"><I icon={icon[k]} size={20} on={sub === k} /></span><small>{k === "saved" ? t.svTab : t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
+              <span aria-hidden="true"><I icon={icon[k]} size={20} on={sub === k} /></span><small>{k === "saved" ? t.svTab : k === "res" ? t.rsTab : t.wTabs[k as keyof typeof t.wTabs]}</small>{counts[k] ? <i className="num">{counts[k]}</i> : null}
             </button>
           ))}
         </nav>
@@ -397,6 +397,7 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
             </section>
           )}
         </>}
+        {sub === "res" && <Reservations t={t} locale={locale} cities={cities} tzOf={tzOf} signed={Boolean(signed)} />}
         {sub === "saved" && (social?.profile ? <SavedGrid t={t} locale={locale} cities={cities} /> : <SignNudge t={t} onClick={goSignIn} />)}
         {sub === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={goSignIn} />)}
         {sub === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
@@ -428,10 +429,10 @@ export function WalletView({ t, locale, cities, free, countryOf, providers = [] 
 
       {/* ---------- Barra de baixo ---------- */}
       <nav className="nv" aria-label={t.wallet}>
-        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvHome}><span><I icon={House} on={section === "home"} /></span><small>{t.nvHome}</small></button>
-        <button className={section === "explore" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
-        <button className="nv-plus" onClick={create} aria-label={t.pfNew}><span><I icon={Plus} size={24} stroke={2.6} /></span></button>
-        <button className={section === "videos" ? "on" : ""} onClick={() => go("videos")} aria-label={t.rlTitle}><span><I icon={Clapperboard} on={section === "videos"} /></span><small>{t.rlTitle}</small></button>
+        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
+        <button className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
+        <button className={section === "trip" ? "on" : ""} onClick={() => go("trip")} aria-label={t.wallet}><span><I icon={Luggage} on={section === "trip"} /></span><small>{t.nvTrip}</small></button>
+        <button onClick={() => { buzz(); setTools({ tab: "fx" }); }} aria-label={t.wQuickTools}><span><I icon={Wrench} /></span><small>{t.wQuickTools}</small></button>
         <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
           <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={Users} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>

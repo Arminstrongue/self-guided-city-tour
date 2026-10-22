@@ -160,3 +160,16 @@ export function minutesLeft(plan: RoutePlan, bp: BasePlan, done: Record<string, 
   if (!started) m += bp.to?.min ?? 0;
   return m + (bp.back?.min ?? plan.ret.min);
 }
+
+/**
+ * Quais paragens retirar para recuperar `need` minutos: das últimas para as primeiras, primeiro as que não são "Top";
+ * nunca a próxima (é para onde o viajante já vai). Devolve null se nem retirando todas chega.
+ */
+export function dropToFit(left: Stop[], need: number): { ids: string[]; saved: number } | null {
+  if (need <= 0) return { ids: [], saved: 0 };
+  const pool = left.slice(1).map((s, i) => ({ s, i })).sort((a, b) => Number(Boolean(a.s.top)) - Number(Boolean(b.s.top)) || b.i - a.i);
+  const ids: string[] = []; let saved = 0;
+  for (const { s } of pool) { ids.push(s.id); saved += s.v + s.leg.min; if (saved >= need) return { ids, saved }; }
+  return null;
+}
+

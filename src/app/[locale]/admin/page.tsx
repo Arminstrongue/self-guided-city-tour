@@ -1,4 +1,5 @@
 import { purgeUser, removePost } from "@/lib/posts";
+import { closeStopReports, openStopReports } from "@/lib/stop-reports";
 import { purgeChats } from "@/lib/chat";
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
@@ -42,6 +43,15 @@ async function setAgentStatus(form: FormData) {
   await d.update(schema.agents).set({ status: status as "active" | "suspended" }).where(eq(schema.agents.id, String(form.get("id"))));
   revalidatePath("/[locale]/admin", "page");
 }
+
+async function handleStopReport(form: FormData) {
+  "use server";
+  if (!(await isAdmin())) return;
+  const st = String(form.get("status")) === "fixed" ? "fixed" : "dismissed";
+  await closeStopReports(String(form.get("city")), String(form.get("stop")), String(form.get("kind")), st);
+  revalidatePath("/[locale]/admin", "page");
+}
+const KIND_PT: Record<string, string> = { entrance: "Entrada incorreta", closed: "Local encerrado", price: "Preço diferente", access: "Percurso inacessível", other: "Outro problema" };
 
 async function handleReport(form: FormData) {
   "use server";
@@ -161,7 +171,8 @@ export default async function Admin({ params, searchParams }: { params: { locale
     const ms = await d.select().from(schema.messages).where(sql`${schema.messages.pair} = ${pair}`).orderBy(sql`${schema.messages.createdAt} desc`).limit(30);
     chatLogs.set(r.id, ms.reverse().map((m) => ({ mine: m.sender === r.target, text: m.text, at: m.createdAt })));
   }
-  const todo = openReports.length + pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
+  const stopReps = await openStopReports().catch(() => []);
+  const todo = stopReps.length + openReports.length + pendingGuides.length + pendingMerchants.length + pendingAgents.length + due.length + agentDue.filter((x) => x.cents > 0).length;
   const hour = Number(new Intl.DateTimeFormat("en-GB", { hour: "numeric", hourCycle: "h23", timeZone: "Europe/Lisbon" }).format(new Date()));
   const hello = hour < 6 ? "Boa noite" : hour < 13 ? "Bom dia" : hour < 20 ? "Boa tarde" : "Boa noite";
   const today = new Intl.DateTimeFormat("pt-PT", { weekday: "long", day: "numeric", month: "long", timeZone: "Europe/Lisbon" }).format(new Date());
@@ -208,6 +219,16 @@ export default async function Admin({ params, searchParams }: { params: { locale
         <section className="stack" style={{ gap: 12 }} id="todo">
           <h2 className="gp-h2">A tratar agora{todo > 0 && <span className="gp-count">{todo}</span>}</h2>
           {todo === 0 && <Empty icon="✅" text="Nada pendente. Novos guias, parceiros e comissões aparecem aqui." />}
+          {stopReps.map((x) => (
+            <div key={`${x.city}-${x.stop}-${x.kind}`} className="card ad-line">
+              <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Problema numa paragem · {KIND_PT[x.kind] ?? x.kind} · {x.n} {x.n === 1 ? "relato" : "relatos"}</span>
+                <b>{getCity(x.city)?.stops.find((s) => s.id === x.stop)?.n ?? x.stop} · {getCity(x.city)?.n.pt ?? x.city}</b>
+                {x.notes?.slice(0, 3).map((n, i) => <span key={i} className="hint">“{n}”</span>)}
+                <span className="hint">Com 2 ou mais pessoas, os viajantes já veem um aviso de incerteza nesta paragem.</span></div>
+              <form action={handleStopReport} className="row" style={{ gap: 6 }}><input type="hidden" name="city" value={x.city} /><input type="hidden" name="stop" value={x.stop} /><input type="hidden" name="kind" value={x.kind} />
+                <button className="btn press" name="status" value="fixed">Corrigido</button><button className="btn ghost press" name="status" value="dismissed">Sem fundamento</button></form>
+            </div>
+          ))}
           {openReports.map(({ r, handle, name, bio, postText, postPhoto, postVideo }) => (
             <div key={r.id} className="card ad-line">
               <div className="stack" style={{ gap: 2, minWidth: 0 }}><span className="label" style={{ color: "var(--warn)" }}>Denúncia · {r.reason}</span><b>{name ?? "(perfil apagado)"} {handle ? `@${handle}` : ""}</b>{bio && <span className="hint ad-ellip">{bio}</span>}{r.note && r.note !== "chat" && <span className="hint">“{r.note}”</span>}

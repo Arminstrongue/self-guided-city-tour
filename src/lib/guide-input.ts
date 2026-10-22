@@ -15,7 +15,7 @@ export const GuideProfile = z.object({
   phone: z.string().trim().max(30).optional().default(""),
   city: z.string().refine((c) => CITIES.some((x) => x.id === c)),
   languages: z.array(z.enum(GUIDE_LANGS)).min(1).max(8),
-  bio: z.string().trim().min(40).max(1200),
+  bio: z.string().trim().min(40).max(1200).transform((b) => dedupeText(b)),
   hourly: z.coerce.number().refine((v) => v * 100 >= GUIDE_MIN_HOURLY && v * 100 <= GUIDE_MAX_HOURLY),
   maxPeople: z.coerce.number().int().min(1).max(20),
   meetingPoint: z.string().trim().max(200).optional().default(""),
@@ -59,3 +59,16 @@ export const BookBody = z.object({
   locale: z.enum(LOCALES),
   terms: z.literal(true)
 });
+
+/**
+ * Controlo editorial simples: remove frases e parágrafos repetidos (texto colado várias vezes).
+ * Compara sem acentos, maiúsculas nem espaços; mantém a primeira ocorrência e a ordem.
+ */
+export function dedupeText(text: string): string {
+  const norm = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const seen = new Set<string>();
+  return text.split(/\n{2,}/).map((para) => {
+    const parts = para.match(/[^.!?。！？]+[.!?。！？]*\s*/g) ?? [para];
+    return parts.filter((p) => { const k = norm(p); if (k.length < 12) return true; if (seen.has(k)) return false; seen.add(k); return true; }).join("").trim();
+  }).filter(Boolean).join("\n\n");
+}

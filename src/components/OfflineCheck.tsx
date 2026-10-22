@@ -44,6 +44,8 @@ export function OfflineCheck({ t, locale, city, audioLang }: { t: Dict; locale: 
       out.push(v === true ? { k: "audio", lvl: "ok", txt: fmt(t.ocAudioOk, { l: langName }) }
         : v === false ? { k: "audio", lvl: "warn", txt: fmt(t.ocAudioNo, { l: langName }) }
           : { k: "audio", lvl: "bad", txt: t.ocAudioNone });
+      let nRes = 0; try { nRes = (JSON.parse(localStorage.getItem("sgct:res") ?? "[]") as { startsAt: string }[]).filter((r) => new Date(r.startsAt).getTime() > Date.now() - 3600_000).length; } catch { /* ignorar */ }
+      out.push(nRes ? { k: "res", lvl: "ok", txt: fmt(t.ocRes, { n: nRes }) } : { k: "res", lvl: "info", txt: t.ocResNone });
       out.push(canPrefetchTiles() && info ? { k: "map", lvl: "ok", txt: t.ocMapOk } : { k: "map", lvl: "info", txt: t.ocMapSketch });
       let geo: PermissionState | "na" = "na";
       try { geo = (await navigator.permissions.query({ name: "geolocation" as PermissionName })).state; } catch { /* Safari antigo */ }

@@ -169,12 +169,15 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
               <p className="hint" style={{ margin: 0 }}>{m.text}</p>
               <div className="ex-tags">{m.h.map((h) => <span key={h} className={hobbies.includes(h) ? "on" : ""}>{HOBBY_ICON[h]} {t.hob[h]}</span>)}</div>
               <div className="ex-acts">
-                <button className={wished(m.title) ? "wish on" : "wish"} aria-pressed={wished(m.title)} onClick={() => heart({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon })}>{wished(m.title) ? "❤️" : "🤍"} {t.wlWish}</button>
-                <button onClick={() => show({ lat: m.lat, lng: m.lng, name: m.title })}>📍 {t.map}</button>
+                <button className="ex-main" onClick={() => setToPlan({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon, kind: "moment" })}>🗺 {t.plAddTo}</button>
                 <a href={goLink(m)} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
-                <a href={tiktok(`${m.title} ${cityName}`)} target="_blank" rel="noreferrer">♪ {t.exTiktok}</a>
-                <button onClick={() => setToPlan({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon, kind: "moment" })}>🗺 {t.plAddTo}</button>
-                <button onClick={() => setSave({ title: m.title, lat: m.lat, lng: m.lng })}>💾 {t.exSave}</button>
+                <details className="ex-more"><summary aria-label={t.exMore}>⋯</summary>
+                  <div className="ex-more-m">
+                    <button className={wished(m.title) ? "wish on" : "wish"} aria-pressed={wished(m.title)} onClick={() => heart({ title: m.title, lat: m.lat, lng: m.lng, icon: m.icon })}>{wished(m.title) ? "❤️" : "🤍"} {t.wlWish}</button>
+                    <button onClick={() => show({ lat: m.lat, lng: m.lng, name: m.title })}>📍 {t.map}</button>
+                    <button onClick={() => setSave({ title: m.title, lat: m.lat, lng: m.lng })}>💾 {t.exSave}</button>
+                    <a href={tiktok(`${m.title} ${cityName}`)} target="_blank" rel="noreferrer">♪ {t.exTiktok}</a>
+                  </div></details>
               </div>
             </article>
           ))}
@@ -204,13 +207,16 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
                       {p.openNow === true && <b className="ex-open"> · {t.exOpen}</b>}{p.openNow === false && <span> · {t.exClosed}</span>}
                     </span>
                     <span className="ex-acts sm">
-                      <button className={wished(p.name) ? "wish on" : "wish"} aria-pressed={wished(p.name)} aria-label={t.wlWish} onClick={() => heart({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat] })}>{wished(p.name) ? "❤️" : "🤍"}</button>
+                      <button className="ex-main" onClick={() => setToPlan({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], kind: "place" })}>🗺 {t.plAddTo}</button>
                       <a href={p.gmaps ?? (p.d < 1800 ? walkLink(p) : goLink(p))} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
-                      {gmapsKey && data.source === "google" && <button onClick={() => setSv(p)}>👁 Street View</button>}
-                      {p.web && <a href={p.web} target="_blank" rel="noreferrer">{t.exWeb}</a>}
-                      <a href={tiktok(`${p.name} ${cityName}`)} target="_blank" rel="noreferrer">♪ TikTok</a>
-                      <button onClick={() => setToPlan({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], kind: "place" })}>🗺 {t.plAddTo}</button>
-                      <button onClick={() => setSave({ title: p.name, lat: p.lat, lng: p.lng })}>💾</button>
+                      <details className="ex-more"><summary aria-label={t.exMore}>⋯</summary>
+                        <span className="ex-more-m">
+                          <button className={wished(p.name) ? "wish on" : "wish"} aria-pressed={wished(p.name)} onClick={() => heart({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat] })}>{wished(p.name) ? "❤️" : "🤍"} {t.wlWish}</button>
+                          {gmapsKey && data.source === "google" && <button onClick={() => setSv(p)}>👁 Street View</button>}
+                          {p.web && <a href={p.web} target="_blank" rel="noreferrer">{t.exWeb}</a>}
+                          <button onClick={() => setSave({ title: p.name, lat: p.lat, lng: p.lng })}>💾 {t.exSave}</button>
+                          <a href={tiktok(`${p.name} ${cityName}`)} target="_blank" rel="noreferrer">♪ TikTok</a>
+                        </span></details>
                     </span>
                   </div>
                 </div>

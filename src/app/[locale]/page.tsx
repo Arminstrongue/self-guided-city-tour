@@ -55,6 +55,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
             <span><b>{LOCALES.length}</b> {t.statLangs}</span><span>{t.f2t}</span>
           </div>
           <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.qsCta}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
+          <p className="hm-free">{t.hmFree}</p>
         </div>
         <PageQR label={t.qrScan} />
       </HomeHero>

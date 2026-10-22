@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, jsonb, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, jsonb, boolean, doublePrecision } from "drizzle-orm/pg-core";
 
 export const accessScope = pgEnum("access_scope", ["city", "all"]);
 export const merchantPlan = pgEnum("merchant_plan", ["basic", "featured", "partner"]);
@@ -526,3 +526,36 @@ export const achievements = pgTable("achievements", {
   key: text("key").notNull(),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("achievements_key_idx").on(t.email, t.key)]);
+
+/* ---------- A minha viagem: reservas e bilhetes do viajante ---------- */
+/** Reserva ou bilhete guardado pelo viajante. `localAt` é a hora local no destino (como está no bilhete); `startsAt` o instante absoluto. */
+export const reservations = pgTable("reservations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  kind: text("kind").notNull(),              // hotel | ticket | food | transport | tour | other
+  title: text("title").notNull(),
+  city: text("city").notNull().default(""),
+  localAt: text("local_at").notNull(),       // AAAA-MM-DDTHH:MM
+  tz: text("tz").notNull().default("UTC"),
+  startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+  place: text("place").notNull().default(""),
+  lat: doublePrecision("lat"),
+  lng: doublePrecision("lng"),
+  ref: text("ref").notNull().default(""),
+  notes: text("notes").notNull().default(""),
+  photo: text("photo").notNull().default(""), // imagem do bilhete (data URL comprimida)
+  paid: boolean("paid").notNull().default(false),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("reservations_email_idx").on(t.email, t.startsAt)]);
+
+/** "Reportar um problema" numa paragem (entrada errada, encerrado, preço, acessibilidade). Fica em aberto até ser verificado. */
+export const stopReports = pgTable("stop_reports", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  city: text("city").notNull(),
+  stop: text("stop").notNull(),
+  kind: text("kind").notNull(),               // entrance | closed | price | access | other
+  note: text("note").notNull().default(""),
+  reporter: text("reporter").notNull().default(""), // email (com sessão) ou impressão anónima
+  status: text("status").notNull().default("open"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("stop_reports_place_idx").on(t.city, t.stop, t.status)]);

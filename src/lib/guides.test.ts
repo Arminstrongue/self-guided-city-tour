@@ -63,3 +63,10 @@ test("registo de guia exige dados profissionais e a declaração de independente
   assert.equal(ok.success && ok.data.taxCountry, "PT");
   assert.deepEqual(missingLegal({ ...legal, insurer: " " }), ["insurer"]);
 });
+
+test("apresentação do guia: frases repetidas aparecem uma vez", async () => {
+  const { dedupeText } = await import("./guide-input");
+  const s = "Sou guia em Lisboa há 10 anos. Adoro história. Sou guia em Lisboa há 10 anos. Adoro história.";
+  assert.equal(dedupeText(s), "Sou guia em Lisboa há 10 anos. Adoro história.");
+  assert.equal(dedupeText("Olá.\n\nOlá, sou a Ana e mostro-lhe Alfama.\n\nOlá, sou a Ana e mostro-lhe Alfama."), "Olá.\n\nOlá, sou a Ana e mostro-lhe Alfama.");
+});

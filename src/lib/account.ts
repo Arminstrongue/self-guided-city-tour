@@ -43,7 +43,7 @@ export async function exportData(email: string) {
   };
 }
 
-/** Apaga a conta: perfil, publicações, conversas, notificações, memórias, planos e preferências. */
+/** Apaga a conta: perfil, publicações, conversas, notificações, memórias, planos, reservas e preferências. */
 export async function deleteAccount(email: string) {
   const d = await db();
   await deleteProfile(email); // perfil + publicações + conversas + notificações + push
@@ -56,6 +56,8 @@ export async function deleteAccount(email: string) {
   await (await import("./points")).purgePoints(email);
   await (await import("./achievements")).purgeAchievements(email);
   await (await import("./split")).purgeSplit(email);
+  await d.delete(schema.reservations).where(eq(schema.reservations.email, email));
+  await d.update(schema.stopReports).set({ reporter: "" }).where(eq(schema.stopReports.reporter, email));
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })
     .onConflictDoUpdate({ target: schema.accountSettings.email, set: { sessionsAfter: new Date(), notif: {}, dmPolicy: "circle", updatedAt: new Date() } });

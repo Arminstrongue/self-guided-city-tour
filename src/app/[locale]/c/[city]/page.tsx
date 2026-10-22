@@ -24,6 +24,7 @@ import { enabledProviders, sessionEmail } from "@/lib/auth";
 import { TOUR_PLANS } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { routeOptions } from "@/lib/route-cost";
+import { formatMoney } from "@/lib/currency";
 import { CityGallery, CityHero, StickyBook } from "@/components/Showcase";
 import { PlaceComments } from "@/components/Comments";
 import { CityHub, CityToday, CityHistory, GoodToKnow } from "@/components/CityInfo";
@@ -81,33 +82,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
-        <CityHub t={t} locale={params.locale} city={city} name={name} />
-        <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />
-        <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} {...exploreProps(city, params.locale)} />
-
-        <CityHistory t={t} name={name} k={know} />
-
         <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />
-
-        {guides.length > 0 && (
-          <section className="sec" id="guides">
-            <div className="sec-h reveal"><div><h2>{fmt(t.gdTitle, { city: name })}</h2><p>{t.gdSub}</p></div><Link href={`/${params.locale}/guides/${city.id}`}>{t.gdSeeAll}</Link></div>
-            {guides.map((g) => <GuideCard key={g.id} g={g} t={t} locale={params.locale} />)}
-          </section>
-        )}
-
-        <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
-
-        <section className="sec" id="safety">
-          <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
-          <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
-        </section>
-
-        <section className="sec" id="comments">
-          <div className="sec-h reveal"><div><h2>💬 {fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
-          <PlaceComments t={t} locale={params.locale} city={city.id} />
-        </section>
-
         {free ? (
           <section className="sec book" id="book">
             <div className="sec-h reveal"><div><h2>🎁 {t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
@@ -116,6 +91,11 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         ) : (
         <section className="sec book" id="book">
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.buySub}</p></div></div>
+          <div className="card bk-sum">
+            <b>{meta}</b>
+            <span>{fmt(t.bkTransport, { c: formatMoney(core.plan.transport, city.cur, INTL_LOCALE[params.locale]) })}</span>
+            <p className="hint">{t.bkIncl}</p>
+          </div>
           <ChosenRoute t={t} locale={params.locale} city={city.id} />
           <ExitCheck city={city} locale={params.locale} t={t} />
           <div className="book-card">
@@ -129,6 +109,25 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           </div>
         </section>
         )}
+        <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
+        <section className="sec" id="safety">
+          <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
+          <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
+        </section>
+        <CityHub t={t} locale={params.locale} city={city} name={name} />
+        <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />
+        <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} {...exploreProps(city, params.locale)} />
+        {guides.length > 0 && (
+          <section className="sec" id="guides">
+            <div className="sec-h reveal"><div><h2>{fmt(t.gdTitle, { city: name })}</h2><p>{t.gdSub}</p></div><Link href={`/${params.locale}/guides/${city.id}`}>{t.gdSeeAll}</Link></div>
+            {guides.map((g) => <GuideCard key={g.id} g={g} t={t} locale={params.locale} />)}
+          </section>
+        )}
+        <CityHistory t={t} name={name} k={know} />
+        <section className="sec" id="comments">
+          <div className="sec-h reveal"><div><h2>💬 {fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
+          <PlaceComments t={t} locale={params.locale} city={city.id} />
+        </section>
       </div>
       {!free && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}
     </main>
