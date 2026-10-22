@@ -52,7 +52,17 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   CA: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }, { k: "health", n: "811" }], help: HELP.en, pharmacy: "Pharmacy (Shoppers Drug Mart · Rexall)" },
   MX: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "078" }], help: HELP.mx, pharmacy: "Farmacia (Farmacias del Ahorro · Guadalajara)" },
   BR: { nums: [{ k: "police", n: "190" }, { k: "ambulance", n: "192" }, { k: "fire", n: "193" }], help: HELP.br, pharmacy: "Farmácia (Drogasil · Pacheco)" },
-  AR: { nums: [{ k: "sos", n: "911" }, { k: "ambulance", n: "107" }, { k: "fire", n: "100" }], help: HELP.ar_es, pharmacy: "Farmacia ✚" }
+  AR: { nums: [{ k: "sos", n: "911" }, { k: "ambulance", n: "107" }, { k: "fire", n: "100" }], help: HELP.ar_es, pharmacy: "Farmacia ✚" },
+  MA: { nums: [{ k: "police", n: "19" }, { k: "ambulance", n: "15" }, { k: "fire", n: "15" }, { k: "sos", n: "112" }], help: HELP.fr, pharmacy: "Pharmacie · صيدلية" },
+  ZA: { nums: [{ k: "police", n: "10111" }, { k: "ambulance", n: "10177" }, { k: "sos", n: "112" }], help: HELP.en, pharmacy: "Pharmacy (Clicks · Dis-Chem)" },
+  TZ: { nums: [{ k: "sos", n: "112" }], help: HELP.en, pharmacy: "Duka la dawa · Pharmacy" },
+  TN: { nums: [{ k: "police", n: "197" }, { k: "ambulance", n: "190" }, { k: "fire", n: "198" }], help: HELP.fr, pharmacy: "Pharmacie · صيدلية" },
+  ET: { nums: [{ k: "police", n: "991" }, { k: "ambulance", n: "907" }, { k: "fire", n: "939" }], help: HELP.en, pharmacy: "Pharmacy · ፋርማሲ" },
+  KE: { nums: [{ k: "sos", n: "999 / 112" }], help: HELP.en, pharmacy: "Chemist / Pharmacy" },
+  AO: { nums: [{ k: "police", n: "113" }, { k: "ambulance", n: "112" }, { k: "fire", n: "115" }], help: HELP.pt, pharmacy: "Farmácia ✚" },
+  GH: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "191" }, { k: "ambulance", n: "193" }, { k: "fire", n: "192" }], help: HELP.en, pharmacy: "Pharmacy / Chemist" },
+  RW: { nums: [{ k: "sos", n: "112" }, { k: "ambulance", n: "912" }], help: HELP.en, pharmacy: "Pharmacie / Pharmacy" },
+  SN: { nums: [{ k: "police", n: "17" }, { k: "fire", n: "18" }, { k: "ambulance", n: "1515" }], help: HELP.fr, pharmacy: "Pharmacie ✚" }
 };
 
 const UK: AlertKey[] = ["lefttraffic", "pickpocket", "snatch"];
@@ -99,7 +109,18 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   yyz: { alerts: ["pickpocket", "nightwalk"], hot: ["Union Station", "Yonge-Dundas Square", "Linha 1 do metro na hora de ponta"], night: ["Moss Park e Dundas East de madrugada"] },
   mex: { alerts: ["pickpocket", "snatch", "taxi", "atm", "drugs", "nightwalk"], hot: ["Metro (linhas 1, 2 e 3 cheias)", "Centro Histórico", "Zócalo em dias de evento"], night: ["Tepito e Doctores", "Centro Histórico depois das 22h", "Táxis apanhados na rua"], tp: "Polícia: 911 · use táxis de sítio, autorizados ou apps" },
   rio: { alerts: ["snatch", "pickpocket", "atm", "drugs", "bar", "nightwalk"], hot: ["Praias (telemóvel e pertences)", "Lapa à noite", "Centro", "Escadaria Selarón"], night: ["Praias depois do anoitecer", "Centro ao fim de semana", "Comunidades sem guia local"], tp: "Delegacia Especial de Apoio ao Turismo (DEAT): +55 21 2332-2924" },
-  bue: { alerts: ["pickpocket", "snatch", "stain", "atm", "taxi", "nightwalk"], hot: ["Subte e autocarros cheios", "Florida e Lavalle", "San Telmo ao domingo", "La Boca fora do Caminito"], night: ["La Boca", "Constitución", "Retiro (estação)"], tp: "Polícia Turística: 0800-999-5000 · 911" }
+  bue: { alerts: ["pickpocket", "snatch", "stain", "atm", "taxi", "nightwalk"], hot: ["Subte e autocarros cheios", "Florida e Lavalle", "San Telmo ao domingo", "La Boca fora do Caminito"], night: ["La Boca", "Constitución", "Retiro (estação)"], tp: "Polícia Turística: 0800-999-5000 · 911" },
+  rak: { alerts: ["shop", "pickpocket", "taxi", "photo", "dress", "heat"], hot: ["Jemaa el-Fna", "Souks", "Bab Doukkala"], night: ["Ruelas vazias da medina", "Arredores da praça depois da meia-noite"], tp: "Brigada turística: Jemaa el-Fna · 19" },
+  cas: { alerts: ["snatch", "pickpocket", "taxi", "shop", "nightwalk"], hot: ["Medina antiga", "Casa Voyageurs", "Elétrico T1"], night: ["Medina antiga", "Zona do porto"] },
+  cpt: { alerts: ["snatch", "atm", "lefttraffic", "nightwalk", "pickpocket"], hot: ["Long Street", "Estações de comboio", "Multibancos no centro", "Trilhos isolados da montanha"], night: ["Centro depois do fecho das lojas", "Comboios suburbanos à noite", "Praias vazias"], tp: "Polícia: 10111 · CTICC e Waterfront têm segurança própria" },
+  zan: { alerts: ["shop", "pickpocket", "dress", "drugs", "lefttraffic"], hot: ["Forodhani à noite", "Darajani", "Praias (vendedores «beach boys»)"], night: ["Ruelas de Stone Town depois das 22h"] },
+  tun: { alerts: ["shop", "pickpocket", "taxi", "dress"], hot: ["Medina", "Avenida Habib Bourguiba", "TGM"], night: ["Medina depois do pôr do sol"] },
+  add: { alerts: ["pickpocket", "snatch", "helpers", "taxi", "nightwalk"], hot: ["Merkato", "Piazza", "Meskel Square"], night: ["Ruas sem iluminação", "Bole à saída dos bares"] },
+  nbo: { alerts: ["snatch", "pickpocket", "atm", "taxi", "lefttraffic", "nightwalk"], hot: ["CBD (centro)", "Paragens de matatu", "Multibancos de rua"], night: ["Andar a pé no centro", "Uhuru Park", "River Road"], tp: "Polícia: 999 · 112 · use táxis de app" },
+  lad: { alerts: ["snatch", "atm", "taxi", "photo", "nightwalk"], hot: ["Marginal", "Mercados", "Paragens de candongueiro"], night: ["Andar a pé fora da Ilha e da Marginal", "Zonas sem iluminação"], tp: "Polícia: 113 · não fotografe edifícios do Estado, militares nem a polícia" },
+  acc: { alerts: ["pickpocket", "snatch", "shop", "taxi"], hot: ["Makola", "Kwame Nkrumah Circle", "Jamestown sem guia"], night: ["Praias depois do anoitecer", "Ruas escuras de Osu"] },
+  kgl: { alerts: ["law", "photo"], hot: ["Mercado de Kimironko", "Paragens de mota-táxi"], night: [], tp: "Polícia: 112 · sacos de plástico proibidos; capacete obrigatório na mota-táxi" },
+  dkr: { alerts: ["shop", "pickpocket", "snatch", "taxi", "nightwalk"], hot: ["Mercado Sandaga", "Porto de Gorée", "Plateau"], night: ["Corniche deserta", "Praias à noite"] }
 };
 
 type T = [string, string];

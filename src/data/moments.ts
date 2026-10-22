@@ -327,6 +327,83 @@ export const MOMENTS: Record<string, Moment[]> = {
     m("bue-feria", "🧺", "weekend", ["shopping", "music"], -34.6205, -58.3717, ["Feira de San Telmo ao domingo", "Antiguidades e artesanato pela rua Defensa, com tango improvisado na praça."], ["San Telmo fair on Sunday", "Antiques and crafts along Defensa street, with impromptu tango on the square."]),
     m("bue-ateneo", "📚", "day", ["art", "architecture"], -34.5959, -58.3943, ["Livraria El Ateneo Grand Splendid", "Um teatro de 1919 transformado numa das livrarias mais bonitas do mundo."], ["El Ateneo Grand Splendid", "A 1919 theatre turned into one of the world's most beautiful bookshops."]),
     m("bue-puerto-madero", "🌅", "sunset", ["photo", "architecture"], -34.6083, -58.3633, ["Pôr do sol em Puerto Madero", "A Puente de la Mujer de Calatrava e as docas de tijolo ao entardecer."], ["Sunset in Puerto Madero", "Calatrava's Puente de la Mujer and the brick docks at dusk."])
+  ],
+  rak: [
+    m("rak-rooftop", "🌅", "sunset", ["photo", "food"], 31.6258, -7.9891, ["Pôr do sol num terraço sobre a Jemaa el-Fna", "Chá de hortelã enquanto o chamamento à oração ecoa e os grelhados se acendem lá em baixo."], ["Sunset on a rooftop over Jemaa el-Fna", "Mint tea as the call to prayer echoes and the grills light up below."]),
+    m("rak-hammam", "🧖", "day", ["wellness"], 31.6295, -7.9878, ["Hammam tradicional", "Banho de vapor, sabão preto e esfoliação com luva kessa, num hammam de bairro ou de riad."], ["A traditional hammam", "Steam, black soap and a kessa-glove scrub, at a neighbourhood or riad hammam."]),
+    m("rak-agafay", "🐪", "sunset", ["adventure", "nature"], 31.4533, -8.1789, ["Deserto de Agafay", "Pedras e dunas a 40 minutos da cidade, com o Atlas ao fundo e jantar sob as estrelas."], ["Agafay desert", "Stony dunes 40 minutes from the city, with the Atlas behind and dinner under the stars."]),
+    m("rak-atlas", "⛰", "morning", ["nature", "adventure"], 31.1367, -7.9196, ["Dia no Alto Atlas (Imlil)", "Aldeias berberes, socalcos de nogueiras e caminhadas à sombra do Toubkal."], ["A day in the High Atlas (Imlil)", "Berber villages, walnut terraces and walks below Toubkal."]),
+    m("rak-cooking", "🍲", "day", ["food"], 31.6318, -7.9862, ["Aula de cozinha marroquina", "Compre no souk e aprenda a fazer tajine, pão e saladas num riad."], ["Moroccan cooking class", "Shop in the souk and learn tagine, bread and salads in a riad."])
+  ],
+  cas: [
+    m("cas-hassan-sunset", "🌅", "sunset", ["photo", "architecture"], 33.6086, -7.6326, ["Pôr do sol na Mesquita Hassan II", "O minarete fica dourado e o Atlântico bate na esplanada de mármore."], ["Sunset at the Hassan II Mosque", "The minaret turns gold as the Atlantic breaks against the marble esplanade."]),
+    m("cas-ricks", "🎹", "night", ["music", "food", "night"], 33.6052, -7.6177, ["Rick's Café", "O bar inspirado no filme «Casablanca», com piano ao vivo, junto à medina."], ["Rick's Café", "The bar inspired by the film «Casablanca», with live piano, by the medina."]),
+    m("cas-fish", "🐟", "day", ["food"], 33.5953, -7.6157, ["Peixe no Mercado Central", "Escolha o peixe nas bancas e coma-o grelhado nos restaurantes ao lado."], ["Fish at the Central Market", "Pick your fish at the stalls and eat it grilled next door."]),
+    m("cas-pastries", "🍪", "morning", ["food", "cafe"], 33.5772, -7.604, ["Bolos marroquinos no Habous", "Cornos de gazela e chebakia na pastelaria Bennis, com chá de hortelã."], ["Moroccan pastries in the Habous", "Gazelle horns and chebakia at Bennis, with mint tea."]),
+    m("cas-corniche-walk", "🌊", "sunset", ["beach", "sport"], 33.594, -7.672, ["Passeio na Corniche", "Corredores, surfistas e cafés de praia de Ain Diab ao entardecer."], ["A walk on the Corniche", "Joggers, surfers and Ain Diab's beach cafés at dusk."])
+  ],
+  cpt: [
+    m("cpt-lionshead", "🌅", "sunset", ["nature", "adventure", "photo"], -33.9353, 18.3891, ["Pôr do sol no Lion's Head", "Subida de 1h30 com correntes no fim; desça com lanterna e em grupo."], ["Sunset on Lion's Head", "A 90-minute climb with chains near the top; come down with a torch and in a group."]),
+    m("cpt-penguins", "🐧", "day", ["nature", "family"], -34.1972, 18.4515, ["Pinguins de Boulders Beach", "Uma colónia de pinguins-africanos numa praia de rochedos, em Simon's Town."], ["Penguins at Boulders Beach", "A colony of African penguins on a boulder beach in Simon's Town."]),
+    m("cpt-capepoint", "🧭", "day", ["nature", "adventure"], -34.3568, 18.4975, ["Cabo da Boa Esperança", "O farol, as falésias e a estrada de Chapman's Peak a caminho."], ["Cape of Good Hope", "The lighthouse, the cliffs and the Chapman's Peak drive on the way."]),
+    m("cpt-wine", "🍷", "day", ["wine", "food"], -34.0246, 18.4239, ["Vinho em Constantia", "As quintas mais antigas do hemisfério sul, a 20 minutos da cidade."], ["Wine in Constantia", "The southern hemisphere's oldest wine estates, 20 minutes from the city."]),
+    m("cpt-noongun", "💥", "day", ["history", "photo"], -33.9139, 18.4097, ["O canhão do meio-dia em Signal Hill", "Todos os dias, exceto domingo, dispara-se o canhão das 12h como desde 1806."], ["The Noon Gun on Signal Hill", "Every day except Sunday the noon cannon fires, as it has since 1806."])
+  ],
+  zan: [
+    m("zan-dhow", "⛵", "sunset", ["photo", "nature"], -6.1617, 39.188, ["Pôr do sol num dhow", "Um barco tradicional à vela ao largo de Stone Town, quando o sol cai no mar."], ["Sunset on a dhow", "A traditional sailing boat off Stone Town as the sun sinks into the sea."]),
+    m("zan-nightmarket", "🍢", "night", ["food", "budget"], -6.1617, 39.188, ["Mercado noturno de Forodhani", "Espetadas de marisco, «pizza de Zanzibar» e sumo de cana com gengibre."], ["Forodhani night market", "Seafood skewers, «Zanzibar pizza» and ginger sugar-cane juice."]),
+    m("zan-spice", "🌿", "morning", ["food", "nature"], -6.0833, 39.25, ["Passeio das especiarias", "Cravinho, canela, noz-moscada e baunilha nas plantações do interior da ilha."], ["Spice tour", "Cloves, cinnamon, nutmeg and vanilla in the island's inland plantations."]),
+    m("zan-jozani", "🐒", "day", ["nature", "family"], -6.2519, 39.4089, ["Floresta de Jozani", "O único lugar do mundo com o macaco-colobo-vermelho de Zanzibar."], ["Jozani Forest", "The only place in the world with the Zanzibar red colobus monkey."]),
+    m("zan-taarab", "🎵", "night", ["music"], -6.1627, 39.1886, ["Música taarab", "A música swahili de cordas e poesia, em concertos no Forte Antigo e no Dhow Countries Music Academy."], ["Taarab music", "Swahili music of strings and poetry, in concerts at the Old Fort and the Dhow Countries Music Academy."])
+  ],
+  tun: [
+    m("tun-nattes", "🌅", "sunset", ["photo", "cafe"], 36.8706, 10.3424, ["Chá de pinhões no Café des Nattes", "No alto de Sidi Bou Said, sobre os telhados brancos e o golfo de Tunes."], ["Pine-nut tea at Café des Nattes", "Atop Sidi Bou Said, over the white rooftops and the Gulf of Tunis."]),
+    m("tun-carthage", "🏛", "day", ["history"], 36.8528, 10.3233, ["Ruínas de Cartago", "As termas de Antonino à beira-mar e a colina de Byrsa, onde Roma destruiu Cartago."], ["The ruins of Carthage", "The seaside Antonine Baths and Byrsa Hill, where Rome destroyed Carthage."]),
+    m("tun-cafe-medina", "☕", "day", ["cafe", "history"], 36.7985, 10.1712, ["Café na medina", "Um café turco ou chá num café tradicional sob as abóbadas, com narguilés à volta."], ["Coffee in the medina", "A Turkish coffee or tea in a vaulted traditional café, with water pipes all around."]),
+    m("tun-marsa", "🏖", "weekend", ["beach", "food"], 36.8781, 10.3247, ["Praia e brik em La Marsa", "A praia dos tunisinos ao fim de semana, com brik e sorvetes na marginal."], ["Beach and brik in La Marsa", "Where Tunisians go to the beach at weekends, with brik and ice cream on the seafront."]),
+    m("tun-malouf", "🎵", "night", ["music"], 36.7998, 10.1806, ["Malouf ao vivo", "A música arábico-andaluza tunisina em casas da medina e no Teatro Municipal."], ["Live malouf", "Tunisian Arab-Andalusian music in medina houses and at the Municipal Theatre."])
+  ],
+  add: [
+    m("add-coffee", "☕", "day", ["food", "cafe"], 9.0349, 38.7509, ["Cerimónia do café", "Grãos torrados à sua frente, incenso e três rondas de café servidas numa jebena."], ["The coffee ceremony", "Beans roasted in front of you, incense and three rounds of coffee from a jebena."]),
+    m("add-dance", "💃", "night", ["music", "food", "night"], 8.9946, 38.7889, ["Jantar com danças tradicionais", "Injera, tibs e o «eskista», a dança dos ombros, num restaurante cultural."], ["Dinner with traditional dance", "Injera, tibs and «eskista», the shoulder dance, at a cultural restaurant."]),
+    m("add-entoto-hike", "🌲", "morning", ["nature", "sport"], 9.0822, 38.7649, ["Caminhada em Entoto", "Ar fresco a 3.000 metros, eucaliptos e os corredores de fundo a treinar ao amanhecer."], ["A walk on Entoto", "Fresh air at 3,000 metres, eucalyptus and long-distance runners training at dawn."]),
+    m("add-meskel", "🎉", "day", ["festival", "history"], 9.0105, 38.7613, ["Meskel e Timkat", "As grandes festas ortodoxas: a fogueira de Meskel em setembro e a Epifania de Timkat em janeiro."], ["Meskel and Timkat", "The great Orthodox festivals: the Meskel bonfire in September and Timkat Epiphany in January."]),
+    m("add-jazz", "🎷", "night", ["music"], 9.0105, 38.7613, ["Ethio-jazz ao vivo", "O som de Mulatu Astatke em clubes de jazz da cidade, ao fim de semana."], ["Live Ethio-jazz", "The sound of Mulatu Astatke in the city's jazz clubs at weekends."])
+  ],
+  nbo: [
+    m("nbo-safari", "🦁", "morning", ["nature", "adventure"], -1.3733, 36.8589, ["Safari no Parque Nacional de Nairobi", "Leões, girafas e rinocerontes com os arranha-céus ao fundo; saia às 6h."], ["Safari in Nairobi National Park", "Lions, giraffes and rhinos with skyscrapers in the background; leave at 6 am."]),
+    m("nbo-nyamachoma", "🍖", "night", ["food"], -1.2921, 36.8219, ["Nyama choma", "Carne grelhada com kachumbari e ugali, a refeição de fim de semana dos quenianos."], ["Nyama choma", "Grilled meat with kachumbari and ugali, Kenya's weekend meal."]),
+    m("nbo-karura", "🌳", "day", ["nature", "sport"], -1.2427, 36.8338, ["Floresta de Karura", "Trilhos, uma cascata e grutas numa floresta urbana protegida."], ["Karura Forest", "Trails, a waterfall and caves in a protected urban forest."]),
+    m("nbo-maasai", "🛍", "weekend", ["shopping"], -1.2833, 36.8172, ["Maasai Market", "Mercado itinerante de artesanato: contas, cestos e tecidos shuka; o local muda conforme o dia."], ["Maasai Market", "A roving craft market of beads, baskets and shuka cloth; the location changes by day."]),
+    m("nbo-coffee", "☕", "day", ["cafe", "food"], -1.2634, 36.8027, ["Café queniano", "Prove os cafés AA de Nyeri e Kiambu nas torrefações de Westlands."], ["Kenyan coffee", "Taste AA coffees from Nyeri and Kiambu at Westlands roasters."])
+  ],
+  lad: [
+    m("lad-sunset", "🌅", "sunset", ["photo", "beach"], -8.792, 13.229, ["Pôr do sol na Ilha", "O sol cai no Atlântico enquanto se acendem as esplanadas da Ilha de Luanda."], ["Sunset on the Ilha", "The sun sets into the Atlantic as the Ilha's terraces light up."]),
+    m("lad-semba", "💃", "night", ["music", "night"], -8.81, 13.235, ["Semba e kizomba ao vivo", "Noites de música angolana e dança em clubes e restaurantes da cidade."], ["Live semba and kizomba", "Nights of Angolan music and dance in the city's clubs and restaurants."]),
+    m("lad-mussulo", "🏝", "weekend", ["beach", "nature"], -8.9333, 13.0833, ["Fim de semana no Mussulo", "Barco para a restinga de praias calmas e areia branca, a sul da cidade."], ["A weekend on Mussulo", "A boat to the sand spit of calm beaches and white sand south of the city."]),
+    m("lad-benfica", "🧺", "day", ["shopping", "art"], -8.9452, 13.1938, ["Mercado de artesanato do Benfica", "Máscaras, esculturas em madeira, pinturas e tecidos de todo o país."], ["Benfica craft market", "Masks, wood carvings, paintings and fabrics from across the country."]),
+    m("lad-muamba", "🍲", "day", ["food"], -8.8137, 13.2311, ["Muamba de galinha", "O prato nacional, com óleo de palma, quiabos e funge, num restaurante tradicional."], ["Chicken muamba", "The national dish, with palm oil, okra and funge, at a traditional restaurant."])
+  ],
+  acc: [
+    m("acc-highlife", "🎵", "night", ["music", "night"], 5.5605, -0.1835, ["Highlife ao vivo", "Bandas de highlife e afrobeats nos bares de Osu ao fim de semana."], ["Live highlife", "Highlife and Afrobeats bands in Osu's bars at weekends."]),
+    m("acc-waakye", "🍛", "morning", ["food", "budget"], 5.556, -0.182, ["Waakye ao pequeno-almoço", "Arroz e feijão com shito, ovo e esparguete, numa banca de rua."], ["Waakye for breakfast", "Rice and beans with shito, egg and spaghetti from a street stall."]),
+    m("acc-chalewote", "🎨", "day", ["art", "festival"], 5.5341, -0.2128, ["Festival Chale Wote", "Em agosto, Jamestown enche-se de arte de rua, música e performances."], ["Chale Wote festival", "In August, Jamestown fills with street art, music and performance."]),
+    m("acc-aburi", "🌿", "day", ["nature"], 5.8499, -0.1786, ["Jardins Botânicos de Aburi", "Jardins de 1890 nas colinas frescas a norte, com vista para a planície de Acra."], ["Aburi Botanical Gardens", "1890 gardens in the cool hills to the north, overlooking the Accra plain."]),
+    m("acc-sunset-jt", "🌅", "sunset", ["photo", "history"], 5.5341, -0.2128, ["Pôr do sol no farol de Jamestown", "Do alto do farol vê-se o porto de pesca e as canoas a regressar."], ["Sunset at Jamestown lighthouse", "From the lighthouse you see the fishing harbour and canoes coming home."])
+  ],
+  kgl: [
+    m("kgl-umuganda", "🧹", "weekend", ["history"], -1.9536, 30.0605, ["Umuganda", "No último sábado do mês, das 8h às 11h, o país faz trabalho comunitário: lojas e transportes param."], ["Umuganda", "On the last Saturday of the month, 8 to 11 am, the country does community work: shops and transport pause."]),
+    m("kgl-carfree", "🚲", "weekend", ["sport", "family"], -1.9536, 30.0605, ["Domingo sem carros", "No 1.º e 3.º domingo de manhã, avenidas fechadas para correr, pedalar e fazer aeróbica."], ["Car-free Sunday", "On the 1st and 3rd Sunday mornings, avenues close for running, cycling and aerobics."]),
+    m("kgl-coffee", "☕", "day", ["cafe", "food"], -1.9535, 30.0927, ["Café ruandês", "Prova de cafés de alta altitude em torrefações como a Question Coffee, que apoia produtoras."], ["Rwandan coffee", "Taste high-altitude coffees at roasters such as Question Coffee, which supports women growers."]),
+    m("kgl-mtkigali", "⛰", "morning", ["nature", "sport"], -1.9867, 30.0347, ["Subida ao Monte Kigali", "Trilho até ao miradouro sobre as colinas da cidade das mil colinas."], ["Climbing Mount Kigali", "A trail to the lookout over the city of a thousand hills."]),
+    m("kgl-nyamirambo-dinner", "🍢", "night", ["food", "night"], -1.9795, 30.043, ["Brochettes em Nyamirambo", "Espetadas de cabra e banana-pão grelhada nas esplanadas animadas à noite."], ["Brochettes in Nyamirambo", "Goat skewers and grilled plantain on the lively terraces at night."])
+  ],
+  dkr: [
+    m("dkr-lacrose", "🩷", "day", ["nature", "photo"], 14.8392, -17.2342, ["Lago Rosa (Retba)", "O lago cor-de-rosa onde se apanha sal à mão, a uma hora de Dacar."], ["Lac Rose (Retba)", "The pink lake where salt is gathered by hand, an hour from Dakar."]),
+    m("dkr-mbalax", "🥁", "night", ["music", "night"], 14.6928, -17.4467, ["Mbalax ao vivo", "A música de tambores sabar de Youssou N'Dour, em clubes de Dacar ao fim de semana."], ["Live mbalax", "The sabar-drum music of Youssou N'Dour, in Dakar clubs at weekends."]),
+    m("dkr-ngor", "🏄", "day", ["beach", "sport"], 14.7536, -17.5139, ["Surf e piroga em Ngor", "Ondas para todos os níveis e a ilha de Ngor a cinco minutos de piroga."], ["Surf and pirogue at Ngor", "Waves for every level and Ngor Island five minutes away by pirogue."]),
+    m("dkr-thieb", "🍲", "day", ["food"], 14.6694, -17.4275, ["Thiéboudienne ao almoço", "O prato nacional de arroz, peixe e legumes, tradicionalmente partilhado numa travessa."], ["Thiéboudienne for lunch", "The national dish of rice, fish and vegetables, traditionally shared from one platter."]),
+    m("dkr-corniche-sunset", "🌅", "sunset", ["sport", "photo"], 14.6936, -17.4728, ["Pôr do sol na Corniche Ouest", "Ginásios ao ar livre e lutadores a treinar à beira do Atlântico."], ["Sunset on the Corniche Ouest", "Outdoor gyms and wrestlers training by the Atlantic."])
   ]
 };
 
@@ -346,5 +423,8 @@ export const AGENDA: Record<string, string> = {
   chi: "https://www.timeout.com/chicago/things-to-do", bos: "https://www.meetboston.com/events", mia: "https://www.timeout.com/miami/things-to-do",
   lax: "https://www.timeout.com/los-angeles/things-to-do", las: "https://www.timeout.com/las-vegas/things-to-do", msy: "https://www.neworleans.com/events/",
   mco: "https://www.visitorlando.com/events/", yyz: "https://www.timeout.com/toronto/things-to-do", mex: "https://www.timeout.com/mexico-city/things-to-do",
-  rio: "https://www.timeout.com/rio-de-janeiro/things-to-do", bue: "https://www.timeout.com/buenos-aires/things-to-do"
+  rio: "https://www.timeout.com/rio-de-janeiro/things-to-do", bue: "https://www.timeout.com/buenos-aires/things-to-do",
+  rak: "https://allevents.in/marrakech", cas: "https://allevents.in/casablanca", cpt: "https://www.capetown.travel/events/", zan: "https://allevents.in/zanzibar",
+  tun: "https://allevents.in/tunis", add: "https://allevents.in/addis-ababa", nbo: "https://allevents.in/nairobi", lad: "https://allevents.in/luanda",
+  acc: "https://allevents.in/accra", kgl: "https://allevents.in/kigali", dkr: "https://allevents.in/dakar"
 };

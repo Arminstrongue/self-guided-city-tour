@@ -3,6 +3,17 @@
  * ("Coliseu", "Torre de Belém", "A e B"); nos outros idiomas mostramos o nome internacional.
  */
 const EN: Record<string, string> = {
+  "rak-koutoubia": "Koutoubia Mosque", "rak-jemaa": "Jemaa el-Fna Square", "rak-souks": "Souks & Ben Youssef Madrasa", "rak-bahia": "Bahia Palace", "rak-saadian": "Saadian Tombs & Kasbah", "rak-majorelle": "Majorelle Garden & Yves Saint Laurent Museum",
+  "cas-unite": "Mohammed V Square & Art Deco centre", "cas-sacrecoeur": "Sacré-Cœur Cathedral & Arab League Park", "cas-habous": "Habous Quarter", "cas-medina": "Old Medina & Skala", "cas-hassan": "Hassan II Mosque", "cas-corniche": "Ain Diab Corniche",
+  "cpt-castle": "Castle of Good Hope & District Six", "cpt-kirstenbosch": "Kirstenbosch Botanical Garden",
+  "znz-forodhani": "Forodhani Gardens", "znz-fort": "Old Fort", "znz-palace": "House of Wonders & Sultan's Palace", "znz-cathedral": "Anglican Cathedral & former Slave Market", "znz-darajani": "Darajani Market", "znz-prison": "Prison Island (Changuu)",
+  "tun-bourguiba": "Avenue Habib Bourguiba", "tun-zitouna": "Zitouna Mosque & souks", "tun-bardo": "Bardo Museum", "tun-sidibou": "Sidi Bou Said & Carthage",
+  "add-unity": "Unity Park (National Palace)", "add-trinity": "Holy Trinity Cathedral", "add-museum": "National Museum (Lucy)", "add-piazza": "Piazza & Tomoca coffee", "add-entoto": "Mount Entoto & Entoto Park",
+  "nbo-museum": "Nairobi National Museum", "nbo-kicc": "KICC & city centre", "nbo-sheldrick": "Sheldrick Elephant Orphanage", "nbo-karen": "Karen Blixen Museum",
+  "lad-marginal": "Luanda Marginal", "lad-baixa": "Baixa: Nazaré Church & Iron Palace", "lad-fortaleza": "Fortress of São Miguel", "lad-memorial": "António Agostinho Neto Memorial", "lad-ilha": "Ilha de Luanda", "lad-lua": "Miradouro da Lua",
+  "acc-nkrumah": "Kwame Nkrumah Memorial Park", "acc-jamestown": "Jamestown & the lighthouse", "acc-makola": "Makola Market", "acc-independence": "Independence Square (Black Star Square)", "acc-osu": "Osu & Oxford Street", "acc-labadi": "Labadi Beach",
+  "kgl-memorial": "Kigali Genocide Memorial", "kgl-kimironko": "Kimironko Market", "kgl-palace": "Presidential Palace Museum (Kanombe)",
+  "dkr-plateau": "Independence Square", "dkr-kermel": "Kermel Market", "dkr-goree": "Gorée Island", "dkr-mcn": "Museum of Black Civilisations", "dkr-renaissance": "African Renaissance Monument", "dkr-almadies": "Pointe des Almadies & Ngor",
   "la-olvera": "Olvera Street & Union Station", "la-gcm": "Grand Central Market & Angels Flight", "la-disney": "Walt Disney Concert Hall & The Broad", "la-hollywood": "Hollywood Walk of Fame", "la-griffith": "Griffith Observatory", "la-santamonica": "Santa Monica Pier & Venice",
   "lv-sign": "Welcome to Fabulous Las Vegas sign", "lv-bellagio": "Bellagio Fountains", "lv-caesars": "Caesars Palace & Forum Shops", "lv-venetian": "The Venetian & Sphere",
   "nola-jackson": "Jackson Square & St. Louis Cathedral", "nola-cafe": "Café du Monde & French Market", "nola-bourbon": "Bourbon Street & Preservation Hall", "nola-garden": "St. Charles Streetcar & Garden District",
@@ -65,6 +76,10 @@ export function stopName(s: { id: string; n: string }, locale: string): string {
 
 /** Indicações de linhas e percursos (escritas em português em cities.ts) em inglês para os outros idiomas. */
 const LINE_EN: [RegExp, string][] = [
+  [/Paragem /g, "Stop "], [/Pelos souks/g, "Through the souks"], [/Pelas ruelas/g, "Through the lanes"], [/Pelo boulevard/g, "Along the boulevard"], [/Pela rua /g, "Along "],
+  [/ e Darling/g, " and Darling"], [/Barco desde a praia de/g, "Boat from the beach at"], [/Barco para/g, "Boat to"], [/ para o aeroporto/g, " to the airport"], [/táxi para/g, "taxi to"],
+  [/Chaloupe de regresso → a pé/g, "Ferry back → on foot"], [/Chaloupe do porto de Dakar/g, "Ferry from Dakar port"], [/Mota-táxi ou táxi/g, "Moto taxi or taxi"], [/Metro ligeiro/g, "Light rail"],
+  [/Táxi amarelo/g, "Yellow taxi"], [/pela Estrada de Samba/g, "via Estrada de Samba"], [/Táxi do aeroporto/g, "Airport taxi"], [/Comboio de/g, "Train from"],
   [/Pela ponte pedonal/g, "Over the footbridge"], [/Táxi autorizado/g, "Authorised taxi"], [/Desde /g, "From "], [/Trem do Corcovado/g, "Corcovado train"],
   [/Linha Prata/g, "Silver Line"], [/Linha Laranja/g, "Orange Line"], [/Elétrico F \(elétricos históricos\)/g, "F-line streetcar (historic)"], [/grátis desde o aeroporto/g, "free from the airport"],
   [/autocarro do terminal/g, "terminal shuttle"], [/Pelo Reflecting Pool/g, "Along the Reflecting Pool"], [/Pela 5\.ª Avenida/g, "Along Fifth Avenue"], [/Porta do Dragão/g, "Dragon Gate"],

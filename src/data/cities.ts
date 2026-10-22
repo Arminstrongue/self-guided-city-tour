@@ -38,6 +38,7 @@ import { ME_CITIES, ME_NAMES } from "./cities-me";
 import { MORE_CITIES, MORE_CITY_NAMES } from "./cities-more";
 import { US_CITIES, US_NAMES } from "./cities-world";
 import { AMERICAS_CITIES, AMERICAS_NAMES } from "./cities-americas";
+import { AFRICA_CITIES, AFRICA_NAMES } from "./cities-africa";
 
 const W = (min: number, line = ""): Leg => ({ m: "walk", min, line });
 const names = (pt: string, en: string, es: string, fr: string, de: string) => ({ pt, en, es, fr, de });
@@ -295,7 +296,8 @@ export const CITIES: City[] = [
   ...MORE_CITIES,
   ...ME_CITIES,
   ...US_CITIES,
-  ...AMERICAS_CITIES
+  ...AMERICAS_CITIES,
+  ...AFRICA_CITIES
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
@@ -331,7 +333,8 @@ const MORE_NAMES: Record<string, Record<string, string>> = {
   ...ME_NAMES,
   ...MORE_CITY_NAMES,
   ...US_NAMES,
-  ...AMERICAS_NAMES
+  ...AMERICAS_NAMES,
+  ...AFRICA_NAMES
 };
 /* Turco, russo e coreano. */
 for (const [id, [tr, ru, ko]] of Object.entries({

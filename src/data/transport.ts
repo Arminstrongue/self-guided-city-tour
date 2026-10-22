@@ -237,5 +237,50 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("subte", "🚇", "Subte (cartão SUBE ou contactless)", "Subte (SUBE card or contactless)", 1400, "trip"), T("colectivo", "🚌", "Autocarro (colectivo)", "City bus (colectivo)", 700, "trip"),
     T("tiendaleon", "✈", "Tienda León Ezeiza → Puerto Madero", "Tienda León Ezeiza → Puerto Madero", 20000, "trip"), T("ecobici", "🚲", "EcoBici (passe de 1 dia)", "EcoBici (day pass)", 3000, "day"),
     T("uber", "🚗", "Uber/Cabify no centro", "Uber/Cabify in the centre", 7000, "ride"), T("taxi", "🚕", "Remis Ezeiza → centro", "Remis Ezeiza → centre", 45000, "ride")
+  ],
+  rak: [
+    T("bus19", "✈", "Autocarro 19 Aeroporto ↔ Medina", "Bus 19 Airport ↔ Medina", 30, "trip"), T("bus", "🚌", "Autocarro urbano Alsa", "Alsa city bus", 4, "trip"),
+    T("petit", "🚕", "Petit taxi na cidade (com taxímetro)", "Petit taxi in town (metered)", 20, "ride"), T("caleche", "🐴", "Caleche (passeio de charrete, por hora)", "Calèche (horse carriage, per hour)", 150, "ride")
+  ],
+  cas: [
+    T("tram", "🚋", "Elétrico de Casablanca", "Casablanca tram", 8, "trip"), T("train", "✈", "Comboio ONCF Aeroporto ↔ Casa Voyageurs", "ONCF train Airport ↔ Casa Voyageurs", 50, "trip"),
+    T("petit", "🚕", "Petit taxi vermelho (com taxímetro)", "Red petit taxi (metered)", 20, "ride"), T("grand", "🚖", "Grand taxi para o aeroporto", "Grand taxi to the airport", 300, "ride")
+  ],
+  cpt: [
+    T("myciti", "🚌", "Autocarro MyCiTi (myconnect)", "MyCiTi bus (myconnect)", 15, "trip"), T("a01", "✈", "MyCiTi A01 Aeroporto ↔ Civic Centre", "MyCiTi A01 Airport ↔ Civic Centre", 100, "trip"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 60, "ride"), T("hop", "🚌", "Autocarro turístico hop-on hop-off (1 dia)", "Hop-on hop-off bus (1 day)", 300, "day")
+  ],
+  zan: [
+    T("daladala", "🚐", "Dala-dala (miniautocarro)", "Dala-dala (minibus)", 1000, "trip"), T("taxi", "🚕", "Táxi aeroporto ↔ Stone Town", "Taxi airport ↔ Stone Town", 30000, "ride"),
+    T("boat", "⛵", "Barco para a Ilha da Prisão", "Boat to Prison Island", 40000, "trip"), T("ferry", "⛴", "Ferry rápido para Dar es Salaam", "Fast ferry to Dar es Salaam", 90000, "trip")
+  ],
+  tun: [
+    T("metro", "🚋", "Metro ligeiro de Tunes", "Tunis light rail", 0.8, "trip"), T("tgm", "🚆", "Comboio TGM (Cartago, Sidi Bou Said, La Marsa)", "TGM train (Carthage, Sidi Bou Said, La Marsa)", 1, "trip"),
+    T("taxi", "🚕", "Táxi amarelo (com taxímetro)", "Yellow taxi (metered)", 6, "ride"), T("bolt", "🚗", "Bolt no centro", "Bolt in the centre", 8, "ride")
+  ],
+  add: [
+    T("lrt", "🚋", "Metro ligeiro de Adis Abeba", "Addis Ababa light rail", 6, "trip"), T("minibus", "🚐", "Minibus azul e branco", "Blue-and-white minibus", 15, "trip"),
+    T("ride", "🚗", "Ride/Feres no centro", "Ride/Feres in the centre", 300, "ride"), T("taxi", "🚕", "Táxi do aeroporto ao centro", "Airport taxi to the centre", 600, "ride")
+  ],
+  nbo: [
+    T("matatu", "🚐", "Matatu (miniautocarro)", "Matatu (minibus)", 100, "trip"), T("sgr", "🚆", "Comboio SGR para Mombaça (económica)", "SGR train to Mombasa (economy)", 1500, "trip"),
+    T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 500, "ride"), T("taxi", "🚕", "Uber/Bolt aeroporto → centro", "Uber/Bolt airport → centre", 2000, "ride")
+  ],
+  lad: [
+    T("candongueiro", "🚐", "Candongueiro (táxi coletivo)", "Candongueiro (shared minibus)", 300, "trip"), T("yango", "🚗", "Yango/Heetch no centro", "Yango/Heetch in the centre", 2500, "ride"),
+    T("taxi", "🚕", "Táxi aeroporto NBJ → centro", "Taxi NBJ airport → centre", 25000, "ride"), T("boat", "⛵", "Barco para o Mussulo", "Boat to Mussulo", 5000, "trip")
+  ],
+  acc: [
+    T("trotro", "🚐", "Trotro (miniautocarro)", "Trotro (minibus)", 7, "trip"), T("uber", "🚗", "Uber/Bolt no centro", "Uber/Bolt in the centre", 40, "ride"),
+    T("taxi", "🚕", "Uber/Bolt aeroporto → centro", "Uber/Bolt airport → centre", 80, "ride"), T("okada", "🏍", "Mota-táxi (pouco segura)", "Motorbike taxi (unsafe)", 20, "ride")
+  ],
+  kgl: [
+    T("bus", "🚌", "Autocarro urbano (cartão Tap&Go)", "City bus (Tap&Go card)", 500, "trip"), T("moto", "🏍", "Mota-táxi com capacete", "Moto taxi with helmet", 1000, "ride"),
+    T("move", "🚗", "Táxi Move/Yego no centro", "Move/Yego taxi in the centre", 5000, "ride"), T("taxi", "🚕", "Táxi aeroporto → centro", "Taxi airport → centre", 8000, "ride")
+  ],
+  dkr: [
+    T("brt", "🚌", "BRT de Dacar", "Dakar BRT", 400, "trip"), T("ter", "🚆", "TER (comboio regional)", "TER (regional train)", 1000, "trip"),
+    T("chaloupe", "⛴", "Chaloupe para Gorée (ida e volta, estrangeiros)", "Gorée ferry (return, foreigners)", 5200, "trip"), T("taxi", "🚕", "Táxi no centro (combinar o preço)", "Taxi in the centre (agree the price)", 2000, "ride"),
+    T("aibd", "✈", "Táxi AIBD → centro", "Taxi AIBD → centre", 25000, "ride")
   ]
 };

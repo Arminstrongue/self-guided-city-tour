@@ -171,6 +171,76 @@ export const COUNTRY_CUSTOMS: Record<string, Custom[]> = {
     c("🧉", ["Mate", "A infusão partilhada: se lhe oferecerem, beba e devolva ao «cebador»; dizer «gracias» significa que não quer mais."], ["Mate", "The shared infusion: if offered, drink and hand it back to the «cebador»; saying «gracias» means you're done."]),
     c("💵", ["Gorjetas e dinheiro", "10% nos restaurantes, em dinheiro. A inflação é alta: os preços mudam com frequência."], ["Tipping and money", "10% in restaurants, in cash. Inflation is high: prices change often."]),
     c("🗣", ["Frases úteis", "Che (ei, amigo) · Dale (combinado) · ¿Cuánto sale? · La cuenta, por favor. Aqui diz-se «vos» em vez de «tú»."], ["Useful phrases", "Che (hey, mate) · Dale (OK) · ¿Cuánto sale? (how much?) · La cuenta, por favor. People say «vos» instead of «tú»."])
+  ],
+  MA: [
+    c("👋", ["Cumprimentar", "«Salam alaykum» com a mão no peito; entre homens, aperto de mão e beijos na face entre amigos."], ["Greetings", "«Salam alaykum» with a hand on the heart; handshakes between men, cheek kisses among friends."]),
+    c("🍵", ["Chá", "Recusar o chá de hortelã é descortês: aceite pelo menos um copo."], ["Tea", "Refusing mint tea is impolite: accept at least one glass."]),
+    c("🛍", ["Regatear", "Nos souks o preço é uma conversa: sorria, faça uma contraproposta e esteja pronto a sair."], ["Haggling", "In the souks the price is a conversation: smile, counter-offer and be ready to walk away."]),
+    c("🕌", ["Religião", "Sexta-feira ao meio-dia é a oração principal; no Ramadão evite comer em público durante o dia."], ["Religion", "Friday noon is the main prayer; during Ramadan avoid eating in public by day."]),
+    c("🗣", ["Frases úteis", "Salam · Shukran (obrigado) · La, shukran (não, obrigado) · Bshhal? (quanto custa?). Fala-se também francês."], ["Useful phrases", "Salam · Shukran (thanks) · La, shukran (no, thanks) · Bshhal? (how much?). French is widely spoken."])
+  ],
+  ZA: [
+    c("🌈", ["Nação arco-íris", "Onze línguas oficiais e muitas culturas; «Howzit?» é o olá de todos."], ["Rainbow nation", "Eleven official languages and many cultures; «Howzit?» is everyone's hello."]),
+    c("🔥", ["Braai", "O churrasco é ritual nacional, sobretudo ao fim de semana e a 24 de setembro, o Dia da Herança."], ["Braai", "Barbecue is a national ritual, especially at weekends and on 24 September, Heritage Day."]),
+    c("💵", ["Gorjetas", "10–15% nos restaurantes; os «car guards» que vigiam o carro esperam umas moedas."], ["Tipping", "10–15% in restaurants; the «car guards» watching your car expect a few coins."]),
+    c("⏰", ["«Now now»", "«Just now» pode querer dizer daqui a bocado ou nunca; «now now» é mesmo já."], ["«Now now»", "«Just now» can mean in a while or never; «now now» means right away."]),
+    c("🗣", ["Frases úteis", "Howzit (olá) · Lekker (ótimo) · Robot (semáforo) · Sharp (está bem)."], ["Useful phrases", "Howzit (hello) · Lekker (great) · Robot (traffic light) · Sharp (OK)."])
+  ],
+  TZ: [
+    c("👋", ["Cumprimentar", "Cumprimentar é importante: «Jambo» ou «Mambo?» e perguntar como está antes de qualquer pedido."], ["Greetings", "Greetings matter: «Jambo» or «Mambo?» and ask how someone is before any request."]),
+    c("🐢", ["Pole pole", "«Devagar, devagar»: o ritmo é tranquilo, a paciência é bem-vista."], ["Pole pole", "«Slowly, slowly»: the pace is relaxed and patience is appreciated."]),
+    c("🤚", ["Mão direita", "Dê e receba dinheiro e comida com a mão direita."], ["Right hand", "Give and receive money and food with your right hand."]),
+    c("📷", ["Fotografias", "Peça sempre antes de fotografar pessoas, sobretudo mulheres e os masai."], ["Photos", "Always ask before photographing people, especially women and Maasai."]),
+    c("🗣", ["Frases úteis", "Jambo · Asante (obrigado) · Hakuna matata (sem problema) · Bei gani? (quanto custa?)."], ["Useful phrases", "Jambo · Asante (thanks) · Hakuna matata (no problem) · Bei gani? (how much?)."])
+  ],
+  TN: [
+    c("👋", ["Cumprimentar", "«Aslema» ou «Bonjour»; aperto de mão e beijos na face entre amigos."], ["Greetings", "«Aslema» or «Bonjour»; handshakes and cheek kisses among friends."]),
+    c("☕", ["Cafés", "Os cafés são o ponto de encontro dos homens; as mulheres preferem os salões de chá e as esplanadas."], ["Cafés", "Cafés are where men meet; women tend to prefer tea rooms and terraces."]),
+    c("🌶", ["Harissa", "A pasta de malagueta vai em quase tudo; peça «sans piment» se quiser sem picante."], ["Harissa", "The chilli paste goes in almost everything; ask «sans piment» if you want it mild."]),
+    c("💶", ["Gorjetas", "10% nos restaurantes e arredondar nos táxis."], ["Tipping", "10% in restaurants and round up in taxis."]),
+    c("🗣", ["Frases úteis", "Aslema · Yaishek (obrigado) · Kaddesh? (quanto?) · Merci. O francês é muito falado."], ["Useful phrases", "Aslema · Yaishek (thanks) · Kaddesh? (how much?) · Merci. French is widely spoken."])
+  ],
+  ET: [
+    c("📅", ["Outro calendário", "A Etiópia tem 13 meses e conta os anos com 7–8 anos de diferença; as horas começam às 6h da manhã."], ["Another calendar", "Ethiopia has 13 months and counts years 7–8 behind; hours start at 6 am."]),
+    c("☕", ["O café nasceu aqui", "A cerimónia do café é uma honra: aceite as três rondas se tiver tempo."], ["Coffee was born here", "The coffee ceremony is an honour: accept all three rounds if you have time."]),
+    c("🍽", ["Gursha", "Dar comida à boca de um convidado é sinal de amizade; come-se com a mão direita."], ["Gursha", "Feeding a guest by hand is a sign of friendship; eat with your right hand."]),
+    c("⛪", ["Jejum", "Às quartas e sextas muitos ortodoxos não comem carne: é o melhor dia para pratos vegetarianos."], ["Fasting", "On Wednesdays and Fridays many Orthodox Christians eat no meat: the best day for vegetarian dishes."]),
+    c("🗣", ["Frases úteis", "Selam (olá) · Ameseginalehu (obrigado) · Sint new? (quanto custa?)."], ["Useful phrases", "Selam (hello) · Ameseginalehu (thank you) · Sint new? (how much?)."])
+  ],
+  KE: [
+    c("👋", ["Cumprimentar", "«Jambo» para turistas, «Sasa?» entre jovens; aperto de mão longo e caloroso."], ["Greetings", "«Jambo» for tourists, «Sasa?» among young people; a long, warm handshake."]),
+    c("📱", ["M-Pesa", "O dinheiro móvel nasceu aqui em 2007 e paga quase tudo, até bancas de fruta."], ["M-Pesa", "Mobile money was born here in 2007 and pays for almost everything, even fruit stalls."]),
+    c("🏃", ["Corredores", "O país dos campeões de fundo: de madrugada vê-se gente a treinar em todo o lado."], ["Runners", "The land of distance champions: at dawn people are training everywhere."]),
+    c("🦁", ["Safari", "Fale baixo nos parques, não saia do carro e não dê comida aos animais."], ["Safari", "Speak softly in the parks, stay in the vehicle and never feed animals."]),
+    c("🗣", ["Frases úteis", "Habari? (como está?) · Asante (obrigado) · Pole (desculpe) · Ngapi? (quanto?)."], ["Useful phrases", "Habari? (how are you?) · Asante (thanks) · Pole (sorry) · Ngapi? (how much?)."])
+  ],
+  AO: [
+    c("👋", ["Cumprimentar", "Aperto de mão e um «Bom dia» a todos; entre amigos, um abraço e o «Tás bom?»."], ["Greetings", "A handshake and «Bom dia» to everyone; among friends, a hug and «Tás bom?»."]),
+    c("🎶", ["Música", "Semba, kizomba e kuduro nasceram aqui; dança-se em casamentos, festas e ao domingo."], ["Music", "Semba, kizomba and kuduro were born here; people dance at weddings, parties and on Sundays."]),
+    c("🗣", ["Português de Angola", "Muitas palavras vêm do kimbundu: «kumbu» (dinheiro), «bué» (muito), «candongueiro» (táxi coletivo)."], ["Angolan Portuguese", "Many words come from Kimbundu: «kumbu» (money), «bué» (a lot), «candongueiro» (shared minibus)."]),
+    c("🍽", ["Refeições", "O almoço de domingo em família é sagrado, com funge, muamba e calulu."], ["Meals", "Family Sunday lunch is sacred, with funge, muamba and calulu."]),
+    c("🎉", ["Festas", "O Carnaval de Luanda desfila na Marginal; a 11 de novembro celebra-se a independência."], ["Festivals", "Luanda's Carnival parades along the Marginal; independence is celebrated on 11 November."])
+  ],
+  GH: [
+    c("👋", ["Cumprimentar", "Cumprimente da direita para a esquerda numa sala e use sempre a mão direita."], ["Greetings", "Greet a room from right to left and always use your right hand."]),
+    c("🤝", ["O estalido", "O aperto de mão ganense acaba com um estalido dos dedos."], ["The snap", "The Ghanaian handshake ends with a finger snap."]),
+    c("👕", ["Sexta-feira africana", "Às sextas muita gente veste tecidos wax e kente no trabalho."], ["African Friday", "On Fridays many people wear wax-print and kente to work."]),
+    c("🏛", ["Akwaaba", "«Bem-vindo» ouve-se em todo o lado; a hospitalidade é motivo de orgulho."], ["Akwaaba", "«Welcome» is heard everywhere; hospitality is a source of pride."]),
+    c("🗣", ["Frases úteis", "Akwaaba (bem-vindo) · Medaase (obrigado) · Ete sen? (como está?) · Chale (amigo)."], ["Useful phrases", "Akwaaba (welcome) · Medaase (thank you) · Ete sen? (how are you?) · Chale (mate)."])
+  ],
+  RW: [
+    c("👋", ["Cumprimentar", "«Muraho» com aperto de mão; entre amigos, um abraço de lado três vezes."], ["Greetings", "«Muraho» with a handshake; among friends, a side hug three times."]),
+    c("🧹", ["Umuganda", "No último sábado do mês de manhã há trabalho comunitário: tudo para até às 11h."], ["Umuganda", "On the last Saturday morning of the month there's community work: everything pauses until 11 am."]),
+    c("🕯", ["Memória", "Abril marca o Kwibuka, a comemoração do genocídio de 1994: é um período de luto e discrição."], ["Remembrance", "April marks Kwibuka, the commemoration of the 1994 genocide: a time of mourning and restraint."]),
+    c("♻️", ["Cidade limpa", "Sacos de plástico proibidos e ruas impecáveis; não deite lixo no chão."], ["A clean city", "Plastic bags banned and spotless streets; never litter."]),
+    c("🗣", ["Frases úteis", "Muraho (olá) · Murakoze (obrigado) · Amakuru? (como está?). Inglês e francês também se falam."], ["Useful phrases", "Muraho (hello) · Murakoze (thank you) · Amakuru? (how are you?). English and French are also spoken."])
+  ],
+  SN: [
+    c("🤝", ["Teranga", "A hospitalidade senegalesa: quem visita é convidado a comer e a beber chá attaya."], ["Teranga", "Senegalese hospitality: visitors are invited to eat and drink attaya tea."]),
+    c("👋", ["Cumprimentar", "«Salaam aleekum», aperto de mão longo e perguntas sobre a família."], ["Greetings", "«Salaam aleekum», a long handshake and questions about the family."]),
+    c("🍽", ["À mesa", "Come-se de uma travessa comum com a mão direita; os melhores pedaços vão para o convidado."], ["At the table", "Meals are shared from one platter with the right hand; the best pieces go to the guest."]),
+    c("🤼", ["Luta senegalesa", "A «laamb» enche estádios ao domingo, com tambores e rituais antes do combate."], ["Senegalese wrestling", "«Laamb» fills stadiums on Sundays, with drums and rituals before the bout."]),
+    c("🗣", ["Frases úteis", "Nanga def? (como está?) · Jërëjëf (obrigado) · Ñaata la? (quanto?). Fala-se francês."], ["Useful phrases", "Nanga def? (how are you?) · Jërëjëf (thank you) · Ñaata la? (how much?). French is spoken."])
   ]
 };
 
@@ -231,5 +301,27 @@ export const CITY_COMMUNITIES: Record<string, Custom[]> = {
   rio: [c("🥁", ["Carnaval e samba", "Os ensaios das escolas de samba começam meses antes do Carnaval e são abertos ao público."], ["Carnival and samba", "Samba school rehearsals start months before Carnival and are open to the public."]),
     c("🏐", ["Cultura de praia", "Futevólei, frescobol e o mergulho ao fim do dia; cada posto de praia tem a sua tribo."], ["Beach culture", "Footvolley, paddleball and a sunset swim; every lifeguard post has its own tribe."])],
   bue: [c("💃", ["Tango", "O tango nasceu nos bairros do porto; as milongas são bailes onde se dança até de madrugada."], ["Tango", "Tango was born in the port districts; milongas are dances that go on till dawn."]),
-    c("☕", ["Cafés notáveis", "A cidade protege dezenas de «bares notables» históricos; tomar um cortado e ler o jornal é ritual."], ["Notable cafés", "The city protects dozens of historic «bares notables»; a cortado and the newspaper is a ritual."])]
+    c("☕", ["Cafés notáveis", "A cidade protege dezenas de «bares notables» históricos; tomar um cortado e ler o jornal é ritual."], ["Notable cafés", "The city protects dozens of historic «bares notables»; a cortado and the newspaper is a ritual."])],
+  rak: [c("🎭", ["Contadores de histórias", "A Jemaa el-Fna é Património Oral da UNESCO: contadores, músicos e curandeiros mantêm tradições de séculos."], ["Storytellers", "Jemaa el-Fna is UNESCO Oral Heritage: storytellers, musicians and healers keep centuries-old traditions alive."]),
+    c("🏠", ["Riads", "Atrás das paredes cegas escondem-se pátios com fontes e laranjeiras: muitos são hoje casas de hóspedes."], ["Riads", "Behind blank walls hide courtyards with fountains and orange trees: many are now guesthouses."])],
+  cas: [c("🏙", ["A capital económica", "A maior cidade do Magrebe vive mais depressa: negócios, Art Déco e surf na mesma tarde."], ["The economic capital", "The Maghreb's largest city moves faster: business, Art Deco and surfing in one afternoon."]),
+    c("🎬", ["O filme", "«Casablanca» de 1942 foi filmado em Hollywood, mas o Rick's Café recriou o bar em 2004."], ["The film", "The 1942 «Casablanca» was shot in Hollywood, but Rick's Café recreated the bar in 2004."])],
+  cpt: [c("🕌", ["Cultura malaia do Cabo", "Descendentes de escravos e exilados do sudeste asiático, com a sua cozinha e as mesquitas do Bo-Kaap."], ["Cape Malay culture", "Descendants of enslaved people and exiles from Southeast Asia, with their cuisine and the Bo-Kaap mosques."]),
+    c("🎺", ["Kaapse Klopse", "A 2 de janeiro, trupes de músicos com fatos brilhantes desfilam pelo centro."], ["Kaapse Klopse", "On 2 January, troupes of musicians in shiny suits parade through the centre."])],
+  zan: [c("🚪", ["Portas de Zanzibar", "As portas de madeira esculpida mostram o estatuto da família: as indianas têm pregos de latão, as árabes têm versos do Corão."], ["Zanzibar doors", "Carved wooden doors show the family's status: Indian ones have brass studs, Arab ones carry Koranic verses."]),
+    c("🎤", ["Freddie Mercury", "O cantor dos Queen nasceu em Stone Town em 1946; há um pequeno museu na casa da família."], ["Freddie Mercury", "Queen's singer was born in Stone Town in 1946; there's a small museum in the family home."])],
+  tun: [c("🏺", ["Três mil anos", "Fenícios, romanos, árabes, otomanos e franceses deixaram marcas a poucos quilómetros uns dos outros."], ["Three thousand years", "Phoenicians, Romans, Arabs, Ottomans and the French left their mark within a few kilometres."]),
+    c("🔵", ["Azul de Sidi Bou Said", "Desde 1915 as portas e janelas da aldeia são obrigatoriamente azuis e as paredes brancas."], ["Sidi Bou Said blue", "Since 1915 the village's doors and windows must be blue and the walls white."])],
+  add: [c("🌍", ["Capital de África", "Sede da União Africana e de dezenas de embaixadas: ouve-se amárico, oromo, inglês e francês."], ["Africa's capital", "Home to the African Union and dozens of embassies: you'll hear Amharic, Oromo, English and French."]),
+    c("🏃", ["Corrida", "A Great Ethiopian Run de novembro junta dezenas de milhares de corredores de verde."], ["Running", "November's Great Ethiopian Run brings together tens of thousands of runners in green."])],
+  nbo: [c("🌳", ["Cidade verde ao sol", "A única capital do mundo com um parque nacional de leões e rinocerontes dentro dos limites."], ["Green city in the sun", "The only capital in the world with a national park of lions and rhinos inside its limits."]),
+    c("🚐", ["Matatus", "Os miniautocarros pintados com grafítis e música alta são arte de rua em movimento."], ["Matatus", "Minibuses painted with graffiti and blasting music are moving street art."])],
+  lad: [c("🌊", ["Vida na Ilha", "Ao fim de semana, Luanda vai para a Ilha e para o Mussulo: praia, peixe grelhado e música até tarde."], ["Island life", "At weekends Luanda heads to the Ilha and Mussulo: beach, grilled fish and music until late."]),
+    c("🛺", ["Candongueiros", "Os miniautocarros azuis e brancos com cobradores a gritar os destinos são o transporte de quase todos."], ["Candongueiros", "Blue-and-white minibuses with conductors shouting destinations are how almost everyone gets around."])],
+  acc: [c("⚰️", ["Caixões de fantasia", "Os artesãos ga fazem caixões em forma de peixe, avião ou garrafa: celebram a vida de quem parte."], ["Fantasy coffins", "Ga craftsmen make coffins shaped like fish, planes or bottles: they celebrate the life of the departed."]),
+    c("🎶", ["Afrobeats", "Acra é uma das capitais da música africana; dezembro é a época dos concertos e do regresso da diáspora."], ["Afrobeats", "Accra is one of the capitals of African music; December is the season of concerts and the diaspora's return."])],
+  kgl: [c("🏍", ["Mota-táxi", "As motas com coletes numerados levam um passageiro com capacete por toda a cidade."], ["Moto taxis", "Motorbikes with numbered vests carry one helmeted passenger all over the city."]),
+    c("🌱", ["País das mil colinas", "A cidade espalha-se por colinas verdes: as distâncias a pé são curtas, mas sobe-se muito."], ["Land of a thousand hills", "The city spreads over green hills: walking distances are short, but there's lots of climbing."])],
+  dkr: [c("🕌", ["Confrarias", "Os mourides e outras confrarias sufis marcam a vida da cidade; o café Touba nasceu delas."], ["Brotherhoods", "The Mourides and other Sufi brotherhoods shape city life; Touba coffee comes from them."]),
+    c("🚌", ["Car rapide", "Os velhos autocarros pintados à mão com as palavras «Alhamdoulilah» são um ícone, embora estejam a ser substituídos."], ["Car rapide", "The old hand-painted buses inscribed «Alhamdoulilah» are an icon, though they are being replaced."])]
 };

@@ -50,6 +50,17 @@ const LAT_TOILET: Tip = { k: "toilet", pt: "Casas de banho em centros comerciais
 const latSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Guarde o telemóvel ao andar na rua e use táxis de app ou autorizados. ${pt}`, en: `Keep your phone away while walking and use app or authorised taxis. ${en}` });
 const lat = (emergency: string, sim: Tip, pay: Tip, tip: Tip, safety: Tip, plug: Tip, food: Food[], extra: Tip[] = []): Practical => ({ emergency, tips: [BAG, sim, pay, tip, LAT_WATER, safety, plug, LAT_TOILET, ...extra], food });
 
+/* ---------- África ---------- */
+const AF_WATER: Tip = { k: "water", pt: "Beba água engarrafada ou filtrada e evite gelo de origem duvidosa; confirme que a garrafa vem selada.", en: "Drink bottled or filtered water and avoid ice of doubtful origin; check that bottles are sealed." };
+const AF_CASH: Tip = { k: "pay", pt: "Cartão nos hotéis, centros comerciais e restaurantes maiores; dinheiro local nos mercados, táxis e bancas. Levante em multibancos dentro de bancos ou centros comerciais.", en: "Cards at hotels, malls and bigger restaurants; local cash for markets, taxis and stalls. Withdraw at ATMs inside banks or malls." };
+const afSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Use táxis de app ou do hotel, guarde o telemóvel na rua e evite andar a pé depois do anoitecer em zonas vazias. ${pt}`, en: `Use app or hotel taxis, keep your phone away in the street and avoid walking after dark in empty areas. ${en}` });
+const plug = (pt: string, en: string): Tip => ({ k: "plug", pt, en });
+const tip = (pt: string, en: string): Tip => ({ k: "tip", pt, en });
+const af = (emergency: string, pay: Tip, t: Tip, safety: Tip, p: Tip, food: Food[], extra: Tip[] = [], water: Tip = AF_WATER): Practical => ({ emergency, tips: [BAG, LAT_SIM, pay, t, water, safety, p, LAT_TOILET, ...extra], food });
+const MA_DRESS: Tip = { k: "dress", pt: "Ombros e joelhos cobertos na medina e nos monumentos; os não muçulmanos não entram nas mesquitas, exceto onde há visitas (Hassan II).", en: "Cover shoulders and knees in the medina and at monuments; non-Muslims may not enter mosques, except where tours exist (Hassan II)." };
+const MA_TIP = tip("Gorjeta de 10% nos restaurantes e umas moedas a guias, arrumadores e a quem posa para fotos. Regateie nos souks: comece em metade do preço.", "Tip 10% in restaurants and a few coins to guides, parking attendants and anyone posing for photos. Haggle in the souks: start at half the price.");
+const MA_PAY: Tip = { k: "pay", pt: "Dirham (MAD) em dinheiro para souks, petits taxis e bancas; cartão nos riads e restaurantes maiores. Exija o taxímetro no petit taxi.", en: "Dirhams (MAD) in cash for souks, petit taxis and stalls; cards at riads and bigger restaurants. Insist on the meter in petit taxis." };
+
 /* ---------- Alemanha e Áustria ---------- */
 const DE_PAY: Tip = { k: "pay", pt: "Cartão e contactless são aceites cada vez mais, mas padarias, bancas e algumas tabernas ainda só aceitam dinheiro: leve algum.", en: "Cards and contactless are increasingly accepted, but bakeries, stalls and some taverns are still cash-only: carry some." };
 const DE_TIP: Tip = { k: "tip", pt: "Arredonde 5–10% e diga o total ao pagar, em vez de deixar dinheiro na mesa.", en: "Round up 5–10% and tell the server the total when paying, rather than leaving money on the table." };
@@ -415,5 +426,71 @@ export const PRACTICAL: Record<string, Practical> = {
     { n: "Empanadas", p: 2500, pt: "Cada empanada de carne ou queijo.", en: "Per beef or cheese empanada." },
     { n: "Medialunas", p: 1500, pt: "Croissants doces ao pequeno-almoço com café.", en: "Sweet croissants with coffee for breakfast." },
     { n: "Malbec", p: 8000, pt: "Um copo de malbec de Mendoza.", en: "A glass of Mendoza malbec." }
+  ]),
+  rak: af("19 / 15", MA_PAY, MA_TIP, afSafety("Diga «não, obrigado» com firmeza aos falsos guias; as ruelas mudam de nome e o GPS falha na medina.", "Say «no, thank you» firmly to fake guides; lanes change name and GPS struggles in the medina."), plug("Tomadas tipo C/E, 220 V.", "Type C/E sockets, 220 V."), [
+    { n: "Tajine", p: 80, pt: "Guisado cozinhado lentamente no prato de barro, de frango com limão ou borrego com ameixas.", en: "Slow-cooked stew in the clay dish, chicken with lemon or lamb with prunes." },
+    { n: "Tanjia", p: 90, pt: "A especialidade de Marraquexe: borrego cozinhado nas cinzas do hammam.", en: "Marrakech's speciality: lamb cooked in the ashes of the hammam." },
+    { n: "Sumo de laranja", p: 10, pt: "Sumo espremido na hora numa banca da Jemaa el-Fna.", en: "Fresh-squeezed juice from a Jemaa el-Fna stall." },
+    { n: "Chá de hortelã", p: 15, pt: "O «whisky berbere», servido de alto e muito doce.", en: "The «Berber whisky», poured from a height and very sweet." }
+  ], [MA_DRESS]),
+  cas: af("19 / 15", MA_PAY, MA_TIP, afSafety("Atenção a esticões de telemóvel por motociclistas no centro.", "Watch out for phone snatching by motorcyclists downtown."), plug("Tomadas tipo C/E, 220 V.", "Type C/E sockets, 220 V."), [
+    { n: "Peixe grelhado", p: 120, pt: "Peixe e marisco do dia no Mercado Central.", en: "Catch of the day and seafood at the Central Market." },
+    { n: "Couscous", p: 70, pt: "Sêmola com legumes e carne, prato tradicional de sexta-feira.", en: "Semolina with vegetables and meat, the traditional Friday dish." },
+    { n: "Harira", p: 15, pt: "Sopa de tomate, lentilhas e grão.", en: "Tomato, lentil and chickpea soup." },
+    { n: "Pastéis Bennis", p: 25, pt: "Doces de amêndoa e mel do bairro Habous.", en: "Almond and honey pastries from the Habous quarter." }
+  ], [MA_DRESS]),
+  cpt: af("10111 / 112", { k: "pay", pt: "Cartão e contactless em quase todo o lado; o MyCiTi usa o cartão myconnect. Leve pouco dinheiro vivo.", en: "Cards and contactless almost everywhere; MyCiTi uses the myconnect card. Carry little cash." }, tip("Gorjeta de 10–15% nos restaurantes; dê 5–10 rand aos arrumadores de carros e aos frentistas.", "Tip 10–15% in restaurants; give 5–10 rand to car guards and petrol attendants."), afSafety("Trânsito pela esquerda. Não faça trilhos sozinho na montanha e use multibancos dentro de centros comerciais.", "Traffic drives on the left. Don't hike the mountain alone and use ATMs inside malls."), plug("Tomadas tipo M/N, 230 V: leve adaptador.", "Type M/N sockets, 230 V: bring an adapter."), [
+    { n: "Bobotie", p: 140, pt: "Carne picada com especiarias e cobertura de ovo, receita malaia do Cabo.", en: "Spiced mince with an egg topping, a Cape Malay recipe." },
+    { n: "Gatsby", p: 90, pt: "Sandes gigante de batatas fritas e carne para partilhar.", en: "A giant chip-and-meat sandwich to share." },
+    { n: "Fish and chips", p: 120, pt: "Peixe hake frito no porto de Kalk Bay.", en: "Fried hake at Kalk Bay harbour." },
+    { n: "Vinho de Stellenbosch", p: 70, pt: "Um copo de pinotage ou chenin blanc.", en: "A glass of pinotage or chenin blanc." }
+  ], [], { k: "water", pt: "A água da torneira é potável na Cidade do Cabo; poupe-a, a região tem secas.", en: "Tap water is safe in Cape Town; use it sparingly, the region has droughts." }),
+  zan: af("112", AF_CASH, tip("Gorjeta de 10% nos restaurantes; os preços para turistas são muitas vezes em dólares, mas pagar em xelins sai mais barato.", "Tip 10% in restaurants; tourist prices are often in dollars, but paying in shillings is cheaper."), afSafety("Trânsito pela esquerda. Desde 2024 Zanzibar exige um seguro de viagem próprio, comprado online antes de chegar.", "Traffic drives on the left. Since 2024 Zanzibar requires its own travel insurance, bought online before arrival."), plug("Tomadas tipo G (e D), 230 V: leve adaptador.", "Type G (and D) sockets, 230 V: bring an adapter."), [
+    { n: "Pizza de Zanzibar", p: 6000, pt: "Massa fina recheada e frita na chapa, salgada ou de banana com Nutella.", en: "Thin dough stuffed and fried on the griddle, savoury or banana and Nutella." },
+    { n: "Espetadas de marisco", p: 10000, pt: "Lagosta, polvo ou peixe grelhado no mercado de Forodhani.", en: "Grilled lobster, octopus or fish at the Forodhani market." },
+    { n: "Urojo", p: 4000, pt: "A «sopa misturada» de Zanzibar, ácida e picante.", en: "Zanzibar «mix», a tangy, spicy soup." },
+    { n: "Sumo de cana", p: 2000, pt: "Cana espremida com gengibre e lima.", en: "Pressed sugar cane with ginger and lime." }
+  ], [{ k: "dress", pt: "Ilha muçulmana conservadora: em Stone Town cubra ombros e joelhos; fato de banho só na praia. No Ramadão não coma nem beba na rua de dia.", en: "A conservative Muslim island: in Stone Town cover shoulders and knees; swimwear only on the beach. During Ramadan don't eat or drink in the street by day." }]),
+  tun: af("197 / 190", { k: "pay", pt: "O dinar (TND) só se troca dentro do país: guarde os recibos de câmbio. Dinheiro para medina, táxis e cafés.", en: "The dinar (TND) can only be exchanged inside the country: keep exchange receipts. Cash for the medina, taxis and cafés." }, tip("Gorjeta de 10% nos restaurantes e arredondar nos táxis (exija o taxímetro).", "Tip 10% in restaurants and round up in taxis (insist on the meter)."), afSafety("Os vendedores da medina podem ser insistentes: um não firme chega.", "Medina sellers can be pushy: a firm no is enough."), plug("Tomadas tipo C/E, 230 V.", "Type C/E sockets, 230 V."), [
+    { n: "Brik", p: 3, pt: "Folha crocante com ovo, atum e salsa.", en: "A crisp pastry with egg, tuna and parsley." },
+    { n: "Couscous de peixe", p: 25, pt: "O couscous tunisino, picante com harissa.", en: "Tunisian couscous, spicy with harissa." },
+    { n: "Lablabi", p: 5, pt: "Sopa de grão com pão, cominhos e ovo, ao pequeno-almoço.", en: "Chickpea soup with bread, cumin and egg, for breakfast." },
+    { n: "Chá de pinhões", p: 6, pt: "Chá de hortelã com pinhões, no Café des Nattes.", en: "Mint tea with pine nuts, at Café des Nattes." }
+  ], [MA_DRESS]),
+  add: af("991 / 907", AF_CASH, tip("Gorjeta de 10% nos restaurantes; muitos já incluem serviço na conta.", "Tip 10% in restaurants; many already include service."), afSafety("A cidade está a 2.355 m: beba água e vá com calma no primeiro dia. Telemóveis são roubados no Merkato e na Piazza.", "The city sits at 7,700 ft: drink water and take it easy on day one. Phones get snatched in Merkato and Piazza."), plug("Tomadas tipo C/E/F, 220 V.", "Type C/E/F sockets, 220 V."), [
+    { n: "Injera e tibs", p: 450, pt: "Panqueca fermentada de teff com carne salteada; come-se com a mão direita.", en: "Fermented teff pancake with sautéed meat; eaten with the right hand." },
+    { n: "Beyaynetu", p: 300, pt: "Travessa vegana de lentilhas, couve e grão, nas quartas e sextas de jejum.", en: "Vegan platter of lentils, greens and chickpeas, on Wednesday and Friday fasting days." },
+    { n: "Macchiato", p: 60, pt: "O macchiato etíope, herança italiana.", en: "The Ethiopian macchiato, an Italian legacy." },
+    { n: "Tej", p: 200, pt: "Hidromel tradicional de mel.", en: "Traditional honey wine." }
+  ], [{ k: "dress", pt: "Nas igrejas ortodoxas descalce-se e cubra ombros e joelhos; as mulheres cobrem o cabelo.", en: "In Orthodox churches remove your shoes and cover shoulders and knees; women cover their hair." }]),
+  nbo: af("999 / 112", { k: "pay", pt: "O M-Pesa é usado para quase tudo; os estrangeiros podem ativá-lo com o passaporte. Cartão nos centros comerciais e hotéis.", en: "M-Pesa is used for almost everything; visitors can activate it with a passport. Cards at malls and hotels." }, tip("Gorjeta de 10% nos restaurantes e aos guias de safari por dia.", "Tip 10% in restaurants and give safari guides a daily tip."), afSafety("Trânsito pela esquerda. Não ande a pé no centro à noite e não mostre telemóvel nem relógio.", "Traffic drives on the left. Don't walk downtown at night and don't show your phone or watch."), plug("Tomadas tipo G, 240 V: leve adaptador.", "Type G sockets, 240 V: bring an adapter."), [
+    { n: "Nyama choma", p: 1200, pt: "Cabra ou vaca grelhada, com kachumbari.", en: "Grilled goat or beef with kachumbari." },
+    { n: "Ugali e sukuma wiki", p: 300, pt: "Papa de milho com couve salteada.", en: "Maize porridge with sautéed greens." },
+    { n: "Chapati", p: 50, pt: "Pão achatado, herança indiana da costa.", en: "Flatbread, an Indian legacy from the coast." },
+    { n: "Café queniano", p: 300, pt: "Um café filtrado de grãos AA.", en: "A filter coffee of AA beans." }
+  ]),
+  lad: af("113 / 112", { k: "pay", pt: "O kwanza (AOA) só se usa no país; muitos sítios aceitam Multicaixa e alguns cartões estrangeiros. Leve dinheiro para mercados e táxis.", en: "The kwanza (AOA) is only used in Angola; many places take Multicaixa and some foreign cards. Carry cash for markets and taxis." }, tip("Gorjeta de 5–10% nos restaurantes; arredonde nos táxis.", "Tip 5–10% in restaurants; round up in taxis."), afSafety("Não fotografe edifícios do Estado, militares nem a polícia, e leve sempre uma cópia do passaporte. Os candongueiros são baratos mas não seguem um horário.", "Don't photograph government buildings, the military or police, and always carry a copy of your passport. Candongueiro minibuses are cheap but keep no timetable."), plug("Tomadas tipo C/F, 220 V.", "Type C/F sockets, 220 V."), [
+    { n: "Muamba de galinha", p: 9000, pt: "Galinha em óleo de palma com quiabos e funge.", en: "Chicken in palm oil with okra and funge." },
+    { n: "Calulu", p: 8000, pt: "Peixe seco com legumes e óleo de palma.", en: "Dried fish with vegetables and palm oil." },
+    { n: "Mufete", p: 10000, pt: "Peixe grelhado com feijão de óleo de palma, banana e mandioca.", en: "Grilled fish with palm-oil beans, plantain and cassava." },
+    { n: "Cuca", p: 1000, pt: "A cerveja angolana, bem gelada.", en: "Angola's beer, ice-cold." }
+  ]),
+  acc: af("112", { k: "pay", pt: "Mobile money (MTN MoMo) e dinheiro; cartão nos hotéis e centros comerciais. Troque só em casas de câmbio oficiais.", en: "Mobile money (MTN MoMo) and cash; cards at hotels and malls. Exchange only at official bureaus." }, tip("Gorjeta de 10% nos restaurantes, se o serviço não estiver incluído.", "Tip 10% in restaurants if service isn't included."), afSafety("Os trotros são baratos mas cheios; à noite prefira Uber ou Bolt.", "Trotro minibuses are cheap but packed; at night prefer Uber or Bolt."), plug("Tomadas tipo G (e D), 230 V: leve adaptador.", "Type G (and D) sockets, 230 V: bring an adapter."), [
+    { n: "Jollof", p: 60, pt: "Arroz de tomate e especiarias, com frango.", en: "Spiced tomato rice with chicken." },
+    { n: "Waakye", p: 40, pt: "Arroz e feijão com shito.", en: "Rice and beans with shito." },
+    { n: "Kelewele", p: 20, pt: "Banana-pão frita com gengibre e malagueta.", en: "Fried plantain with ginger and chilli." },
+    { n: "Banku e tilápia", p: 90, pt: "Massa de milho fermentado com tilápia grelhada.", en: "Fermented corn dough with grilled tilapia." }
+  ]),
+  kgl: af("112", AF_CASH, tip("Gorjeta de 5–10% é bem recebida; regatear é pouco comum nas lojas.", "A 5–10% tip is welcome; haggling is uncommon in shops."), afSafety("Kigali é das capitais mais seguras de África. Os sacos de plástico são proibidos e o capacete é obrigatório nas mota-táxis.", "Kigali is one of Africa's safest capitals. Plastic bags are banned and helmets are compulsory on moto taxis."), plug("Tomadas tipo C/J, 230 V.", "Type C/J sockets, 230 V."), [
+    { n: "Brochettes", p: 2000, pt: "Espetadas de cabra com banana-pão.", en: "Goat skewers with plantain." },
+    { n: "Isombe", p: 2500, pt: "Folhas de mandioca com amendoim.", en: "Cassava leaves with peanuts." },
+    { n: "Buffet local", p: 4000, pt: "O almoço de buffet ruandês de feijão, matoke e arroz.", en: "The Rwandan lunch buffet of beans, matoke and rice." },
+    { n: "Café", p: 2000, pt: "Café ruandês de altitude.", en: "High-altitude Rwandan coffee." }
+  ]),
+  dkr: af("17 / 18", { k: "pay", pt: "Franco CFA (XOF) em dinheiro; Wave e Orange Money muito usados. Combine o preço do táxi antes de entrar.", en: "CFA francs (XOF) in cash; Wave and Orange Money are widely used. Agree the taxi fare before getting in." }, tip("Gorjeta de 5–10% nos restaurantes; regateie nos mercados.", "Tip 5–10% in restaurants; haggle in markets."), afSafety("Vendedores e «guias» insistentes no centro e no porto de Gorée: compre bilhetes só na bilheteira.", "Pushy vendors and «guides» downtown and at the Gorée port: buy tickets only at the counter."), plug("Tomadas tipo C/D/E/K, 230 V.", "Type C/D/E/K sockets, 230 V."), [
+    { n: "Thiéboudienne", p: 3000, pt: "Arroz, peixe e legumes, o prato nacional.", en: "Rice, fish and vegetables, the national dish." },
+    { n: "Yassa", p: 3000, pt: "Frango ou peixe com cebola e limão.", en: "Chicken or fish with onion and lemon." },
+    { n: "Bissap", p: 500, pt: "Sumo de hibisco gelado.", en: "Iced hibiscus juice." },
+    { n: "Café Touba", p: 200, pt: "Café com pimenta-da-guiné, numa banca de rua.", en: "Coffee with Guinea pepper from a street stall." }
   ])
 };
