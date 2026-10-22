@@ -1224,5 +1224,6 @@
 },
 "cats": {
 "car": "Location de voitures"
-}
+},
+"qrShow": "Montrez ce code à un ami pour ouvrir VOYBU"
 }

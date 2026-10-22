@@ -1255,5 +1255,6 @@
 "car": "Alquilar coche",
 "slot": "Reservar",
 "bag": "Reservar consigna"
-}
+},
+"qrShow": "Enseña este código a un amigo para abrir VOYBU"
 }

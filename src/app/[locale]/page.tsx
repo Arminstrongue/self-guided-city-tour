@@ -56,8 +56,8 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
           </div>
           <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.qsCta}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
           <p className="hm-free">{t.hmFree}</p>
+          <PageQR label={t.qrScan} mobileLabel={t.qrShow} />
         </div>
-        <PageQR label={t.qrScan} />
       </HomeHero>
 
       <section className="sec" id="cities" style={{ scrollMarginTop: 70 }}>

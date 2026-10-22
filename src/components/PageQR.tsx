@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
 
-/** QR code of the current page, pinned to the hero's bottom corner on desktop,
- *  so a visitor on a computer can scan and continue on their phone. */
-export default function PageQR({ label }: { label: string }) {
+/** QR code of the current page: on desktop pinned to the hero corner (scan to continue on the phone);
+ *  on phones shown under the hero buttons, to show to a friend. */
+export default function PageQR({ label, mobileLabel }: { label: string; mobileLabel?: string }) {
   const [svg, setSvg] = useState("");
   useEffect(() => {
     const url = window.location.origin + window.location.pathname;
@@ -15,7 +15,7 @@ export default function PageQR({ label }: { label: string }) {
   return (
     <figure className="pqr" aria-label={label}>
       <span className="pqr-img" role="img" aria-label={label} dangerouslySetInnerHTML={{ __html: svg }} />
-      <figcaption>{label}</figcaption>
+      <figcaption><span className="pqr-d">{label}</span><span className="pqr-m">{mobileLabel ?? label}</span></figcaption>
     </figure>
   );
 }
