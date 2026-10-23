@@ -8,7 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Archive, ArchiveRestore, Bookmark, BookmarkMinus, EyeOff, Flag, Heart, HeartOff, Link2, MessageCircle, MessageCircleOff,
-  Pencil, Pin, PinOff, Share, Trash2, VolumeX, ChevronRight, ChevronLeft, type LucideIcon
+  Pencil, Pin, PinOff, Share, Trash2, VolumeX, ChevronRight, ChevronLeft, QrCode, Send, UserRound, type LucideIcon
 } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
@@ -28,7 +28,22 @@ export function PostMenu({ t, locale, p, handle, act, onPatch, onShare, onDelete
   onClose: () => void; toast: (s: string, err?: boolean) => void;
 }) {
   const m = t.pm;
-  const [view, setView] = useState<"main" | "delete" | "report" | "edit">("main");
+  const [view, setView] = useState<"main" | "delete" | "report" | "edit" | "qr" | "shareto">("main");
+  const [qr, setQr] = useState("");
+  const link = typeof window === "undefined" ? "" : `${location.origin}/${locale}/wallet#post:${p.id}`;
+  useEffect(() => {
+    if (view !== "qr" || qr) return;
+    void import("qrcode").then((Q) => Q.default.toString(link, { type: "svg", margin: 0, errorCorrectionLevel: "M", color: { dark: "#0b0b0d", light: "#ffffff" } })).then(setQr).catch(() => {});
+  }, [view, qr, link]);
+  const short = p.text.slice(0, 80);
+  const SHARE_TO: [string, string][] = [
+    ["WhatsApp", `https://wa.me/?text=${encodeURIComponent(`${short} ${link}`.trim())}`],
+    ["Facebook", `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`],
+    ["X", `https://twitter.com/intent/tweet?url=${encodeURIComponent(link)}&text=${encodeURIComponent(short)}`],
+    ["Telegram", `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(short)}`],
+    ["LinkedIn", `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`],
+    ["Email", `mailto:?subject=${encodeURIComponent("VOYBU")}&body=${encodeURIComponent(`${short}\n${link}`)}`]
+  ];
   const [txt, setTxt] = useState(p.text);
   const [busy, setBusy] = useState(false);
   const ta = useRef<HTMLTextAreaElement>(null);
@@ -47,8 +62,7 @@ export function PostMenu({ t, locale, p, handle, act, onPatch, onShare, onDelete
   }
   async function copy() {
     onClose();
-    const url = `${location.origin}/${locale}/wallet#post:${p.id}`;
-    try { await navigator.clipboard.writeText(url); toast(m.tCopied); } catch { toast(t.tsError, true); }
+    try { await navigator.clipboard.writeText(link); toast(m.tCopied); } catch { toast(t.tsError, true); }
   }
   async function saveEdit() {
     setBusy(true);
@@ -59,8 +73,10 @@ export function PostMenu({ t, locale, p, handle, act, onPatch, onShare, onDelete
   }
 
   const share: Row[] = [
-    { k: "share", I: Share, label: m.share, run: () => { onClose(); onShare(); } },
-    { k: "copy", I: Link2, label: m.copy, run: () => void copy() }
+    { k: "share", I: Send, label: m.share, run: () => { onClose(); onShare(); } },
+    { k: "shareto", I: Share, label: t.st.shareTo, go: true, run: () => setView("shareto") },
+    { k: "copy", I: Link2, label: m.copy, run: () => void copy() },
+    { k: "qr", I: QrCode, label: t.st.qr, go: true, run: () => setView("qr") }
   ];
   const groups: { h?: string; rows: Row[] }[] = p.mine ? [
     { h: m.gManage, rows: [
@@ -85,6 +101,7 @@ export function PostMenu({ t, locale, p, handle, act, onPatch, onShare, onDelete
       ...share
     ] },
     { h: m.gFeed, rows: [
+      { k: "profile", I: UserRound, label: t.st.viewProfile, run: () => { onClose(); location.href = `/${locale}/u/${handle}`; } },
       { k: "hide", I: EyeOff, label: m.hide, sub: m.hideSub, run: () => { onClose(); onHide(); } },
       { k: "mute", I: VolumeX, label: fmt(m.mute, { h: handle }), sub: m.muteSub, run: () => { onClose(); onMute(); } }
     ] },
@@ -142,6 +159,30 @@ export function PostMenu({ t, locale, p, handle, act, onPatch, onShare, onDelete
             </div>
             <div className="as-group"><textarea ref={ta} className="as-ta" rows={5} maxLength={2200} value={txt} onChange={(e) => setTxt(e.target.value)} aria-label={m.editT} /></div>
             <small className="as-count num">{txt.length}/2200</small>
+          </div>
+        )}
+
+        {view === "qr" && (
+          <div className="as-sec">
+            <button type="button" className="as-back" onClick={() => setView("main")}><ChevronLeft size={18} aria-hidden="true" />{t.st.qr}</button>
+            <div className="as-group as-qr">
+              {qr ? <span className="as-qr-svg" dangerouslySetInnerHTML={{ __html: qr }} /> : <span className="as-qr-svg" />}
+              <b>@{handle}</b><small>{t.st.qrHint}</small>
+            </div>
+          </div>
+        )}
+
+        {view === "shareto" && (
+          <div className="as-sec">
+            <button type="button" className="as-back" onClick={() => setView("main")}><ChevronLeft size={18} aria-hidden="true" />{t.st.shareTo}</button>
+            <div className="as-group">
+              {SHARE_TO.map(([n, href]) => (
+                <a key={n} className="as-row" href={href} target="_blank" rel="noopener noreferrer" onClick={onClose}>
+                  <span className={`as-brand b-${n.toLowerCase()}`} aria-hidden="true">{n === "Email" ? "@" : n[0]}</span>
+                  <span className="as-tx"><span>{n}</span></span><ChevronRight size={18} className="as-chev" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
           </div>
         )}
 

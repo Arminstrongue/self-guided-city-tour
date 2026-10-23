@@ -1,6 +1,7 @@
 "use client";
 /** Perfil de outro viajante: foto, nome, seguidores, seguir, cidades visitadas (se puder ver), bloquear e denunciar. */
 import { useEffect, useState } from "react";
+import { Menu } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { flag } from "@/data/countries";
 import { Avatar, FollowBtn, Verified, act, type PublicProfile } from "./Social";
@@ -29,7 +30,9 @@ export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Local
               <span className="wl-me-c" style={{ color: "var(--ink)" }}><span><b className="num">{v.followers}</b> {v.followers === 1 ? t.scFollower : t.scFollowers}</span><span><b className="num">{v.following}</b> {t.scFollowingN}</span></span>
             </div>
           </div>
-          {v.relation !== "self" && <button className="wl-ic" aria-label="⋯" onClick={() => setMenu(!menu)} style={{ color: "var(--ink)", background: "var(--surface-2)" }}>⋯</button>}
+          {v.relation === "self"
+            ? <a className="wl-ic" href={`/${locale}/wallet/account`} aria-label={t.st.title} title={t.st.title} style={{ color: "var(--ink)", background: "var(--surface-2)" }}><Menu size={20} aria-hidden="true" /></a>
+            : <button className="wl-ic" aria-label="⋯" onClick={() => setMenu(!menu)} style={{ color: "var(--ink)", background: "var(--surface-2)" }}>⋯</button>}
         </div>
         {p.bio && <p style={{ margin: 0 }}>{p.bio}</p>}
         {v.relation === "self" ? <a className="btn ghost press" href={`/${locale}/wallet`}>{t.scEdit}</a> : (

@@ -1,26 +1,38 @@
 "use client";
 /**
- * Gerir a conta: perfil, privacidade, quem pode enviar mensagens, bloqueados, notificações (push),
- * descarregar os dados, terminar sessões e apagar a conta.
+ * "Definições e atividade" ao estilo do iOS: pesquisa no topo, secções agrupadas com ícones e setas,
+ * e páginas de detalhe com navegação para trás. Perfil, privacidade, mensagens, bloqueados, silenciados,
+ * publicações ocultadas, notificações (push), idioma, dados, sessões e apagar a conta.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Archive, Bell, Bookmark, Ban, ChevronLeft, ChevronRight, CircleHelp, Download, EyeOff, FileText, Info, Languages, Lock,
+  LogOut, MessageCircle, MonitorSmartphone, Search, Shield, Trash2, UserRound, VolumeX, WifiOff, type LucideIcon
+} from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
+import { LOCALES } from "@/i18n/core";
 import { Avatar, ProfileEditor, act, loadSocial, type PublicProfile, type Social } from "./Social";
 
 type Acc = {
   email: string; hasProfile: boolean; isPrivate: boolean; dmPolicy: "circle" | "following" | "none";
-  notif: Partial<Record<NotifKey, boolean>>; lang: string; blocked: PublicProfile[]; push: { enabled: boolean; key: string };
+  notif: Partial<Record<NotifKey, boolean>>; lang: string; blocked: PublicProfile[]; muted: PublicProfile[];
+  hidden: { id: string; handle: string; text: string }[]; push: { enabled: boolean; key: string };
 };
 type NotifKey = "like" | "comment" | "follow" | "message" | "story_reply" | "video";
 const NOTIF_KEYS: NotifKey[] = ["message", "like", "comment", "follow", "story_reply", "video"];
+type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete";
 
 function b64ToBytes(b64: string) {
   const pad = "=".repeat((4 - (b64.length % 4)) % 4);
   const raw = atob((b64 + pad).replace(/-/g, "+").replace(/_/g, "/"));
   return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
+const langName = (l: string, inL: string) => { try { return new Intl.DisplayNames([inL], { type: "language" }).of(l) ?? l; } catch { return l; } };
+
+type Row = { k: string; I: LucideIcon; label: string; sub?: string; value?: string; href?: string; go?: Page; run?: () => void; red?: boolean; blue?: boolean; dl?: boolean };
 
 export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
+  const s = t.st;
   const [a, setA] = useState<Acc | null | "auth">(null);
   const [social, setSocial] = useState<Social | null>(null);
   const [editing, setEditing] = useState(false);
@@ -28,6 +40,8 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
   const [pushState, setPushState] = useState<"unknown" | "on" | "off" | "denied" | "unsupported" | "ios">("unknown");
   const [del, setDel] = useState("");
   const [busy, setBusy] = useState("");
+  const [page, setPage] = useState<Page>("root");
+  const [q, setQ] = useState("");
   const load = async () => {
     const r = await fetch("/api/me/account", { cache: "no-store" }).catch(() => null);
     if (r?.status === 401) return setA("auth");
@@ -46,6 +60,13 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
       setPushState(sub ? "on" : "off");
     })().catch(() => setPushState("unsupported"));
   }, []);
+  // Navegação: o botão "voltar" do telemóvel regressa à lista principal.
+  useEffect(() => {
+    const f = () => setPage((h) => (location.hash.startsWith("#st:") ? (location.hash.slice(4) as Page) : h === "root" ? h : "root"));
+    window.addEventListener("popstate", f); return () => window.removeEventListener("popstate", f);
+  }, []);
+  const go = (p: Page) => { setPage(p); history.pushState(null, "", `#st:${p}`); window.scrollTo(0, 0); };
+  const back = () => { if (location.hash.startsWith("#st:")) history.back(); else setPage("root"); };
   const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(""), 2500); };
   async function put(v: Record<string, unknown>) {
     if (!a || a === "auth") return;
@@ -73,101 +94,211 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
     if (sub) { await fetch("/api/me/push", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ endpoint: sub.endpoint }) }).catch(() => null); await sub.unsubscribe().catch(() => null); }
     setPushState("off"); setBusy("");
   }
+  function logout() {
+    const f = document.createElement("form"); f.method = "post"; f.action = `/api/me/logout?locale=${locale}`; document.body.appendChild(f);
+    void import("@/lib/offline-client").then((m) => m.clearPersonalCache()).finally(() => f.submit());
+  }
+
+  const prof = social?.profile ?? null;
+  const ok = a && a !== "auth" ? a : null;
+  const groups = useMemo<{ h: string; rows: Row[] }[]>(() => {
+    if (!ok) return [];
+    const onN = NOTIF_KEYS.filter((k) => ok.notif[k] !== false).length;
+    return [
+      { h: s.gUse, rows: [
+        { k: "saved", I: Bookmark, label: s.saved, href: `/${locale}/wallet#saved` },
+        ...(prof ? [{ k: "archive", I: Archive, label: s.archive, href: `/${locale}/u/${prof.handle}?tab=archive` }] : []),
+        { k: "notifs", I: Bell, label: t.acNotifs, value: pushState === "on" ? s.on : `${onN}/${NOTIF_KEYS.length}`, go: "notifs" as Page },
+        { k: "lang", I: Languages, label: s.language, value: langName(locale, locale), go: "language" as Page },
+        { k: "offline", I: WifiOff, label: s.offline, href: `/${locale}/wallet#offline` }
+      ] },
+      { h: s.gSee, rows: [
+        ...(prof ? [{ k: "privacy", I: Lock, label: t.acPrivacy, value: ok.isPrivate ? s.private : s.public, go: "privacy" as Page }] : []),
+        { k: "blocked", I: Ban, label: t.acBlocked, value: String(ok.blocked.length), go: "blocked" as Page }
+      ] },
+      { h: s.gInteract, rows: [
+        { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page }
+      ] },
+      { h: s.gWhat, rows: [
+        { k: "muted", I: VolumeX, label: s.muted, value: String(ok.muted.length), go: "muted" as Page },
+        { k: "hidden", I: EyeOff, label: s.hidden, value: String(ok.hidden.length), go: "hidden" as Page }
+      ] },
+      { h: s.gApp, rows: [
+        { k: "export", I: Download, label: t.acExport, sub: t.acExportHint, href: "/api/me/export", dl: true },
+        { k: "outall", I: MonitorSmartphone, label: t.acOutAll, run: async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); } }
+      ] },
+      { h: s.gSupport, rows: [
+        { k: "help", I: CircleHelp, label: s.help, href: `/${locale}/support` },
+        { k: "privacyc", I: Shield, label: t.lPrivacy, href: `/${locale}/legal/privacy` },
+        { k: "terms", I: FileText, label: s.terms, href: `/${locale}/legal/terms` },
+        { k: "about", I: Info, label: s.about, href: `/${locale}/about` }
+      ] },
+      { h: s.gLogin, rows: [
+        { k: "logout", I: LogOut, label: t.wSignOut, red: true, run: logout },
+        { k: "delete", I: Trash2, label: t.acDelete, red: true, go: "delete" as Page }
+      ] }
+    ];
+  }, [ok, prof, pushState, locale, t, s]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (a === null) return <p className="hint" style={{ marginTop: 24 }}>{t.exLoading}</p>;
   if (a === "auth") return <div className="card gp-empty" style={{ marginTop: 16 }}><span aria-hidden="true">🔐</span><b>{t.acSignIn}</b><a className="btn press" href={`/${locale}/wallet`} style={{ width: "auto" }}>{t.wSignIn}</a></div>;
-  const prof = social?.profile ?? null;
   const toggle = (k: NotifKey) => put({ notif: { ...a.notif, [k]: a.notif[k] === false } });
 
+  const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const shown = q.trim() ? groups.map((g) => ({ ...g, rows: g.rows.filter((r) => norm(`${r.label} ${r.sub ?? ""} ${g.h}`).includes(norm(q.trim()))) })).filter((g) => g.rows.length) : groups;
+
+  const RowEl = ({ r }: { r: Row }) => {
+    const inner = <>
+      <r.I size={22} strokeWidth={1.8} aria-hidden="true" className="st-ic" />
+      <span className="st-tx"><span>{r.label}</span>{r.sub && <small>{r.sub}</small>}</span>
+      {r.value && <span className="st-val">{r.value}</span>}
+      {!r.red && <ChevronRight size={18} className="st-chev" aria-hidden="true" />}
+    </>;
+    const cls = `st-row${r.red ? " red" : ""}`;
+    if (r.href) return <a className={cls} href={r.href} {...(r.dl ? { download: true } : {})}>{inner}</a>;
+    return <button type="button" className={cls} disabled={r.k === "outall" && busy === "out"} onClick={() => (r.go ? go(r.go) : r.run?.())}>{inner}</button>;
+  };
+  const Person = ({ p, label, onClick }: { p: PublicProfile; label: string; onClick: () => void }) => (
+    <div className="st-row st-person">
+      <a href={`/${locale}/u/${p.handle}`} className="st-person-l"><Avatar p={p} size={40} /><span className="st-tx"><span>{p.name}</span><small>@{p.handle}</small></span></a>
+      <button type="button" className="st-pill" onClick={onClick}>{label}</button>
+    </div>
+  );
+  const Nav = ({ title }: { title: string }) => (
+    <div className="st-nav">
+      <button type="button" className="st-back" onClick={back} aria-label={t.close}><ChevronLeft size={24} aria-hidden="true" /></button>
+      <b>{title}</b><span />
+    </div>
+  );
+
   return (
-    <div className="stack ac" style={{ gap: 16, marginTop: 8 }}>
-      <h1 className="gp-h1" style={{ margin: 0 }}>👤 {t.acTitle}</h1>
+    <div className="st">
       {msg && <p className="note ac-flash" role="status">✓ {msg}</p>}
 
-      {/* Perfil */}
-      <section className="card stack ac-sec" style={{ gap: 10 }}>
-        <div className="row" style={{ gap: 14, flexWrap: "nowrap" }}>
-          {prof ? <Avatar p={prof} size={64} /> : <span className="sc-av sc-av-i" style={{ width: 64, height: 64, fontSize: 26 }}>?</span>}
-          <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}>
-            <b className="ad-ellip" style={{ fontSize: 18 }}>{prof?.name ?? t.acNoProfile}</b>
-            {prof && <span className="hint">@{prof.handle}</span>}
-            <span className="hint ad-ellip" style={{ fontSize: 13 }}>✉️ {a.email}</span>
-          </div>
-        </div>
-        <div className="grid2">
-          <button className="btn press" onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
-          {prof && <a className="btn ghost press" href={`/${locale}/u/${prof.handle}`}>{t.acView}</a>}
-        </div>
-        <small className="hint">{t.acEmailNote}</small>
-      </section>
+      {page === "root" && <>
+        <h1 className="st-title">{s.title}</h1>
+        <label className="st-search"><Search size={17} aria-hidden="true" /><input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={s.search} aria-label={s.search} /></label>
 
-      {/* Privacidade e segurança */}
-      <section className="card stack ac-sec" style={{ gap: 12 }} id="privacy">
-        <b className="sc-h">🔒 {t.acPrivacy}</b>
-        {prof && <label className="sc-switch"><input type="checkbox" checked={a.isPrivate} onChange={(e) => void put({ isPrivate: e.target.checked })} /><span><b>{t.scPrivate}</b><small className="hint">{t.scPrivateHint}</small></span></label>}
-        <b style={{ fontSize: 14 }}>💬 {t.acWhoDm}</b>
-        <div className="ac-radio">
+        {!q && <>
+          <span className="st-h">{s.gAccount}</span>
+          <div className="st-group">
+            <button type="button" className="st-row st-acc" onClick={() => setEditing(true)}>
+              {prof ? <Avatar p={prof} size={56} /> : <span className="st-ic-big"><UserRound size={28} aria-hidden="true" /></span>}
+              <span className="st-tx"><span className="st-me-n">{prof?.name ?? t.acNoProfile}</span><small>{prof ? `@${prof.handle} · ` : ""}{a.email}</small><small>{s.accSub}</small></span>
+              <ChevronRight size={18} className="st-chev" aria-hidden="true" />
+            </button>
+            {prof && <a className="st-row" href={`/${locale}/u/${prof.handle}`}><UserRound size={22} strokeWidth={1.8} className="st-ic" aria-hidden="true" /><span className="st-tx"><span>{t.acView}</span></span><ChevronRight size={18} className="st-chev" aria-hidden="true" /></a>}
+          </div>
+        </>}
+
+        {shown.map((g) => (
+          <section key={g.h} className="st-sec">
+            <span className="st-h">{g.h}</span>
+            <div className="st-group">{g.rows.map((r) => <RowEl key={r.k} r={r} />)}</div>
+          </section>
+        ))}
+        {q && shown.length === 0 && <p className="hint st-empty">{s.noResults}</p>}
+      </>}
+
+      {page === "privacy" && <>
+        <Nav title={t.acPrivacy} />
+        <div className="st-group">
+          <label className="st-row st-switch"><span className="st-tx"><span>{t.scPrivate}</span></span>
+            <input type="checkbox" role="switch" checked={a.isPrivate} onChange={(e) => void put({ isPrivate: e.target.checked })} /></label>
+        </div>
+        <p className="st-note">{t.scPrivateHint}</p>
+      </>}
+
+      {page === "messages" && <>
+        <Nav title={t.acWhoDm} />
+        <div className="st-group">
           {(["circle", "following", "none"] as const).map((k) => (
-            <label key={k} className={a.dmPolicy === k ? "on" : ""}><input type="radio" name="dm" checked={a.dmPolicy === k} onChange={() => void put({ dmPolicy: k })} /><span>{t.acDm[k]}</span></label>
+            <button key={k} type="button" className="st-row" onClick={() => void put({ dmPolicy: k })} aria-pressed={a.dmPolicy === k}>
+              <span className="st-tx"><span>{t.acDm[k]}</span></span>{a.dmPolicy === k && <span className="st-check" aria-hidden="true">✓</span>}
+            </button>
           ))}
         </div>
-        <b style={{ fontSize: 14 }}>🚫 {t.acBlocked} <small className="hint num">· {a.blocked.length}</small></b>
-        {a.blocked.length === 0 ? <small className="hint">{t.acBlockedNone}</small> : a.blocked.map((p) => (
-          <div key={p.handle} className="sc-row">
-            <span className="sc-row-l"><Avatar p={p} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}</b><small className="hint">@{p.handle}</small></span></span>
-            <button className="sc-follow" onClick={async () => { await act(p.handle, "unblock"); setA({ ...a, blocked: a.blocked.filter((x) => x.handle !== p.handle) }); flash(t.acUnblocked); }}>{t.acUnblock}</button>
+      </>}
+
+      {page === "blocked" && <>
+        <Nav title={t.acBlocked} />
+        {a.blocked.length === 0 ? <p className="st-note">{t.acBlockedNone}</p> : (
+          <div className="st-group">{a.blocked.map((p) => <Person key={p.handle} p={p} label={t.acUnblock} onClick={async () => { await act(p.handle, "unblock"); setA({ ...a, blocked: a.blocked.filter((x) => x.handle !== p.handle) }); flash(t.acUnblocked); }} />)}</div>
+        )}
+      </>}
+
+      {page === "muted" && <>
+        <Nav title={s.muted} />
+        <p className="st-note">{s.mutedSub}</p>
+        {a.muted.length === 0 ? <p className="st-note">{s.mutedNone}</p> : (
+          <div className="st-group">{a.muted.map((p) => <Person key={p.handle} p={p} label={s.unmute} onClick={() => { setA({ ...a, muted: a.muted.filter((x) => x.handle !== p.handle) }); void put({ unmute: p.handle }); }} />)}</div>
+        )}
+      </>}
+
+      {page === "hidden" && <>
+        <Nav title={s.hidden} />
+        <p className="st-note">{s.hiddenSub}</p>
+        {a.hidden.length === 0 ? <p className="st-note">{s.hiddenNone}</p> : (
+          <div className="st-group">{a.hidden.map((h) => (
+            <div key={h.id} className="st-row">
+              <EyeOff size={20} strokeWidth={1.8} className="st-ic" aria-hidden="true" />
+              <span className="st-tx"><span>@{h.handle}</span><small className="st-clip">{h.text || "📷"}</small></span>
+              <button type="button" className="st-pill" onClick={() => { setA({ ...a, hidden: a.hidden.filter((x) => x.id !== h.id) }); void put({ unhide: h.id }); }}>{s.unhide}</button>
+            </div>
+          ))}</div>
+        )}
+      </>}
+
+      {page === "notifs" && <>
+        <Nav title={t.acNotifs} />
+        <div className="st-group">
+          <div className="st-row st-push">
+            {!a.push.enabled ? <small className="hint">{t.acPushServerOff}</small>
+              : pushState === "on" ? <>
+                  <span className="st-tx"><span>✅ {t.acPushOn}</span></span>
+                  <button type="button" className="st-pill" onClick={async () => { const r = await fetch("/api/me/push/test", { method: "POST" }).then((x) => x.json()).catch(() => null); flash(r?.sent ? t.acPushTestSent : t.acErr); }}>{t.acPushTest}</button>
+                  <button type="button" className="st-pill" disabled={busy === "push"} onClick={() => void pushOff()}>{t.acPushOffBtn}</button>
+                </>
+              : pushState === "denied" ? <small className="hint">{t.acPushDenied}</small>
+              : pushState === "ios" ? <small className="hint">{t.acPushIos}</small>
+              : pushState === "unsupported" ? <small className="hint">{t.acPushNo}</small>
+              : <button type="button" className="btn press" disabled={busy === "push"} onClick={() => void pushOn()}>🔔 {t.acPushOnBtn}</button>}
           </div>
-        ))}
-      </section>
-
-      {/* Notificações */}
-      <section className="card stack ac-sec" style={{ gap: 12 }} id="notifications">
-        <b className="sc-h">🔔 {t.acNotifs}</b>
-        <div className="ac-push">
-          {!a.push.enabled ? <small className="hint">{t.acPushServerOff}</small>
-            : pushState === "on" ? <>
-                <span>✅ {t.acPushOn}</span>
-                <span className="row" style={{ gap: 8 }}>
-                  <button className="sc-follow" onClick={async () => { const r = await fetch("/api/me/push/test", { method: "POST" }).then((x) => x.json()).catch(() => null); flash(r?.sent ? t.acPushTestSent : t.acErr); }}>{t.acPushTest}</button>
-                  <button className="sc-follow" disabled={busy === "push"} onClick={() => void pushOff()}>{t.acPushOffBtn}</button>
-                </span>
-              </>
-            : pushState === "denied" ? <small className="hint">{t.acPushDenied}</small>
-            : pushState === "ios" ? <small className="hint">{t.acPushIos}</small>
-            : pushState === "unsupported" ? <small className="hint">{t.acPushNo}</small>
-            : <button className="btn press" disabled={busy === "push"} onClick={() => void pushOn()}>🔔 {t.acPushOnBtn}</button>}
         </div>
-        <small className="hint">{t.acNotifsHint}</small>
-        {NOTIF_KEYS.map((k) => (
-          <label key={k} className="ac-toggle"><span>{t.acNotif[k]}</span><input type="checkbox" role="switch" checked={a.notif[k] !== false} onChange={() => void toggle(k)} /></label>
-        ))}
-      </section>
-
-      {/* Os seus dados e sessões */}
-      <section className="card ac-sec ac-list-sec">
-        <b className="sc-h">📦 {t.acData}</b>
-        <div className="ac-list">
-          <a className="ac-item" href="/api/me/export" download><span className="ac-i">⬇️</span><span className="ac-tx"><b>{t.acExport}</b><small>{t.acExportHint}</small></span><span className="ac-chev">›</span></a>
-          <button className="ac-item" disabled={busy === "out"} onClick={async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); }}><span className="ac-i">🔁</span><span className="ac-tx"><b>{t.acOutAll}</b></span><span className="ac-chev">›</span></button>
-          <form action={`/api/me/logout?locale=${locale}`} method="post" onSubmit={(e) => { e.preventDefault(); const f = e.currentTarget; void import("@/lib/offline-client").then((m) => m.clearPersonalCache()).finally(() => f.submit()); }}><button className="ac-item"><span className="ac-i">↪️</span><span className="ac-tx"><b>{t.wSignOut}</b></span><span className="ac-chev">›</span></button></form>
-          <a className="ac-item" href={`/${locale}/legal/privacy`}><span className="ac-i">🔒</span><span className="ac-tx"><b>{t.lPrivacy}</b></span><span className="ac-chev">›</span></a>
+        <p className="st-note">{t.acNotifsHint}</p>
+        <div className="st-group">
+          {NOTIF_KEYS.map((k) => (
+            <label key={k} className="st-row st-switch"><span className="st-tx"><span>{t.acNotif[k]}</span></span>
+              <input type="checkbox" role="switch" checked={a.notif[k] !== false} onChange={() => void toggle(k)} /></label>
+          ))}
         </div>
-      </section>
+      </>}
 
-      {/* Apagar a conta: discreto, abre só quando se pede */}
-      <details className="ac-del">
-        <summary><span>{t.acDelete}</span><span aria-hidden="true">›</span></summary>
-        <div className="stack" style={{ gap: 10, paddingTop: 10 }}>
+      {page === "language" && <>
+        <Nav title={s.language} />
+        <div className="st-group">
+          {LOCALES.map((l) => (
+            <a key={l} className="st-row" href={`/${l}/wallet/account`} lang={l} onClick={() => void put({ lang: l })}>
+              <span className="st-tx"><span>{langName(l, l)}</span>{l !== locale && <small>{langName(l, locale)}</small>}</span>
+              {l === locale && <span className="st-check" aria-hidden="true">✓</span>}
+            </a>
+          ))}
+        </div>
+      </>}
+
+      {page === "delete" && <>
+        <Nav title={t.acDelete} />
+        <div className="st-group st-del">
           <p className="ac-del-txt">{t.acDeleteHint}</p>
           <label className="ac-del-lbl" htmlFor="acdel">{t.acDeleteType}</label>
           <input id="acdel" className="ac-del-in" value={del} onChange={(e) => setDel(e.target.value.toUpperCase())} autoCapitalize="characters" autoComplete="off" placeholder="DELETE" />
-          <button className="ac-del-btn" disabled={del !== "DELETE" || busy === "del"} onClick={async () => {
+          <button type="button" className="ac-del-btn" disabled={del !== "DELETE" || busy === "del"} onClick={async () => {
             setBusy("del");
             const r = await fetch("/api/me/account", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "DELETE" }) }).catch(() => null);
             if (r?.ok) { try { localStorage.clear(); } catch { /* ignorar */ } location.href = `/${locale}`; } else { setBusy(""); flash(t.acErr); }
           }}>{t.acDeleteBtn}</button>
         </div>
-      </details>
+      </>}
 
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) void load(); }} />}
     </div>

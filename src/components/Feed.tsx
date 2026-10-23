@@ -21,7 +21,7 @@ const PostMenu = dynamic(() => import("./PostMenu").then((m) => m.PostMenu), { s
 const ShareSheet = dynamic(() => import("./PostExtras").then((m) => m.ShareSheet), { ssr: false });
 const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { ssr: false });
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
-import { Archive, Pin, ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
+import { Archive, Pin, Grid3x3, Bookmark as BookmarkIc, ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
 import { MusicSticker, SoundButton, usePostMusic, type PickedMusic } from "./Music";
 import { toast, withUndo } from "@/lib/toast";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
@@ -619,12 +619,19 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
   const [open, setOpen] = useState<PostItem | null>(null);
   const [reel, setReel] = useState<string | null>(null);
   const [isMe, setIsMe] = useState(false);
-  const [arch, setArch] = useState(false); // separador "Arquivo" (só no próprio perfil)
-  const base = `/api/social/u/${encodeURIComponent(handle)}/posts?${arch ? "archive=1&" : ""}`;
+  // Separadores como no iOS: grelha, vídeos e, no próprio perfil, guardados e arquivo.
+  const [tab, setTab] = useState<"grid" | "reels" | "saved" | "archive">(() => {
+    if (typeof window === "undefined") return "grid";
+    const q = new URLSearchParams(location.search).get("tab");
+    return q === "archive" || q === "saved" || q === "reels" ? q : "grid";
+  });
+  const arch = tab === "archive";
+  const base = tab === "saved" ? "/api/social/saved?" : `/api/social/u/${encodeURIComponent(handle)}/posts?${arch ? "archive=1&" : ""}`;
   useEffect(() => {
     setPage(null);
     fetch(base, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => { setPage(r ?? { posts: [], authors: {}, next: null }); if (r?.me) setIsMe(true); }).catch(() => setPage({ posts: [], authors: {}, next: null }));
   }, [base]);
+  const shownPosts = tab === "reels" ? (page?.posts ?? []).filter((x) => x.video === "ready") : page?.posts ?? [];
   const drop = (id: string) => setPage((pg) => (pg ? { ...pg, posts: pg.posts.filter((x) => x.id !== id) } : pg));
   async function more() {
     if (!page?.next) return;
@@ -633,15 +640,18 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
   }
   return (
     <section className="stack" style={{ gap: 10 }}>
-      {isMe ? (
-        <div className="ios-seg" role="tablist">
-          <button role="tab" aria-selected={!arch} className={!arch ? "on" : ""} onClick={() => setArch(false)}>{t.pm.postsTab}</button>
-          <button role="tab" aria-selected={arch} className={arch ? "on" : ""} onClick={() => setArch(true)}><Archive size={14} aria-hidden="true" /> {t.pm.archiveTab}</button>
-        </div>
-      ) : <h2 className="gp-h2">📸 {t.pfPostsT} {page && <small className="hint num">· {page.posts.length}{page.next ? "+" : ""}</small>}</h2>}
+      <div className="pf-tabs" role="tablist" aria-label={t.pfPostsT}>
+        {([{ k: "grid", Ic: Grid3x3, label: t.pm.postsTab }, { k: "reels", Ic: Clapperboard, label: t.st.reels },
+          ...(isMe ? [{ k: "saved", Ic: BookmarkIc, label: t.st.saved }, { k: "archive", Ic: Archive, label: t.pm.archiveTab }] : [])] as { k: typeof tab; Ic: typeof Archive; label: string }[]).map(({ k, Ic, label }) => (
+          <button key={k} role="tab" aria-selected={tab === k} aria-label={label} title={label} className={tab === k ? "on" : ""}
+            onClick={() => { setTab(k); const u = new URL(location.href); if (k === "grid") u.searchParams.delete("tab"); else u.searchParams.set("tab", k); history.replaceState(null, "", u); }}>
+            <Ic size={24} strokeWidth={tab === k ? 2.2 : 1.7} aria-hidden="true" />
+          </button>
+        ))}
+      </div>
       {page === null && <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>}
-      {page && page.posts.length === 0 && <p className="hint">{arch ? t.pm.archiveEmpty : t.pfNoPosts}</p>}
-      {page && page.posts.length > 0 && <div className="pf-grid">{page.posts.map((p) => (
+      {page && shownPosts.length === 0 && <p className="hint pf-empty">{arch ? t.pm.archiveEmpty : tab === "saved" ? t.svEmptySub : t.pfNoPosts}</p>}
+      {page && shownPosts.length > 0 && <div className="pf-grid">{shownPosts.map((p) => (
         <button key={p.id} className="pf-tile" onClick={() => (p.video === "ready" ? setReel(p.id) : setOpen(p))} aria-label={p.text.slice(0, 60) || t.pfPost}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true"><I icon={Play} size={14} solid /></span></>
