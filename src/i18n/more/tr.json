@@ -2073,5 +2073,31 @@
 "accepted": "İstek kabul edildi",
 "declined": "İstek silindi",
 "none": "Bekleyen istek yok"
+},
+"tpChoose": {
+"station": "İstasyonu seçin",
+"port": "Terminali seçin",
+"hotel": "Oteli veya adresi seçin",
+"here": "Konum alınıyor…"
+},
+"emb": {
+"pick": "Büyükelçiliğinizi veya konsolosluğunuzu bulmak için uyruğunuzu seçin",
+"of": "{c} büyükelçiliği veya konsolosluğu",
+"note": "Harita araması — adres ve iletişim bilgilerini ülkenizin resmi dışişleri sitesinden doğrulayın."
+},
+"trs": {
+"title": "Bu yolculuk için olağan bilgiler",
+"note": "Şu an canlı saat yok. Bunlar VOYBU başvuru bilgileridir (gerçek zamanlı kalkışlar değil).",
+"ticket": "Bilet: {x}",
+"buy": "Binmeden önce bileti alın veya doğrulayın; temassız kartla girişte (ve varsa çıkışta) okuyucuya dokundurun.",
+"dir": "Yön: {x}"
+},
+"gdTranslate": "Çevir",
+"tg": {
+"start": "Yürüyüşü başlat",
+"startSub": "Sonraki adım en üste taşınır",
+"plan": "Plan, süreler ve araçlar",
+"night": "Akşam rotası: ücretli iç mekânlar ve müzeler genelde kapalıdır — bu duraklar dışarıdan ziyaret olur.",
+"outside": "Akşam yalnızca dışarıdan"
 }
 }

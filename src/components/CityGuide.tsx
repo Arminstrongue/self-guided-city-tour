@@ -8,6 +8,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { PRACTICAL } from "@/data/practical";
 import { ExitCheck, NAT_KEY } from "./ExitCheck";
 import { ExtLink } from "./ExtLink";
+import { COUNTRY_CODES } from "@/data/countries";
 
 export function CityGuide({ city, cityLabel, t, locale, money }: {
   city: City; cityLabel: string; t: Dict; locale: Locale; money: (v: number) => React.ReactNode;
@@ -23,14 +24,26 @@ export function CityGuide({ city, cityLabel, t, locale, money }: {
     natLocal = nat ? new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }).of(nat) ?? "" : "";
   } catch { /* ignorar */ }
   const c = city.stops[0];
-  const embassy = `https://www.google.com/maps/search/${encodeURIComponent(natName ? `embassy of ${natName}` : "embassy")}/@${c.lat},${c.lng},13z`;
+  const natList = (() => { try { const dn = new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }); return COUNTRY_CODES.map((x) => ({ c: x, n: dn.of(x) ?? x })).sort((a, b) => a.n.localeCompare(b.n)); } catch { return COUNTRY_CODES.map((x) => ({ c: x, n: x })); } })();
+  const embassy = `https://www.google.com/maps/search/${encodeURIComponent(`embassy of ${natName} ${cityLabel}`)}/@${c.lat},${c.lng},13z`;
   return (
     <div className="stack">
       <h2 style={{ fontSize: 22 }}>{fmt(t.guideTitle, { city: cityLabel })}</h2>
       <div className="card rows" style={{ paddingBlock: 6 }}>
         {g && <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{emergencyText(g.emergency, t)}</b></a></div>}
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}
-        <div><span>🏛 {t.embassy}</span><ExtLink href={embassy}>{natLocal || "Google Maps"} ↗</ExtLink></div>
+        {/* Embaixada: com nacionalidade, procura a do país do viajante; sem ela, pede-a (nunca uma pesquisa genérica com rótulo enganador). */}
+        {nat ? <div className="stack" style={{ gap: 2, alignItems: "stretch" }}>
+            <div><span>🏛 {fmt(t.emb.of, { c: natLocal })}</span><ExtLink href={embassy}>Google Maps ↗</ExtLink></div>
+            <small className="hint">{t.emb.note} <button type="button" className="link-btn" onClick={() => { setNat(""); try { localStorage.removeItem(NAT_KEY); } catch { /* ignorar */ } }}>{t.bpChange}</button></small>
+          </div>
+          : <div className="stack" style={{ gap: 6, alignItems: "stretch" }}>
+            <label htmlFor="emb-nat" className="hint">🏛 {t.emb.pick}</label>
+            <select id="emb-nat" value="" onChange={(e) => { setNat(e.target.value); try { localStorage.setItem(NAT_KEY, e.target.value); } catch { /* ignorar */ } }}>
+              <option value="">—</option>
+              {natList.map((x) => <option key={x.c} value={x.c}>{x.n}</option>)}
+            </select>
+          </div>}
       </div>
       {g && (
         <div className="card stack" style={{ gap: 10, padding: 14 }}>

@@ -98,7 +98,13 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
         <div className="bp-seg tp-seg" role="radiogroup">
           {kinds.map((k) => (
             <button key={k} type="button" role="radio" aria-checked={want === k} className={want === k ? "on" : ""}
-              onClick={() => { setMsg(""); if (k === "airport") { setWant(k); onChange(AIRPORT); } else if (k === "here") here(); else setWant(k); }}>
+              onClick={() => {
+                setMsg("");
+                if (k === "airport") { setWant(k); onChange(AIRPORT); }
+                else if (k === "here") here();
+                // Mudar de tipo invalida logo a escolha anterior (nunca fica "✓ Aeroporto" com "Hotel" selecionado).
+                else { setWant(k); if (value.kind !== k) onChange({ kind: k, lat: NaN, lng: NaN, label: "" }); }
+              }}>
               {icon(k)}{t.tpKinds[k === "address" ? "hotel" : k]}
             </button>
           ))}
@@ -106,6 +112,7 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
       )}
       {searchKind && <PlaceSearch t={t} locale={locale} city={city} kind={searchKind} onPick={onChange} />}
       {value.kind !== "airport" && value.kind === want && endpointReady(value) && <p className="bp-ok">✓ {endIcon(value)} {endLabel(value, t)}</p>}
+      {want !== "airport" && !msg && !(value.kind === want && endpointReady(value)) && <p className="tp-need">{t.tpChoose[want === "address" ? "hotel" : want]}</p>}
       {msg && <p className="hint">{msg}</p>}
     </>
   );
@@ -151,7 +158,6 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
       {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
       {(needKind === "station" || needKind === "port") && (
         <>
-          {endMissing && <p className="tp-need">{needKind === "station" ? t.tpNeedStation : t.tpNeedPort}</p>}
           <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
             kinds={needKind === "station" ? ["station", "airport"] : [needKind]} onChange={(e) => set({ end: e })} />
           {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
@@ -164,7 +170,7 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
             <button type="button" role="radio" aria-checked={other} className={other ? "on" : ""} onClick={() => setOther(true)}>{t.tpElsewhere}</button>
           </div>
           {other ? <EndpointChooser t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["airport", "station", "port", "hotel"]} onChange={(e) => set({ end: e })} />
-            : <p className="bp-ok">✓ {endIcon(value.start)} {endLabel(value.start, t)}</p>}
+            : endpointReady(value.start) ? <p className="bp-ok">✓ {endIcon(value.start)} {endLabel(value.start, t)}</p> : <p className="hint">{t.tpNeedEnd}</p>}
         </>
       )}
     </div>

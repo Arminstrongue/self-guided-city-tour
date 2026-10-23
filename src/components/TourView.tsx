@@ -162,6 +162,12 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const extras = city.stops.filter((s) => s.x);
   const extraMin = extras.reduce((a, s) => a + s.v + s.leg.min, 0) + (city.ret.extra.min - city.ret.core.min);
   const doneN = plan.stops.filter((s) => done[s.id]).length;
+  const [going, setGoing] = useLocalState<boolean>(`sgct:go:${city.id}`, false);
+  const started = going || doneN > 0;
+  const [planOpen, setPlanOpen] = useState(false);
+  // Começa à noite (19h–7h na hora da cidade)? Interiores pagos passam a "só exterior".
+  const startHour = Number(new Intl.DateTimeFormat("en-GB", { timeZone: city.tz ?? "UTC", hour: "2-digit", hour12: false }).format(((d) => (Number.isFinite(d.getTime()) ? d : new Date()))(trip.startAt ? zonedToDate(trip.startAt, city.tz ?? "UTC") : new Date())).slice(0, 2));
+  const night = startHour >= 19 || startHour < 7;
   const desc = (s: Stop) => (locale === "pt" ? s.pt : s.en);
 
   const legView = (l: Leg) => {
@@ -285,6 +291,18 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             <a className="link-btn" href={preview.signIn}>{t.pvHave}</a>
           </div>
         )}
+        {started && tab === "route" && !preview ? (<>
+          {/* A caminhar: o próximo passo é a primeira coisa no ecrã; o plano fica recolhido. */}
+        {(
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
+            onDone={(id) => toggleDone(id)}
+            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
+        )}
+          <button type="button" className="ios-row press" onClick={() => setPlanOpen(!planOpen)} aria-expanded={planOpen}>
+            <span className="ios-tx"><b>{t.tg.plan}</b><small>{fmt(t.fitOpt, { n: plan.stops.length, h: hrs(plan.minutesTour) })}</small></span>
+            <ChevronRight size={18} className="ios-chev" style={{ transform: planOpen ? "rotate(90deg)" : undefined }} aria-hidden="true" />
+          </button>
+          {planOpen && <>
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
@@ -294,7 +312,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
-            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"}
+            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night}
             from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
           <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
@@ -322,6 +340,56 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           </button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
+          </>}
+        </>) : (<>
+        <div className="card stack" style={{ gap: 10, padding: 14 }}>
+          <WeatherCard cityId={city.id} t={t} locale={locale} />
+          <div className="bp-line">
+            <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
+            <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
+          </div>
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
+          {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
+          <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
+            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night}
+            from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
+          <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
+          {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
+          {accessCount(plan.stops.map((s) => s.id)) > 0 && <p className="hint">♿ {fmt(t.acSum, { n: accessCount(plan.stops.map((s) => s.id)) })}</p>}
+          {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
+          {avail !== null && leave && (
+            <p className={`fit ${fits ? "ok" : "bad"}`}>
+              {fits ? fmt(t.tpFitsOk, { a: hrs(plan.minutesTour), b: hrs(avail), p: endName })
+                : avail <= 0 ? fmt(t.tpLate, { p: endName, t: when(leave) })
+                  : fmt(t.fitsBad, { a: hrs(plan.minutesTour), b: hrs(avail) }) + (ext && hasExtension(city) ? t.fitsTip : t.fitsTip2)}
+            </p>
+          )}
+          {leave && avail !== null && avail > 15 && (
+            notice ? <p className="hint">🔔 {notice}</p> : <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={remind}>🔔 {t.notifyBtn}</button>
+          )}
+          {trip.mode === "plane" && <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
+            onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />}
+          {!online && <p className="note">{t.offline}</p>}
+          {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
+          {!preview && <OfflineStatus t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
+          {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
+          <button type="button" className="ios-row press" onClick={() => setFxOpen(true)}>
+            <span className="ios-ic" style={{ background: "#ff9500" }}><ArrowLeftRight size={17} color="#fff" aria-hidden="true" /></span>
+            <span className="ios-tx"><b>{t.ttFx}</b>{city.cur !== fx.cur && <small>{city.cur} → {fx.cur}</small>}</span><ChevronRight size={18} className="ios-chev" aria-hidden="true" />
+          </button>
+          {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
+        </div>
+          {tab === "route" && !preview && (
+            <button type="button" className="btn tram press tg-go" onClick={() => { setGoing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+              <span>▶ {t.tg.start}</span><small>{t.tg.startSub}</small>
+            </button>
+          )}
+        {tab === "route" && !preview && (
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
+            onDone={(id) => toggleDone(id)}
+            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
+        )}
+        </>)}
 
         {tab === "route" && flightDate && trip.mode === "plane" && trip.end.kind === "airport" && (
           <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
@@ -334,11 +402,6 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
-        {tab === "route" && !preview && (
-          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
-            onDone={(id) => toggleDone(id)}
-            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
-        )}
 
         {tab === "route" && !preview && leftStops.length > 0 ? (
           <PlanChanged t={t} locale={locale} left={leftStops} remaining={minutesLeft(plan, bp, done)} deadline={deadline} endSet={Boolean(flightDate || endHM)}

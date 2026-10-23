@@ -1640,5 +1640,31 @@
 "accepted": "Richiesta accettata",
 "declined": "Richiesta eliminata",
 "none": "Nessuna richiesta in attesa"
+},
+"tpChoose": {
+"station": "Scegli la stazione",
+"port": "Scegli il terminal",
+"hotel": "Scegli l'hotel o l'indirizzo",
+"here": "Rilevamento posizione…"
+},
+"emb": {
+"pick": "Scegli la tua nazionalità per trovare l'ambasciata o il consolato",
+"of": "Ambasciata o consolato: {c}",
+"note": "Ricerca sulla mappa: verifica indirizzo e contatti sul sito ufficiale del ministero degli esteri del tuo paese."
+},
+"trs": {
+"title": "Informazioni abituali per questo tragitto",
+"note": "Nessun orario in tempo reale ora. Sono dati di riferimento VOYBU (non partenze in tempo reale).",
+"ticket": "Biglietto: {x}",
+"buy": "Acquista o convalida il biglietto prima di salire; con carta contactless, avvicinala al lettore all'ingresso (e all'uscita, se presente).",
+"dir": "Direzione: {x}"
+},
+"gdTranslate": "Traduci",
+"tg": {
+"start": "Inizia la passeggiata",
+"startSub": "Il prossimo passo va in alto",
+"plan": "Piano, tempi e strumenti",
+"night": "Percorso serale: interni a pagamento e musei sono di solito chiusi — quelle tappe diventano visite esterne.",
+"outside": "Solo esterno di sera"
 }
 }

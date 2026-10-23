@@ -63,16 +63,23 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
     setErr("");
   }
 
-  function go() {
+  /** Guarda o plano (início, fim, horas, roteiro) para o passeio, a amostra e a carteira usarem o mesmo. */
+  function persist() {
     if (!city || !opt) return;
     const final: Trip = { ...trip, startAt: later ? trip.startAt : "", deadline: time?.k === "dep" ? trip.deadline : "", key: opt.key };
     saveTrip(city.id, final);
-    track("plan_done", { city: city.id, locale });
     try {
       localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); localStorage.setItem("sgct:onboarded", "1");
       const b = bd(opt);
       localStorage.setItem("sgct:planned", JSON.stringify({ city: city.id, key: opt.key, n: opt.n, h: hrs(b.total), tour: hrs(b.tour), names: opt.names, bd: b, base: endLabel(trip.start, t), end: endLabel(trip.end, t), mode: trip.mode, startAt: final.startAt, deadline: final.deadline, cost: opt.cost, open: city.open, at: Date.now() }));
     } catch { /* sem armazenamento */ }
+  }
+  // Rascunho automático: ao ver o resultado, o plano fica guardado (carteira: "Continuar de onde ficou").
+  useEffect(() => { if (city && opt && tripReady(trip)) persist(); }, [city?.id, opt?.key, time?.k, trip]); // eslint-disable-line react-hooks/exhaustive-deps
+  function go() {
+    if (!city || !opt) return;
+    persist();
+    track("plan_done", { city: city.id, locale });
     if (city.open) { location.href = `/${locale}/tour/${city.id}`; return; }
     location.href = `/${locale}/c/${city.id}#book`;
   }
@@ -156,7 +163,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>
               </div>
               <button className="btn tram qs-go press" onClick={go}><Play size={18} aria-hidden="true" />{city.open ? t.qsStart : fmt(t.qsBuy, { p: from })}</button>
-              {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={() => { try { localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); } catch { /* ignorar */ } }}>🎧 {t.qsTry}</a>}
+              {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={persist}>🎧 {t.qsTry}</a>}
             </>
           ) : (
             <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0] ? bd(city.options[0]).total : 0) })}</p>

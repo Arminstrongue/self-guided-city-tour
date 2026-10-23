@@ -1640,5 +1640,31 @@
 "accepted": "Solicitud aceptada",
 "declined": "Solicitud eliminada",
 "none": "Sin solicitudes pendientes"
+},
+"tpChoose": {
+"station": "Elija la estación",
+"port": "Elija la terminal",
+"hotel": "Elija el hotel o la dirección",
+"here": "Obteniendo su ubicación…"
+},
+"emb": {
+"pick": "Elija su nacionalidad para buscar su embajada o consulado",
+"of": "Embajada o consulado de {c}",
+"note": "Búsqueda en el mapa: confirme la dirección y los contactos en la web oficial del ministerio de exteriores de su país."
+},
+"trs": {
+"title": "Información habitual de este trayecto",
+"note": "Sin horarios en directo ahora. Son datos de referencia de VOYBU (no son salidas en tiempo real).",
+"ticket": "Billete: {x}",
+"buy": "Compre o valide el billete antes de subir; con tarjeta contactless, acérquela al lector al entrar (y al salir, si lo hay).",
+"dir": "Sentido: {x}"
+},
+"gdTranslate": "Traducir",
+"tg": {
+"start": "Empezar el paseo",
+"startSub": "El siguiente paso pasa arriba",
+"plan": "Plan, tiempos y herramientas",
+"night": "Ruta nocturna: los interiores de pago y museos suelen estar cerrados; esas paradas quedan como visita exterior.",
+"outside": "Solo exterior de noche"
 }
 }

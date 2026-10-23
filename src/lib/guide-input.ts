@@ -71,7 +71,13 @@ export function dedupeText(text: string): string {
   const seen = new Set<string>();
   return text.replace(/\r/g, "").split(/\n{2,}/).map((para) => para.split("\n").map((line) => {
     const parts = line.match(/[^.!?。！？]+[.!?。！？]*\s*/g) ?? [line];
-    return parts.filter((p) => { const k = norm(p); if (k.length < 12) return true; if (seen.has(k)) return false; seen.add(k); return true; }).join("").trim();
+    return parts.filter((p) => {
+      const k = norm(p);
+      if (k.length < 12) return true;
+      // Repetida, ou quase igual (uma contida na outra, ex.: colada sem o ponto final).
+      if (seen.has(k) || (k.length >= 30 && [...seen].some((x) => x.length >= 30 && (x.includes(k) || k.includes(x))))) return false;
+      seen.add(k); return true;
+    }).join("").trim();
   }).filter(Boolean).join("\n")).filter(Boolean).join("\n\n");
 }
 

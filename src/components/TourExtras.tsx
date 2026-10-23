@@ -20,9 +20,9 @@ const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Mat
 
 const MODE_ICON: Record<Leg["m"], string> = { walk: "🚶", metro: "🚇", tram: "🚊", bus: "🚌", train: "🚆", ferry: "⛴", car: "🚕" };
 
-export function RouteFit({ options, value, onChange, availMin, t, extName, locale, single, money, from, tz }: {
+export function RouteFit({ options, value, onChange, availMin, t, extName, locale, single, money, from, tz, ticket, night = false }: {
   options: RouteOption[]; value: string; onChange: (k: string) => void; availMin: number | null; t: Dict; extName: string;
-  locale: Locale; single: number; money: (v: number) => string; from: { lat: number; lng: number; n: string } | null; tz: string;
+  locale: Locale; single: number; money: (v: number) => string; from: { lat: number; lng: number; n: string } | null; tz: string; ticket?: string; night?: boolean;
 }) {
   const [times, setTimes] = useState<{ a: { lat: number; lng: number; n: string }; b: Stop } | null>(null);
   // Estilo iOS: escolha compacta da duração (pílulas) e, por baixo, as paragens do roteiro escolhido com nome.
@@ -52,6 +52,7 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
             {cur.key === "ext" && <small>+ {extName}</small>}
             {ok(cur) === false && <small className="rf-warn">{t.tooLong}</small>}
           </div>
+          {night && <p className="rf-night">🌙 {t.tg.night}</p>}
           <ol className="rf-list">
             {cur.plan.stops.map((s, k) => {
               const l = s.leg, price = (l.r ?? 0) * single + (l.f ?? 0);
@@ -60,6 +61,7 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
                 <li key={s.id} className={i > 0 && !prev.has(s.id) ? "new" : ""}>
                   <span className="rf-n num">{k + 1}</span>
                   <span className="rf-name">{s.n}
+                    {night && s.o && <small className="rf-out">🌙 {t.tg.outside}</small>}
                     <small className="rf-leg">{MODE_ICON[l.m]} {l.m === "walk" ? t.walk : t[l.m]}{l.line ? ` · ${lineText(l.line, locale)}` : ""} · {l.min} min · {price > 0 ? money(price) : t.free}</small>
                   </span>
                   {l.m !== "walk" && a && <button type="button" className="rf-tbtn" onClick={() => setTimes({ a, b: s })}>{t.rfTimes}</button>}
@@ -70,7 +72,9 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
           </ol>
         </div>
       )}
-      {times && <TransitSheet a={times.a} b={times.b} t={t} locale={locale} tz={tz} onClose={() => setTimes(null)} />}
+      {times && <TransitSheet a={times.a} b={times.b} t={t} locale={locale} tz={tz} onClose={() => setTimes(null)}
+        fallback={{ how: `${MODE_ICON[times.b.leg.m]} ${t[times.b.leg.m]}${times.b.leg.line ? ` · ${lineText(times.b.leg.line, locale)}` : ""}`, min: times.b.leg.min,
+          price: (times.b.leg.r ?? 0) * single + (times.b.leg.f ?? 0) > 0 ? money((times.b.leg.r ?? 0) * single + (times.b.leg.f ?? 0)) : t.free, ticket: ticket ?? "" }} />}
     </div>
   );
 }
@@ -79,7 +83,10 @@ type TLine = { name: string; vehicle: string; color: string; from: string; to: s
 type TOpt = { dep: string; arr: string; min: number; fare: string; walkMin: number; lines: TLine[] };
 
 /** Próximas ligações em transportes públicos entre duas paragens: linhas, horas, duração e preço. */
-function TransitSheet({ a, b, t, locale, tz, onClose }: { a: { lat: number; lng: number; n: string }; b: Stop; t: Dict; locale: Locale; tz: string; onClose: () => void }) {
+function TransitSheet({ a, b, t, locale, tz, onClose, fallback }: {
+  a: { lat: number; lng: number; n: string }; b: Stop; t: Dict; locale: Locale; tz: string; onClose: () => void;
+  fallback: { how: string; min: number; price: string; ticket: string };
+}) {
   const [opts, setOpts] = useState<TOpt[] | null>(null);
   useEffect(() => {
     let live = true;
@@ -94,7 +101,18 @@ function TransitSheet({ a, b, t, locale, tz, onClose }: { a: { lat: number; lng:
       <div className="sheet stack" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={t.trTitle}>
         <SheetX onClose={onClose} label={t.close} />
         <div className="stack" style={{ gap: 2 }}><b style={{ fontSize: 20 }}>{t.trTitle}</b><span className="hint">{fmt(t.trFrom, { a: a.n, b: b.n })}</span></div>
-        {opts === null ? <p className="hint">…</p> : opts.length === 0 ? <p className="hint">{t.trNone}</p> : (
+        {opts === null ? <p className="hint">…</p> : opts.length === 0 ? (
+          // Sem horários ao vivo: a informação habitual do trajeto (identificada como tal), em vez de um beco sem saída.
+          <div className="tr-static">
+            <b>{t.trs.title}</b>
+            <ul className="ios-group">
+              <li className="ios-li"><span className="ios-tx"><b>{fallback.how}</b><small>{fallback.min} min · {fallback.price}</small></span></li>
+              {fallback.ticket && <li className="ios-li"><span className="ios-tx"><small>{fmt(t.trs.ticket, { x: fallback.ticket })}</small></span></li>}
+              <li className="ios-li"><span className="ios-tx"><small>{t.trs.buy}</small></span></li>
+            </ul>
+            <p className="hint">{t.trs.note}</p>
+          </div>
+        ) : (
           <ul className="ios-group">
             {opts.map((o, k) => (
               <li key={k} className="tr-o">

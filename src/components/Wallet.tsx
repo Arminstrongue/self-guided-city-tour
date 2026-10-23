@@ -308,7 +308,8 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
           <a className="press" href={`/${locale}#cities`}><span className="qi q4"><I icon={Sparkles} size={22} /></span>{t.wQuickExplore}</a>
           <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
         </div>
-        <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />
+        {/* Alertas só com viagem: sem destino, não mostra notícias do mundo inteiro. */}
+        {myCities.length > 0 && <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />}
       </>}
 
       {/* ---------- Explorar: pessoas, cidades e o que há ---------- */}

@@ -1613,5 +1613,31 @@
 "accepted": "Anfrage angenommen",
 "declined": "Anfrage gelöscht",
 "none": "Keine offenen Anfragen"
+},
+"tpChoose": {
+"station": "Bahnhof wählen",
+"port": "Terminal wählen",
+"hotel": "Hotel oder Adresse wählen",
+"here": "Standort wird ermittelt…"
+},
+"emb": {
+"pick": "Wählen Sie Ihre Staatsangehörigkeit, um Ihre Botschaft oder Ihr Konsulat zu finden",
+"of": "Botschaft oder Konsulat: {c}",
+"note": "Kartensuche – prüfen Sie Adresse und Kontakte auf der offiziellen Website Ihres Außenministeriums."
+},
+"trs": {
+"title": "Übliche Informationen zu dieser Strecke",
+"note": "Derzeit keine Live-Abfahrten. Dies sind Referenzdaten von VOYBU (keine Echtzeit-Abfahrten).",
+"ticket": "Ticket: {x}",
+"buy": "Kaufen oder entwerten Sie das Ticket vor dem Einsteigen; mit kontaktloser Karte beim Einstieg (und ggf. Ausstieg) an den Leser halten.",
+"dir": "Richtung: {x}"
+},
+"gdTranslate": "Übersetzen",
+"tg": {
+"start": "Spaziergang starten",
+"startSub": "Der nächste Schritt erscheint oben",
+"plan": "Plan, Zeiten und Werkzeuge",
+"night": "Abendroute: kostenpflichtige Innenräume und Museen sind meist geschlossen – diese Stationen werden zu Außenbesuchen.",
+"outside": "Abends nur von außen"
 }
 }

@@ -2741,3 +2741,10 @@ a.nt2-who small{opacity:.55}
 .nt2-skel span{height:62px;border-radius:16px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink) 5%,transparent),color-mix(in srgb,var(--ink) 9%,transparent),color-mix(in srgb,var(--ink) 5%,transparent));background-size:200% 100%;animation:nt2-sh 1.2s linear infinite}
 @keyframes nt2-sh{to{background-position:-200% 0}}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nt2{background:#000}:root:not([data-theme="light"]) .nt2-list,:root:not([data-theme="light"]) .nt2-req,:root:not([data-theme="light"]) .nt2-set{background:#1c1c1e}}
+.tr-static{display:grid;gap:8px}
+.tr-static .ios-li{padding:10px 14px}
+
+.rf-night{margin:0 14px 6px;padding:8px 10px;border-radius:10px;font-size:13px;background:color-mix(in srgb,#5856d6 10%,transparent)}
+.rf-out{font-size:12px;font-weight:600;color:#5856d6}
+.tg-go{display:grid;gap:2px;justify-items:center;padding:14px}
+.tg-go small{font-size:12px;opacity:.85;font-weight:500}
