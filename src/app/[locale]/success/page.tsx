@@ -20,7 +20,7 @@ export default async function Success({ params, searchParams }: { params: { loca
           <>
             <h1 style={{ fontSize: 30 }}>✓ {t.successTitle}</h1>
             <p>{fmt(t.successSub, { email: searchParams.email ?? "" })}</p>
-            <Link className="btn tram" href={`/${params.locale}/tour/${city?.id ?? "lis"}`}>{t.openTour}</Link>
+            <Link className="btn tram" href={`/${params.locale}/tour/${city?.id ?? "lon"}`}>{t.openTour}</Link>
           </>
         )}
       </div>

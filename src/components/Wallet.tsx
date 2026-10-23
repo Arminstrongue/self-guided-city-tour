@@ -11,6 +11,7 @@ import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { SearchPick } from "./SearchPick";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
+import { NeedNow } from "./NeedNow";
 import { Composer, FeedTab } from "./Feed";
 import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
@@ -277,6 +278,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
         {/* Agora: o próximo passo (reserva, visita com guia, roteiro em curso ou roteiro planeado) */}
         <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned} hasPass={active.length > 0}
           bookings={(signed?.bookings ?? []).map((b) => ({ id: b.id, guide: b.guide, guideId: b.guideId, startAt: b.startAt, city: b.city, status: b.status, meeting: "meeting" in b ? (b.meeting as string | null) : null }))} />
+        <NeedNow t={t} locale={locale} city={planned?.city ?? myCities[0] ?? "lon"} compact />
         {w === "anon" && (
           <section className="card stack wl-sign">
             <b style={{ fontSize: 17 }}>🔐 {t.wSignTitle}</b>

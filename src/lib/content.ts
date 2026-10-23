@@ -71,8 +71,11 @@ export async function loadCities(opts: { includeInactive?: boolean } = {}): Prom
     return r ? { ...withStatic(r.data as City, c), edited: true, active: r.active } : { ...c, active: true };
   });
   for (const r of over.values()) if (!CITIES.some((c) => c.id === r.id)) out.push({ ...(r.data as City), edited: true, active: r.active });
+  // Londres é sempre a cidade principal: primeira em todas as listas.
+  out.sort((a, b) => Number(b.id === PRIMARY_CITY) - Number(a.id === PRIMARY_CITY));
   return opts.includeInactive ? out : out.filter((c) => c.active !== false);
 }
+export const PRIMARY_CITY = "lon";
 
 export async function loadCity(id: string): Promise<City | undefined> {
   return (await loadCities()).find((c) => c.id === id);

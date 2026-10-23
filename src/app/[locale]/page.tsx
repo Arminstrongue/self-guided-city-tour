@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { alternates } from "@/lib/seo";
 import Link from "next/link";
 import { Header } from "@/components/Header";
+import { NeedNow } from "@/components/NeedNow";
 import { fxContext } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
 import { SOON, cityName, cityNames, regionOf, COUNTRY } from "@/data/cities";
@@ -28,15 +29,15 @@ const FEAT_HREF = [
   "/start",                // transporte mais barato: o planeador mostra o custo do roteiro
   "/tour/man",             // áudio-guia: roteiro de demonstração
   "/start",                // contagem até à partida: planear com a hora de partida
-  "/c/lis",                // avaliações e fotos de cada paragem
+  "/c/lon",                // avaliações e fotos de cada paragem
   "/wallet#offline",       // descarregar para offline
   "/wallet#tools",         // conversor de moeda
   "/wallet#split",         // dividir despesas
   "/c/man#safety",         // SOS e segurança
-  "/c/lis#book",           // posso sair do aeroporto?
+  "/c/lon#book",           // posso sair do aeroporto?
   "/wallet#trip",          // estado do voo na minha viagem
   "/wallet#home",          // comunidade
-  "/guides/lis"            // guias locais
+  "/guides/lon"            // guias locais
 ] as const;
 
 export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
@@ -66,7 +67,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const from = fmt(t.fromP, { p: p.local ?? p.main });
-  const featured = ["lis", "nyc", "par", "rak", "dxb", "rio", "rom", "cpt", "lon", "sin", "ist", "mex", "prg", "cai", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
+  const featured = ["lon", "lis", "nyc", "par", "rak", "dxb", "rio", "rom", "cpt", "sin", "ist", "mex", "prg", "cai", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
   return (
     <main className="app xl">
       <HomeHero cities={featured}>
@@ -85,12 +86,15 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
         </div>
       </HomeHero>
 
+      {/* Para quem acabou de chegar ou precisa de algo já: quatro entradas diretas (Londres primeiro). */}
+      <div className="sec nn-sec"><NeedNow t={t} locale={params.locale} city="lon" /></div>
+
       {/* O produto logo a seguir ao topo: escolher → roteiro → próximo passo → bilhete */}
       <section className="sec dm" aria-labelledby="dm-h">
         <div className="sec-h reveal"><div><h2 id="dm-h">{t.dmTitle}</h2></div><a href={`/${params.locale}/tour/man`}>🎧 {t.qsTry} →</a></div>
         <ol className="dm-rail">
           <li className="dm-card reveal"><span className="dm-n">1</span><b>{t.dm1t}</b><small>{t.dm1s}</small>
-            <div className="dm-ui"><div className="dm-search">⌕ Lisbo…</div><div className="dm-row on">🇵🇹 {cityName(list.find((c) => c.id === "lis")!, params.locale)}</div><div className="dm-row">🇵🇹 Porto</div></div></li>
+            <div className="dm-ui"><div className="dm-search">⌕ Lond…</div><div className="dm-row on">🇬🇧 {cityName(list.find((c) => c.id === "lon")!, params.locale)}</div><div className="dm-row">🇬🇧 Manchester</div></div></li>
           <li className="dm-card reveal"><span className="dm-n">2</span><b>{t.dm2t}</b><small>{t.dm2s}</small>
             <div className="dm-ui"><div className="dm-big">4 {t.stops} · 2 h 38</div><div className="dm-line"><span>✈ → 🚆</span><span>+45 min</span></div><div className="dm-bar"><i style={{ width: "62%" }} /><i style={{ width: "19%" }} /><i style={{ width: "19%" }} /></div></div></li>
           <li className="dm-card reveal"><span className="dm-n">3</span><b>{t.dm3t}</b><small>{t.dm3s}</small>
