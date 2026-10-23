@@ -2058,5 +2058,20 @@
 "earned": "{b}개 중 {a}개 획득",
 "pts": "포인트",
 "done": "획득"
+},
+"nt2": {
+"requests": "팔로우 요청",
+"confirm": "확인",
+"delete": "삭제",
+"followBack": "맞팔로우",
+"following": "팔로잉",
+"requested": "요청됨",
+"today": "오늘",
+"week": "최근 7일",
+"month": "최근 30일",
+"older": "이전",
+"accepted": "요청을 수락했습니다",
+"declined": "요청을 삭제했습니다",
+"none": "대기 중인 요청이 없습니다"
 }
 }

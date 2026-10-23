@@ -76,6 +76,8 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
     const f = () => setPage((h) => (location.hash.startsWith("#st:") ? (location.hash.slice(4) as Page) : h === "root" ? h : "root"));
     window.addEventListener("popstate", f); return () => window.removeEventListener("popstate", f);
   }, []);
+  // Abrir diretamente uma subpágina (ex.: /wallet/account#st:notifs a partir das notificações).
+  useEffect(() => { if (location.hash.startsWith("#st:")) setPage(location.hash.slice(4) as Page); }, []);
   const go = (p: Page) => { setPage(p); history.pushState(null, "", `#st:${p}`); window.scrollTo(0, 0); };
   const back = () => { if (location.hash.startsWith("#st:")) history.back(); else setPage("root"); };
   const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(""), 2500); };

@@ -193,3 +193,21 @@ test("amigos próximos, palavras ocultas e a sua atividade", async () => {
   assert.deepEqual(act.likes.posts.map((x) => x.id), [post]);
   assert.deepEqual(act.comments.map((x) => [x.text, x.handle]), [["lindo", "clara"]]);
 });
+
+test("pedidos para seguir: aceitar resolve a notificação (sem repetir)", async () => {
+  const { db } = await import("./db");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  await migrate((await db()) as never, { migrationsFolder: "./drizzle" });
+  const s = await import("./social");
+  const n = await import("./notify");
+  await s.saveProfile("r1@x.com", { handle: "rita", name: "Rita", bio: "", photo: null, isPrivate: true });
+  await s.saveProfile("r2@x.com", { handle: "abdul", name: "Abdul", bio: "", photo: null, isPrivate: false });
+  await s.follow("r2@x.com", "rita");
+  await s.unfollow("r2@x.com", "rita"); await s.follow("r2@x.com", "rita"); // pedido repetido
+  let list = await n.listNotifs("r1@x.com");
+  assert.deepEqual(list.filter((x) => x.type === "request").map((x) => x.actor.handle), ["abdul"]);
+  await s.answerRequest("r1@x.com", "abdul", true);
+  list = await n.listNotifs("r1@x.com");
+  assert.equal(list.filter((x) => x.type === "request").length, 0);
+  assert.deepEqual(list.filter((x) => x.type === "follow").map((x) => [x.actor.handle, x.me]), [["abdul", "none"]]);
+});

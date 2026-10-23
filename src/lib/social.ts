@@ -123,11 +123,16 @@ export async function answerRequest(me: string, handle: string, accept: boolean)
   if (!p) return;
   const d = await db();
   const where = and(eq(schema.follows.follower, p.email), eq(schema.follows.followee, me));
+  const reqNotif = and(eq(schema.notifications.email, me), eq(schema.notifications.actor, p.email), eq(schema.notifications.type, "request"));
   if (accept) {
     const up = await d.update(schema.follows).set({ status: "accepted" }).where(and(where, eq(schema.follows.status, "pending"))).returning({ f: schema.follows.follower });
     if (up.length) await notify(p.email, me, "accepted").catch(() => null);
+    // O pedido passa a "começou a seguir-te" (deixa de pedir "Aceitar").
+    await d.update(schema.notifications).set({ type: "follow" }).where(reqNotif);
+  } else {
+    await d.delete(schema.follows).where(where);
+    await d.delete(schema.notifications).where(reqNotif);
   }
-  else await d.delete(schema.follows).where(where);
 }
 
 async function profilesFor(emails: string[]) {

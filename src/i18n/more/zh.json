@@ -1570,5 +1570,20 @@
 "earned": "已获得 {a}/{b}",
 "pts": "积分",
 "done": "已获得"
+},
+"nt2": {
+"requests": "关注请求",
+"confirm": "确认",
+"delete": "删除",
+"followBack": "回关",
+"following": "已关注",
+"requested": "已请求",
+"today": "今天",
+"week": "最近 7 天",
+"month": "最近 30 天",
+"older": "更早",
+"accepted": "已接受请求",
+"declined": "已删除请求",
+"none": "没有待处理的请求"
 }
 }

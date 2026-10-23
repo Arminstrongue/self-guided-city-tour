@@ -1598,5 +1598,20 @@
 "earned": "{a} von {b} erreicht",
 "pts": "Punkte",
 "done": "Erreicht"
+},
+"nt2": {
+"requests": "Follower-Anfragen",
+"confirm": "Bestätigen",
+"delete": "Löschen",
+"followBack": "Zurückfolgen",
+"following": "Gefolgt",
+"requested": "Angefragt",
+"today": "Heute",
+"week": "Letzte 7 Tage",
+"month": "Letzte 30 Tage",
+"older": "Früher",
+"accepted": "Anfrage angenommen",
+"declined": "Anfrage gelöscht",
+"none": "Keine offenen Anfragen"
 }
 }

@@ -2694,3 +2694,50 @@ a.as-row{text-decoration:none}
 .pt2-seg button{white-space:nowrap;font-size:13px;padding:8px 4px}
 .pt2-seg button svg{flex:0 0 auto}
 @media (max-width:360px){.pt2-badges{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* ---------- Notificações (premium, estilo iOS) ---------- */
+.nt2-bg{position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;animation:as-fade .2s ease}
+.nt2{width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;padding:8px 16px calc(18px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:var(--bg,#f2f2f7);color:var(--ink);box-shadow:0 -20px 60px rgba(0,0,0,.18);animation:as-up .3s cubic-bezier(.2,.9,.25,1)}
+.nt2-grab{background:color-mix(in srgb,var(--ink) 20%,transparent)}
+.nt2-head{display:flex;align-items:center;gap:8px;margin:4px 0 14px}
+.nt2-head b{flex:1;font-size:28px;font-weight:700;letter-spacing:-.02em}
+.nt2-x{width:34px;height:34px;border-radius:50%;border:0;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 8%,transparent);color:inherit;cursor:pointer}
+.nt2-back{border:0;background:none;color:#007aff;padding:0;margin-left:-6px;display:grid;place-items:center;cursor:pointer}
+.nt2-req{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;margin-bottom:14px;border:0;border-radius:18px;background:var(--surface,#fff);color:inherit;font:inherit;text-align:start;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.nt2-req-t{flex:1;min-width:0;display:grid;gap:1px}
+.nt2-req-t b{font-size:16px}.nt2-req-t small{font-size:13px;opacity:.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nt2-count{min-width:22px;height:22px;padding:0 7px;border-radius:999px;display:grid;place-items:center;background:#ff3b30;color:#fff;font-size:12px;font-weight:700}
+.nt2-chev{opacity:.3;flex:0 0 auto}
+.nt2-pair{position:relative;display:inline-flex;width:46px;height:46px;flex:0 0 46px}
+.nt2-pair>*{position:absolute;box-shadow:0 0 0 2px var(--surface,#fff);border-radius:50%}
+.nt2-pair>*:first-child{top:0;left:0}.nt2-pair>*:nth-child(2){right:0;bottom:0}
+.nt2-pair.big{width:52px;height:52px;flex-basis:52px}
+.nt2-sec{margin-bottom:10px}
+.nt2-h{display:block;font-size:15px;font-weight:700;margin:8px 4px 6px}
+.nt2-list{list-style:none;margin:0;padding:4px 0;border-radius:18px;background:var(--surface,#fff);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.nt2-row{position:relative;display:flex;align-items:center;gap:12px;padding:10px 14px}
+.nt2-row+.nt2-row::before{content:"";position:absolute;top:0;left:72px;right:0;height:.5px;background:color-mix(in srgb,var(--ink) 10%,transparent)}
+.nt2-row.new::after{content:"";position:absolute;left:5px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#007aff}
+.nt2-av{position:relative;flex:0 0 46px;height:46px;display:grid;place-items:center}
+.nt2-type{position:absolute;right:-3px;bottom:-3px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff;box-shadow:0 0 0 2.5px var(--surface,#fff)}
+.nt2-medal{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#3a2500;background:conic-gradient(from 210deg,#ffe29a,#ffb547,#ff7a59,#ffe29a);box-shadow:0 4px 14px rgba(255,181,71,.35)}
+.nt2-txt{flex:1;min-width:0;border:0;background:none;padding:0;color:inherit;font:inherit;font-size:15px;line-height:1.35;text-align:start;cursor:pointer}
+.nt2-txt b{font-weight:650}
+.nt2-txt small{font-size:13px;opacity:.5;white-space:nowrap}
+a.nt2-who{display:grid;gap:1px;text-decoration:none}
+a.nt2-who small{opacity:.55}
+.nt2-thumb{flex:0 0 46px;width:46px;height:46px;border-radius:10px;object-fit:cover;cursor:pointer}
+.nt2-acts{display:flex;gap:6px;flex:0 0 auto}
+.nt2-btn{flex:0 0 auto;padding:8px 16px;border:0;border-radius:10px;background:#007aff;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:transform .12s;white-space:nowrap}
+.nt2-btn:active{transform:scale(.96)}
+.nt2-btn.ghost{background:color-mix(in srgb,var(--ink) 9%,transparent);color:inherit}
+.nt2-btn.static{cursor:default}
+.nt2-set{display:flex;align-items:center;gap:12px;margin-top:6px;padding:14px;border-radius:18px;background:var(--surface,#fff);color:inherit;text-decoration:none;font-size:15px}
+.nt2-set span{flex:1}
+.nt2-empty{display:grid;justify-items:center;gap:6px;padding:48px 20px;text-align:center}
+.nt2-empty span{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 7%,transparent);margin-bottom:6px}
+.nt2-empty small{opacity:.6}
+.nt2-skel{display:grid;gap:10px}
+.nt2-skel span{height:62px;border-radius:16px;background:linear-gradient(90deg,color-mix(in srgb,var(--ink) 5%,transparent),color-mix(in srgb,var(--ink) 9%,transparent),color-mix(in srgb,var(--ink) 5%,transparent));background-size:200% 100%;animation:nt2-sh 1.2s linear infinite}
+@keyframes nt2-sh{to{background-position:-200% 0}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .nt2{background:#000}:root:not([data-theme="light"]) .nt2-list,:root:not([data-theme="light"]) .nt2-req,:root:not([data-theme="light"]) .nt2-set{background:#1c1c1e}}

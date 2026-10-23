@@ -1625,5 +1625,20 @@
 "earned": "{a} de {b} conseguidas",
 "pts": "puntos",
 "done": "Conseguida"
+},
+"nt2": {
+"requests": "Solicitudes de seguimiento",
+"confirm": "Confirmar",
+"delete": "Eliminar",
+"followBack": "Seguir también",
+"following": "Siguiendo",
+"requested": "Solicitado",
+"today": "Hoy",
+"week": "Últimos 7 días",
+"month": "Últimos 30 días",
+"older": "Anteriores",
+"accepted": "Solicitud aceptada",
+"declined": "Solicitud eliminada",
+"none": "Sin solicitudes pendientes"
 }
 }

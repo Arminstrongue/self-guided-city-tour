@@ -1625,5 +1625,20 @@
 "earned": "{a} di {b} ottenuti",
 "pts": "punti",
 "done": "Ottenuto"
+},
+"nt2": {
+"requests": "Richieste di follow",
+"confirm": "Conferma",
+"delete": "Elimina",
+"followBack": "Ricambia",
+"following": "Segui già",
+"requested": "Richiesto",
+"today": "Oggi",
+"week": "Ultimi 7 giorni",
+"month": "Ultimi 30 giorni",
+"older": "Precedenti",
+"accepted": "Richiesta accettata",
+"declined": "Richiesta eliminata",
+"none": "Nessuna richiesta in attesa"
 }
 }

@@ -118,13 +118,38 @@ export async function listNotifs(email: string) {
     .from(schema.notifications)
     .leftJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.notifications.actor))
     .leftJoin(schema.posts, eq(schema.posts.id, schema.notifications.postId))
-    .where(eq(schema.notifications.email, email)).orderBy(desc(schema.notifications.createdAt)).limit(60);
-  return rows.filter((r) => r.a).map(({ n, a, p }) => ({
-    id: n.id, type: n.type, text: n.text, at: n.createdAt.toISOString(), read: Boolean(n.readAt),
-    actor: { handle: a!.handle, name: a!.name, bio: a!.bio, photo: a!.photo, isPrivate: a!.isPrivate },
-    post: p?.id ? { id: p.id, photo: p.photo, kind: p.kind } : null,
-    split: n.type === "split" ? n.postId : null
-  }));
+    .where(eq(schema.notifications.email, email)).orderBy(desc(schema.notifications.createdAt)).limit(80);
+  // Estado real das relações: um pedido já respondido deixa de pedir "Aceitar" (e não se repete).
+  const [toMe, fromMe] = await Promise.all([
+    d.select({ e: schema.follows.follower, s: schema.follows.status }).from(schema.follows).where(eq(schema.follows.followee, email)),
+    d.select({ e: schema.follows.followee, s: schema.follows.status }).from(schema.follows).where(eq(schema.follows.follower, email))
+  ]);
+  const inRel = new Map(toMe.map((x) => [x.e, x.s]));
+  const outRel = new Map(fromMe.map((x) => [x.e, x.s]));
+  const seen = new Set<string>();
+  const out = [];
+  for (const { n, a, p } of rows) {
+    if (!a) continue;
+    let type = n.type;
+    if (type === "request" || type === "follow") {
+      const st = inRel.get(n.actor);
+      if (type === "request" && st === "accepted") type = "follow";   // já aceite: passa a "começou a seguir-te"
+      else if (type === "request" && st !== "pending") continue;      // recusado ou cancelado
+      const k = `${type}:${n.actor}`;
+      if (seen.has(k)) continue;                                      // um só por pessoa
+      seen.add(k);
+    }
+    const rel = outRel.get(n.actor);
+    out.push({
+      id: n.id, type, text: n.text, at: n.createdAt.toISOString(), read: Boolean(n.readAt),
+      actor: { handle: a.handle, name: a.name, bio: a.bio, photo: a.photo, isPrivate: a.isPrivate },
+      post: p?.id ? { id: p.id, photo: p.photo, kind: p.kind } : null,
+      split: n.type === "split" ? n.postId : null,
+      // Para "seguir de volta": se eu já sigo (ou pedi para seguir) quem fez a ação.
+      me: rel === "accepted" ? "following" as const : rel === "pending" ? "requested" as const : "none" as const
+    });
+  }
+  return out;
 }
 export async function unreadNotifs(email: string) {
   const d = await db();

@@ -2058,5 +2058,20 @@
 "earned": "{b} rozetten {a} kazanıldı",
 "pts": "puan",
 "done": "Kazanıldı"
+},
+"nt2": {
+"requests": "Takip istekleri",
+"confirm": "Onayla",
+"delete": "Sil",
+"followBack": "Geri takip et",
+"following": "Takip ediliyor",
+"requested": "İstendi",
+"today": "Bugün",
+"week": "Son 7 gün",
+"month": "Son 30 gün",
+"older": "Daha önce",
+"accepted": "İstek kabul edildi",
+"declined": "İstek silindi",
+"none": "Bekleyen istek yok"
 }
 }

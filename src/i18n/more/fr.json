@@ -1594,5 +1594,20 @@
 "earned": "{a} sur {b} obtenus",
 "pts": "points",
 "done": "Obtenu"
+},
+"nt2": {
+"requests": "Demandes d'abonnement",
+"confirm": "Confirmer",
+"delete": "Supprimer",
+"followBack": "Suivre en retour",
+"following": "Abonné",
+"requested": "Demandé",
+"today": "Aujourd'hui",
+"week": "7 derniers jours",
+"month": "30 derniers jours",
+"older": "Plus tôt",
+"accepted": "Demande acceptée",
+"declined": "Demande supprimée",
+"none": "Aucune demande en attente"
 }
 }
