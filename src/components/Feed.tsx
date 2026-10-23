@@ -38,7 +38,7 @@ export type PostItem = {
   archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
-type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
+export type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
 const BGS = ["sunset", "ocean", "forest", "night", "rose", "sand"] as const;
 const photoUrl = (id: string) => `/api/social/photo/${id}`;
 const postAct = (id: string, body: Record<string, string>) =>
@@ -113,8 +113,9 @@ function StoriesBar({ t, locale, me, rings, authors, onOpen, onAdd, seen }: { t:
 }
 
 const REACTIONS = ["😍", "😂", "😮", "🔥", "👏", "❤️"];
-export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen, onChanged, cities }: {
+export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen, onChanged, cities, hl }: {
   t: Dict; locale: Locale; rings: Ring[]; authors: Record<string, PublicProfile>; start: number; onClose: () => void; onSeen?: (id: string) => void; onChanged?: () => void; cities?: Record<string, string>;
+  hl?: { title: string; paused: boolean; onMenu: (storyId: string) => void }; // a ver um destaque: título e data no topo, "Mais" em vez de apagar
 }) {
   const [ri, setRi] = useState(start);
   const [ii, setIi] = useState(0);
@@ -123,7 +124,7 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
   const [viewers, setViewers] = useState<{ n: number; list: (PublicProfile & { at: string; liked: boolean })[] } | null>(null);
   const [showViewers, setShowViewers] = useState(false);
   const [burst, setBurst] = useState<string | null>(null);
-  const paused = pause || typing || showViewers;
+  const paused = pause || typing || showViewers || Boolean(hl?.paused);
   const [liked, setLiked] = useState<Record<string, boolean>>({});
   const ring = rings[ri]; const item = ring?.items[ii];
   const [muted, setMutedS] = useState(isMuted());
@@ -206,7 +207,8 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         <div className="st-prog">{ring.items.map((x, j) => <span key={x.id}><i className={j < ii ? "done" : j === ii ? (paused ? "run paused" : "run") : ""} key={`${x.id}-${j === ii ? ri : 0}`} /></span>)}</div>
         <div className="st-head">
           <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
-            {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{a?.name}</b><small style={{ opacity: .8 }}>{ago(item.at, locale)}</small>
+            {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{hl ? hl.title : a?.name}</b>
+            <small style={{ opacity: .8 }}>{hl ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(new Date(item.at)) : ago(item.at, locale)}</small>
           </a>
           <span className="st-hr">
             {item.music && <button type="button" className="st-snd" onPointerDown={(e) => e.stopPropagation()} onClick={() => setMuted(!muted)} aria-label={muted ? t.rlUnmute : t.rlMute}>{muted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}</button>}
@@ -222,7 +224,8 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
               👁 {viewers ? fmt(t.stSeenN, { n: viewers.n }) : "…"}
             </button>
             <span style={{ flex: 1 }} />
-            <button className="st-btn" onClick={async () => { await postAct(item.id, { action: "delete" }); onChanged?.(); onClose(); }}>🗑 {t.pfDelete}</button>
+            {hl ? <button className="st-btn" onPointerDown={(e) => e.stopPropagation()} onClick={() => hl.onMenu(item.id)} aria-label={t.hl.more}><I icon={Ellipsis} size={18} /> {t.hl.more}</button>
+              : <button className="st-btn" onClick={async () => { await postAct(item.id, { action: "delete" }); onChanged?.(); onClose(); }}>🗑 {t.pfDelete}</button>}
           </>) : (
             <>
               {!typing && <div className="st-reacts" onPointerDown={(e) => e.stopPropagation()}>{REACTIONS.map((e) => <button key={e} type="button" onClick={() => void react(e)} aria-label={`${t.stReact} ${e}`}>{e}</button>)}</div>}
@@ -626,6 +629,14 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
     return q === "archive" || q === "saved" || q === "reels" ? q : "grid";
   });
   const arch = tab === "archive";
+  // No Arquivo: publicações ou histórias (as histórias ficam 1 ano, só o autor vê).
+  const [archKind, setArchKind] = useState<"posts" | "stories">("posts");
+  const [stories, setStories] = useState<PostItem[] | null>(null);
+  const [storyAt, setStoryAt] = useState<number | null>(null);
+  useEffect(() => {
+    if (!arch || archKind !== "stories" || stories) return;
+    fetch("/api/social/highlights?archive=1", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((r) => setStories(r?.posts ?? [])).catch(() => setStories([]));
+  }, [arch, archKind, stories]);
   const base = tab === "saved" ? "/api/social/saved?" : `/api/social/u/${encodeURIComponent(handle)}/posts?${arch ? "archive=1&" : ""}`;
   useEffect(() => {
     setPage(null);
@@ -649,6 +660,27 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
           </button>
         ))}
       </div>
+      {arch && (
+        <div className="ios-seg" role="tablist">
+          <button role="tab" aria-selected={archKind === "posts"} className={archKind === "posts" ? "on" : ""} onClick={() => setArchKind("posts")}>{t.hl.posts}</button>
+          <button role="tab" aria-selected={archKind === "stories"} className={archKind === "stories" ? "on" : ""} onClick={() => setArchKind("stories")}>{t.hl.stories}</button>
+        </div>
+      )}
+      {arch && archKind === "stories" ? (<>
+        <p className="hint" style={{ margin: 0 }}>{t.hl.archiveSub}</p>
+        {stories === null ? <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>
+          : stories.length === 0 ? <p className="hint pf-empty">{t.hl.none}</p> : (
+            <div className="pf-grid hl-arch">{stories.map((x, i) => (
+              <button key={x.id} className={`pf-tile hl-tile ${x.photo ? "" : `sg-bg-${x.bg ?? "ocean"}`}`} onClick={() => setStoryAt(i)} aria-label={x.text.slice(0, 60) || t.hl.stories}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {x.photo ? <img src={photoUrl(x.id)} alt="" loading="lazy" /> : <span className="hl-tile-t">{x.text}</span>}
+                <small className="hl-date">{new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "2-digit" }).format(new Date(x.at))}</small>
+              </button>
+            ))}</div>
+          )}
+        {storyAt !== null && stories && <StoryViewer t={t} locale={locale} cities={cities} rings={stories.map((x) => ({ handle: x.handle, items: [x], mine: true, last: x.at }))}
+          authors={{ [author.handle]: author }} start={storyAt} onClose={() => setStoryAt(null)} onChanged={() => setStories(null)} />}
+      </>) : <>
       {page === null && <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>}
       {page && shownPosts.length === 0 && <p className="hint pf-empty">{arch ? t.pm.archiveEmpty : tab === "saved" ? t.svEmptySub : t.pfNoPosts}</p>}
       {page && shownPosts.length > 0 && <div className="pf-grid">{shownPosts.map((p) => (
@@ -662,6 +694,7 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
         </button>
       ))}</div>}
       {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}
+      </>}
       {reel && <ReelsViewer t={t} locale={locale} cities={cities} handle={handle} startId={reel} onClose={() => setReel(null)} />}
       {open && (
         <Portal><div className="sheet-bg" onClick={() => setOpen(null)}>

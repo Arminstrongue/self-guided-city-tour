@@ -372,6 +372,17 @@ export const posts = pgTable("posts", {
 }, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);
 export type Post = typeof posts.$inferSelect;
 
+/** Destaques do perfil: histórias guardadas em coleções com título (ficam depois das 24 h). */
+export const highlights = pgTable("highlights", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  author: text("author").notNull(),
+  title: text("title").notNull(),
+  items: jsonb("items").$type<string[]>().notNull().default([]),  // ids das histórias, por ordem
+  cover: uuid("cover"),                                           // história usada como capa
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("highlights_author_idx").on(t.author, t.createdAt)]);
+export type Highlight = typeof highlights.$inferSelect;
+
 /** Publicações que cada pessoa ocultou do seu feed. */
 export const postHides = pgTable("post_hides", {
   email: text("email").notNull(),

@@ -45,6 +45,12 @@ test("publicações: privacidade, feeds, histórias de 24 h, gostos, comentário
   const d = await db();
   await d.update(schema.posts).set({ expiresAt: new Date(Date.now() - 1000) }).where((await import("drizzle-orm")).eq(schema.posts.kind, "story"));
   assert.equal((await p.stories("b@x.com")).rings.length, 0);
+  // Fica no arquivo do autor (1 ano); os outros deixam de a ver
+  const stId = (await p.storyArchive("a@x.com")).posts[0].id;
+  assert.equal(await p.getPost("b@x.com", stId), null);
+  assert.ok(await p.getPost("a@x.com", stId));
+  assert.equal(await p.purgeExpired(), 0);
+  await d.update(schema.posts).set({ expiresAt: new Date(Date.now() - 400 * 86_400_000) }).where((await import("drizzle-orm")).eq(schema.posts.kind, "story"));
   assert.equal(await p.purgeExpired(), 1);
 
   // Bloqueio esconde tudo; apagar o perfil apaga publicações
@@ -109,4 +115,40 @@ test("gestão de publicações: arquivar, fixar, ocultar gostos, desligar coment
   assert.ok((await p.userPosts("m2@x.com", "mia"))!.posts.length > 0);
   await p.muteAuthorOf("m2@x.com", b, false);
   assert.ok((await p.feedFollowing("m2@x.com")).posts.some((x) => x.handle === "mia"));
+});
+
+test("destaques: histórias guardadas no perfil depois das 24 h", async () => {
+  const { db, schema } = await import("./db");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  await migrate((await db()) as never, { migrationsFolder: "./drizzle" });
+  const { eq } = await import("drizzle-orm");
+  const s = await import("./social");
+  const p = await import("./posts");
+  await s.saveProfile("h1@x.com", { handle: "hana", name: "Hana", bio: "", photo: null, isPrivate: false });
+  await s.saveProfile("h2@x.com", { handle: "hugo", name: "Hugo", bio: "", photo: null, isPrivate: false });
+  const s1 = (await p.createPost("h1@x.com", { kind: "story", text: "Porto", photo: null, city: null, tag: null, bg: "sunset" }) as { id: string }).id;
+  const s2 = (await p.createPost("h1@x.com", { kind: "story", text: "Ribeira", photo: null, city: null, tag: null, bg: "ocean" }) as { id: string }).id;
+  const other = (await p.createPost("h2@x.com", { kind: "story", text: "x", photo: null, city: null, tag: null, bg: "ocean" }) as { id: string }).id;
+
+  // Só histórias próprias entram
+  assert.deepEqual(await p.createHighlight("h1@x.com", "Porto", [other]), { error: "empty" });
+  const hl = (await p.createHighlight("h1@x.com", "  Porto  ", [s1, s2, other]) as { id: string }).id;
+  // Expira: continua visível a todos dentro do destaque
+  const d = await db();
+  await d.update(schema.posts).set({ expiresAt: new Date(Date.now() - 1000) }).where(eq(schema.posts.author, "h1@x.com"));
+  const list = (await p.highlightsOf("h2@x.com", "hana"))!;
+  assert.deepEqual(list.list.map((h) => [h.title, h.n]), [["Porto", 2]]);
+  const items = (await p.highlightItems("h2@x.com", hl))!;
+  assert.deepEqual(items.items.map((x) => x.id), [s1, s2]);
+  assert.ok(await p.getPost("h2@x.com", s1));
+
+  // Editar título, tirar uma história, apagar
+  await p.updateHighlight("h1@x.com", hl, { title: "Norte", remove: s1 });
+  assert.deepEqual((await p.highlightItems("h2@x.com", hl))!.items.map((x) => x.id), [s2]);
+  assert.equal((await p.highlightsOf("h1@x.com", "hana"))!.list[0].title, "Norte");
+  assert.equal(await p.getPost("h2@x.com", s1), null); // já não está em nenhum destaque
+  assert.deepEqual(await p.updateHighlight("h2@x.com", hl, { title: "x" }), { error: "not_found" });
+  const r = await p.updateHighlight("h1@x.com", hl, { remove: s2 });
+  assert.deepEqual(r, { ok: true, deleted: true }); // sem histórias, o destaque desaparece
+  assert.equal((await p.highlightsOf("h1@x.com", "hana"))!.list.length, 0);
 });

@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS "highlights" ("id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, "author" text NOT NULL, "title" text NOT NULL, "items" jsonb DEFAULT '[]'::jsonb NOT NULL, "cover" uuid, "created_at" timestamp with time zone DEFAULT now() NOT NULL);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "highlights_author_idx" ON "highlights" ("author","created_at");

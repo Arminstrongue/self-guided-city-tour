@@ -6,6 +6,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { flag } from "@/data/countries";
 import { Avatar, FollowBtn, Verified, act, type PublicProfile } from "./Social";
 import { ProfilePosts, ProfileStories } from "./Feed";
+import { HighlightsRow } from "./Highlights";
 
 type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[]; canMessage?: boolean };
 
@@ -39,6 +40,7 @@ export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Local
           <div className={v.canMessage ? "grid2" : ""}><FollowBtn t={t} handle={p.handle} rel={v.relation} onChange={() => void load()} />
             {v.canMessage && <a className="sc-follow uv-msg" href={`/${locale}/wallet#chat:${p.handle}`}>💬 {t.chMessage}</a>}</div>
         )}
+        {v.canSee && <HighlightsRow t={t} locale={locale} handle={p.handle} cities={cities} />}
         {menu && (
           <div className="stack sc-menu" style={{ gap: 6 }}>
             <button onClick={async () => { await act(p.handle, "block"); setMenu(false); setV("none"); }}>🚫 {t.scBlock}</button>

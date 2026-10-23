@@ -16,6 +16,7 @@ import { moderate } from "./moderation";
 export const STORY_HOURS = 24;
 export const PAGE = 12;
 export const MAX_ACTIVE_STORIES = 10;
+export const STORY_ARCHIVE_DAYS = 365;
 export const STORY_BGS = ["sunset", "ocean", "forest", "night", "rose", "sand"] as const;
 
 export type PostItem = {
@@ -109,7 +110,12 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false, feed =
 /** Apaga histórias expiradas (e os respetivos gostos e comentários). */
 export async function purgeExpired() {
   const d = await db();
-  const old = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts).where(lte(schema.posts.expiresAt, new Date())).limit(500);
+  // As histórias ficam no arquivo do autor durante 1 ano (e para sempre se estiverem num destaque).
+  const cut = new Date(Date.now() - STORY_ARCHIVE_DAYS * 86_400_000);
+  const cand = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts).where(lte(schema.posts.expiresAt, cut)).limit(500);
+  if (!cand.length) return 0;
+  const kept = new Set((await d.select({ items: schema.highlights.items }).from(schema.highlights)).flatMap((h) => h.items));
+  const old = cand.filter((o) => !kept.has(o.id));
   if (!old.length) return 0;
   const ids = old.map((o) => o.id);
   await (await import("./music")).deleteOwnMusic(old.map((o) => o.music?.own));
@@ -144,7 +150,7 @@ export async function createPost(me: string, v: NewPost) {
   const d = await db();
   await purgeExpired();
   if (v.kind === "story") {
-    const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts).where(and(eq(schema.posts.author, me), eq(schema.posts.kind, "story")));
+    const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts).where(and(eq(schema.posts.author, me), eq(schema.posts.kind, "story"), gt(schema.posts.expiresAt, new Date())));
     if (n >= MAX_ACTIVE_STORIES) return { error: "too_many" as const };
   }
   const expiresAt = v.kind === "story" ? new Date(Date.now() + STORY_HOURS * 3600_000) : null;
@@ -240,8 +246,9 @@ async function visiblePost(me: string, id: string) {
   const d = await db();
   const [r] = await d.select({ p: schema.posts, a: schema.travellerProfiles }).from(schema.posts)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
-    .where(and(eq(schema.posts.id, id), or(isNull(schema.posts.expiresAt), gt(schema.posts.expiresAt, new Date())))).limit(1);
+    .where(eq(schema.posts.id, id)).limit(1);
   if (!r) return null;
+  if (r.p.expiresAt && r.p.expiresAt <= new Date() && r.p.author !== me && !(await inHighlight(r.p.author, r.p.id))) return null;
   const c = await circle(me);
   if (!canSee(me, r.a, c)) return null;
   if (r.p.video && r.p.videoStatus !== "ready" && r.p.author !== me) return null;
@@ -549,4 +556,109 @@ export async function muteAuthorOf(me: string, id: string, on: boolean) {
   if (on) await d.insert(schema.userMutes).values({ email: me, muted: p.author }).onConflictDoNothing();
   else await d.delete(schema.userMutes).where(and(eq(schema.userMutes.email, me), eq(schema.userMutes.muted, p.author)));
   return { ok: true as const };
+}
+
+
+/* ---------- Destaques (histórias guardadas no perfil) e arquivo de histórias ---------- */
+
+export const MAX_HIGHLIGHTS = 50, MAX_HL_ITEMS = 100;
+async function inHighlight(author: string, id: string) {
+  const d = await db();
+  const rows = await d.select({ items: schema.highlights.items }).from(schema.highlights).where(eq(schema.highlights.author, author));
+  return rows.some((h) => h.items.includes(id));
+}
+
+/** As minhas histórias (ativas e arquivadas), das mais recentes para as mais antigas. */
+export async function storyArchive(me: string): Promise<FeedPage> {
+  const d = await db();
+  const rows = await d.select(LITE).from(schema.posts).where(and(eq(schema.posts.author, me), eq(schema.posts.kind, "story")))
+    .orderBy(desc(schema.posts.createdAt)).limit(300);
+  return hydrate(me, rows, await circle(me));
+}
+
+export type HighlightItem = { id: string; title: string; cover: string | null; coverPhoto: boolean; bg: string | null; n: number };
+/** Destaques de um perfil (se o puder ver). */
+export async function highlightsOf(me: string, handle: string): Promise<{ list: HighlightItem[]; me: boolean } | null> {
+  const d = await db();
+  const [a] = await d.select().from(schema.travellerProfiles).where(eq(schema.travellerProfiles.handle, handle.toLowerCase())).limit(1);
+  if (!a) return null;
+  const c = await circle(me);
+  if (!canSee(me, a, c)) return null;
+  const hs = await d.select().from(schema.highlights).where(eq(schema.highlights.author, a.email)).orderBy(desc(schema.highlights.createdAt)).limit(MAX_HIGHLIGHTS);
+  const all = [...new Set(hs.flatMap((h) => h.items))];
+  const live = all.length ? await d.select({ id: schema.posts.id, photo: sql<string | null>`case when ${schema.posts.photo} is null then null else '1' end`, bg: schema.posts.bg })
+    .from(schema.posts).where(inArray(schema.posts.id, all)) : [];
+  const byId = new Map(live.map((x) => [x.id, x]));
+  const list = hs.map((h) => {
+    const items = h.items.filter((i) => byId.has(i));
+    const cov = (h.cover && items.includes(h.cover) ? h.cover : items[0]) ?? null;
+    const cp = cov ? byId.get(cov) : undefined;
+    return { id: h.id, title: h.title, cover: cov, coverPhoto: Boolean(cp?.photo), bg: cp?.bg ?? null, n: items.length };
+  }).filter((h) => h.n > 0 || a.email === me);
+  return { list, me: a.email === me };
+}
+
+/** Histórias de um destaque, por ordem, para o visualizador. */
+export async function highlightItems(me: string, id: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return null;
+  const d = await db();
+  const [h] = await d.select().from(schema.highlights).where(eq(schema.highlights.id, id)).limit(1);
+  if (!h) return null;
+  const [a] = await d.select().from(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, h.author)).limit(1);
+  const c = await circle(me);
+  if (!a || !canSee(me, a, c)) return null;
+  const rows = h.items.length ? await d.select(LITE).from(schema.posts).where(and(inArray(schema.posts.id, h.items), eq(schema.posts.author, h.author))) : [];
+  const order = new Map(h.items.map((x, i) => [x, i]));
+  rows.sort((x, y) => (order.get(x.id) ?? 0) - (order.get(y.id) ?? 0));
+  const page = await hydrate(me, rows, c);
+  return { id: h.id, title: h.title, handle: a.handle, mine: h.author === me, items: page.posts, authors: page.authors };
+}
+
+/** Só histórias do próprio autor entram nos destaques. */
+async function ownStories(me: string, ids: string[]) {
+  const uniq = [...new Set(ids.filter((x) => /^[0-9a-f-]{36}$/.test(x)))].slice(0, MAX_HL_ITEMS);
+  if (!uniq.length) return [];
+  const d = await db();
+  const ok = new Set((await d.select({ id: schema.posts.id }).from(schema.posts)
+    .where(and(inArray(schema.posts.id, uniq), eq(schema.posts.author, me), eq(schema.posts.kind, "story")))).map((x) => x.id));
+  return uniq.filter((x) => ok.has(x));
+}
+const cleanTitle = (s: string) => s.replace(/\s+/g, " ").trim().slice(0, 30);
+
+export async function createHighlight(me: string, title: string, ids: string[]) {
+  const d = await db();
+  const items = await ownStories(me, ids);
+  if (!items.length) return { error: "empty" as const };
+  const t = cleanTitle(title) || "♥";
+  const mod = moderate(t);
+  if (!mod.ok) return { error: "offensive" as const };
+  const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.highlights).where(eq(schema.highlights.author, me));
+  if (n >= MAX_HIGHLIGHTS) return { error: "too_many" as const };
+  const [r] = await d.insert(schema.highlights).values({ author: me, title: mod.text, items, cover: items[0] }).returning({ id: schema.highlights.id });
+  return { id: r.id };
+}
+
+export async function updateHighlight(me: string, id: string, v: { title?: string; ids?: string[]; cover?: string; remove?: string }) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return { error: "not_found" as const };
+  const d = await db();
+  const [h] = await d.select().from(schema.highlights).where(and(eq(schema.highlights.id, id), eq(schema.highlights.author, me))).limit(1);
+  if (!h) return { error: "not_found" as const };
+  const set: Partial<schema.Highlight> = {};
+  if (v.title !== undefined) { const mod = moderate(cleanTitle(v.title) || h.title); if (!mod.ok) return { error: "offensive" as const }; set.title = mod.text; }
+  let items = h.items;
+  if (v.ids) items = await ownStories(me, v.ids);
+  if (v.remove) items = items.filter((x) => x !== v.remove);
+  set.items = items;
+  if (v.cover && items.includes(v.cover)) set.cover = v.cover;
+  else if (!h.cover || !items.includes(h.cover)) set.cover = items[0] ?? null;
+  // Sem histórias, o destaque desaparece.
+  if (!items.length) { await d.delete(schema.highlights).where(eq(schema.highlights.id, id)); return { ok: true as const, deleted: true }; }
+  await d.update(schema.highlights).set(set).where(eq(schema.highlights.id, id));
+  return { ok: true as const, deleted: false };
+}
+
+export async function deleteHighlight(me: string, id: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return;
+  const d = await db();
+  await d.delete(schema.highlights).where(and(eq(schema.highlights.id, id), eq(schema.highlights.author, me)));
 }
