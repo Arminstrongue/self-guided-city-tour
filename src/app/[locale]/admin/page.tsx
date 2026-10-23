@@ -89,7 +89,8 @@ async function markAgentPaid(form: FormData) {
   if (!(await isAdmin())) return;
   const d = await db();
   await d.update(schema.agentCommissions).set({ paidAt: new Date() })
-    .where(sql`${schema.agentCommissions.agentId} = ${String(form.get("agentId"))} and ${schema.agentCommissions.paidAt} is null`);
+    // Só as comissões com mais de 30 dias (prazo de reembolsos e disputas) passam a pagas.
+    .where(sql`${schema.agentCommissions.agentId} = ${String(form.get("agentId"))} and ${schema.agentCommissions.paidAt} is null and ${schema.agentCommissions.createdAt} < now() - interval '30 days'`);
   revalidatePath("/[locale]/admin", "page");
 }
 
@@ -134,7 +135,7 @@ export default async function Admin({ params, searchParams }: { params: { locale
   const gBookings = await d.select({ guideId: schema.guideBookings.guideId, n: sql<number>`count(*) filter (where ${schema.guideBookings.status} in ('confirmed','completed'))::int`, cents: sql<number>`coalesce(sum(${schema.guideBookings.feeCents}) filter (where ${schema.guideBookings.status} in ('confirmed','completed')),0)::int`, open: sql<number>`count(*) filter (where ${schema.guideBookings.status} = 'requested')::int` })
     .from(schema.guideBookings).groupBy(schema.guideBookings.guideId);
   const agents = await d.select().from(schema.agents).orderBy(desc(schema.agents.createdAt)).limit(200);
-  const agentDue = await d.select({ agentId: schema.agentCommissions.agentId, cents: sql<number>`coalesce(sum(case when ${schema.agentCommissions.paidAt} is null then ${schema.agentCommissions.amountCents} else 0 end),0)::int`, total: sql<number>`sum(${schema.agentCommissions.amountCents})::int` })
+  const agentDue = await d.select({ agentId: schema.agentCommissions.agentId, cents: sql<number>`coalesce(sum(case when ${schema.agentCommissions.paidAt} is null and ${schema.agentCommissions.createdAt} < now() - interval '30 days' then ${schema.agentCommissions.amountCents} else 0 end),0)::int`, total: sql<number>`sum(${schema.agentCommissions.amountCents})::int` })
     .from(schema.agentCommissions).groupBy(schema.agentCommissions.agentId);
   const agentLeads = await d.select({ agentId: schema.leads.agentId, n: sql<number>`count(*)::int`, won: sql<number>`count(*) filter (where ${schema.leads.status} = 'won')::int` })
     .from(schema.leads).groupBy(schema.leads.agentId);

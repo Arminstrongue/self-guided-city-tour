@@ -77,6 +77,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
       if (!res.ok || !data.url) throw new Error(data.error ?? "checkout");
       window.location.href = data.url;
     } catch {
+      track("checkout_error", { city: cityId, locale });
       setError(t.errGeneric); setBusy(false);
     }
   }

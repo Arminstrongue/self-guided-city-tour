@@ -39,6 +39,10 @@ export const merchants = pgTable("merchants", {
   bookingUrl: text("booking_url"),
   phone: text("phone"),
   photoCount: integer("photo_count").notNull().default(0),
+  /** Morada exata e posição no mapa (para o viajante chegar lá e para sugerir a paragem mais próxima). */
+  address: text("address"),
+  lat: doublePrecision("lat"),
+  lng: doublePrecision("lng"),
   locale: text("locale").notNull().default("en"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [

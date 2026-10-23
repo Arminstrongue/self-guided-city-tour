@@ -2296,3 +2296,27 @@ main:focus{outline:none}
 [dir="rtl"] .feat2-go{display:inline-block;transform:scaleX(-1)}
 .tk-kind{color:var(--warn,#ff9f0a);font-weight:600;margin-inline-start:6px}
 .vf{margin-top:8px}.vf.ok{color:var(--good)}
+
+/* Demonstração do produto na página inicial */
+.dm-rail{list-style:none;margin:0;padding:0 0 4px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.dm-rail::-webkit-scrollbar{display:none}
+.dm-card{scroll-snap-align:start;display:flex;flex-direction:column;gap:4px;padding:14px;border-radius:20px;background:var(--surface);border:.5px solid var(--line);box-shadow:var(--shadow)}
+.dm-card>b{font-size:16px;line-height:1.25}
+.dm-card>small{color:var(--muted);font-size:13px;line-height:1.4;min-height:36px}
+.dm-n{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--cobalt);color:#fff;font-size:12px;font-weight:700}
+.dm-ui{margin-top:8px;display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:14px;background:color-mix(in srgb,var(--ink) 5%,transparent);font-size:13px}
+.dm-search{padding:6px 10px;border-radius:10px;background:var(--surface);color:var(--muted)}
+.dm-row{padding:6px 10px;border-radius:10px}
+.dm-row.on{background:var(--surface);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.dm-big{font-weight:700;font-size:15px}
+.dm-k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.dm-line{display:flex;justify-content:space-between;color:var(--muted)}
+.dm-ok{color:var(--good);font-weight:700}
+.dm-bar{display:flex;gap:3px;height:8px}
+.dm-bar i{display:block;border-radius:4px;background:var(--cobalt)}
+.dm-bar i+i{background:color-mix(in srgb,var(--cobalt) 45%,transparent)}
+.dm-ticket{flex-direction:row;justify-content:space-between;align-items:center}
+.dm-qr{width:46px;height:46px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--ink) 0 4px,transparent 4px 7px),repeating-linear-gradient(0deg,var(--ink) 0 4px,transparent 4px 7px);background-blend-mode:multiply;opacity:.75}
+@media (min-width:900px){.dm-rail{grid-auto-flow:row;grid-template-columns:repeat(4,1fr);overflow:visible}}
+/* Título do herói: a palavra destacada fica branca e sublinhada (legível sobre qualquer fotografia) */
+.hero-x h1 em{background:none;-webkit-background-clip:initial;background-clip:initial;color:#fff;-webkit-text-fill-color:#fff;filter:none;text-decoration:underline;text-decoration-color:#7cc4ff;text-decoration-thickness:.07em;text-underline-offset:.1em;text-decoration-skip-ink:none}

@@ -15,7 +15,8 @@ async function shrink(file: File): Promise<string> {
   return data;
 }
 
-type CityOpt = { id: string; name: string; stops: { id: string; name: string }[] };
+type CityOpt = { id: string; name: string; stops: { id: string; name: string; lat: number; lng: number }[] };
+type Hit = { label: string; sub: string; lat: number; lng: number };
 type Plan = "basic" | "featured" | "partner";
 
 export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string; partnerPct: number }) {
@@ -26,6 +27,24 @@ export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: {
   const [busy, setBusy] = useState(false);
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
   const city = cities.find((c) => c.id === f.city) ?? cities[0];
+  // Morada exata: pesquisa na cidade escolhida; ao escolher, sugere a paragem mais próxima (pode mudar).
+  const [place, setPlace] = useState<{ address: string; lat: number; lng: number } | null>(null);
+  const [aq, setAq] = useState("");
+  const [hits, setHits] = useState<Hit[] | null>(null);
+  const [aBusy, setABusy] = useState(false);
+  async function findAddress() {
+    if (aq.trim().length < 3) return;
+    setABusy(true); setHits(null);
+    const j = await fetch(`/api/geocode?city=${f.city}&lang=${locale}&q=${encodeURIComponent(aq.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[] } | null;
+    setHits(j?.hits ?? []); setABusy(false);
+  }
+  function pickPlace(h: Hit) {
+    const address = h.sub ? `${h.label}, ${h.sub}` : h.label;
+    setPlace({ address: address.slice(0, 200), lat: h.lat, lng: h.lng }); setHits(null); setAq(address);
+    const d = (s: { lat: number; lng: number }) => (s.lat - h.lat) ** 2 + ((s.lng - h.lng) * Math.cos((h.lat * Math.PI) / 180)) ** 2;
+    const near = [...city.stops].sort((a, b) => d(a) - d(b))[0];
+    if (near) setF((p) => ({ ...p, stopId: near.id }));
+  }
   const kind = bookKind(f.category);
   async function addPhotos(files: FileList | null) {
     if (!files) return;
@@ -40,11 +59,12 @@ export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (f.name.trim().length < 2 || f.offer.trim().length < 3 || !/^\S+@\S+\.\S+$/.test(f.email)) return setError(t.mErr);
+    if (!place) return setError(t.mAddrErr);
     if (!photos.length) return setError(t.mPhotoErr);
     setBusy(true); setError("");
     try {
       const res = await fetch("/api/merchants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...f, locale, agent: agent || undefined, photos,
-        bookMode: kind && book.on ? "request" : "none", bookOptions: kind ? book.options.filter((o) => o.name.trim()) : [], bookingUrl: book.url, phone: book.phone }) });
+        bookMode: kind && book.on ? "request" : "none", bookOptions: kind ? book.options.filter((o) => o.name.trim()) : [], bookingUrl: book.url, phone: book.phone, address: place.address, lat: place.lat, lng: place.lng }) });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error();
       window.location.href = data.url;
@@ -89,9 +109,18 @@ export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: {
               {Object.entries(t.cats).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select></div>
           <div className="field"><label htmlFor="m-city">{t.mCity}</label>
-            <select id="m-city" value={f.city} onChange={(e) => { const c = cities.find((x) => x.id === e.target.value)!; setF((p) => ({ ...p, city: c.id, stopId: c.stops[0].id })); }}>
+            <select id="m-city" value={f.city} onChange={(e) => { const c = cities.find((x) => x.id === e.target.value)!; setF((p) => ({ ...p, city: c.id, stopId: c.stops[0].id })); setPlace(null); setHits(null); setAq(""); }}>
               {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select></div>
+        </div>
+        <div className="field"><label htmlFor="m-addr">{t.mAddr}</label>
+          <div className="bp-q">
+            <input id="m-addr" value={aq} onChange={(e) => { setAq(e.target.value); setPlace(null); }} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void findAddress(); } }} placeholder={t.mAddrPh} autoComplete="street-address" />
+            <button type="button" className="btn tram" disabled={aBusy || aq.trim().length < 3} onClick={() => void findAddress()}>⌕<span className="sr-only">{t.bpSearch}</span></button>
+          </div>
+          {hits && (hits.length ? <div className="bp-hits">{hits.map((h, k) => <button key={k} type="button" className="bp-hit press" onClick={() => pickPlace(h)}><b>{h.label}</b>{h.sub && <small>{h.sub}</small>}</button>)}</div> : <p className="hint">{t.bpNone}</p>)}
+          {place && <p className="bp-ok">✓ {place.address} · <a href={`https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`} target="_blank" rel="noopener noreferrer">{t.mAddrMap} ↗</a></p>}
+          <span className="hint">{t.mAddrHint}</span>
         </div>
         <div className="field"><label htmlFor="m-stop">{t.mStop}</label>
           <select id="m-stop" value={f.stopId} onChange={(e) => set("stopId", e.target.value)}>
@@ -150,10 +179,23 @@ export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: {
             <div className="field"><label htmlFor="m-fb">Facebook</label><input id="m-fb" placeholder="facebook.com/…" value={f.facebook} onChange={(e) => set("facebook", e.target.value)} /></div>
           </div>
         </details>
+        <span className="label">{t.mPreview}</span>
+        <div className="offer mb-offer" style={{ borderStyle: "solid" }} aria-live="polite">
+          {photos[0] ? <img className="mb-thumb" src={photos[0]} alt="" /> : <span className="mb-thumb mb-thumb-demo" aria-hidden="true">📷</span>}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <span className="cat">{t.cats[f.category as keyof Dict["cats"]] ?? f.category}</span>
+            <b>{f.name.trim() || t.mName}</b>{f.offer.trim() || t.mOfferPh}
+            {place && <div className="hint">📍 {place.address}</div>}
+            {kind && book.on && <div className="mb-cta">{t.mbReq[kind]} ›</div>}
+          </div>
+          {f.plan !== "basic" && <span className="feat">{t.featured}</span>}
+        </div>
+        <span className="hint">{city.stops.find((x) => x.id === f.stopId)?.name ?? ""} · {city.name}</span>
         <span className="label">{t.mNextT}</span>
         <ul className="mb-next">
           <li>{f.plan === "basic" ? t.mNextFree : t.mNextPaid}</li>
           {kind && <li>{t.mNextBook}</li>}
+          <li>{t.mEditCancel}</li>
         </ul>
         {error && <p className="err" role="alert">{error}</p>}
         <button className="btn tram" type="submit" disabled={busy}>

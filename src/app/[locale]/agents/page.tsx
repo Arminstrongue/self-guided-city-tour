@@ -29,6 +29,10 @@ export default function Agents({ params, searchParams }: { params: { locale: Loc
             <li>{t.agHow2}</li>
             <li>{t.agHow3}</li>
             <li>{t.agHow4}</li>
+            <li>{t.agHow5}</li>
+            <li>{t.agHow6}</li>
+            <li>{t.agHow7}</li>
+            <li>{t.agHow8}</li>
           </ul>
           <p className="hint" style={{ margin: 0 }}>{fmt(t.agExample, { plan: t.mPlans.featured[0], price: eur(feat), c: eur(Math.round(feat * AGENT_COMMISSION)) })}</p>
         </section>

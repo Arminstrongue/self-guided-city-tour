@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ErrorTracker } from "@/components/ErrorTracker";
 import { notFound } from "next/navigation";
 import "@fontsource-variable/inter";
 import "../globals.css";
@@ -45,6 +46,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <SheetManager />
         {children}
         <Toaster />
+        <ErrorTracker />
         <footer className="foot">
           <p>{t.footer}</p>
           <p className="legal-links"><Link href={`/${params.locale}/about`}>{t.lAbout}</Link> · <Link href={`/${params.locale}/support`}>{t.lSupport}</Link> · <Link href={`/${params.locale}/eco`}>{t.lEco}</Link> · <Link href={`/${params.locale}/contact`}>{t.lContact}</Link></p>

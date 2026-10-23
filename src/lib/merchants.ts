@@ -51,7 +51,7 @@ async function loadOffers(cityId: string) {
     id: m.id, stopId: m.stopId, name: m.name, category: m.category, offer: m.offer,
     instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic",
     photos: m.photoCount, book: m.bookMode === "request" ? bookKind(m.category) : null, options: m.bookOptions,
-    bookingUrl: m.bookingUrl, phone: m.phone
+    bookingUrl: m.bookingUrl, phone: m.phone, address: m.address, lat: m.lat, lng: m.lng
   }));
 }
 export type Offer = Awaited<ReturnType<typeof loadOffers>>[number];

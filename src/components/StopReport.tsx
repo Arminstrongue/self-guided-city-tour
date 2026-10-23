@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { Dict } from "@/i18n/dictionaries";
 import Portal from "./Portal";
+import { track } from "@/lib/track";
 import { SheetX } from "./WinNav";
 
 const KINDS = ["entrance", "closed", "price", "access", "other"] as const;
@@ -18,6 +19,7 @@ export function StopReport({ t, city, stop, name }: { t: Dict; city: string; sto
     setState("busy");
     const r = await fetch("/api/stop-reports", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ city, stop, kind, note }) }).catch(() => null);
     setState(r?.ok ? "done" : "err");
+    if (r?.ok) track("stop_report", { city, stop });
   }
   return (
     <>

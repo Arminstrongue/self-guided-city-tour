@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Merchants({ params, searchParams }: { params: { locale: Locale }; searchParams: { agent?: string } }) {
   const t = getDict(params.locale);
-  const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale), stops: c.stops.map((s) => ({ id: s.id, name: s.n })) }));
+  const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale), stops: c.stops.map((s) => ({ id: s.id, name: s.n, lat: s.lat, lng: s.lng })) }));
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />

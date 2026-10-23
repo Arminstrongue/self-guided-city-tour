@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 const eur = (c: number) => new Intl.NumberFormat("pt-PT", { style: "currency", currency: "EUR" }).format(c / 100);
 const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)} %` : "—");
 const STEP: Record<string, string> = {
-  view_city: "Abriram a página da cidade (QR ou link)", checkout_start: "Começaram o pagamento", purchase: "Compraram",
-  tour_open: "Abriram o roteiro", tour_done: "Concluíram o roteiro", rating: "Deixaram avaliação"
+  view_city: "Abriram a página da cidade (QR ou link)", plan_done: "Criaram um roteiro no planeador", checkout_start: "Começaram o pagamento", purchase: "Compraram",
+  tour_open: "Abriram o roteiro", first_stop: "Fizeram a 1.ª paragem", tour_done: "Concluíram o roteiro", rating: "Deixaram avaliação"
 };
 
 /** Painel de métricas: funil, receita, avaliações e NPS por período. */
@@ -32,6 +32,8 @@ export default async function Metrics({ params, searchParams }: { params: { loca
 
         <div className="kpis">
           <div className="card kpi"><span className="label">Receita</span><b className="num">{eur(m.revenue)}</b></div>
+          <div className="card kpi"><span className="label">Erros na página · no pagamento</span><b className="num">{m.errors} · {m.checkoutErrors}</b></div>
+          <div className="card kpi"><span className="label">Problemas reportados · descargas offline</span><b className="num">{m.reports} · {m.offline}</b></div>
           <div className="card kpi"><span className="label">Compras</span><b className="num">{m.purchases}</b></div>
           <div className="card kpi"><span className="label">Conversão (página → compra)</span><b className="num">{pct(m.purchases, views)}</b></div>
           <div className="card kpi"><span className="label">Nota média</span><b className="num">{m.stars ? `${m.stars.toFixed(1)} ★` : "—"}</b></div>

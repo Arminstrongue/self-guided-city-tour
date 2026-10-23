@@ -116,7 +116,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
           <div className="card now-card now-empty">
             <b className="now-t">{t.nwEmptyT}</b>
             <p className="hint">{hasPass ? t.nwEmptyPass : t.nwEmptyS}</p>
-            <div className="now-acts"><a className="btn tram press" href={`/${locale}/start`}>{t.qsCta}</a></div>
+            <div className="now-acts"><a className="btn tram press" href={`/${locale}/start`}>{t.hmBuild}</a></div>
           </div>
         )}
       {later.length > 0 && (

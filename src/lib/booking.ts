@@ -56,7 +56,10 @@ export const MerchantExtras = z.object({
   bookMode: z.enum(["none", "request"]).default("none"),
   bookOptions: z.array(BookOption).max(MAX_OPTIONS).default([]),
   bookingUrl: z.string().max(300).optional().default(""),
-  phone: z.string().max(30).optional().default("")
+  phone: z.string().max(30).optional().default(""),
+  address: z.string().trim().min(5).max(200),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180)
 });
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;

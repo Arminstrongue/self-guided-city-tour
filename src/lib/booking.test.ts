@@ -43,7 +43,10 @@ test("registo do negócio exige foto válida e limpa links e telefones", () => {
   assert.ok(!isPhotoDataUrl("data:text/html;base64,PHNjcmlwdD4="));
   assert.equal(MerchantExtras.safeParse({ photos: [] }).success, false);
   assert.equal(MerchantExtras.safeParse({ photos: [jpg, jpg, jpg, jpg, jpg] }).success, false);
-  assert.ok(MerchantExtras.safeParse({ photos: [jpg], bookMode: "request", bookOptions: [{ name: "Quarto duplo", price: "80 €" }] }).success);
+  const where = { address: "Rua Augusta 100, Lisboa", lat: 38.7108, lng: -9.1368 };
+  assert.ok(MerchantExtras.safeParse({ photos: [jpg], bookMode: "request", bookOptions: [{ name: "Quarto duplo", price: "80 €" }], ...where }).success);
+  // Sem morada exata não é aceite.
+  assert.equal(MerchantExtras.safeParse({ photos: [jpg] }).success, false);
   assert.equal(cleanUrl("javascript:alert(1)"), null);
   assert.equal(cleanUrl("hotel-avenida.pt/reservas"), "https://hotel-avenida.pt/reservas");
   assert.equal(cleanPhone("+244 923 456 789"), "+244923456789");

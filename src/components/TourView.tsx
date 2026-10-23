@@ -211,6 +211,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
     void syncCheckin(id, Boolean(nv[id]));
     if (nv[id]) {
       track("stop_done", { city: city.id, stop: id });
+      if (!Object.values(done).some(Boolean)) track("first_stop", { city: city.id, locale }, "day");
       if (plan.stops.every((s) => nv[s.id])) track("tour_done", { city: city.id, locale }, "day");
     }
     if (nv[id]) { const i = plan.stops.findIndex((s) => s.id === id); const next = plan.stops[i + 1]; if (next) setOpen(next.id); }

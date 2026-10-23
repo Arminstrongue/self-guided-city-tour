@@ -6,6 +6,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
 import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
 import { loadTrip, saveTrip } from "./trip-store";
+import { track } from "@/lib/track";
 
 type LL = { lat: number; lng: number };
 export type QsOption = { key: string; n: number; min: number; tour: number; air: number; ret: number; first: LL; last: LL; acc: number; cost: string; names: string[] };
@@ -65,6 +66,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
     if (!city || !opt) return;
     const final: Trip = { ...trip, startAt: later ? trip.startAt : "", deadline: time?.k === "dep" ? trip.deadline : "", key: opt.key };
     saveTrip(city.id, final);
+    track("plan_done", { city: city.id, locale });
     try {
       localStorage.setItem(`sgct:lvl:${city.id}`, JSON.stringify(opt.key)); localStorage.setItem("sgct:onboarded", "1");
       const b = bd(opt);

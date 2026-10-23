@@ -5,7 +5,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 
-export const EVENTS = ["view_city", "checkout_start", "tour_open", "stop_done", "tour_done", "sos_open", "share_loc", "rating_open"] as const;
+export const EVENTS = ["view_city", "plan_done", "checkout_start", "tour_open", "first_stop", "stop_done", "tour_done", "sos_open", "share_loc", "rating_open", "client_error", "checkout_error", "stop_report", "offline_saved"] as const;
 export type EventName = (typeof EVENTS)[number];
 export const isEvent = (v: unknown): v is EventName => typeof v === "string" && (EVENTS as readonly string[]).includes(v);
 
@@ -62,9 +62,11 @@ export async function dashboard(days: number) {
   const revenue = sales.reduce((a, s) => a + s.cents, 0);
   const funnel = [
     { key: "view_city", n: sum("view_city") },
+    { key: "plan_done", n: sum("plan_done") },
     { key: "checkout_start", n: sum("checkout_start") },
     { key: "purchase", n: purchases },
     { key: "tour_open", n: sum("tour_open") },
+    { key: "first_stop", n: sum("first_stop") },
     { key: "tour_done", n: sum("tour_done") },
     { key: "rating", n: rates.length }
   ];
@@ -83,6 +85,7 @@ export async function dashboard(days: number) {
     stars: rates.length ? rates.reduce((a, r) => a + r.stars, 0) / rates.length : null,
     nps: npsScore(npsVals), npsN: npsVals.length,
     sos: sum("sos_open"), shares: sum("share_loc"),
+    errors: sum("client_error"), checkoutErrors: sum("checkout_error"), reports: sum("stop_report"), offline: sum("offline_saved"),
     comments: rates.filter((r) => r.comment).slice(0, 20)
   };
 }

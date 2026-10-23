@@ -9,6 +9,7 @@ import { agentByCode } from "@/lib/agents";
 import { rateLimit } from "@/lib/rate-limit";
 import { loadCity } from "@/lib/content";
 import { LOCALES } from "@/i18n/core";
+import { km } from "@/lib/route-cost";
 import { MERCHANT_CATS, MerchantExtras, bookKind, cleanPhone, cleanUrl } from "@/lib/booking";
 
 export const runtime = "nodejs";
@@ -34,6 +35,8 @@ export async function POST(req: Request) {
   const b = parsed.data;
   const city = await loadCity(b.city);
   if (!city || !city.stops.some((s) => s.id === b.stopId)) return NextResponse.json({ error: "unknown_stop" }, { status: 400 });
+  // A morada tem de ficar na cidade (no máximo 60 km da 1.ª paragem).
+  if (km({ lat: b.lat, lng: b.lng }, city.stops[0]) > 60) return NextResponse.json({ error: "far" }, { status: 400 });
 
   const agent = await agentByCode(b.agent);
   const d = await db();
@@ -42,7 +45,8 @@ export async function POST(req: Request) {
     name: b.name, category: b.category, city: city.id, stopId: b.stopId, offer: b.offer, email: b.email.toLowerCase(),
     instagram: b.instagram, tiktok: b.tiktok, facebook: b.facebook, plan: b.plan, status: "pending", refCode: newRefCode(), agentId: agent?.status === "active" ? agent.id : null,
     bookMode: bookable ? b.bookMode : "none", bookOptions: bookable ? b.bookOptions.filter((o) => o.name) : [],
-    bookingUrl: cleanUrl(b.bookingUrl), phone: cleanPhone(b.phone), photoCount: b.photos.length, locale: b.locale
+    bookingUrl: cleanUrl(b.bookingUrl), phone: cleanPhone(b.phone), photoCount: b.photos.length, locale: b.locale,
+    address: b.address, lat: b.lat, lng: b.lng
   }).returning();
   await d.insert(schema.merchantPhotos).values(b.photos.map((data, idx) => ({ merchantId: m.id, idx, data })));
 

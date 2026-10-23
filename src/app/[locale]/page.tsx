@@ -79,11 +79,26 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
             <span><b>{list.length}</b> {t.statCities}</span><span><b>{stops}</b> {t.stops}</span>
             <span><b>{LOCALES.length}</b> {t.statLangs}</span><span>{t.f2t}</span>
           </div>
-          <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.qsCta}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
+          <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.hmBuild}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
           <p className="hm-free">{t.hmFree}</p>
           <PageQR label={t.qrScan} mobileLabel={t.qrShare} />
         </div>
       </HomeHero>
+
+      {/* O produto logo a seguir ao topo: escolher → roteiro → próximo passo → bilhete */}
+      <section className="sec dm" aria-labelledby="dm-h">
+        <div className="sec-h reveal"><div><h2 id="dm-h">{t.dmTitle}</h2></div><a href={`/${params.locale}/tour/man`}>🎧 {t.qsTry} →</a></div>
+        <ol className="dm-rail">
+          <li className="dm-card reveal"><span className="dm-n">1</span><b>{t.dm1t}</b><small>{t.dm1s}</small>
+            <div className="dm-ui"><div className="dm-search">⌕ Lisbo…</div><div className="dm-row on">🇵🇹 {cityName(list.find((c) => c.id === "lis")!, params.locale)}</div><div className="dm-row">🇵🇹 Porto</div></div></li>
+          <li className="dm-card reveal"><span className="dm-n">2</span><b>{t.dm2t}</b><small>{t.dm2s}</small>
+            <div className="dm-ui"><div className="dm-big">4 {t.stops} · 2 h 38</div><div className="dm-line"><span>✈ → 🚆</span><span>+45 min</span></div><div className="dm-bar"><i style={{ width: "62%" }} /><i style={{ width: "19%" }} /><i style={{ width: "19%" }} /></div></div></li>
+          <li className="dm-card reveal"><span className="dm-n">3</span><b>{t.dm3t}</b><small>{t.dm3s}</small>
+            <div className="dm-ui"><div className="dm-k">{t.nxLabel}</div><div className="dm-big">Praça do Comércio</div><div className="dm-line"><span>🚶 {t.walk} · 6 min</span><span className="dm-ok">✓</span></div></div></li>
+          <li className="dm-card reveal"><span className="dm-n">4</span><b>{t.dm4t}</b><small>{t.dm4s}</small>
+            <div className="dm-ui dm-ticket"><div><div className="dm-k">{t.rsTicket}</div><div className="dm-big">Torre de Belém</div><div className="dm-line"><span>10:30</span></div></div><div className="dm-qr" aria-hidden="true" /></div></li>
+        </ol>
+      </section>
 
       <section className="sec" id="cities" style={{ scrollMarginTop: 70 }}>
         <div className="sec-h reveal"><div><h2>{t.topDest}</h2><p>{t.topDestSub}</p></div></div>

@@ -1,4 +1,5 @@
 "use client";
+import { track } from "@/lib/track";
 /** Ferramentas de viagem: conversor de moeda (funciona sem rede), cidades offline e dividir despesas com amigos. */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -93,7 +94,7 @@ export function OfflineButton({ t, locale, city, compact = false }: { t: Dict; l
     setErr(false);
     if (!(await offlineReady())) { setErr(true); return; }
     setBusy({ d: 0, n: 1 });
-    try { await saveCity(city, locale, (dd, n) => setBusy({ d: dd, n })); } catch { setErr(true); }
+    try { await saveCity(city, locale, (dd, n) => setBusy({ d: dd, n })); track("offline_saved", { city, locale }); } catch { setErr(true); }
     setBusy(null);
   }
   if (busy) return (

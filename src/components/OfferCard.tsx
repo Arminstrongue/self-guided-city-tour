@@ -45,6 +45,7 @@ function OfferSheet({ o, t, locale, cat, onClose }: { o: Offer; t: Dict; locale:
         <span className="label">{cat} · <span className="ad-tag">{t.adPartner}</span></span>
         <b style={{ fontSize: 20 }}>{o.name}</b>
         <p style={{ margin: 0 }}>{o.offer}</p>
+        {o.address && <p className="hint" style={{ margin: 0 }}>📍 {o.address}{o.lat !== null && o.lng !== null && <> · <a href={`https://www.google.com/maps/dir/?api=1&destination=${o.lat},${o.lng}`} target="_blank" rel="noopener noreferrer">{t.directions}</a></>}</p>}
         {o.options.length > 0 && (
           <ul className="mb-opts">{o.options.map((x) => <li key={x.name}><span>{x.name}</span>{x.price && <b>{x.price}</b>}</li>)}</ul>
         )}
