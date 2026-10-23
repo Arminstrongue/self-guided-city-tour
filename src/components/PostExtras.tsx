@@ -12,10 +12,12 @@ type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: s
 
 /** Texto com @nome → perfil, #tag → página da hashtag e endereços → link. */
 export function RichText({ text, locale }: { text: string; locale: Locale }) {
-  const parts = text.split(/((?:^|(?<=[^\w@]))@[a-z0-9._]{3,24}|#[\p{L}\p{N}_]{2,40}|https?:\/\/[^\s]+)/giu);
+  // Sem "lookbehind" no regex (o Safari anterior ao iOS 16.4 não o suporta e a página inteira falhava).
+  const parts = text.split(/(@[a-z0-9._]{3,24}|#[\p{L}\p{N}_]{2,40}|https?:\/\/[^\s]+)/giu);
   return <>{parts.map((x, i) => {
     if (!x) return null;
-    if (/^@[a-z0-9._]{3,24}$/i.test(x)) return <a key={i} className="rt-at" href={`/${locale}/u/${x.slice(1).toLowerCase()}`}>{x}</a>;
+    const before = i > 0 ? parts[i - 1] ?? "" : "";
+    if (/^@[a-z0-9._]{3,24}$/i.test(x) && !/[\w@]$/.test(before)) return <a key={i} className="rt-at" href={`/${locale}/u/${x.slice(1).toLowerCase()}`}>{x}</a>;
     if (/^#[\p{L}\p{N}_]{2,40}$/u.test(x)) return <a key={i} className="rt-tag" href={`/${locale}/wallet#tag:${encodeURIComponent(x.slice(1).toLowerCase())}`}>{x}</a>;
     if (/^https?:\/\//.test(x)) return <a key={i} className="rt-link" href={x} target="_blank" rel="noreferrer nofollow">{x.replace(/^https?:\/\/(www\.)?/, "").slice(0, 40)}</a>;
     return <Fragment key={i}>{x}</Fragment>;
