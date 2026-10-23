@@ -1724,5 +1724,41 @@
 "exit": "Scendi a {to} ({n} fermate).",
 "walkM": "Cammina ≈ {m} m",
 "live": "Percorso calcolato ora (Google)"
+},
+"ph": {
+"hello": "Ciao",
+"thanks": "Grazie",
+"help": "Mi può aiutare?",
+"lost": "Mi sono perso",
+"where": "Dov'è…?",
+"toilet": "Dov'è il bagno?",
+"english": "Parla inglese?",
+"take": "Mi porti a questo indirizzo",
+"police": "Chiami la polizia",
+"hospital": "Ho bisogno di un ospedale"
+},
+"ess": {
+"title": "Essenziali offline",
+"sub": "L'essenziale senza internet: alloggio, biglietti, piano, emergenza e frasi.",
+"city": "Destinazione",
+"home": "Alloggio",
+"noHome": "Alloggio non salvato. Fallo in «Sono appena arrivato».",
+"goHome": "Torna all'alloggio",
+"res": "Prossime prenotazioni e biglietti",
+"noRes": "Nessuna prenotazione su questo telefono.",
+"plan": "Piano",
+"noPlan": "Ancora nessun piano.",
+"emergency": "Emergenza",
+"phrases": "Frasi utili · {l}",
+"tapShow": "Tocca una frase per mostrarla in grande o ascoltarla.",
+"save": "Salva tutto per l'uso offline",
+"saving": "Salvataggio… {d}/{n}",
+"saved": "Salvato offline · {d}",
+"appOnly": "Il salvataggio offline funziona nell'app installata o nel sito pubblicato.",
+"offline": "Nessuna connessione: ciò che hai salvato continua a funzionare.",
+"essentials": "Essenziali",
+"resume": "Riprendi da dove eri",
+"resumeArr": "Orientamento · passo {i} · {x}",
+"resumeTour": "Passeggiata in corso · {x}"
 }
 }

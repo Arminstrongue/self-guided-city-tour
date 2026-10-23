@@ -2157,5 +2157,41 @@
 "exit": "{to} durağında inin ({n} durak).",
 "walkM": "≈ {m} m yürüyün",
 "live": "Şimdi hesaplanan rota (Google)"
+},
+"ph": {
+"hello": "Merhaba",
+"thanks": "Teşekkürler",
+"help": "Yardım eder misiniz?",
+"lost": "Kayboldum",
+"where": "… nerede?",
+"toilet": "Tuvalet nerede?",
+"english": "İngilizce biliyor musunuz?",
+"take": "Beni bu adrese götürün",
+"police": "Polisi arayın",
+"hospital": "Hastaneye ihtiyacım var"
+},
+"ess": {
+"title": "Çevrimdışı temel bilgiler",
+"sub": "İnternetsiz gerekenler: konaklama, biletler, plan, acil durum ve ifadeler.",
+"city": "Varış yeri",
+"home": "Konaklama",
+"noHome": "Konaklama henüz kaydedilmedi. “Yeni geldim” bölümünden kaydedin.",
+"goHome": "Konaklamaya dön",
+"res": "Yaklaşan rezervasyonlar ve biletler",
+"noRes": "Bu telefonda kayıtlı rezervasyon yok.",
+"plan": "Plan",
+"noPlan": "Henüz plan yok.",
+"emergency": "Acil durum",
+"phrases": "Faydalı ifadeler · {l}",
+"tapShow": "Büyük göstermek veya dinlemek için bir ifadeye dokunun.",
+"save": "Her şeyi çevrimdışı için kaydet",
+"saving": "Kaydediliyor… {d}/{n}",
+"saved": "Çevrimdışı kaydedildi · {d}",
+"appOnly": "Çevrimdışı kayıt yüklü uygulamada veya yayındaki sitede çalışır.",
+"offline": "Bağlantı yok — kaydettikleriniz çalışmaya devam eder.",
+"essentials": "Temel bilgiler",
+"resume": "Kaldığınız yerden devam edin",
+"resumeArr": "Yönlendirme · adım {i} · {x}",
+"resumeTour": "Devam eden yürüyüş · {x}"
 }
 }

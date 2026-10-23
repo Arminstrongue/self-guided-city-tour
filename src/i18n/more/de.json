@@ -1697,5 +1697,41 @@
 "exit": "Steigen Sie in {to} aus ({n} Halte).",
 "walkM": "Gehen Sie ≈ {m} m",
 "live": "Route jetzt berechnet (Google)"
+},
+"ph": {
+"hello": "Hallo",
+"thanks": "Danke",
+"help": "Können Sie mir helfen?",
+"lost": "Ich habe mich verlaufen",
+"where": "Wo ist…?",
+"toilet": "Wo ist die Toilette?",
+"english": "Sprechen Sie Englisch?",
+"take": "Bringen Sie mich zu dieser Adresse",
+"police": "Rufen Sie die Polizei",
+"hospital": "Ich brauche ein Krankenhaus"
+},
+"ess": {
+"title": "Offline-Essentials",
+"sub": "Das Wichtigste ohne Internet: Unterkunft, Tickets, Plan, Notfall und Sätze.",
+"city": "Reiseziel",
+"home": "Unterkunft",
+"noHome": "Noch keine Unterkunft gespeichert. Unter „Gerade angekommen“ speichern.",
+"goHome": "Zurück zur Unterkunft",
+"res": "Kommende Buchungen und Tickets",
+"noRes": "Keine Buchungen auf diesem Handy.",
+"plan": "Plan",
+"noPlan": "Noch kein Plan.",
+"emergency": "Notruf",
+"phrases": "Nützliche Sätze · {l}",
+"tapShow": "Tippen Sie auf einen Satz, um ihn groß zu zeigen oder anzuhören.",
+"save": "Alles offline speichern",
+"saving": "Speichern… {d}/{n}",
+"saved": "Offline gespeichert · {d}",
+"appOnly": "Offline-Speichern funktioniert in der installierten App oder auf der Website.",
+"offline": "Keine Verbindung — Gespeichertes funktioniert weiter.",
+"essentials": "Wichtiges",
+"resume": "Dort weitermachen, wo Sie waren",
+"resumeArr": "Wegweiser · Schritt {i} · {x}",
+"resumeTour": "Spaziergang läuft · {x}"
 }
 }

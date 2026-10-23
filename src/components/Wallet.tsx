@@ -15,6 +15,7 @@ import { NeedNow } from "./NeedNow";
 import { Composer, FeedTab } from "./Feed";
 import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
+import { CloudOff } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
@@ -309,6 +310,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
           <button className="press" onClick={() => setTools({ tab: "fx" })}><span className="qi q3"><I icon={Wrench} size={22} /></span>{t.wQuickTools}</button>
           <a className="press" href={`/${locale}#cities`}><span className="qi q4"><I icon={Sparkles} size={22} /></span>{t.wQuickExplore}</a>
           <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
+          <a className="press" href={`/${locale}/wallet/essentials${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q1"><I icon={CloudOff} size={22} /></span>{t.ess.essentials}</a>
         </div>
         {/* Alertas só com viagem: sem destino, não mostra notícias do mundo inteiro. */}
         {myCities.length > 0 && <NewsFeed t={t} locale={locale} cities={cities} mine={myCities} />}

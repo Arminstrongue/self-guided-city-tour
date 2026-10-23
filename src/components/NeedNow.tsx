@@ -3,8 +3,10 @@
  * "De que precisa agora?": quatro entradas para quem acabou de chegar, está perdido ou tem uma necessidade imediata.
  * "Preciso de algo perto" abre o mapa com pesquisas úteis à volta do viajante (não lista estabelecimentos comerciais).
  */
-import { useState } from "react";
-import { BatteryCharging, ChevronRight, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fmt } from "@/i18n/core";
+import { arrivalsFor } from "@/data/arrivals";
+import { BatteryCharging, ChevronRight, CloudOff, History, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import Portal from "./Portal";
 
@@ -73,11 +75,13 @@ export function NeedNow({ t, locale, city = "lon", compact = false }: { t: Dict;
     { k: "arr", I: PlaneLanding, label: t.nn.arrived, sub: t.nn.arrivedSub, href: `/${locale}/arrive?city=${city}`, main: true },
     { k: "go", I: MapPinned, label: t.nn.go, sub: t.nn.goSub, href: `/${locale}/arrive?city=${city}&go=1` },
     { k: "near", I: Search, label: t.nn.near, sub: t.nn.nearSub, run: () => setNear(true) },
-    { k: "exp", I: Compass, label: t.nn.explore, sub: t.nn.exploreSub, href: `/${locale}/start?city=${city}` }
+    { k: "exp", I: Compass, label: t.nn.explore, sub: t.nn.exploreSub, href: `/${locale}/start?city=${city}` },
+    { k: "ess", I: CloudOff, label: t.ess.essentials, sub: t.ess.sub, href: `/${locale}/wallet/essentials?city=${city}` }
   ];
   return (
     <section className={`nn ${compact ? "compact" : ""}`} aria-labelledby="nn-h">
       <h2 id="nn-h" className="nn-h">{t.nn.title}</h2>
+      <Resume t={t} locale={locale} />
       <div className="nn-tiles">
         {tiles.map((x) => {
           const inner = <><span className="nn-ic"><x.I size={22} aria-hidden="true" /></span><span className="nn-tx"><b>{x.label}</b><small>{x.sub}</small></span><ChevronRight size={18} className="nn-chev" aria-hidden="true" /></>;
@@ -88,4 +92,23 @@ export function NeedNow({ t, locale, city = "lon", compact = false }: { t: Dict;
       {near && <NearSheet t={t} onClose={() => setNear(false)} />}
     </section>
   );
+}
+
+/** "Continuar onde ficou": orientação a meio (últimas 12 h) ou passeio em curso (últimas 24 h). */
+function Resume({ t, locale }: { t: Dict; locale: Locale }) {
+  const [r, setR] = useState<{ href: string; label: string } | null>(null);
+  useEffect(() => {
+    try {
+      const a = JSON.parse(localStorage.getItem("sgct:arrive") ?? "null") as { city: string; point: string | null; dest: { label: string } | null; step: number; at: number } | null;
+      const g = JSON.parse(localStorage.getItem("sgct:last-tour") ?? "null") as { id: string; name: string; done: number; n: number; at: number } | null;
+      const arrOk = a && a.point && Date.now() - a.at < 12 * 3600_000;
+      const tourOk = g && g.done < g.n && Date.now() - g.at < 24 * 3600_000 && localStorage.getItem(`sgct:go:${g.id}`) !== "false";
+      if (arrOk && (!tourOk || a.at >= g.at)) {
+        const pt = arrivalsFor(a.city).find((x) => x.id === a.point);
+        setR({ href: `/${locale}/arrive?city=${a.city}`, label: fmt(t.ess.resumeArr, { i: a.step + 1, x: a.dest?.label ?? pt?.name ?? "" }) });
+      } else if (tourOk) setR({ href: `/${locale}/tour/${g.id}`, label: fmt(t.ess.resumeTour, { x: `${g.name} · ${g.done}/${g.n}` }) });
+    } catch { /* ignorar */ }
+  }, [t, locale]);
+  if (!r) return null;
+  return <a className="nn-resume press" href={r.href}><History size={20} aria-hidden="true" /><span>{t.ess.resume}<br /><small style={{ fontWeight: 400, opacity: .75 }}>{r.label}</small></span><ChevronRight size={18} aria-hidden="true" /></a>;
 }

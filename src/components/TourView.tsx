@@ -164,6 +164,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const doneN = plan.stops.filter((s) => done[s.id]).length;
   const [going, setGoing] = useLocalState<boolean>(`sgct:go:${city.id}`, false);
   const started = going || doneN > 0;
+  // Para "Continuar onde ficou" no início: último passeio em curso, com o nome legível e o progresso.
+  useEffect(() => { if (started) try { localStorage.setItem("sgct:last-tour", JSON.stringify({ id: city.id, name: cityLabel, done: doneN, n: plan.stops.length, at: Date.now() })); } catch { /* ignorar */ } }, [started, city.id, cityLabel, doneN, plan.stops.length]);
   const [planOpen, setPlanOpen] = useState(false);
   // Começa à noite (19h–7h na hora da cidade)? Interiores pagos passam a "só exterior".
   const startHour = Number(new Intl.DateTimeFormat("en-GB", { timeZone: city.tz ?? "UTC", hour: "2-digit", hour12: false }).format(((d) => (Number.isFinite(d.getTime()) ? d : new Date()))(trip.startAt ? zonedToDate(trip.startAt, city.tz ?? "UTC") : new Date())).slice(0, 2));

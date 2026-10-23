@@ -74,3 +74,9 @@ export async function removeCity(city: string, locale: Locale) {
 export async function clearPersonalCache() {
   try { for (const k of await caches.keys()) if (k.endsWith("-pages")) await caches.delete(k); } catch { /* ignorar */ }
 }
+
+/** Guarda um conjunto de páginas (ex.: Essenciais e "Acabei de chegar") para abrir sem internet. */
+export async function saveUrls(urls: string[], onProgress: (done: number, total: number) => void) {
+  const res = await post({ type: "offline-save", urls }, (d) => { if (typeof d.done === "number" && typeof d.total === "number") onProgress(d.done, d.total); });
+  return { ok: Number(res.done) - Number(res.failed), failed: Number(res.failed) };
+}

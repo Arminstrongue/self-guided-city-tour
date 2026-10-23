@@ -1693,5 +1693,41 @@
 "exit": "Descendez à {to} ({n} arrêts).",
 "walkM": "Marchez ≈ {m} m",
 "live": "Itinéraire calculé maintenant (Google)"
+},
+"ph": {
+"hello": "Bonjour",
+"thanks": "Merci",
+"help": "Pouvez-vous m'aider ?",
+"lost": "Je suis perdu",
+"where": "Où est… ?",
+"toilet": "Où sont les toilettes ?",
+"english": "Parlez-vous anglais ?",
+"take": "Emmenez-moi à cette adresse",
+"police": "Appelez la police",
+"hospital": "J'ai besoin d'un hôpital"
+},
+"ess": {
+"title": "Essentiels hors ligne",
+"sub": "L'essentiel sans internet : hébergement, billets, plan, urgence et phrases.",
+"city": "Destination",
+"home": "Hébergement",
+"noHome": "Hébergement non enregistré. Faites-le dans « Je viens d'arriver ».",
+"goHome": "Retourner à l'hébergement",
+"res": "Réservations et billets à venir",
+"noRes": "Aucune réservation sur ce téléphone.",
+"plan": "Plan",
+"noPlan": "Pas encore de plan.",
+"emergency": "Urgence",
+"phrases": "Phrases utiles · {l}",
+"tapShow": "Touchez une phrase pour l'afficher en grand ou l'écouter.",
+"save": "Tout enregistrer pour le hors ligne",
+"saving": "Enregistrement… {d}/{n}",
+"saved": "Enregistré hors ligne · {d}",
+"appOnly": "L'enregistrement hors ligne fonctionne dans l'app installée ou le site publié.",
+"offline": "Pas de connexion — ce que vous avez enregistré fonctionne toujours.",
+"essentials": "Essentiels",
+"resume": "Reprendre où vous étiez",
+"resumeArr": "Orientation · étape {i} · {x}",
+"resumeTour": "Balade en cours · {x}"
 }
 }

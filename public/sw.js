@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v5";
+const VERSION = "sgct-v6";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -68,7 +68,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   // Páginas: roteiro, plano, carteira e cidade — rede primeiro, cópia sem rede.
-  if (req.mode === "navigate" && /^\/[a-z]{2}\/(tour|plan|wallet|c)(\/|$)/.test(url.pathname)) e.respondWith(networkFirst(req, PAGES));
+  if (req.mode === "navigate" && /^\/[a-z]{2}\/(tour|plan|wallet|c|arrive)(\/|$)/.test(url.pathname)) e.respondWith(networkFirst(req, PAGES));
 });
 
 let trimming = false;

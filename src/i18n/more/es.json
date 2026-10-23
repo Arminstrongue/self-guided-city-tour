@@ -1724,5 +1724,41 @@
 "exit": "Bájese en {to} ({n} paradas).",
 "walkM": "Camine ≈ {m} m",
 "live": "Ruta calculada ahora (Google)"
+},
+"ph": {
+"hello": "Hola",
+"thanks": "Gracias",
+"help": "¿Me puede ayudar?",
+"lost": "Estoy perdido",
+"where": "¿Dónde está…?",
+"toilet": "¿Dónde está el baño?",
+"english": "¿Habla inglés?",
+"take": "Lléveme a esta dirección",
+"police": "Llame a la policía",
+"hospital": "Necesito un hospital"
+},
+"ess": {
+"title": "Esenciales sin conexión",
+"sub": "Lo necesario sin internet: alojamiento, entradas, plan, emergencia y frases.",
+"city": "Destino",
+"home": "Alojamiento",
+"noHome": "Aún no ha guardado el alojamiento. Hágalo en «Acabo de llegar».",
+"goHome": "Volver al alojamiento",
+"res": "Próximas reservas y entradas",
+"noRes": "No hay reservas guardadas en este móvil.",
+"plan": "Plan",
+"noPlan": "Aún sin plan.",
+"emergency": "Emergencia",
+"phrases": "Frases útiles · {l}",
+"tapShow": "Toque una frase para verla en grande u oírla.",
+"save": "Guardar todo para usar sin conexión",
+"saving": "Guardando… {d}/{n}",
+"saved": "Guardado sin conexión · {d}",
+"appOnly": "El guardado sin conexión funciona en la app instalada o en el sitio publicado.",
+"offline": "Sin conexión: lo que ya guardó sigue funcionando.",
+"essentials": "Esenciales",
+"resume": "Continuar donde lo dejó",
+"resumeArr": "Orientación · paso {i} · {x}",
+"resumeTour": "Paseo en curso · {x}"
 }
 }
