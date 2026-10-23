@@ -127,7 +127,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   // Tarifas na moeda da cidade (a que se paga na máquina) e, se diferente, o aproximado na moeda do viajante.
   const money = (v: number) => dualMoney(v, city.cur, fx, INTL_LOCALE[locale]).main;
   const both = (v: number) => { const d = dualMoney(v, city.cur, fx, INTL_LOCALE[locale]); return d.local ? <>{d.main} <span className="fx">{d.local}</span></> : d.main; };
-  const hm = (d: Date) => d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" });
+  const hm = (d: Date) => (Number.isFinite(d.getTime()) ? d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" }) : "—");
   const legs = endLegs(city, plan, trip.start, trip.end);
   const bd = breakdown(city, plan, trip);
   const buffer = BUFFER_MIN[trip.mode];

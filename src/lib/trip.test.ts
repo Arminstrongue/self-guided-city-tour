@@ -8,10 +8,11 @@ const lis = CITIES.find((c) => c.id === "lis")!;
 const stationSA = { kind: "station" as const, lat: 38.7139, lng: -9.1225, label: "Santa Apolónia" };
 const hotel = { kind: "hotel" as const, lat: 38.7167, lng: -9.1425, label: "Hotel Avenida" };
 
-test("comboio: o fim é a estação, nunca o aeroporto", () => {
+test("comboio: o fim é a estação (ou o aeroporto, se escolhido explicitamente)", () => {
   const t: Trip = { v: 2, start: AIRPORT, end: stationSA, mode: "train", startAt: "", deadline: "" };
   assert.ok(tripReady(t));
-  assert.equal(endMatchesMode({ end: AIRPORT, mode: "train" }), false);
+  assert.equal(endMatchesMode({ end: AIRPORT, mode: "train" }), true);  // estação ferroviária do aeroporto
+  assert.equal(endMatchesMode({ end: AIRPORT, mode: "ship" }), false);
   const plan = planRoute(lis, false);
   const b = breakdown(lis, plan, t);
   assert.equal(b.to, lis.air.min);          // começa no aeroporto
@@ -57,4 +58,10 @@ test("plano recebido do navegador ou do servidor é validado", () => {
   const ok = parseTrip({ start: AIRPORT, end: stationSA, mode: "train", startAt: "2026-10-24T09:00", deadline: "bad" });
   assert.equal(ok?.end.kind, "station");
   assert.equal(ok?.deadline, "");
+});
+
+test("ponto final ainda por escolher (comboio sem estação) não dá NaN", () => {
+  const t: Trip = { v: 2, start: AIRPORT, end: { kind: "station", lat: NaN, lng: NaN, label: "" }, mode: "train", startAt: "", deadline: "" };
+  const b = breakdown(lis, planRoute(lis, false), t);
+  assert.ok(Number.isFinite(b.back) && Number.isFinite(b.needed));
 });

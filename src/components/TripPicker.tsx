@@ -28,6 +28,17 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
   }, [city, kind, locale]);
   const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   const shown = list?.filter((h) => !q.trim() || norm(`${h.label} ${h.sub}`).includes(norm(q.trim())));
+  // Escrever pesquisa sozinho (sem ter de tocar na lupa) quando a lista da cidade não tem o que procura.
+  useEffect(() => {
+    const v = q.trim();
+    if (v.length < 3 || (shown && shown.length > 0)) return;
+    const id = setTimeout(() => {
+      setBusy(true);
+      fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+        .then((j: { hits?: Hit[] } | null) => { setHits(j?.hits ?? []); setBusy(false); });
+    }, 450);
+    return () => clearTimeout(id);
+  }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
   async function search(e: React.FormEvent) {
     e.preventDefault();
     if (q.trim().length < 3) return;
@@ -38,7 +49,7 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
   return (
     <>
       <form className="bp-q" onSubmit={search}>
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.tpSearchPh[kind]} aria-label={t.tpSearchPh[kind]} autoComplete="off" />
+        <input value={q} onChange={(e) => { setQ(e.target.value); setHits(null); }} placeholder={t.tpSearchPh[kind]} aria-label={t.tpSearchPh[kind]} autoComplete="off" />
         <button className="btn tram" disabled={busy || q.trim().length < 3}><Search size={16} aria-hidden="true" /><span className="sr-only">{t.bpSearch}</span></button>
       </form>
       {!hits && kind !== "hotel" && (list === null ? <p className="hint">…</p> : shown && shown.length > 0 && (
@@ -50,6 +61,7 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
           ))}
         </div>
       ))}
+      {busy && !hits && <p className="hint">…</p>}
       {hits && (hits.length ? (
         <div className="bp-hits">
           {hits.map((h, i) => (
@@ -140,7 +152,9 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
       {(needKind === "station" || needKind === "port") && (
         <>
           {endMissing && <p className="tp-need">{needKind === "station" ? t.tpNeedStation : t.tpNeedPort}</p>}
-          <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end} kinds={[needKind]} onChange={(e) => set({ end: e })} />
+          <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
+            kinds={needKind === "station" ? ["station", "airport"] : [needKind]} onChange={(e) => set({ end: e })} />
+          {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
         </>
       )}
       {!needKind && (

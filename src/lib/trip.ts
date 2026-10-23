@@ -30,7 +30,8 @@ export const sameEnd = (a: Endpoint, b: Endpoint) =>
 /** O fim combina com a modalidade? (comboio → estação, navio → terminal, avião → aeroporto). */
 export function endMatchesMode(t: Pick<Trip, "end" | "mode">): boolean {
   const need = END_FOR_MODE[t.mode];
-  return !need || t.end.kind === need;
+  // De comboio também se pode terminar no aeroporto (muitos têm estação ferroviária).
+  return !need || t.end.kind === need || (t.mode === "train" && t.end.kind === "airport");
 }
 
 export type Leg = { min: number; how: "airport" | CityHop["m"] };
@@ -59,8 +60,10 @@ export const shapeOf = (city: City, plan: RoutePlan): RouteShape => ({
  * needed = total + margem antes da partida.
  */
 export function breakdownOf(r: RouteShape, trip: Pick<Trip, "start" | "end" | "mode">): Breakdown {
-  const to = trip.start.kind === "airport" || !r.first ? r.air : hop(trip.start, r.first).min;
-  const back = trip.end.kind === "airport" || !r.last ? r.ret : hop(r.last, trip.end).min;
+  // Ponto ainda por escolher (sem coordenadas): usa o tempo de referência da cidade, nunca NaN.
+  const ok = (e: Endpoint) => e.kind === "airport" || (Number.isFinite(e.lat) && Number.isFinite(e.lng));
+  const to = trip.start.kind === "airport" || !r.first || !ok(trip.start) ? r.air : hop(trip.start, r.first).min;
+  const back = trip.end.kind === "airport" || !r.last || !ok(trip.end) ? r.ret : hop(r.last, trip.end).min;
   const buffer = BUFFER_MIN[trip.mode];
   const total = to + r.tour + back;
   return { tour: r.tour, to, back, buffer, total, needed: total + buffer };
@@ -84,6 +87,7 @@ export function availableMin(trip: Pick<Trip, "startAt" | "deadline" | "mode">, 
 
 /** "15:40", "amanhã, 15:40" ou "sáb., 24 out., 15:40", sempre na hora da cidade. */
 export function whenLabel(at: number, tz: string, intl: string, words: { today: string; tomorrow: string }, now = Date.now()): string {
+  if (!Number.isFinite(at)) return "—";
   const day = (x: number) => new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(new Date(x));
   const hm = new Intl.DateTimeFormat(intl, { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(new Date(at));
   if (day(at) === day(now)) return hm;
