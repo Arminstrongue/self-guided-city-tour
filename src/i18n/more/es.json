@@ -1441,5 +1441,24 @@
 "bat": "Batería"
 },
 "rfStops": "Paradas de esta ruta",
-"rfLen": "Duración"
+"rfLen": "Duración",
+"rfTimes": "Horarios",
+"trTitle": "Próximas conexiones",
+"trNone": "No hay horarios en directo para este trayecto ahora.",
+"trMaps": "Ver en Google Maps",
+"trStops": "{n} paradas",
+"trWalk": "{n} min a pie",
+"trFrom": "De {a} a {b}",
+"trSrc": "Horarios y tarifas del operador vía Google. Confírmelo en la parada.",
+"evStatus": {
+"onsale": "A la venta",
+"offsale": "Venta cerrada",
+"cancelled": "Cancelado",
+"postponed": "Aplazado",
+"rescheduled": "Nueva fecha"
+},
+"evAdults": "Solo mayores de 18",
+"evAbout": "Sobre el evento",
+"evNote": "A tener en cuenta",
+"evPriceWhy": "El organizador no ha publicado el precio aquí. Vea las entradas y precios en «Entradas»."
 }

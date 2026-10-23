@@ -10,8 +10,12 @@ type Extra = { id: string; name: string; price: number; qty: number };
 type State = { tr: Record<string, number>; mu: Record<string, number>; extras: Extra[] };
 const EMPTY: State = { tr: {}, mu: {}, extras: [] };
 
-export function CostPlanner({ cityId, t, locale, transport, museums, base, money }: {
+/** Tipo de paragem para procurar no mapa (o Google Maps mostra as próximas partidas de cada estação). */
+const STOP_Q: Record<string, string> = { "🚇": "metro station", "🚋": "tram stop", "🚊": "tram stop", "🚌": "bus stop", "🚆": "train station", "⛴": "ferry terminal", "🚠": "funicular", "🚡": "cable car" };
+
+export function CostPlanner({ cityId, t, locale, transport, museums, base, money, cityName, center }: {
   cityId: string; t: Dict; locale: Locale; transport: Transport[]; museums: Museum[]; base: number; money: (v: number) => React.ReactNode;
+  cityName: string; center: { lat: number; lng: number };
 }) {
   const key = `sgct:costs:${cityId}`;
   const [s, setS] = useState<State>(EMPTY);
@@ -34,7 +38,10 @@ export function CostPlanner({ cityId, t, locale, transport, museums, base, money
         {transport.map((x) => (
           <div key={x.id} className={`cp-row ${(s.tr[x.id] ?? 0) > 0 ? "on" : ""}`}>
             <span className="cp-ic" aria-hidden="true">{x.icon}</span>
-            <span className="stack" style={{ gap: 0, flex: 1, minWidth: 0 }}><span className="cp-n">{name(x)}</span><span className="hint num">{x.price === 0 ? t.exFreeEntry : <>{money(x.price)} / {t.cpUnit[x.u]}</>}</span></span>
+            <span className="stack" style={{ gap: 0, flex: 1, minWidth: 0 }}><span className="cp-n">{name(x)}</span><span className="hint num">{x.price === 0 ? t.exFreeEntry : <>{money(x.price)} / {t.cpUnit[x.u]}</>}</span>
+              {STOP_Q[x.icon] && x.u === "trip" && (
+                <a className="cp-times" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${STOP_Q[x.icon]} ${cityName}`)}&center=${center.lat},${center.lng}`} target="_blank" rel="noopener noreferrer">🕒 {t.rfTimes} ↗</a>
+              )}</span>
             <Stepper n={s.tr[x.id] ?? 0} on={(d) => step("tr", x.id, d)} />
           </div>
         ))}

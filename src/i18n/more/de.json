@@ -1414,5 +1414,24 @@
 "bat": "Akku"
 },
 "rfStops": "Stationen dieser Route",
-"rfLen": "Dauer"
+"rfLen": "Dauer",
+"rfTimes": "Abfahrten",
+"trTitle": "Nächste Verbindungen",
+"trNone": "Derzeit keine Live-Abfahrten für diese Strecke.",
+"trMaps": "In Google Maps öffnen",
+"trStops": "{n} Halte",
+"trWalk": "{n} Min. zu Fuß",
+"trFrom": "Von {a} nach {b}",
+"trSrc": "Fahrzeiten und Preise des Betreibers über Google. Bitte an der Haltestelle prüfen.",
+"evStatus": {
+"onsale": "Im Verkauf",
+"offsale": "Verkauf beendet",
+"cancelled": "Abgesagt",
+"postponed": "Verschoben",
+"rescheduled": "Neuer Termin"
+},
+"evAdults": "Nur ab 18",
+"evAbout": "Über die Veranstaltung",
+"evNote": "Gut zu wissen",
+"evPriceWhy": "Der Veranstalter hat den Preis hier nicht veröffentlicht. Tickets und Preise unter „Tickets“."
 }

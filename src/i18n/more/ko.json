@@ -1874,5 +1874,24 @@
 "bat": "배터리"
 },
 "rfStops": "이 경로의 명소",
-"rfLen": "소요 시간"
+"rfLen": "소요 시간",
+"rfTimes": "시간표",
+"trTitle": "다음 출발",
+"trNone": "지금은 이 구간의 실시간 시간표가 없습니다.",
+"trMaps": "Google 지도에서 열기",
+"trStops": "{n}개 정거장",
+"trWalk": "도보 {n}분",
+"trFrom": "{a} → {b}",
+"trSrc": "운영사 시간표와 요금(Google 제공). 정류장에서 확인하세요.",
+"evStatus": {
+"onsale": "판매 중",
+"offsale": "판매 종료",
+"cancelled": "취소됨",
+"postponed": "연기됨",
+"rescheduled": "일정 변경"
+},
+"evAdults": "18세 이상만",
+"evAbout": "이벤트 정보",
+"evNote": "알아두세요",
+"evPriceWhy": "주최 측이 여기에 가격을 공개하지 않았습니다. ‘티켓’에서 확인하세요."
 }

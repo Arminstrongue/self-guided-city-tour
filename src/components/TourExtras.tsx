@@ -11,14 +11,20 @@ import type { Weather } from "@/lib/weather";
 import type { FlightStatus } from "@/lib/flight";
 import { ExitCheck, NAT_KEY } from "./ExitCheck";
 import { ExtLink } from "./ExtLink";
+import Portal from "./Portal";
+import { SheetX } from "./WinNav";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
 /* ---------- Roteiro pelo tempo livre ---------- */
 
-export function RouteFit({ options, value, onChange, availMin, t, extName }: {
+const MODE_ICON: Record<Leg["m"], string> = { walk: "🚶", metro: "🚇", tram: "🚊", bus: "🚌", train: "🚆", ferry: "⛴", car: "🚕" };
+
+export function RouteFit({ options, value, onChange, availMin, t, extName, locale, single, money, from, tz }: {
   options: RouteOption[]; value: string; onChange: (k: string) => void; availMin: number | null; t: Dict; extName: string;
+  locale: Locale; single: number; money: (v: number) => string; from: { lat: number; lng: number; n: string } | null; tz: string;
 }) {
+  const [times, setTimes] = useState<{ a: { lat: number; lng: number; n: string }; b: Stop } | null>(null);
   // Estilo iOS: escolha compacta da duração (pílulas) e, por baixo, as paragens do roteiro escolhido com nome.
   const i = Math.max(0, options.findIndex((o) => o.key === value));
   const cur = options[i];
@@ -47,16 +53,69 @@ export function RouteFit({ options, value, onChange, availMin, t, extName }: {
             {ok(cur) === false && <small className="rf-warn">{t.tooLong}</small>}
           </div>
           <ol className="rf-list">
-            {cur.plan.stops.map((s, k) => (
-              <li key={s.id} className={i > 0 && !prev.has(s.id) ? "new" : ""}>
-                <span className="rf-n num">{k + 1}</span><span className="rf-name">{s.n}</span>
-                {i > 0 && !prev.has(s.id) && <span className="rf-new">+</span>}
-              </li>
-            ))}
+            {cur.plan.stops.map((s, k) => {
+              const l = s.leg, price = (l.r ?? 0) * single + (l.f ?? 0);
+              const a = k === 0 ? from : { lat: cur.plan.stops[k - 1].lat, lng: cur.plan.stops[k - 1].lng, n: cur.plan.stops[k - 1].n };
+              return (
+                <li key={s.id} className={i > 0 && !prev.has(s.id) ? "new" : ""}>
+                  <span className="rf-n num">{k + 1}</span>
+                  <span className="rf-name">{s.n}
+                    <small className="rf-leg">{MODE_ICON[l.m]} {l.m === "walk" ? t.walk : t[l.m]}{l.line ? ` · ${lineText(l.line, locale)}` : ""} · {l.min} min · {price > 0 ? money(price) : t.free}</small>
+                  </span>
+                  {l.m !== "walk" && a && <button type="button" className="rf-tbtn" onClick={() => setTimes({ a, b: s })}>{t.rfTimes}</button>}
+                  {i > 0 && !prev.has(s.id) && <span className="rf-new">+</span>}
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}
+      {times && <TransitSheet a={times.a} b={times.b} t={t} locale={locale} tz={tz} onClose={() => setTimes(null)} />}
     </div>
+  );
+}
+
+type TLine = { name: string; vehicle: string; color: string; from: string; to: string; headsign: string; dep: string; stops: number };
+type TOpt = { dep: string; arr: string; min: number; fare: string; walkMin: number; lines: TLine[] };
+
+/** Próximas ligações em transportes públicos entre duas paragens: linhas, horas, duração e preço. */
+function TransitSheet({ a, b, t, locale, tz, onClose }: { a: { lat: number; lng: number; n: string }; b: Stop; t: Dict; locale: Locale; tz: string; onClose: () => void }) {
+  const [opts, setOpts] = useState<TOpt[] | null>(null);
+  useEffect(() => {
+    let live = true;
+    fetch(`/api/transit?from=${a.lat},${a.lng}&to=${b.lat},${b.lng}&lang=${locale}`).then((r) => (r.ok ? r.json() : null))
+      .then((j: { options?: TOpt[] } | null) => { if (live) setOpts(j?.options ?? []); }).catch(() => { if (live) setOpts([]); });
+    return () => { live = false; };
+  }, [a.lat, a.lng, b.lat, b.lng, locale]);
+  const hm = (iso: string) => (iso ? new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: tz, hour: "2-digit", minute: "2-digit" }).format(new Date(iso)) : "");
+  const maps = `https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lng}&destination=${b.lat},${b.lng}&travelmode=transit`;
+  return (
+    <Portal><div className="sheet-bg" onClick={onClose}>
+      <div className="sheet stack" style={{ gap: 14 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={t.trTitle}>
+        <SheetX onClose={onClose} label={t.close} />
+        <div className="stack" style={{ gap: 2 }}><b style={{ fontSize: 20 }}>{t.trTitle}</b><span className="hint">{fmt(t.trFrom, { a: a.n, b: b.n })}</span></div>
+        {opts === null ? <p className="hint">…</p> : opts.length === 0 ? <p className="hint">{t.trNone}</p> : (
+          <ul className="ios-group">
+            {opts.map((o, k) => (
+              <li key={k} className="tr-o">
+                <div className="tr-h"><b className="num">{hm(o.dep)} → {hm(o.arr)}</b><span className="num">{o.min} min{o.fare ? ` · ${o.fare}` : ""}</span></div>
+                <div className="tr-lines">
+                  {o.lines.map((l, j) => (
+                    <span key={j} className="tr-l">
+                      <i className="tr-chip" style={l.color ? { background: l.color, color: "#fff" } : undefined}>{l.name || l.vehicle}</i>
+                      <small>{hm(l.dep)} · {l.from}{l.headsign ? ` → ${l.headsign}` : ""}{l.stops ? ` · ${fmt(t.trStops, { n: l.stops })}` : ""}</small>
+                    </span>
+                  ))}
+                  {o.walkMin > 0 && <small className="hint">🚶 {fmt(t.trWalk, { n: o.walkMin })}</small>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+        <ExtLink href={maps} className="btn ghost">{t.trMaps} ↗</ExtLink>
+        <p className="hint">{t.trSrc}</p>
+      </div>
+    </div></Portal>
   );
 }
 

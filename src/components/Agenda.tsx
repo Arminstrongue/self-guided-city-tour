@@ -44,12 +44,19 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
   const weekend = useMemo(() => Array.from({ length: 7 }, (_, i) => localDay(tz, i)).filter((d) => [5, 6, 0].includes(new Date(`${d}T12:00:00Z`).getUTCDay())), [tz]);
   const on = (e: CityEvent, d: string) => e.localDate === d || (Boolean(e.until) && e.localDate <= d && d <= e.until!);
   const list = (events ?? []).filter((e) => (kind === "all" || e.kind === kind) && (range === "all" || (range === "today" ? on(e, today) : range === "tomorrow" ? on(e, tomorrow) : weekend.some((d) => on(e, d)))));
-  const days = useMemo(() => { const m = new Map<string, CityEvent[]>(); for (const e of list) m.set(e.localDate, [...(m.get(e.localDate) ?? []), e]); return [...m.entries()]; }, [list]);
+  // Agrupado por dia em ordem de data; sessões já começadas que continuam aparecem em "hoje".
+  const days = useMemo(() => {
+    const m = new Map<string, CityEvent[]>();
+    for (const e of list) { const d = e.localDate < today ? today : e.localDate; if (e.localDate < today && !(e.until && e.until >= today)) continue; m.set(d, [...(m.get(d) ?? []), e]); }
+    return [...m.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [list, today]);
   const kinds = KINDS.filter((k) => (events ?? []).some((e) => e.kind === k));
   const dayFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "long", day: "numeric", month: "long" });
   const shortFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short" });
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: c, maximumFractionDigits: 0 }).format(n); } catch { return `${n} ${c}`; } };
-  const price = (e: CityEvent) => (e.free ? `🆓 ${t.exFreeEntry}` : e.priceMin && e.currency ? `🎟 ${fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : `🎟 ${t.evPriceSite}`);
+  const price = (e: CityEvent) => (e.free ? `🆓 ${t.exFreeEntry}` : e.priceMin && e.currency
+    ? `🎟 ${e.priceMax ? `${money(e.priceMin, e.currency)} – ${money(e.priceMax, e.currency)}` : fmt(t.exFrom, { p: money(e.priceMin, e.currency) })}` : `🎟 ${t.evPriceSite}`);
+  const badStatus = (e: CityEvent) => e.status && e.status !== "onsale";
   const wished = (title: string) => wish.some((x) => wishKey(x) === wishKey({ city: cityId, title }));
   function heart(e: CityEvent) {
     if (e.lat === null || e.lng === null) return;
@@ -93,9 +100,10 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {e.image ? <img className="ag-img" src={e.image} alt="" loading="lazy" /> : <span className="ag-img">{KIND_ICON[e.kind]}</span>}
               <span className="stack" style={{ gap: 2, minWidth: 0, flex: 1, textAlign: "start" }}>
-                <span className="label" style={{ color: "var(--cobalt)" }}>{KIND_ICON[e.kind]} {t.evKind[e.kind]}{e.localTime ? ` · ${e.localTime}` : ""}</span>
+                <span className="label" style={{ color: "var(--cobalt)" }}>{KIND_ICON[e.kind]} {e.genre ?? t.evKind[e.kind]}{e.localTime ? ` · ${e.localTime}` : ""}</span>
                 <b className="ex-ev-t">{e.name}</b>
-                <span className="hint ad-ellip">{e.venue ?? ""}</span>
+                <span className="hint ad-ellip">{e.venue ?? ""}{e.adults ? ` · ${t.evAdults}` : ""}</span>
+                {badStatus(e) && <span className="ag-status">{t.evStatus[e.status!]}</span>}
                 {e.until && <span className="ag-runs">🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${e.until}T12:00:00`)), n: e.runs ?? 2 })}</span>}
                 <span className={`ag-price ${e.free ? "free" : e.priceMin ? "" : "unk"}`}>{price(e)}</span>
               </span>
@@ -135,8 +143,14 @@ export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: {
               <b style={{ fontSize: 20, lineHeight: 1.25 }}>{open.name}</b>
               <span>📅 {dayFmt.format(new Date(`${open.localDate}T12:00:00`))}{open.localTime ? ` · ${open.localTime}` : ""}</span>
               {open.until && <span>🔁 {fmt(t.evUntil, { d: shortFmt.format(new Date(`${open.until}T12:00:00`)), n: open.runs ?? 2 })}</span>}
-              {open.venue && <span>📍 {open.venue}</span>}
+              {open.genre && <span>🏷 {open.genre}</span>}
+              {open.venue && <span>📍 {open.venue}{open.address && <small className="hint" style={{ display: "block" }}>{open.address}</small>}</span>}
+              {open.adults && <span>🔞 {t.evAdults}</span>}
+              {open.status && <span className={`ag-status ${open.status === "onsale" ? "ok" : ""}`} style={{ alignSelf: "flex-start" }}>{t.evStatus[open.status]}</span>}
               <span className={`ag-price ${open.free ? "free" : open.priceMin ? "" : "unk"}`}>{price(open)}</span>
+              {!open.free && !open.priceMin && <small className="hint">{t.evPriceWhy}</small>}
+              {open.info && <div className="ag-more"><b>{t.evAbout}</b><p>{open.info}</p></div>}
+              {open.note && <div className="ag-more"><b>{t.evNote}</b><p>{open.note}</p></div>}
               <div className="grid2" style={{ marginTop: 6 }}>
                 <a className="btn press" href={open.url} target="_blank" rel="noopener noreferrer">🎟 {t.exTickets}</a>
                 {open.lat !== null && open.lng !== null ? <a className="btn ghost press" href={`https://www.google.com/maps/dir/?api=1&destination=${open.lat},${open.lng}`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a> : <span />}

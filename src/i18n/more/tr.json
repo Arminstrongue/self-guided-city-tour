@@ -1874,5 +1874,24 @@
 "bat": "Pil"
 },
 "rfStops": "Bu rotadaki duraklar",
-"rfLen": "Süre"
+"rfLen": "Süre",
+"rfTimes": "Saatler",
+"trTitle": "Sonraki seferler",
+"trNone": "Bu yolculuk için şu an canlı saat yok.",
+"trMaps": "Google Haritalar'da aç",
+"trStops": "{n} durak",
+"trWalk": "{n} dk yürüme",
+"trFrom": "{a} → {b}",
+"trSrc": "Operatör saatleri ve ücretleri Google üzerinden. Durakta kontrol edin.",
+"evStatus": {
+"onsale": "Satışta",
+"offsale": "Satış kapandı",
+"cancelled": "İptal edildi",
+"postponed": "Ertelendi",
+"rescheduled": "Yeni tarih"
+},
+"evAdults": "Yalnızca 18+",
+"evAbout": "Etkinlik hakkında",
+"evNote": "Bilinmesi gerekenler",
+"evPriceWhy": "Organizatör fiyatı burada yayınlamadı. Bilet ve fiyatlar için “Biletler”e bakın."
 }

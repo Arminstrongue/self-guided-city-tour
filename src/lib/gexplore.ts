@@ -4,7 +4,7 @@
  * (as regras da Google não permitem guardar estes dados em base de dados).
  */
 import type { City } from "@/data/cities";
-import { cityCenter, distM, PLACE_CATS, type Place, type PlaceCat } from "./explore";
+import { cityCenter, distM, PUBLIC_CATS, type Place, type PlaceCat } from "./explore";
 import { takeGoogle } from "./gbudget";
 
 /** Pesquisa por categoria (em inglês, funciona em qualquer país). `far` = arredores. */
@@ -70,7 +70,7 @@ export async function googlePlacesFor(city: City, _lang: string): Promise<Place[
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < TTL) return hit.places;
   const center = cityCenter(city);
-  const res = await Promise.allSettled(PLACE_CATS.map((c) => search(c, city.n.en, center, lang)));
+  const res = await Promise.allSettled(PUBLIC_CATS.map((c) => search(c, city.n.en, center, lang)));
   const seen = new Set<string>();
   const places = res.flatMap((r) => (r.status === "fulfilled" ? r.value : [])).filter((p) => !seen.has(p.id) && (seen.add(p.id), true));
   if (!places.length) return hit?.places ?? null;

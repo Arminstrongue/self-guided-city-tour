@@ -1410,5 +1410,24 @@
 "bat": "Batterie"
 },
 "rfStops": "Étapes de cet itinéraire",
-"rfLen": "Durée"
+"rfLen": "Durée",
+"rfTimes": "Horaires",
+"trTitle": "Prochains départs",
+"trNone": "Pas d'horaires en direct pour ce trajet pour l'instant.",
+"trMaps": "Ouvrir dans Google Maps",
+"trStops": "{n} arrêts",
+"trWalk": "{n} min à pied",
+"trFrom": "De {a} à {b}",
+"trSrc": "Horaires et tarifs de l'opérateur via Google. Vérifiez à l'arrêt.",
+"evStatus": {
+"onsale": "En vente",
+"offsale": "Vente close",
+"cancelled": "Annulé",
+"postponed": "Reporté",
+"rescheduled": "Nouvelle date"
+},
+"evAdults": "Réservé aux 18 ans et plus",
+"evAbout": "À propos",
+"evNote": "Bon à savoir",
+"evPriceWhy": "L'organisateur n'a pas publié le prix ici. Voir billets et prix dans « Billets »."
 }

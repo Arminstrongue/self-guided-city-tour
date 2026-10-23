@@ -1386,5 +1386,24 @@
 "bat": "バッテリー"
 },
 "rfStops": "このルートのスポット",
-"rfLen": "所要時間"
+"rfLen": "所要時間",
+"rfTimes": "時刻",
+"trTitle": "次の便",
+"trNone": "現在この区間のリアルタイム時刻はありません。",
+"trMaps": "Google マップで開く",
+"trStops": "{n} 駅",
+"trWalk": "徒歩 {n} 分",
+"trFrom": "{a} → {b}",
+"trSrc": "運行会社の時刻と運賃（Google 経由）。乗り場で確認してください。",
+"evStatus": {
+"onsale": "発売中",
+"offsale": "販売終了",
+"cancelled": "中止",
+"postponed": "延期",
+"rescheduled": "日程変更"
+},
+"evAdults": "18歳以上のみ",
+"evAbout": "イベントについて",
+"evNote": "ご注意",
+"evPriceWhy": "主催者はここに価格を掲載していません。「チケット」で確認してください。"
 }

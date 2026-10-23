@@ -9,7 +9,7 @@ import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
 import { loadTrip, saveTrip, tripKey } from "./trip-store";
 import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
 import { cityCenterOf } from "@/lib/city-center";
-import { NextCard, BackNow, dayNames, EatNearby, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
+import { NextCard, BackNow, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { CurrencyPicker } from "./CurrencyPicker";
@@ -293,7 +293,9 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           </div>
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
-          <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
+          <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
+            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"}
+            from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
           <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
           {accessCount(plan.stops.map((s) => s.id)) > 0 && <p className="hint">♿ {fmt(t.acSum, { n: accessCount(plan.stops.map((s) => s.id)) })}</p>}
@@ -420,7 +422,6 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
                             <ExtLink href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`}>🍽 {t.eatNear}</ExtLink>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
-                          <EatNearby cityId={city.id} stopId={s.id} locale={locale} t={t} cur={city.cur} />
                           <StopReport t={t} city={city.id} stop={s.id} name={s.n} />
                           <CommentsButton t={t} locale={locale} city={city.id} stop={s.id} title={stopName(s, locale)} count={cmCounts[s.id] ?? 0} />
                         </div>
@@ -482,7 +483,7 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
             </div>
             <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
-            <CostPlanner cityId={city.id} t={t} locale={locale} transport={TRANSPORT[city.id] ?? []} museums={museums} base={plan.transport + plan.entries} money={both} />
+            <CostPlanner cityId={city.id} t={t} locale={locale} transport={TRANSPORT[city.id] ?? []} museums={museums} base={plan.transport + plan.entries} money={both} cityName={cityLabel} center={cityCenterOf(city)} />
           </>
         )}
 

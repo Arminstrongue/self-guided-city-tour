@@ -1386,5 +1386,24 @@
 "bat": "电池"
 },
 "rfStops": "本路线的站点",
-"rfLen": "时长"
+"rfLen": "时长",
+"rfTimes": "时刻",
+"trTitle": "接下来的班次",
+"trNone": "此路段目前没有实时时刻。",
+"trMaps": "在 Google 地图中打开",
+"trStops": "{n} 站",
+"trWalk": "步行 {n} 分钟",
+"trFrom": "从 {a} 到 {b}",
+"trSrc": "运营商时刻与票价来自 Google，请在站点确认。",
+"evStatus": {
+"onsale": "售票中",
+"offsale": "停止售票",
+"cancelled": "已取消",
+"postponed": "已延期",
+"rescheduled": "已改期"
+},
+"evAdults": "仅限18岁以上",
+"evAbout": "活动介绍",
+"evNote": "注意事项",
+"evPriceWhy": "主办方未在此公布票价，请在“门票”中查看。"
 }

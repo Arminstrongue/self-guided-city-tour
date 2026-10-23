@@ -1441,5 +1441,24 @@
 "bat": "Batteria"
 },
 "rfStops": "Tappe di questo percorso",
-"rfLen": "Durata"
+"rfLen": "Durata",
+"rfTimes": "Orari",
+"trTitle": "Prossimi collegamenti",
+"trNone": "Nessun orario in tempo reale per questo tragitto ora.",
+"trMaps": "Apri in Google Maps",
+"trStops": "{n} fermate",
+"trWalk": "{n} min a piedi",
+"trFrom": "Da {a} a {b}",
+"trSrc": "Orari e tariffe dell'operatore tramite Google. Verifica alla fermata.",
+"evStatus": {
+"onsale": "In vendita",
+"offsale": "Vendita chiusa",
+"cancelled": "Annullato",
+"postponed": "Rinviato",
+"rescheduled": "Nuova data"
+},
+"evAdults": "Solo maggiorenni",
+"evAbout": "Informazioni",
+"evNote": "Da sapere",
+"evPriceWhy": "L'organizzatore non ha pubblicato il prezzo qui. Vedi biglietti e prezzi in «Biglietti»."
 }

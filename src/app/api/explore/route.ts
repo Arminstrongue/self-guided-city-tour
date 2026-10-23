@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { loadCity } from "@/lib/content";
-import { cityCenter, placesFor } from "@/lib/explore";
+import { cityCenter, COMMERCIAL_CATS, placesFor } from "@/lib/explore";
 import { eventsEnabled, eventsNear } from "@/lib/events";
 import { googleExploreEnabled, googlePlacesFor } from "@/lib/gexplore";
 import { isLocale } from "@/i18n/core";
@@ -19,6 +19,6 @@ export async function GET(req: Request) {
   // Google Places quando há chave (fotos, avaliações, horário); OpenStreetMap como reserva.
   const google = googleExploreEnabled();
   const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city), 30)]);
-  const places = gp ?? (await placesFor(city, lang));
+  const places = ((gp ?? (await placesFor(city, lang))) ?? []).filter((p) => !COMMERCIAL_CATS.has(p.cat));
   return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=3600" } });
 }

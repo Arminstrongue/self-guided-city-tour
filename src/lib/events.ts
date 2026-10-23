@@ -8,6 +8,13 @@ export type CityEvent = {
   id: string; name: string; url: string; start: string; localDate: string; localTime: string | null;
   kind: "music" | "sport" | "arts" | "family" | "film" | "other"; venue: string | null; lat: number | null; lng: number | null;
   image: string | null; priceMin: number | null; currency: string | null;
+  priceMax?: number | null;  // preço mais alto publicado
+  genre?: string;            // ex.: Rock, Futebol, Musical
+  status?: "onsale" | "offsale" | "cancelled" | "postponed" | "rescheduled";
+  info?: string;             // descrição do organizador
+  note?: string;             // avisos (entrada, idades, bagagem)
+  address?: string;          // morada do local
+  adults?: boolean;          // só maiores de idade
   free?: boolean;   // entrada gratuita
   until?: string;   // última data, quando o mesmo evento se repete em vários dias
   runs?: number;    // número de dias com sessões
@@ -19,12 +26,13 @@ export const eventsEnabled = () => Boolean(process.env.TICKETMASTER_API_KEY);
 
 type TmEvent = {
   id: string; name: string; url: string;
-  dates?: { start?: { dateTime?: string; localDate?: string; localTime?: string } };
-  classifications?: { segment?: { name?: string }; genre?: { name?: string } }[];
+  dates?: { start?: { dateTime?: string; localDate?: string; localTime?: string }; status?: { code?: string } };
+  classifications?: { segment?: { name?: string }; genre?: { name?: string }; subGenre?: { name?: string } }[];
+  ageRestrictions?: { legalAgeEnforced?: boolean };
   images?: { url: string; width: number; ratio?: string }[];
   priceRanges?: { min?: number; max?: number; currency?: string }[];
   info?: string; pleaseNote?: string;
-  _embedded?: { venues?: { name?: string; location?: { latitude?: string; longitude?: string } }[] };
+  _embedded?: { venues?: { name?: string; address?: { line1?: string }; postalCode?: string; city?: { name?: string }; location?: { latitude?: string; longitude?: string } }[] };
 };
 
 function kindOf(seg: string | undefined, genre: string | undefined): CityEvent["kind"] {
@@ -36,6 +44,26 @@ function kindOf(seg: string | undefined, genre: string | undefined): CityEvent["
   return "other";
 }
 
+const clip = (x: string | undefined, n: number) => { const v = (x ?? "").replace(/\s+/g, " ").trim(); return v ? (v.length > n ? `${v.slice(0, n - 1)}…` : v) : undefined; };
+const STATUS = new Set(["onsale", "offsale", "cancelled", "postponed", "rescheduled"]);
+/** Detalhes para a ficha do evento: preço máximo, género, estado da venda, descrição, avisos, morada e idade. */
+function extra(e: TmEvent, low: { max?: number } | undefined): Partial<CityEvent> {
+  const v = e._embedded?.venues?.[0], c = e.classifications?.[0];
+  const g = [c?.genre?.name, c?.subGenre?.name].filter((x) => x && x !== "Undefined" && x !== "Other");
+  const st = e.dates?.status?.code;
+  const max = Math.max(...(e.priceRanges ?? []).map((p) => p.max ?? 0));
+  const addr = [v?.address?.line1, v?.postalCode, v?.city?.name].filter(Boolean).join(", ");
+  return {
+    ...(max > 0 && max !== (low as { min?: number } | undefined)?.min ? { priceMax: max } : {}),
+    ...(g.length ? { genre: [...new Set(g)].join(" · ") } : {}),
+    ...(st && STATUS.has(st) ? { status: st as CityEvent["status"] } : {}),
+    ...(clip(e.info, 600) ? { info: clip(e.info, 600) } : {}),
+    ...(clip(e.pleaseNote, 400) ? { note: clip(e.pleaseNote, 400) } : {}),
+    ...(addr ? { address: addr } : {}),
+    ...(e.ageRestrictions?.legalAgeEnforced ? { adults: true } : {})
+  };
+}
+
 /** Converte a resposta da Ticketmaster: um evento por nome e dia, com a imagem 16:9 mais pequena que sirva. */
 export function parseTicketmaster(json: { _embedded?: { events?: TmEvent[] } }): CityEvent[] {
   const seen = new Set<string>();
@@ -43,7 +71,7 @@ export function parseTicketmaster(json: { _embedded?: { events?: TmEvent[] } }):
   for (const e of json._embedded?.events ?? []) {
     const d = e.dates?.start;
     if (!d?.localDate) continue;
-    if (/gift ?card|voucher|parking|upgrade|add[- ]?on|fast ?track only|hospitality package/i.test(e.name)) continue; // não são eventos
+    if (/gift ?card|voucher|parking|upgrade|add[- ]?on|fast ?track only|hospitality package|^row [a-z]\b|\bseat(s|ing)? (only|upgrade)\b|\bpremium (seat|package)\b/i.test(e.name)) continue; // não são eventos
     const key = `${e.name.toLowerCase()}|${d.localDate}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -57,7 +85,8 @@ export function parseTicketmaster(json: { _embedded?: { events?: TmEvent[] } }):
       id: e.id, name: e.name, url: e.url, start: d.dateTime ?? `${d.localDate}T${d.localTime ?? "00:00:00"}`, localDate: d.localDate, localTime: d.localTime?.slice(0, 5) ?? null,
       kind: kindOf(c?.segment?.name, c?.genre?.name), venue: v?.name ?? null, lat: Number.isFinite(lat) ? lat : null, lng: Number.isFinite(lng) ? lng : null,
       image: imgs[0]?.url ?? e.images?.[0]?.url ?? null, priceMin: low?.min ?? null, currency: low?.currency ?? null,
-      ...(free ? { free: true } : {})
+      ...(free ? { free: true } : {}),
+      ...(extra(e, low))
     });
   }
   return out;

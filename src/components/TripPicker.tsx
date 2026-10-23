@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BedDouble, LocateFixed, Plane, Search, Ship, TrainFront, Home } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
@@ -18,6 +18,16 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[] | null>(null);
   const [busy, setBusy] = useState(false);
+  // Estações e terminais: a lista da cidade aparece logo, sem escrever; escrever filtra a lista.
+  const [list, setList] = useState<Hit[] | null>(null);
+  useEffect(() => {
+    if (kind === "hotel") return;
+    let live = true; setList(null);
+    fetch(`/api/stations?city=${city}&kind=${kind}&lang=${locale}`).then((r) => (r.ok ? r.json() : null)).then((j: { hits?: Hit[] } | null) => { if (live) setList(j?.hits ?? []); }).catch(() => { if (live) setList([]); });
+    return () => { live = false; };
+  }, [city, kind, locale]);
+  const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const shown = list?.filter((h) => !q.trim() || norm(`${h.label} ${h.sub}`).includes(norm(q.trim())));
   async function search(e: React.FormEvent) {
     e.preventDefault();
     if (q.trim().length < 3) return;
@@ -31,6 +41,15 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.tpSearchPh[kind]} aria-label={t.tpSearchPh[kind]} autoComplete="off" />
         <button className="btn tram" disabled={busy || q.trim().length < 3}><Search size={16} aria-hidden="true" /><span className="sr-only">{t.bpSearch}</span></button>
       </form>
+      {!hits && kind !== "hotel" && (list === null ? <p className="hint">…</p> : shown && shown.length > 0 && (
+        <div className="bp-hits ios-group">
+          {shown.map((h, i) => (
+            <button key={i} type="button" className="bp-hit press" onClick={() => { setQ(h.label); setList([]); onPick({ kind, lat: h.lat, lng: h.lng, label: h.label }); }}>
+              <b>{h.label}</b>{h.sub && <small>{h.sub}</small>}
+            </button>
+          ))}
+        </div>
+      ))}
       {hits && (hits.length ? (
         <div className="bp-hits">
           {hits.map((h, i) => (

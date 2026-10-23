@@ -38,6 +38,9 @@ const QUERIES: Record<PlaceCat, { q: string[]; far?: boolean; limit: number }> =
   country: { q: ['nwr["leisure"="nature_reserve"]["name"]', 'nwr["boundary"="national_park"]["name"]', 'nwr["historic"="castle"]["name"]["tourism"="attraction"]'], far: true, limit: 20 }
 };
 export const PLACE_CATS = Object.keys(QUERIES) as PlaceCat[];
+/** Estabelecimentos comerciais (bares, discotecas, cinemas, bowling…) só aparecem se estiverem registados como parceiros. */
+export const COMMERCIAL_CATS: ReadonlySet<PlaceCat> = new Set<PlaceCat>(["nightlife", "fun"]);
+export const PUBLIC_CATS = PLACE_CATS.filter((c) => !COMMERCIAL_CATS.has(c));
 const NEAR_M = 9000, FAR_M = 40000;
 
 export type Place = {
@@ -54,7 +57,7 @@ export function cityCenter(c: Pick<City, "stops">) {
 
 /** Um pedido por categoria: pedidos pequenos respondem depressa e uma categoria pesada não estraga as outras. */
 export function overpassQuery(center: { lat: number; lng: number }, cat?: PlaceCat) {
-  const cats = cat ? [cat] : PLACE_CATS;
+  const cats = cat ? [cat] : PUBLIC_CATS;
   const parts = cats.flatMap((c) => QUERIES[c].q.map((q) => `${q}(around:${QUERIES[c].far ? FAR_M : NEAR_M},${center.lat.toFixed(5)},${center.lng.toFixed(5)});`));
   return `[out:json][timeout:25];(${parts.join("")});out center tags qt ${cat ? QUERIES[cat].limit * 6 : 2500};`;
 }
