@@ -1552,5 +1552,30 @@
 "archiveStories": "Story-Archiv",
 "archiveSub": "Ihre Storys bleiben hier ein Jahr. Nur Sie sehen sie.",
 "more": "Mehr"
+},
+"cf": {
+"activity": "Deine Aktivität",
+"activitySub": "Likes und Kommentare",
+"likes": "Likes",
+"comments": "Kommentare",
+"noLikes": "Sie haben noch keinen Beitrag geliked.",
+"noComments": "Sie haben noch nicht kommentiert.",
+"close": "Enge Freunde",
+"closeSub": "Nur diese Personen sehen Storys, die Sie mit „Enge Freunde“ teilen. Niemand wird benachrichtigt, wenn Sie jemanden hinzufügen oder entfernen.",
+"closeNone": "Folgen Sie jemandem (oder lassen Sie sich folgen), um ihn hinzuzufügen.",
+"add": "Hinzufügen",
+"remove": "Entfernen",
+"search": "Suchen",
+"words": "Verborgene Wörter",
+"wordsSub": "Kommentare zu Ihren Beiträgen mit diesen Wörtern oder Emojis werden für andere ausgeblendet. Sie sehen sie eingeklappt und können sie löschen.",
+"wordsPh": "Wort, Ausdruck oder Emoji",
+"wordsNone": "Noch keine Wörter.",
+"everyone": "Alle",
+"hiddenCom": "Kommentar ausgeblendet (verborgene Wörter)",
+"show": "Anzeigen",
+"unlike": "Gefällt mir nicht mehr",
+"delete": "Löschen",
+"onPost": "bei @{h}",
+"inList": "In der Liste"
 }
 }

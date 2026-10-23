@@ -1579,5 +1579,30 @@
 "archiveStories": "Archivo de historias",
 "archiveSub": "Sus historias se guardan aquí un año. Solo usted las ve.",
 "more": "Más"
+},
+"cf": {
+"activity": "Su actividad",
+"activitySub": "Me gusta y comentarios",
+"likes": "Me gusta",
+"comments": "Comentarios",
+"noLikes": "Aún no ha dado me gusta a ninguna publicación.",
+"noComments": "Aún no ha comentado.",
+"close": "Mejores amigos",
+"closeSub": "Solo estas personas ven las historias que comparta con «Mejores amigos». Nadie recibe aviso al añadirlo o quitarlo.",
+"closeNone": "Siga a alguien (o que le sigan) para añadirlo.",
+"add": "Añadir",
+"remove": "Quitar",
+"search": "Buscar",
+"words": "Palabras ocultas",
+"wordsSub": "Los comentarios en sus publicaciones con estas palabras o emojis se ocultan a los demás. Usted los ve contraídos y puede eliminarlos.",
+"wordsPh": "Palabra, frase o emoji",
+"wordsNone": "Aún no ha añadido palabras.",
+"everyone": "Todos",
+"hiddenCom": "Comentario oculto (palabras ocultas)",
+"show": "Ver",
+"unlike": "Ya no me gusta",
+"delete": "Eliminar",
+"onPost": "en @{h}",
+"inList": "En la lista"
 }
 }

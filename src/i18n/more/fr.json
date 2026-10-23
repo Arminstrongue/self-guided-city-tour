@@ -1548,5 +1548,30 @@
 "archiveStories": "Archive des stories",
 "archiveSub": "Vos stories restent ici un an. Vous seul les voyez.",
 "more": "Plus"
+},
+"cf": {
+"activity": "Votre activité",
+"activitySub": "J'aime et commentaires",
+"likes": "J'aime",
+"comments": "Commentaires",
+"noLikes": "Vous n'avez encore aimé aucune publication.",
+"noComments": "Vous n'avez pas encore commenté.",
+"close": "Amis proches",
+"closeSub": "Seules ces personnes voient les stories partagées avec « Amis proches ». Personne n'est averti quand vous l'ajoutez ou le retirez.",
+"closeNone": "Suivez quelqu'un (ou soyez suivi) pour l'ajouter.",
+"add": "Ajouter",
+"remove": "Retirer",
+"search": "Rechercher",
+"words": "Mots masqués",
+"wordsSub": "Les commentaires sur vos publications contenant ces mots ou emojis sont masqués aux autres. Vous les voyez réduits et pouvez les supprimer.",
+"wordsPh": "Mot, expression ou emoji",
+"wordsNone": "Aucun mot ajouté.",
+"everyone": "Tout le monde",
+"hiddenCom": "Commentaire masqué (mots masqués)",
+"show": "Voir",
+"unlike": "Je n'aime plus",
+"delete": "Supprimer",
+"onPost": "chez @{h}",
+"inList": "Dans la liste"
 }
 }

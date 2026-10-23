@@ -2517,3 +2517,38 @@ a.as-row{text-decoration:none}
 .hl-mini img{width:100%;height:100%;object-fit:cover}
 .hl-mini.on{border-color:#007aff}
 .hl-mini-ok{position:absolute;bottom:4px;right:4px;color:#fff;background:#007aff;border-radius:50%;padding:2px}
+
+/* Cores neutras: capas de destaques sem foto e ícones das folhas de ações em tom de texto */
+.hl-c.hl-plain{background:color-mix(in srgb,var(--ink) 7%,var(--bg,#fff));color:var(--ink)}
+.hl-c.hl-plain b{font-weight:600;opacity:.75}
+.as-row svg{color:var(--ink,#111)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .as-row svg{color:#fff}}
+:root[data-theme="dark"] .as-row svg{color:#fff}
+.as-row.red svg{color:#ff3b30}
+.as-chev{color:rgba(60,60,67,.35)!important}
+/* Amigos próximos */
+.st-ring.close{background:#2bb24c}
+.st-close{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:999px;background:#2bb24c;color:#fff;font-size:11px;font-weight:700}
+.cp2-aud{margin-top:2px}
+.cp2-aud button.on.close{background:#2bb24c;color:#fff}
+.st-round{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--ink) 30%,transparent);background:none;display:grid;place-items:center;cursor:pointer;color:#fff;padding:0}
+.st-round.on{background:#2bb24c;border-color:#2bb24c}
+/* Palavras ocultas */
+.st-add{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 14px}
+.st-add input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:var(--ink);outline:none;padding:8px 0}
+.st-add .st-pill{display:inline-flex;align-items:center;gap:4px}
+.st-chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px}
+.st-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;border-radius:999px;background:color-mix(in srgb,var(--ink) 7%,transparent);font-size:15px}
+.st-chip button{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 10%,transparent);color:inherit;cursor:pointer;padding:0}
+/* A sua atividade */
+.st-grid{margin-top:4px}
+.st-act{gap:10px}
+.st-act-l{flex:1;min-width:0;display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}
+.st-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:0 0 auto}
+.pf-com-hid{align-items:center;opacity:.85}
+.pf-com-hid small{flex:1}
+/* Grelha: publicações só com texto em tom neutro (sem gradientes) */
+.pf-tile{background:color-mix(in srgb,var(--ink) 6%,var(--bg,#fff))}
+.pf-tile .pf-tile-t{color:var(--ink)}
+.pf-tile.hl-tile{color:#fff}
+.pf-tile .pf-tile-t{text-shadow:none}

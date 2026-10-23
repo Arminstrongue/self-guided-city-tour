@@ -21,7 +21,7 @@ const post = (body: unknown) => fetch("/api/social/highlights", { method: "POST"
 
 function Cover({ h, size }: { h: Pick<HL, "cover" | "coverPhoto" | "bg" | "title">; size: number }) {
   return (
-    <span className={`hl-c ${h.coverPhoto ? "" : `sg-bg-${h.bg ?? "ocean"}`}`} style={{ width: size, height: size }}>
+    <span className={`hl-c ${h.coverPhoto ? "" : "hl-plain"}`} style={{ width: size, height: size }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       {h.cover && h.coverPhoto ? <img src={photo(h.cover)} alt="" loading="lazy" /> : <b>{(Array.from(h.title.replace(/^[^\p{L}\p{N}]+/u, "") || h.title)[0] ?? "").toUpperCase()}</b>}
     </span>

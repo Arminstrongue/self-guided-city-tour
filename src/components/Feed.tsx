@@ -21,7 +21,7 @@ const PostMenu = dynamic(() => import("./PostMenu").then((m) => m.PostMenu), { s
 const ShareSheet = dynamic(() => import("./PostExtras").then((m) => m.ShareSheet), { ssr: false });
 const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { ssr: false });
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
-import { Archive, Pin, Grid3x3, Bookmark as BookmarkIc, ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
+import { Star, Archive, Pin, Grid3x3, Bookmark as BookmarkIc, ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
 import { MusicSticker, SoundButton, usePostMusic, type PickedMusic } from "./Music";
 import { toast, withUndo } from "@/lib/toast";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
@@ -35,7 +35,7 @@ export type PostItem = {
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video?: "processing" | "ready" | "failed" | null; duration?: number | null;
   photos?: number; saved?: boolean; music?: { title: string; artist: string; url: string } | null;
-  archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean;
+  archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean; close?: boolean;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 export type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
@@ -80,9 +80,9 @@ function useSeen() {
   return { seen, mark };
 }
 
-export function StoryRing({ p, size = 64, state, onClick, label }: { p: { photo: string | null; name: string }; size?: number; state: "new" | "seen" | "none"; onClick?: () => void; label?: string }) {
+export function StoryRing({ p, size = 64, state, onClick, label, close }: { p: { photo: string | null; name: string }; size?: number; state: "new" | "seen" | "none"; onClick?: () => void; label?: string; close?: boolean }) {
   return (
-    <button type="button" className={`st-ring ${state}`} onClick={onClick} aria-label={label} style={{ width: size + 8, height: size + 8 }}>
+    <button type="button" className={`st-ring ${state}${close && state === "new" ? " close" : ""}`} onClick={onClick} aria-label={label} style={{ width: size + 8, height: size + 8 }}>
       <Avatar p={p} size={size} />
     </button>
   );
@@ -102,7 +102,8 @@ function StoriesBar({ t, locale, me, rings, authors, onOpen, onAdd, seen }: { t:
       </div>
       {rings.map((r, i) => r.mine ? null : (
         <div key={r.handle} className="st-item" role="listitem">
-          <StoryRing p={authors[r.handle]} state={r.items.every((x) => seen.includes(x.id)) ? "seen" : "new"} onClick={() => onOpen(i)} label={authors[r.handle]?.name} />
+          <StoryRing p={authors[r.handle]} state={r.items.every((x) => seen.includes(x.id)) ? "seen" : "new"} onClick={() => onOpen(i)} label={authors[r.handle]?.name}
+            close={r.items.some((x) => x.close && !seen.includes(x.id))} />
           <small className="ad-ellip">{authors[r.handle]?.name.split(" ")[0]}</small>
         </div>
       ))}
@@ -208,6 +209,7 @@ export function StoryViewer({ t, locale, rings, authors, start, onClose, onSeen,
         <div className="st-head">
           <a href={`/${locale}/u/${ring.handle}`} className="row" style={{ gap: 8, color: "#fff", textDecoration: "none", minWidth: 0 }}>
             {a && <Avatar p={a} size={32} />}<b className="ad-ellip">{hl ? hl.title : a?.name}</b>
+            {item.close && <span className="st-close" title={t.cf.close}><Star size={11} fill="currentColor" aria-hidden="true" /> {t.cf.close}</span>}
             <small style={{ opacity: .8 }}>{hl ? new Intl.DateTimeFormat(locale, { day: "numeric", month: "long", year: "numeric" }).format(new Date(item.at)) : ago(item.at, locale)}</small>
           </a>
           <span className="st-hr">
@@ -265,6 +267,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", i
   const [city, setCity] = useState<string | null>(defaultCity);
   const [tag, setTag] = useState<Hobby | null>(null);
   const [bg, setBg] = useState<(typeof BGS)[number]>("ocean");
+  const [close, setClose] = useState(false); // história só para amigos próximos
   const [busy, setBusy] = useState<"" | "photo" | "send">("");
   const [err, setErr] = useState("");
   const [tool, setTool] = useState<"photo" | "music" | "bg" | "city" | "tag" | null>(null);
@@ -313,7 +316,7 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", i
     if (!photo && !text.trim() && !music) return;
     prevAudio.current?.pause();
     setBusy("send"); setErr("");
-    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, extra: kind === "post" ? more : [], city, tag, bg: kind === "story" ? bg : null,
+    const r = await fetch("/api/social/posts", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, text: text.slice(0, max), photo, extra: kind === "post" ? more : [], city, tag, bg: kind === "story" ? bg : null, ...(kind === "story" && close ? { close: true } : {}),
       music: music ? ("lib" in music ? { lib: music.lib } : { own: music.own, title: music.title }) : null }) }).catch(() => null);
     const j = await r?.json().catch(() => null);
     setBusy("");
@@ -413,6 +416,12 @@ export function Composer({ t, social, cities, defaultCity, startKind = "post", i
           options={Object.entries(cities).sort((a, b) => a[1].localeCompare(b[1])).map(([id, n]) => ({ value: id, label: n, icon: "📍" }))} />}
         {tool === "tag" && !isStory && <div className="sc-chips">{HOBBIES.map((h) => <button key={h} className={`sc-chip ${tag === h ? "on" : ""}`} onClick={() => setTag(tag === h ? null : h)}>{HOBBY_ICON[h]} {t.hob[h]}</button>)}</div>}
 
+        {isStory && (
+          <div className="ios-seg cp2-aud" role="radiogroup" aria-label={t.cf.close}>
+            <button type="button" role="radio" aria-checked={!close} className={!close ? "on" : ""} onClick={() => setClose(false)}><Globe2 size={14} aria-hidden="true" /> {t.cf.everyone}</button>
+            <button type="button" role="radio" aria-checked={close} className={close ? "on close" : ""} onClick={() => setClose(true)}><Star size={14} aria-hidden="true" /> {t.cf.close}</button>
+          </div>
+        )}
         <p className="cp2-who">{social.profile?.isPrivate ? <Lock size={14} aria-hidden="true" /> : <Globe2 size={14} aria-hidden="true" />}{social.profile?.isPrivate ? t.pfWhoPriv : t.pfWhoPub}{isStory ? ` · ${t.pfStoryNote}` : ""}</p>
         {err && <p className="err">{err}</p>}
         <button className="btn press cp2-go" disabled={busy !== "" || (isVideo ? !video : !photo && !text.trim() && !music)} onClick={() => void send()}>{busy === "send" ? "…" : t.pfPublish}</button>
@@ -430,7 +439,7 @@ export function TileImg({ src, text }: { src: string; text: string }) {
 }
 
 /* ---------- Uma publicação ---------- */
-type Comment = { id: string; text: string; at: string; author: PublicProfile; canDelete: boolean };
+type Comment = { id: string; text: string; at: string; author: PublicProfile; canDelete: boolean; hidden?: boolean };
 export function PostCard({ t, locale, post, author, cities, onDeleted, onMoved }: {
   t: Dict; locale: Locale; post: PostItem; author: PublicProfile; cities: Record<string, string>; onDeleted?: () => void;
   onMoved?: (p: PostItem) => void; // arquivada/reposta: a lista do perfil tira-a do separador atual
@@ -439,6 +448,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted, onMoved }
   const [open, setOpen] = useState(false);
   const [list, setList] = useState<Comment[] | null>(null);
   const [txt, setTxt] = useState("");
+  const [shownHidden, setShownHidden] = useState<string[]>([]);
   const [menu, setMenu] = useState(false);
   const [burst, setBurst] = useState(false);
   const cRef = useRef<HTMLInputElement>(null);
@@ -527,7 +537,13 @@ export function PostCard({ t, locale, post, author, cities, onDeleted, onMoved }
         {open && (
           <div className="stack pf-coms" style={{ gap: 8 }}>
             {list === null && <small className="hint">{t.exLoading}</small>}
-            {list?.map((c) => (
+            {list?.map((c) => c.hidden && !shownHidden.includes(c.id) ? (
+              <div key={c.id} className="pf-com pf-com-hid">
+                <small className="hint">{t.cf.hiddenCom}</small>
+                <button type="button" className="link-btn" onClick={() => setShownHidden([...shownHidden, c.id])}>{t.cf.show}</button>
+                {c.canDelete && <button aria-label={t.pfDelete} title={t.pfDelete} onClick={async () => { await postAct(p.id, { action: "uncomment", commentId: c.id }); await loadComments(); }}>✕</button>}
+              </div>
+            ) : (
               <div key={c.id} className="pf-com">
                 <a href={`/${locale}/u/${c.author.handle}`}><Avatar p={c.author} size={26} /></a>
                 <p><b>{c.author.handle}</b> {c.text} <small className="hint">{ago(c.at, locale)}</small></p>

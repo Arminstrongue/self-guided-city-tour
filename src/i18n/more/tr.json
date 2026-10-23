@@ -2012,5 +2012,30 @@
 "archiveStories": "Hikaye arşivi",
 "archiveSub": "Hikayeleriniz burada bir yıl kalır. Yalnızca siz görürsünüz.",
 "more": "Daha fazla"
+},
+"cf": {
+"activity": "Hareketleriniz",
+"activitySub": "Beğeniler ve yorumlar",
+"likes": "Beğeniler",
+"comments": "Yorumlar",
+"noLikes": "Henüz bir gönderiyi beğenmediniz.",
+"noComments": "Henüz yorum yapmadınız.",
+"close": "Yakın arkadaşlar",
+"closeSub": "“Yakın arkadaşlar” ile paylaştığınız hikayeleri yalnızca bu kişiler görür. Ekleyip çıkardığınızda kimseye bildirilmez.",
+"closeNone": "Eklemek için birini takip edin (veya takip edilin).",
+"add": "Ekle",
+"remove": "Çıkar",
+"search": "Ara",
+"words": "Gizli kelimeler",
+"wordsSub": "Gönderilerinizde bu kelimeleri veya emojileri içeren yorumlar diğerlerinden gizlenir. Siz daraltılmış görür ve silebilirsiniz.",
+"wordsPh": "Kelime, ifade veya emoji",
+"wordsNone": "Henüz kelime eklenmedi.",
+"everyone": "Herkes",
+"hiddenCom": "Yorum gizlendi (gizli kelimeler)",
+"show": "Göster",
+"unlike": "Beğenmekten vazgeç",
+"delete": "Sil",
+"onPost": "@{h} gönderisinde",
+"inList": "Listede"
 }
 }

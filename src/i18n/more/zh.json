@@ -1524,5 +1524,30 @@
 "archiveStories": "快拍归档",
 "archiveSub": "你的快拍在此保留一年，仅你可见。",
 "more": "更多"
+},
+"cf": {
+"activity": "你的动态",
+"activitySub": "点赞和评论",
+"likes": "点赞",
+"comments": "评论",
+"noLikes": "你还没有点赞任何帖子。",
+"noComments": "你还没有发表评论。",
+"close": "密友",
+"closeSub": "只有这些人能看到你分享给“密友”的快拍。添加或移除时不会通知对方。",
+"closeNone": "关注某人（或被关注）后即可添加。",
+"add": "添加",
+"remove": "移除",
+"search": "搜索",
+"words": "隐藏字词",
+"wordsSub": "你帖子下含有这些字词或表情的评论会对他人隐藏。你会看到折叠的评论并可删除。",
+"wordsPh": "字词、短语或表情",
+"wordsNone": "尚未添加字词。",
+"everyone": "所有人",
+"hiddenCom": "评论已隐藏（隐藏字词）",
+"show": "查看",
+"unlike": "取消赞",
+"delete": "删除",
+"onPost": "在 @{h}",
+"inList": "已在列表中"
 }
 }

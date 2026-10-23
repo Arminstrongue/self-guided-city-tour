@@ -6,21 +6,24 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import {
-  Archive, Bell, Bookmark, Ban, ChevronLeft, ChevronRight, CircleHelp, Download, EyeOff, FileText, Info, Languages, Lock,
+  Activity as ActivityIc, Check, Star, Type, Plus, X, Heart, MessageCircle as CommentIc, Archive, Bell, Bookmark, Ban, ChevronLeft, ChevronRight, CircleHelp, Download, EyeOff, FileText, Info, Languages, Lock,
   LogOut, MessageCircle, MonitorSmartphone, Search, Shield, Trash2, UserRound, VolumeX, WifiOff, type LucideIcon
 } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { LOCALES } from "@/i18n/core";
+import { LOCALES, fmt } from "@/i18n/core";
+import { posterUrl } from "./FeedVideo";
 import { Avatar, ProfileEditor, act, loadSocial, type PublicProfile, type Social } from "./Social";
 
 type Acc = {
   email: string; hasProfile: boolean; isPrivate: boolean; dmPolicy: "circle" | "following" | "none";
   notif: Partial<Record<NotifKey, boolean>>; lang: string; blocked: PublicProfile[]; muted: PublicProfile[];
   hidden: { id: string; handle: string; text: string }[]; push: { enabled: boolean; key: string };
+  hiddenWords: string[]; closeFriends: (PublicProfile & { close: boolean })[];
 };
+type Activity = { likes: { posts: { id: string; handle: string; text: string; photo: boolean; video: string | null }[] }; comments: { id: string; text: string; at: string; postId: string; postText: string; photo: boolean; handle: string }[] };
 type NotifKey = "like" | "comment" | "follow" | "message" | "story_reply" | "video";
 const NOTIF_KEYS: NotifKey[] = ["message", "like", "comment", "follow", "story_reply", "video"];
-type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete";
+type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete" | "activity" | "close" | "words";
 
 function b64ToBytes(b64: string) {
   const pad = "=".repeat((4 - (b64.length % 4)) % 4);
@@ -42,6 +45,14 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
   const [busy, setBusy] = useState("");
   const [page, setPage] = useState<Page>("root");
   const [q, setQ] = useState("");
+  const [actv, setActv] = useState<Activity | null>(null);
+  const [actTab, setActTab] = useState<"likes" | "comments">("likes");
+  const [cq, setCq] = useState("");
+  const [word, setWord] = useState("");
+  useEffect(() => {
+    if (page !== "activity" || actv) return;
+    fetch("/api/me/activity", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((r) => setActv(r ?? { likes: { posts: [] }, comments: [] })).catch(() => null);
+  }, [page, actv]);
   const load = async () => {
     const r = await fetch("/api/me/account", { cache: "no-store" }).catch(() => null);
     if (r?.status === 401) return setA("auth");
@@ -107,6 +118,7 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
     return [
       { h: s.gUse, rows: [
         { k: "saved", I: Bookmark, label: s.saved, href: `/${locale}/wallet#saved` },
+        ...(prof ? [{ k: "activity", I: ActivityIc, label: t.cf.activity, sub: t.cf.activitySub, go: "activity" as Page }] : []),
         ...(prof ? [{ k: "archive", I: Archive, label: s.archive, href: `/${locale}/u/${prof.handle}?tab=archive` }] : []),
         { k: "notifs", I: Bell, label: t.acNotifs, value: pushState === "on" ? s.on : `${onN}/${NOTIF_KEYS.length}`, go: "notifs" as Page },
         { k: "lang", I: Languages, label: s.language, value: langName(locale, locale), go: "language" as Page },
@@ -114,10 +126,12 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
       ] },
       { h: s.gSee, rows: [
         ...(prof ? [{ k: "privacy", I: Lock, label: t.acPrivacy, value: ok.isPrivate ? s.private : s.public, go: "privacy" as Page }] : []),
+        ...(prof ? [{ k: "close", I: Star, label: t.cf.close, value: String(ok.closeFriends.filter((x) => x.close).length), go: "close" as Page }] : []),
         { k: "blocked", I: Ban, label: t.acBlocked, value: String(ok.blocked.length), go: "blocked" as Page }
       ] },
       { h: s.gInteract, rows: [
-        { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page }
+        { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page },
+        ...(prof ? [{ k: "words", I: Type, label: t.cf.words, value: ok.hiddenWords.length ? String(ok.hiddenWords.length) : undefined, go: "words" as Page }] : [])
       ] },
       { h: s.gWhat, rows: [
         { k: "muted", I: VolumeX, label: s.muted, value: String(ok.muted.length), go: "muted" as Page },
@@ -245,6 +259,69 @@ export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
               <span className="st-tx"><span>@{h.handle}</span><small className="st-clip">{h.text || "📷"}</small></span>
               <button type="button" className="st-pill" onClick={() => { setA({ ...a, hidden: a.hidden.filter((x) => x.id !== h.id) }); void put({ unhide: h.id }); }}>{s.unhide}</button>
             </div>
+          ))}</div>
+        )}
+      </>}
+
+      {page === "activity" && <>
+        <Nav title={t.cf.activity} />
+        <div className="ios-seg" role="tablist">
+          <button role="tab" aria-selected={actTab === "likes"} className={actTab === "likes" ? "on" : ""} onClick={() => setActTab("likes")}><Heart size={14} aria-hidden="true" /> {t.cf.likes}</button>
+          <button role="tab" aria-selected={actTab === "comments"} className={actTab === "comments" ? "on" : ""} onClick={() => setActTab("comments")}><CommentIc size={14} aria-hidden="true" /> {t.cf.comments}</button>
+        </div>
+        {!actv ? <p className="st-note">…</p> : actTab === "likes" ? (
+          actv.likes.posts.length === 0 ? <p className="st-note">{t.cf.noLikes}</p> : (
+            <div className="pf-grid st-grid">{actv.likes.posts.map((x) => (
+              <a key={x.id} className="pf-tile" href={`/${locale}/wallet#post:${x.id}`} aria-label={x.text.slice(0, 60) || `@${x.handle}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {x.video === "ready" ? <img src={posterUrl(x.id)} alt="" loading="lazy" /> : x.photo ? <img src={`/api/social/photo/${x.id}`} alt="" loading="lazy" /> : <span className="pf-tile-t"><span>{x.text}</span></span>}
+              </a>
+            ))}</div>
+          )
+        ) : actv.comments.length === 0 ? <p className="st-note">{t.cf.noComments}</p> : (
+          <div className="st-group">{actv.comments.map((c) => (
+            <div key={c.id} className="st-row st-act">
+              <a className="st-act-l" href={`/${locale}/wallet#post:${c.postId}`}>
+                <span className="st-tx"><span className="st-clip">{c.text}</span><small>{fmt(t.cf.onPost, { h: c.handle })} · {new Intl.DateTimeFormat(locale, { day: "numeric", month: "short" }).format(new Date(c.at))}</small></span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {c.photo && <img className="st-thumb" src={`/api/social/photo/${c.postId}`} alt="" loading="lazy" />}
+              </a>
+              <button type="button" className="st-pill" onClick={async () => {
+                setActv({ ...actv, comments: actv.comments.filter((x) => x.id !== c.id) });
+                await fetch(`/api/social/post/${c.postId}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "uncomment", commentId: c.id }) }).catch(() => null);
+              }}>{t.cf.delete}</button>
+            </div>
+          ))}</div>
+        )}
+      </>}
+
+      {page === "close" && <>
+        <Nav title={t.cf.close} />
+        <p className="st-note">{t.cf.closeSub}</p>
+        {a.closeFriends.length === 0 ? <p className="st-note">{t.cf.closeNone}</p> : <>
+          <label className="st-search"><Search size={17} aria-hidden="true" /><input type="search" value={cq} onChange={(e) => setCq(e.target.value)} placeholder={t.cf.search} aria-label={t.cf.search} /></label>
+          <div className="st-group">{a.closeFriends.filter((p) => !cq.trim() || norm(`${p.name} ${p.handle}`).includes(norm(cq.trim()))).map((p) => (
+            <div key={p.handle} className="st-row st-person">
+              <a href={`/${locale}/u/${p.handle}`} className="st-person-l"><Avatar p={p} size={40} /><span className="st-tx"><span>{p.name}</span><small>@{p.handle}</small></span></a>
+              <button type="button" className={`st-round ${p.close ? "on" : ""}`} aria-pressed={p.close} aria-label={p.close ? t.cf.remove : t.cf.add}
+                onClick={() => { const on = !p.close; setA({ ...a, closeFriends: a.closeFriends.map((x) => (x.handle === p.handle ? { ...x, close: on } : x)) }); void fetch("/api/me/account", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ close: { handle: p.handle, on } }) }).catch(() => null); }}>
+                {p.close ? <Check size={16} aria-hidden="true" /> : null}
+              </button>
+            </div>
+          ))}</div>
+        </>}
+      </>}
+
+      {page === "words" && <>
+        <Nav title={t.cf.words} />
+        <p className="st-note">{t.cf.wordsSub}</p>
+        <form className="st-group st-add" onSubmit={(e) => { e.preventDefault(); const w = word.trim(); if (!w) return; const list = [...new Set([...a.hiddenWords, w.toLowerCase()])]; setA({ ...a, hiddenWords: list }); setWord(""); void put({ hiddenWords: list }); }}>
+          <input value={word} maxLength={40} onChange={(e) => setWord(e.target.value)} placeholder={t.cf.wordsPh} aria-label={t.cf.wordsPh} />
+          <button type="submit" className="st-pill" disabled={!word.trim()} aria-label={t.cf.add}><Plus size={16} aria-hidden="true" /> {t.cf.add}</button>
+        </form>
+        {a.hiddenWords.length === 0 ? <p className="st-note">{t.cf.wordsNone}</p> : (
+          <div className="st-chips">{a.hiddenWords.map((w) => (
+            <span key={w} className="st-chip">{w}<button type="button" aria-label={`${t.cf.remove} ${w}`} onClick={() => { const list = a.hiddenWords.filter((x) => x !== w); setA({ ...a, hiddenWords: list }); void put({ hiddenWords: list }); }}><X size={14} aria-hidden="true" /></button></span>
           ))}</div>
         )}
       </>}

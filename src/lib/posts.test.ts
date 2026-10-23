@@ -152,3 +152,44 @@ test("destaques: histórias guardadas no perfil depois das 24 h", async () => {
   assert.deepEqual(r, { ok: true, deleted: true }); // sem histórias, o destaque desaparece
   assert.equal((await p.highlightsOf("h1@x.com", "hana"))!.list.length, 0);
 });
+
+test("amigos próximos, palavras ocultas e a sua atividade", async () => {
+  const { db, schema } = await import("./db");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  await migrate((await db()) as never, { migrationsFolder: "./drizzle" });
+  const s = await import("./social");
+  const p = await import("./posts");
+  await s.saveProfile("c1@x.com", { handle: "clara", name: "Clara", bio: "", photo: null, isPrivate: false });
+  await s.saveProfile("c2@x.com", { handle: "dani", name: "Dani", bio: "", photo: null, isPrivate: false });
+  await s.saveProfile("c3@x.com", { handle: "edu", name: "Edu", bio: "", photo: null, isPrivate: false });
+  for (const e of ["c2@x.com", "c3@x.com"]) await s.follow(e, "clara");
+  await s.follow("c1@x.com", "dani"); await s.follow("c1@x.com", "edu");
+
+  // História só para amigos próximos: a Dani vê, o Edu não
+  assert.equal(await p.setCloseFriend("c1@x.com", "dani", true), true);
+  const st = (await p.createPost("c1@x.com", { kind: "story", text: "só nós", photo: null, city: null, tag: null, bg: "ocean", close: true }) as { id: string }).id;
+  assert.equal((await p.stories("c2@x.com")).rings.find((r) => r.handle === "clara")?.items[0].close, true);
+  assert.equal((await p.stories("c3@x.com")).rings.find((r) => r.handle === "clara"), undefined);
+  assert.equal(await p.getPost("c3@x.com", st), null);
+  assert.deepEqual((await p.closeFriendsOf("c1@x.com")).filter((x) => x.close).map((x) => x.handle), ["dani"]);
+
+  // Palavras ocultas: o comentário do Edu fica oculto para os outros e recolhido para a autora
+  assert.equal(p.hasHiddenWord("Que FEIO isto", ["feio"]), true);
+  assert.equal(p.hasHiddenWord("feiosinho", ["feio"]), false);
+  assert.equal(p.hasHiddenWord("ok 💩", ["💩"]), true);
+  const d = await db();
+  await d.insert(schema.accountSettings).values({ email: "c1@x.com", hiddenWords: ["feio"] });
+  const post = (await p.createPost("c1@x.com", { kind: "post", text: "Porto", photo: null, city: null, tag: null, bg: null }) as { id: string }).id;
+  await p.addComment("c3@x.com", post, "muito feio");
+  await p.addComment("c2@x.com", post, "lindo");
+  assert.deepEqual((await p.comments("c2@x.com", post))!.comments.map((x) => x.text), ["lindo"]);
+  assert.deepEqual((await p.comments("c3@x.com", post))!.comments.map((x) => x.text), ["muito feio", "lindo"]);
+  const own = (await p.comments("c1@x.com", post))!.comments;
+  assert.equal(own.find((x) => x.text === "muito feio")?.hidden, true);
+
+  // A sua atividade
+  await p.like("c2@x.com", post, true);
+  const act = await p.myActivity("c2@x.com");
+  assert.deepEqual(act.likes.posts.map((x) => x.id), [post]);
+  assert.deepEqual(act.comments.map((x) => [x.text, x.handle]), [["lindo", "clara"]]);
+});

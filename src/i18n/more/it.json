@@ -1579,5 +1579,30 @@
 "archiveStories": "Archivio storie",
 "archiveSub": "Le tue storie restano qui per un anno. Le vedi solo tu.",
 "more": "Altro"
+},
+"cf": {
+"activity": "La tua attività",
+"activitySub": "Mi piace e commenti",
+"likes": "Mi piace",
+"comments": "Commenti",
+"noLikes": "Non hai ancora messo Mi piace a nessun post.",
+"noComments": "Non hai ancora commentato.",
+"close": "Amici più stretti",
+"closeSub": "Solo queste persone vedono le storie condivise con «Amici più stretti». Nessuno riceve avvisi quando lo aggiungi o rimuovi.",
+"closeNone": "Segui qualcuno (o fatti seguire) per aggiungerlo.",
+"add": "Aggiungi",
+"remove": "Rimuovi",
+"search": "Cerca",
+"words": "Parole nascoste",
+"wordsSub": "I commenti ai tuoi post con queste parole o emoji vengono nascosti agli altri. Tu li vedi compressi e puoi eliminarli.",
+"wordsPh": "Parola, frase o emoji",
+"wordsNone": "Nessuna parola aggiunta.",
+"everyone": "Tutti",
+"hiddenCom": "Commento nascosto (parole nascoste)",
+"show": "Mostra",
+"unlike": "Non mi piace più",
+"delete": "Elimina",
+"onPost": "da @{h}",
+"inList": "Nell'elenco"
 }
 }

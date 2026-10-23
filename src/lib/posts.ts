@@ -25,6 +25,7 @@ export type PostItem = {
   video: "processing" | "ready" | "failed" | null; duration: number | null;
   photos: number; saved: boolean; music: { title: string; artist: string; url: string } | null;
   archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean;
+  close?: boolean; // história só para amigos próximos
 };
 export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -33,12 +34,12 @@ const P = schema.posts;
 const LITE = {
   id: P.id, author: P.author, kind: P.kind, text: P.text, city: P.city, tag: P.tag, bg: P.bg, createdAt: P.createdAt, expiresAt: P.expiresAt,
   video: P.video, videoStatus: P.videoStatus, duration: P.duration, music: P.music,
-  archived: P.archived, pinned: P.pinned, hideLikes: P.hideLikes, commentsOff: P.commentsOff, editedAt: P.editedAt,
+  archived: P.archived, pinned: P.pinned, hideLikes: P.hideLikes, commentsOff: P.commentsOff, editedAt: P.editedAt, audience: P.audience,
   photo: sql<string | null>`case when ${P.photo} is null then null else '1' end`,
   nExtra: sql<number>`coalesce(jsonb_array_length(${P.extra}), 0)::int`
 };
 type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; music: schema.PostMusic | null; photo: string | null; nExtra: number;
-  archived: boolean; pinned: boolean; hideLikes: boolean; commentsOff: boolean; editedAt: Date | null };
+  archived: boolean; pinned: boolean; hideLikes: boolean; commentsOff: boolean; editedAt: Date | null; audience: "all" | "close" };
 const lite = (p: schema.Post): Lite => ({ ...p, photo: p.photo ? "1" : null, nExtra: p.extra?.length ?? 0 });
 const live = () => eq(schema.posts.archived, false);
 
@@ -47,14 +48,16 @@ const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, 
 /** Quem sigo, quem me segue e quem está bloqueado (nos dois sentidos). */
 async function circle(me: string) {
   const d = await db();
-  const [f, b, h, m] = await Promise.all([
+  const [f, b, h, m, cf] = await Promise.all([
     d.select().from(schema.follows).where(and(or(eq(schema.follows.follower, me), eq(schema.follows.followee, me)), eq(schema.follows.status, "accepted"))),
     d.select().from(schema.blocks).where(or(eq(schema.blocks.blocker, me), eq(schema.blocks.blocked, me))),
     d.select({ id: schema.postHides.postId }).from(schema.postHides).where(eq(schema.postHides.email, me)),
-    d.select({ e: schema.userMutes.muted }).from(schema.userMutes).where(eq(schema.userMutes.email, me))
+    d.select({ e: schema.userMutes.muted }).from(schema.userMutes).where(eq(schema.userMutes.email, me)),
+    d.select({ e: schema.closeFriends.email }).from(schema.closeFriends).where(eq(schema.closeFriends.friend, me))
   ]);
   return {
     hidden: new Set(h.map((x) => x.id)),   // publicações que ocultei
+    closeOf: new Set(cf.map((x) => x.e)),  // quem me tem nos amigos próximos
     muted: new Set(m.map((x) => x.e)),     // contas silenciadas (fora dos feeds; o perfil continua visível)
     following: new Set(f.filter((x) => x.follower === me).map((x) => x.followee)),
     followers: new Set(f.filter((x) => x.followee === me).map((x) => x.follower)),
@@ -70,7 +73,8 @@ const canComment = (me: string, author: string, c: Circle) =>
 /** Junta autores, gostos e comentários a uma lista de publicações. */
 async function hydrate(me: string, rows: Lite[], c: Circle, more = false, feed = false): Promise<FeedPage> {
   // Arquivadas só o autor vê; ocultadas e contas silenciadas saem dos feeds.
-  rows = rows.filter((r) => (!r.archived || r.author === me) && !(feed && (c.hidden.has(r.id) || c.muted.has(r.author))));
+  rows = rows.filter((r) => (!r.archived || r.author === me) && !(feed && (c.hidden.has(r.id) || c.muted.has(r.author)))
+    && (r.audience !== "close" || r.author === me || c.closeOf.has(r.author)));
   const d = await db();
   const ids = rows.map((r) => r.id);
   const emails = [...new Set(rows.map((r) => r.author))];
@@ -98,7 +102,7 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false, feed =
       likes: hideL ? 0 : likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
       mine, canComment: !r.commentsOff && canComment(me, r.author, c),
       ...(r.archived ? { archived: true } : {}), ...(r.pinned ? { pinned: true } : {}), ...(r.hideLikes ? { hideLikes: true } : {}),
-      ...(r.commentsOff ? { commentsOff: true } : {}), ...(r.editedAt ? { edited: true } : {}),
+      ...(r.commentsOff ? { commentsOff: true } : {}), ...(r.editedAt ? { edited: true } : {}), ...(r.audience === "close" ? { close: true } : {}),
       video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null,
       photos: (r.photo ? 1 : 0) + (r.nExtra ?? 0), saved: savedL.some((x) => x.id === r.id),
       music: r.music ? { title: r.music.title, artist: r.music.artist, url: r.music.lib ? `/music/${r.music.lib}.m4a` : `/api/social/music/${r.id}` } : null
@@ -127,7 +131,7 @@ export async function purgeExpired() {
 }
 
 export type NewMusic = { lib: string } | { own: string; title: string };
-export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; extra?: string[]; city: string | null; tag: string | null; bg: string | null; music?: NewMusic | null };
+export type NewPost = { kind: "post" | "story"; text: string; photo: string | null; extra?: string[]; city: string | null; tag: string | null; bg: string | null; music?: NewMusic | null; close?: boolean };
 export async function createPost(me: string, v: NewPost) {
   if (!(await myProfile(me))) return { error: "no_profile" as const };
   const mod = moderate(v.text);
@@ -155,7 +159,7 @@ export async function createPost(me: string, v: NewPost) {
   }
   const expiresAt = v.kind === "story" ? new Date(Date.now() + STORY_HOURS * 3600_000) : null;
   const extra = v.kind === "post" && v.photo && v.extra?.length ? v.extra.slice(0, 5) : null;
-  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, extra, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, music, expiresAt }).returning({ id: schema.posts.id });
+  const [r] = await d.insert(schema.posts).values({ author: me, kind: v.kind, text: v.text.trim(), photo: v.photo, extra, city: v.city, tag: v.tag, bg: v.kind === "story" ? v.bg : null, music, expiresAt, audience: v.kind === "story" && v.close ? "close" : "all" }).returning({ id: schema.posts.id });
   await notifyMentions(me, r.id, v.text).catch(() => null);
   return { id: r.id };
 }
@@ -253,6 +257,7 @@ async function visiblePost(me: string, id: string) {
   if (!canSee(me, r.a, c)) return null;
   if (r.p.video && r.p.videoStatus !== "ready" && r.p.author !== me) return null;
   if (r.p.archived && r.p.author !== me) return null;
+  if (r.p.audience === "close" && r.p.author !== me && !c.closeOf.has(r.p.author)) return null;
   return { post: r.p, author: r.a, circle: c };
 }
 
@@ -418,12 +423,17 @@ export async function comments(me: string, id: string) {
   const rows = await d.select({ c: schema.postComments, a: schema.travellerProfiles }).from(schema.postComments)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.postComments.author))
     .where(eq(schema.postComments.postId, id)).orderBy(schema.postComments.createdAt).limit(200);
+  // Palavras ocultas do autor: esses comentários só os vê quem os escreveu; o autor vê-os recolhidos.
+  const [st] = await d.select({ w: schema.accountSettings.hiddenWords }).from(schema.accountSettings).where(eq(schema.accountSettings.email, v.post.author)).limit(1);
+  const words = st?.w ?? [];
+  const isOwner = v.post.author === me;
   return {
     canComment: !v.post.commentsOff && canComment(me, v.post.author, v.circle),
-    comments: rows.filter((r) => !v.circle.blocked.has(r.c.author)).map((r) => ({
-      id: r.c.id, text: r.c.text, at: r.c.createdAt.toISOString(), author: pub(r.a),
-      canDelete: r.c.author === me || v.post.author === me
-    }))
+    comments: rows.filter((r) => !v.circle.blocked.has(r.c.author)).flatMap((r) => {
+      const hid = r.c.author !== me && r.c.author !== v.post.author && hasHiddenWord(r.c.text, words);
+      if (hid && !isOwner) return [];
+      return [{ id: r.c.id, text: r.c.text, at: r.c.createdAt.toISOString(), author: pub(r.a), canDelete: r.c.author === me || isOwner, ...(hid ? { hidden: true } : {}) }];
+    })
   };
 }
 
@@ -661,4 +671,59 @@ export async function deleteHighlight(me: string, id: string) {
   if (!/^[0-9a-f-]{36}$/.test(id)) return;
   const d = await db();
   await d.delete(schema.highlights).where(and(eq(schema.highlights.id, id), eq(schema.highlights.author, me)));
+}
+
+
+/* ---------- Palavras ocultas, amigos próximos e a sua atividade ---------- */
+
+const fold = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+/** O texto tem alguma palavra ou expressão da lista (sem maiúsculas nem acentos; palavra inteira ou emoji). */
+export function hasHiddenWord(text: string, words: string[]) {
+  const t = ` ${fold(text).replace(/[^\p{L}\p{N}\p{Extended_Pictographic}]+/gu, " ")} `;
+  return words.some((w) => {
+    const k = fold(w).replace(/[^\p{L}\p{N}\p{Extended_Pictographic}]+/gu, " ").trim();
+    return k.length > 0 && (/\p{Extended_Pictographic}/u.test(k) ? t.includes(k) : t.includes(` ${k} `));
+  });
+}
+export function cleanWords(list: string[]) {
+  return [...new Set(list.map((w) => w.replace(/\s+/g, " ").trim().slice(0, 40)).filter(Boolean).map((w) => w.toLowerCase()))].slice(0, 200);
+}
+
+/** Amigos próximos: a lista (perfis) e os candidatos (quem sigo e quem me segue). */
+export async function closeFriendsOf(me: string) {
+  const d = await db();
+  const c = await circle(me);
+  const ids = [...new Set([...c.following, ...c.followers])].filter((e) => !c.blocked.has(e));
+  const [list, cands] = await Promise.all([
+    d.select({ email: schema.closeFriends.friend }).from(schema.closeFriends).where(eq(schema.closeFriends.email, me)),
+    ids.length ? d.select().from(schema.travellerProfiles).where(inArray(schema.travellerProfiles.email, ids.slice(0, 500))) : Promise.resolve([])
+  ]);
+  const on = new Set(list.map((x) => x.email));
+  return cands.map((p) => ({ ...pub(p), close: on.has(p.email) })).sort((a, b) => Number(b.close) - Number(a.close) || a.name.localeCompare(b.name));
+}
+export async function setCloseFriend(me: string, handle: string, on: boolean) {
+  const d = await db();
+  const [p] = await d.select({ e: schema.travellerProfiles.email }).from(schema.travellerProfiles).where(eq(schema.travellerProfiles.handle, handle.toLowerCase())).limit(1);
+  if (!p || p.e === me) return false;
+  if (on) await d.insert(schema.closeFriends).values({ email: me, friend: p.e }).onConflictDoNothing();
+  else await d.delete(schema.closeFriends).where(and(eq(schema.closeFriends.email, me), eq(schema.closeFriends.friend, p.e)));
+  return true;
+}
+
+/** A sua atividade: publicações de que gostei e os meus comentários (mais recentes primeiro). */
+export async function myActivity(me: string) {
+  const d = await db();
+  const c = await circle(me);
+  const liked = await d.select({ ...LITE, at: schema.postLikes.createdAt }).from(schema.postLikes)
+    .innerJoin(schema.posts, eq(schema.posts.id, schema.postLikes.postId))
+    .where(and(eq(schema.postLikes.email, me), eq(schema.posts.kind, "post"))).orderBy(desc(schema.postLikes.createdAt)).limit(120);
+  const likes = await hydrate(me, liked.filter((r) => !c.blocked.has(r.author)), c);
+  const coms = await d.select({ id: schema.postComments.id, text: schema.postComments.text, at: schema.postComments.createdAt, postId: schema.posts.id, postText: schema.posts.text, photo: sql<string | null>`case when ${schema.posts.photo} is null then null else '1' end`, handle: schema.travellerProfiles.handle })
+    .from(schema.postComments).innerJoin(schema.posts, eq(schema.posts.id, schema.postComments.postId))
+    .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
+    .where(eq(schema.postComments.author, me)).orderBy(desc(schema.postComments.createdAt)).limit(200);
+  return {
+    likes,
+    comments: coms.map((x) => ({ id: x.id, text: x.text, at: x.at.toISOString(), postId: x.postId, postText: x.postText.slice(0, 80), photo: Boolean(x.photo), handle: x.handle }))
+  };
 }

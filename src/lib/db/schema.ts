@@ -368,9 +368,17 @@ export const posts = pgTable("posts", {
   pinned: boolean("pinned").notNull().default(false),         // fixada no topo do perfil
   hideLikes: boolean("hide_likes").notNull().default(false),  // só o autor vê o número de gostos
   commentsOff: boolean("comments_off").notNull().default(false),
-  editedAt: timestamp("edited_at", { withTimezone: true })
+  editedAt: timestamp("edited_at", { withTimezone: true }),
+  audience: text("audience").$type<"all" | "close">().notNull().default("all")   // histórias só para amigos próximos
 }, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);
 export type Post = typeof posts.$inferSelect;
+
+/** Amigos próximos: quem vê as histórias marcadas como "amigos próximos". */
+export const closeFriends = pgTable("close_friends", {
+  email: text("email").notNull(),
+  friend: text("friend").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("close_friends_pair_idx").on(t.email, t.friend), index("close_friends_friend_idx").on(t.friend)]);
 
 /** Destaques do perfil: histórias guardadas em coleções com título (ficam depois das 24 h). */
 export const highlights = pgTable("highlights", {
@@ -449,6 +457,7 @@ export const accountSettings = pgTable("account_settings", {
   notif: jsonb("notif").$type<NotifPrefs>().notNull().default({}),
   lang: text("lang").notNull().default("en"),                           // língua do push
   sessionsAfter: timestamp("sessions_after", { withTimezone: true }),   // sessões anteriores deixam de valer
+  hiddenWords: jsonb("hidden_words").$type<string[]>().notNull().default([]), // comentários com estas palavras ficam ocultos
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 

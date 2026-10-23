@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { and, desc, eq } from "drizzle-orm";
 import { currentTraveller } from "@/lib/wallet";
+import { cleanWords, closeFriendsOf, setCloseFriend } from "@/lib/posts";
 import { db, schema } from "@/lib/db";
 import { ACCESS_COOKIE } from "@/lib/access-token";
 import { pushEnabled, saveSettings, settingsOf } from "@/lib/notify";
@@ -32,6 +33,8 @@ export async function GET() {
   return NextResponse.json({
     email: me, hasProfile: prof.length > 0, isPrivate: prof[0]?.isPrivate ?? true,
     dmPolicy: st.dmPolicy, notif: st.notif, lang: st.lang, blocked, muted,
+    hiddenWords: (await d.select({ w: schema.accountSettings.hiddenWords }).from(schema.accountSettings).where(eq(schema.accountSettings.email, me)).limit(1))[0]?.w ?? [],
+    closeFriends: await closeFriendsOf(me),
     hidden: hidden.map((h) => ({ id: h.id, handle: h.handle, text: h.text.slice(0, 120) })),
     push: { enabled: pushEnabled(), key: env.vapidPublic }
   });
@@ -43,14 +46,22 @@ const Body = z.object({
   lang: z.string().regex(/^[a-z]{2}$/).optional(),
   isPrivate: z.boolean().optional(),
   unmute: z.string().max(40).optional(),   // handle
-  unhide: z.string().uuid().optional()     // publicação
+  unhide: z.string().uuid().optional(),    // publicação
+  hiddenWords: z.array(z.string().max(60)).max(200).optional(),
+  close: z.object({ handle: z.string().max(40), on: z.boolean() }).optional()
 });
 export async function PUT(req: Request) {
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const v = Body.safeParse(await req.json().catch(() => null));
   if (!v.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
-  const { isPrivate, unmute, unhide, ...rest } = v.data;
+  const { isPrivate, unmute, unhide, hiddenWords, close, ...rest } = v.data;
+  if (hiddenWords) {
+    const d = await db();
+    const w = cleanWords(hiddenWords);
+    await d.insert(schema.accountSettings).values({ email: me, hiddenWords: w }).onConflictDoUpdate({ target: schema.accountSettings.email, set: { hiddenWords: w, updatedAt: new Date() } });
+  }
+  if (close && !(await setCloseFriend(me, close.handle, close.on))) return NextResponse.json({ error: "not_found" }, { status: 404 });
   if (unmute || unhide) {
     const d = await db();
     if (unhide) await d.delete(schema.postHides).where(and(eq(schema.postHides.email, me), eq(schema.postHides.postId, unhide)));

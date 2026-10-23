@@ -15,6 +15,7 @@ const Body = z.object({
   city: z.string().regex(/^[a-z]{2,12}$/).nullable().default(null),
   tag: z.enum(HOBBIES as unknown as [string, ...string[]]).nullable().default(null),
   bg: z.enum(STORY_BGS).nullable().default(null),
+  close: z.boolean().optional(), // história só para amigos próximos
   music: z.union([z.object({ lib: z.string().regex(/^[a-z-]{2,40}$/) }), z.object({ own: z.string().uuid(), title: z.string().max(60).default("") })]).nullable().default(null)
 }).refine((v) => v.kind === "post" || v.text.length <= 200, { message: "story text" });
 
