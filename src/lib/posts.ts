@@ -23,6 +23,7 @@ export type PostItem = {
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video: "processing" | "ready" | "failed" | null; duration: number | null;
   photos: number; saved: boolean; music: { title: string; artist: string; url: string } | null;
+  archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean;
 };
 export type FeedPage = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 
@@ -31,22 +32,29 @@ const P = schema.posts;
 const LITE = {
   id: P.id, author: P.author, kind: P.kind, text: P.text, city: P.city, tag: P.tag, bg: P.bg, createdAt: P.createdAt, expiresAt: P.expiresAt,
   video: P.video, videoStatus: P.videoStatus, duration: P.duration, music: P.music,
+  archived: P.archived, pinned: P.pinned, hideLikes: P.hideLikes, commentsOff: P.commentsOff, editedAt: P.editedAt,
   photo: sql<string | null>`case when ${P.photo} is null then null else '1' end`,
   nExtra: sql<number>`coalesce(jsonb_array_length(${P.extra}), 0)::int`
 };
-type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; music: schema.PostMusic | null; photo: string | null; nExtra: number };
+type Lite = { id: string; author: string; kind: "post" | "story"; text: string; city: string | null; tag: string | null; bg: string | null; createdAt: Date; expiresAt: Date | null; video: string | null; videoStatus: "processing" | "ready" | "failed" | null; duration: number | null; music: schema.PostMusic | null; photo: string | null; nExtra: number;
+  archived: boolean; pinned: boolean; hideLikes: boolean; commentsOff: boolean; editedAt: Date | null };
 const lite = (p: schema.Post): Lite => ({ ...p, photo: p.photo ? "1" : null, nExtra: p.extra?.length ?? 0 });
+const live = () => eq(schema.posts.archived, false);
 
 const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: p.photo, isPrivate: p.isPrivate });
 
 /** Quem sigo, quem me segue e quem está bloqueado (nos dois sentidos). */
 async function circle(me: string) {
   const d = await db();
-  const [f, b] = await Promise.all([
+  const [f, b, h, m] = await Promise.all([
     d.select().from(schema.follows).where(and(or(eq(schema.follows.follower, me), eq(schema.follows.followee, me)), eq(schema.follows.status, "accepted"))),
-    d.select().from(schema.blocks).where(or(eq(schema.blocks.blocker, me), eq(schema.blocks.blocked, me)))
+    d.select().from(schema.blocks).where(or(eq(schema.blocks.blocker, me), eq(schema.blocks.blocked, me))),
+    d.select({ id: schema.postHides.postId }).from(schema.postHides).where(eq(schema.postHides.email, me)),
+    d.select({ e: schema.userMutes.muted }).from(schema.userMutes).where(eq(schema.userMutes.email, me))
   ]);
   return {
+    hidden: new Set(h.map((x) => x.id)),   // publicações que ocultei
+    muted: new Set(m.map((x) => x.e)),     // contas silenciadas (fora dos feeds; o perfil continua visível)
     following: new Set(f.filter((x) => x.follower === me).map((x) => x.followee)),
     followers: new Set(f.filter((x) => x.followee === me).map((x) => x.follower)),
     blocked: new Set(b.map((x) => (x.blocker === me ? x.blocked : x.blocker)))
@@ -59,7 +67,9 @@ const canComment = (me: string, author: string, c: Circle) =>
   !c.blocked.has(author) && (author === me || c.following.has(author) || c.followers.has(author));
 
 /** Junta autores, gostos e comentários a uma lista de publicações. */
-async function hydrate(me: string, rows: Lite[], c: Circle, more = false): Promise<FeedPage> {
+async function hydrate(me: string, rows: Lite[], c: Circle, more = false, feed = false): Promise<FeedPage> {
+  // Arquivadas só o autor vê; ocultadas e contas silenciadas saem dos feeds.
+  rows = rows.filter((r) => (!r.archived || r.author === me) && !(feed && (c.hidden.has(r.id) || c.muted.has(r.author))));
   const d = await db();
   const ids = rows.map((r) => r.id);
   const emails = [...new Set(rows.map((r) => r.author))];
@@ -79,12 +89,15 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false): Promi
   for (const r of rows) {
     const a = byEmail.get(r.author);
     if (!a || (flagged.has(r.id) && r.author !== me)) continue;
+    const mine = r.author === me, hideL = r.hideLikes && !mine;
     authors[a.handle] = pub(a);
     posts.push({
       id: r.id, kind: r.kind, handle: a.handle, text: r.text, photo: Boolean(r.photo), city: r.city, tag: r.tag, bg: r.bg,
       at: r.createdAt.toISOString(), expiresAt: r.expiresAt?.toISOString() ?? null,
-      likes: likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
-      mine: r.author === me, canComment: canComment(me, r.author, c),
+      likes: hideL ? 0 : likes.find((x) => x.id === r.id)?.n ?? 0, liked: mineL.some((x) => x.id === r.id), comments: coms.find((x) => x.id === r.id)?.n ?? 0,
+      mine, canComment: !r.commentsOff && canComment(me, r.author, c),
+      ...(r.archived ? { archived: true } : {}), ...(r.pinned ? { pinned: true } : {}), ...(r.hideLikes ? { hideLikes: true } : {}),
+      ...(r.commentsOff ? { commentsOff: true } : {}), ...(r.editedAt ? { edited: true } : {}),
       video: r.video ? (r.videoStatus ?? "processing") : null, duration: r.duration ?? null,
       photos: (r.photo ? 1 : 0) + (r.nExtra ?? 0), saved: savedL.some((x) => x.id === r.id),
       music: r.music ? { title: r.music.title, artist: r.music.artist, url: r.music.lib ? `/music/${r.music.lib}.m4a` : `/api/social/music/${r.id}` } : null
@@ -152,9 +165,9 @@ export async function feedFollowing(me: string, cursor?: string | null): Promise
   const authors = [...new Set([me, ...c.following, OFFICIAL_EMAIL])].filter((e) => !c.blocked.has(e));
   const d = await db();
   const rows = await d.select(LITE).from(schema.posts)
-    .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), videoOk(me), before(cursor)))
+    .where(and(eq(schema.posts.kind, "post"), inArray(schema.posts.author, authors), live(), videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1);
-  return hydrate(me, rows.slice(0, PAGE), c, rows.length > PAGE);
+  return hydrate(me, rows.slice(0, PAGE), c, rows.length > PAGE, true);
 }
 
 /**
@@ -169,10 +182,10 @@ export async function feedCity(me: string, city: string, cursor?: string | null)
   const visible = or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]));
   const rows: Lite[] = await d.select(LITE).from(schema.posts)
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.posts.author))
-    .where(and(eq(schema.posts.kind, "post"), eq(schema.posts.city, city), visible, videoOk(me), before(cursor)))
+    .where(and(eq(schema.posts.kind, "post"), eq(schema.posts.city, city), live(), visible, videoOk(me), before(cursor)))
     .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
   const all = rows.slice(0, PAGE * 2);
-  const ok = (r: Lite) => !c.blocked.has(r.author) && !(r.tag && less.has(r.tag) && r.author !== me && !c.following.has(r.author));
+  const ok = (r: Lite) => !c.blocked.has(r.author) && !c.hidden.has(r.id) && !c.muted.has(r.author) && !(r.tag && less.has(r.tag) && r.author !== me && !c.following.has(r.author));
   const page: Lite[] = [];
   let scanned = 0;
   for (const r of all) { scanned++; if (ok(r)) { page.push(r); if (page.length === PAGE) break; } }
@@ -183,15 +196,21 @@ export async function feedCity(me: string, city: string, cursor?: string | null)
 }
 
 /** Publicações de um perfil (grelha), se o puder ver. */
-export async function userPosts(me: string, handle: string, cursor?: string | null): Promise<FeedPage | null> {
+export async function userPosts(me: string, handle: string, cursor?: string | null, archive = false): Promise<(FeedPage & { me: boolean }) | null> {
   const d = await db();
   const [a] = await d.select().from(schema.travellerProfiles).where(eq(schema.travellerProfiles.handle, handle.toLowerCase())).limit(1);
   if (!a) return null;
   const c = await circle(me);
   if (!canSee(me, a, c)) return null;
-  const rows = await d.select(LITE).from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), videoOk(me), before(cursor)))
-    .orderBy(desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
-  return hydrate(me, rows.slice(0, PAGE * 2), c, rows.length > PAGE * 2);
+  const isMe = a.email === me;
+  if (archive && !isMe) return null; // o arquivo é só do próprio
+  // Fixadas primeiro (só na primeira página), depois por data.
+  const rows = await d.select(LITE).from(schema.posts).where(and(eq(schema.posts.author, a.email), eq(schema.posts.kind, "post"), eq(schema.posts.archived, archive), videoOk(me), before(cursor)))
+    .orderBy(...(cursor ? [] : [desc(schema.posts.pinned)]), desc(schema.posts.createdAt)).limit(PAGE * 2 + 1);
+  const page = rows.slice(0, PAGE * 2);
+  const out = await hydrate(me, page, c, false);
+  const last = [...page].sort((x, y) => x.createdAt.getTime() - y.createdAt.getTime())[0];
+  return { ...out, me: isMe, next: rows.length > PAGE * 2 && last ? last.createdAt.toISOString() : null };
 }
 
 /** Histórias ativas: as minhas primeiro, depois as de quem sigo (mais recentes primeiro). */
@@ -226,6 +245,7 @@ async function visiblePost(me: string, id: string) {
   const c = await circle(me);
   if (!canSee(me, r.a, c)) return null;
   if (r.p.video && r.p.videoStatus !== "ready" && r.p.author !== me) return null;
+  if (r.p.archived && r.p.author !== me) return null;
   return { post: r.p, author: r.a, circle: c };
 }
 
@@ -262,7 +282,7 @@ export async function feedVideos(me: string, scope: "foryou" | "following", curs
   const less = new Set(prof?.lessOf ?? []);
   const [prefs] = await d.select({ h: schema.travellerPrefs.hobbies }).from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, me)).limit(1);
   const more = new Set(prefs?.h ?? []);
-  const conds = [eq(schema.posts.kind, "post"), eq(schema.posts.videoStatus, "ready"), before(cursor)];
+  const conds = [eq(schema.posts.kind, "post"), eq(schema.posts.videoStatus, "ready"), live(), before(cursor)];
   if (onlyHandle) conds.push(eq(schema.travellerProfiles.handle, onlyHandle.toLowerCase()));
   if (scope === "following" || onlyHandle) conds.push(or(inArray(schema.posts.author, [me, ...c.following]), onlyHandle ? eq(schema.travellerProfiles.isPrivate, false) : undefined)!);
   else conds.push(or(eq(schema.travellerProfiles.isPrivate, false), inArray(schema.posts.author, [me, ...c.following]))!);
@@ -271,7 +291,7 @@ export async function feedVideos(me: string, scope: "foryou" | "following", curs
     .where(and(...conds)).orderBy(desc(schema.posts.createdAt)).limit(PAGE + 1);
   const page = rows.slice(0, PAGE);
   const shown = page.filter((r) => !c.blocked.has(r.author) && !(scope === "foryou" && !onlyHandle && r.tag && less.has(r.tag) && !c.following.has(r.author)));
-  const out = await hydrate(me, shown, c);
+  const out = await hydrate(me, shown, c, false, !onlyHandle);
   if (scope === "foryou" && !onlyHandle) {
     const score = (p: PostItem) => (p.tag && more.has(p.tag) ? 3 : 0) + Math.log2(1 + p.likes) - (Date.now() - Date.parse(p.at)) / 86_400_000 / 3;
     out.posts.sort((a, b) => score(b) - score(a));
@@ -392,7 +412,7 @@ export async function comments(me: string, id: string) {
     .innerJoin(schema.travellerProfiles, eq(schema.travellerProfiles.email, schema.postComments.author))
     .where(eq(schema.postComments.postId, id)).orderBy(schema.postComments.createdAt).limit(200);
   return {
-    canComment: canComment(me, v.post.author, v.circle),
+    canComment: !v.post.commentsOff && canComment(me, v.post.author, v.circle),
     comments: rows.filter((r) => !v.circle.blocked.has(r.c.author)).map((r) => ({
       id: r.c.id, text: r.c.text, at: r.c.createdAt.toISOString(), author: pub(r.a),
       canDelete: r.c.author === me || v.post.author === me
@@ -404,7 +424,7 @@ export async function addComment(me: string, id: string, text: string) {
   const v = await visiblePost(me, id);
   if (!v) return { error: "not_found" as const };
   if (!(await myProfile(me))) return { error: "no_profile" as const };
-  if (!canComment(me, v.post.author, v.circle)) return { error: "not_allowed" as const };
+  if (v.post.commentsOff || !canComment(me, v.post.author, v.circle)) return { error: "not_allowed" as const };
   const mod = moderate(text);
   if (!mod.ok) return { error: "offensive" as const };
   text = mod.text;
@@ -471,4 +491,62 @@ export async function postCount(email: string) {
   const d = await db();
   const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts).where(and(eq(schema.posts.author, email), eq(schema.posts.kind, "post")));
   return n;
+}
+
+
+/* ---------- Gestão de publicações (estilo iOS: arquivar, fixar, ocultar, silenciar, editar) ---------- */
+
+export const MAX_PINNED = 3;
+export type ManageAction = "archive" | "unarchive" | "pin" | "unpin" | "hidelikes" | "showlikes" | "commentsoff" | "commentson";
+
+/** Alterações que só o autor pode fazer. Devolve o novo estado ou um erro. */
+export async function managePost(me: string, id: string, action: ManageAction) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return { error: "not_found" as const };
+  const d = await db();
+  const [p] = await d.select({ author: schema.posts.author, kind: schema.posts.kind }).from(schema.posts).where(eq(schema.posts.id, id)).limit(1);
+  if (!p || p.author !== me || p.kind !== "post") return { error: "not_found" as const };
+  if (action === "pin") {
+    const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.posts).where(and(eq(schema.posts.author, me), eq(schema.posts.pinned, true)));
+    if (n >= MAX_PINNED) return { error: "too_many" as const };
+  }
+  const set: Partial<schema.Post> =
+    action === "archive" ? { archived: true, pinned: false } : action === "unarchive" ? { archived: false }
+      : action === "pin" ? { pinned: true, archived: false } : action === "unpin" ? { pinned: false }
+        : action === "hidelikes" ? { hideLikes: true } : action === "showlikes" ? { hideLikes: false }
+          : action === "commentsoff" ? { commentsOff: true } : { commentsOff: false };
+  await d.update(schema.posts).set(set).where(eq(schema.posts.id, id));
+  return { ok: true as const };
+}
+
+/** Editar a legenda (o autor; passa pela moderação e fica marcada como editada). */
+export async function editPost(me: string, id: string, text: string) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return { error: "not_found" as const };
+  const mod = moderate(text);
+  if (!mod.ok) return { error: "offensive" as const };
+  const d = await db();
+  const [p] = await d.select({ author: schema.posts.author, photo: schema.posts.photo, video: schema.posts.video, music: schema.posts.music }).from(schema.posts).where(eq(schema.posts.id, id)).limit(1);
+  if (!p || p.author !== me) return { error: "not_found" as const };
+  if (!mod.text.trim() && !p.photo && !p.video && !p.music) return { error: "empty" as const };
+  await d.update(schema.posts).set({ text: mod.text.trim(), editedAt: new Date() }).where(eq(schema.posts.id, id));
+  await notifyMentions(me, id, mod.text).catch(() => null);
+  return { ok: true as const, text: mod.text.trim() };
+}
+
+/** Ocultar (ou voltar a mostrar) uma publicação no meu feed. */
+export async function hidePost(me: string, id: string, on: boolean) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return;
+  const d = await db();
+  if (on) await d.insert(schema.postHides).values({ email: me, postId: id }).onConflictDoNothing();
+  else await d.delete(schema.postHides).where(and(eq(schema.postHides.email, me), eq(schema.postHides.postId, id)));
+}
+
+/** Silenciar (ou deixar de silenciar) a conta de quem publicou: sai dos feeds, sem deixar de seguir nem bloquear. */
+export async function muteAuthorOf(me: string, id: string, on: boolean) {
+  if (!/^[0-9a-f-]{36}$/.test(id)) return { error: "not_found" as const };
+  const d = await db();
+  const [p] = await d.select({ author: schema.posts.author }).from(schema.posts).where(eq(schema.posts.id, id)).limit(1);
+  if (!p || p.author === me) return { error: "not_found" as const };
+  if (on) await d.insert(schema.userMutes).values({ email: me, muted: p.author }).onConflictDoNothing();
+  else await d.delete(schema.userMutes).where(and(eq(schema.userMutes.email, me), eq(schema.userMutes.muted, p.author)));
+  return { ok: true as const };
 }

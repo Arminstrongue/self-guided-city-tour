@@ -54,3 +54,59 @@ test("publicações: privacidade, feeds, histórias de 24 h, gostos, comentário
   assert.equal((await d.select().from(schema.posts)).length, 1);
   assert.equal((await d.select().from(schema.postComments)).length, 0);
 });
+
+test("gestão de publicações: arquivar, fixar, ocultar gostos, desligar comentários, editar, ocultar e silenciar", async () => {
+  const { db } = await import("./db");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  await migrate((await db()) as never, { migrationsFolder: "./drizzle" });
+  const s = await import("./social");
+  const p = await import("./posts");
+  await s.saveProfile("m1@x.com", { handle: "mia", name: "Mia", bio: "", photo: null, isPrivate: false });
+  await s.saveProfile("m2@x.com", { handle: "rui", name: "Rui", bio: "", photo: null, isPrivate: false });
+  await s.follow("m2@x.com", "mia"); await s.follow("m1@x.com", "rui");
+  const ids = [] as string[];
+  for (const txt of ["um", "dois", "três", "quatro"]) ids.push((await p.createPost("m1@x.com", { kind: "post", text: txt, photo: null, city: "man", tag: null, bg: null }) as { id: string }).id);
+  const [a, b, c, d] = ids;
+
+  // Só o autor gere
+  assert.deepEqual(await p.managePost("m2@x.com", a, "archive"), { error: "not_found" });
+  // Arquivar: sai do perfil e dos feeds dos outros; o autor vê no Arquivo
+  await p.managePost("m1@x.com", a, "archive");
+  assert.ok(!(await p.userPosts("m2@x.com", "mia"))!.posts.some((x) => x.id === a));
+  assert.equal(await p.getPost("m2@x.com", a), null);
+  assert.deepEqual((await p.userPosts("m1@x.com", "mia", null, true))!.posts.map((x) => x.id), [a]);
+  assert.equal(await p.userPosts("m2@x.com", "mia", null, true), null);
+  assert.ok(!(await p.feedFollowing("m2@x.com")).posts.some((x) => x.id === a));
+
+  // Fixar: no topo do perfil, máximo 3
+  await p.managePost("m1@x.com", b, "pin");
+  assert.equal((await p.userPosts("m2@x.com", "mia"))!.posts[0].id, b);
+  await p.managePost("m1@x.com", c, "pin"); await p.managePost("m1@x.com", d, "pin");
+  assert.deepEqual(await p.managePost("m1@x.com", a, "pin"), { error: "too_many" });
+
+  // Ocultar gostos: os outros veem 0; o autor vê o número
+  await p.like("m2@x.com", b, true);
+  await p.managePost("m1@x.com", b, "hidelikes");
+  assert.equal((await p.getPost("m2@x.com", b))!.posts[0].likes, 0);
+  assert.equal((await p.getPost("m1@x.com", b))!.posts[0].likes, 1);
+
+  // Comentários desligados
+  await p.managePost("m1@x.com", b, "commentsoff");
+  assert.deepEqual(await p.addComment("m2@x.com", b, "olá"), { error: "not_allowed" });
+  assert.equal((await p.getPost("m2@x.com", b))!.posts[0].canComment, false);
+
+  // Editar: passa pela moderação e fica "editada"
+  assert.ok("ok" in (await p.editPost("m1@x.com", c, "novo texto")));
+  const ed = (await p.getPost("m2@x.com", c))!.posts[0];
+  assert.equal(ed.text, "novo texto"); assert.equal(ed.edited, true);
+  assert.deepEqual(await p.editPost("m2@x.com", c, "x"), { error: "not_found" });
+
+  // Ocultar uma publicação e silenciar a conta: saem do feed, o perfil continua visível
+  await p.hidePost("m2@x.com", d, true);
+  assert.ok(!(await p.feedFollowing("m2@x.com")).posts.some((x) => x.id === d));
+  await p.muteAuthorOf("m2@x.com", b, true);
+  assert.ok(!(await p.feedFollowing("m2@x.com")).posts.some((x) => x.handle === "mia"));
+  assert.ok((await p.userPosts("m2@x.com", "mia"))!.posts.length > 0);
+  await p.muteAuthorOf("m2@x.com", b, false);
+  assert.ok((await p.feedFollowing("m2@x.com")).posts.some((x) => x.handle === "mia"));
+});

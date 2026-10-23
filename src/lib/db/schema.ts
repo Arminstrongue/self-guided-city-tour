@@ -363,9 +363,28 @@ export const posts = pgTable("posts", {
   duration: integer("duration"),                          // segundos
   music: jsonb("music").$type<PostMusic>(),               // música da biblioteca ou som próprio
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-  expiresAt: timestamp("expires_at", { withTimezone: true })
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  archived: boolean("archived").notNull().default(false),     // só o autor vê (arquivo do perfil)
+  pinned: boolean("pinned").notNull().default(false),         // fixada no topo do perfil
+  hideLikes: boolean("hide_likes").notNull().default(false),  // só o autor vê o número de gostos
+  commentsOff: boolean("comments_off").notNull().default(false),
+  editedAt: timestamp("edited_at", { withTimezone: true })
 }, (t) => [index("posts_author_idx").on(t.author, t.createdAt), index("posts_city_idx").on(t.city, t.createdAt), index("posts_kind_idx").on(t.kind, t.createdAt)]);
 export type Post = typeof posts.$inferSelect;
+
+/** Publicações que cada pessoa ocultou do seu feed. */
+export const postHides = pgTable("post_hides", {
+  email: text("email").notNull(),
+  postId: uuid("post_id").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("post_hides_pair_idx").on(t.email, t.postId)]);
+
+/** Contas silenciadas: as publicações deixam de aparecer no feed, sem deixar de seguir nem bloquear. */
+export const userMutes = pgTable("user_mutes", {
+  email: text("email").notNull(),
+  muted: text("muted").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("user_mutes_pair_idx").on(t.email, t.muted)]);
 
 export const postLikes = pgTable("post_likes", {
   postId: uuid("post_id").notNull(),

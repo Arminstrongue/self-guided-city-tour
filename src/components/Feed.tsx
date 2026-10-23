@@ -17,10 +17,11 @@ import { FeedVideo, posterUrl } from "./FeedVideo";
 import dynamic from "next/dynamic";
 // Partes pesadas só quando são abertas.
 const ReelsViewer = dynamic(() => import("./Reels").then((m) => m.ReelsViewer), { ssr: false });
+const PostMenu = dynamic(() => import("./PostMenu").then((m) => m.PostMenu), { ssr: false });
 const ShareSheet = dynamic(() => import("./PostExtras").then((m) => m.ShareSheet), { ssr: false });
 const StoryReply = dynamic(() => import("./Chat").then((m) => m.StoryReply), { ssr: false });
 import { I, Heart, MessageCircle, Send, Bookmark, Ellipsis, Play, Camera } from "./Ico";
-import { ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
+import { Archive, Pin, ImagePlus, Clapperboard, CircleDashed, Music2, MapPin, Hash, Palette, X, Lock, Globe2, Volume2, VolumeX } from "lucide-react";
 import { MusicSticker, SoundButton, usePostMusic, type PickedMusic } from "./Music";
 import { toast, withUndo } from "@/lib/toast";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
@@ -34,6 +35,7 @@ export type PostItem = {
   at: string; expiresAt: string | null; likes: number; liked: boolean; comments: number; mine: boolean; canComment: boolean;
   video?: "processing" | "ready" | "failed" | null; duration?: number | null;
   photos?: number; saved?: boolean; music?: { title: string; artist: string; url: string } | null;
+  archived?: boolean; pinned?: boolean; hideLikes?: boolean; commentsOff?: boolean; edited?: boolean;
 };
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 type Ring = { handle: string; items: PostItem[]; mine: boolean; last: string };
@@ -426,13 +428,15 @@ export function TileImg({ src, text }: { src: string; text: string }) {
 
 /* ---------- Uma publicação ---------- */
 type Comment = { id: string; text: string; at: string; author: PublicProfile; canDelete: boolean };
-export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Dict; locale: Locale; post: PostItem; author: PublicProfile; cities: Record<string, string>; onDeleted?: () => void }) {
+export function PostCard({ t, locale, post, author, cities, onDeleted, onMoved }: {
+  t: Dict; locale: Locale; post: PostItem; author: PublicProfile; cities: Record<string, string>; onDeleted?: () => void;
+  onMoved?: (p: PostItem) => void; // arquivada/reposta: a lista do perfil tira-a do separador atual
+}) {
   const [p, setP] = useState(post);
   const [open, setOpen] = useState(false);
   const [list, setList] = useState<Comment[] | null>(null);
   const [txt, setTxt] = useState("");
   const [menu, setMenu] = useState(false);
-  const [reported, setReported] = useState(false);
   const [burst, setBurst] = useState(false);
   const cRef = useRef<HTMLInputElement>(null);
   useEffect(() => setP(post), [post]);
@@ -469,18 +473,18 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
         <a href={`/${locale}/u/${author.handle}`} className="pf-who"><Avatar p={author} size={36} />
           <span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{author.name}<Verified handle={author.handle} /></b>
             <small className="hint ad-ellip">{p.city && cities[p.city] ? `📍 ${cities[p.city]} · ` : ""}{ago(p.at, locale)}</small></span></a>
-        <button className="wl-ic pf-more" aria-label="⋯" onClick={() => { setMenu(!menu); }}><I icon={Ellipsis} size={20} /></button>
+        {(p.pinned || p.archived) && <span className="pf-flag">{p.archived ? <><Archive size={13} aria-hidden="true" /> {t.pm.archived}</> : <><Pin size={13} aria-hidden="true" /> {t.pm.pinned}</>}</span>}
+        <button className="wl-ic pf-more" aria-label="⋯" aria-haspopup="dialog" onClick={() => setMenu(true)}><I icon={Ellipsis} size={20} /></button>
       </header>
       {p.music && !p.video && <div className="pf-music" ref={p.photo ? undefined : mu.box}><MusicSticker m={p.music} playing={mu.playing} onClick={mu.toggle} label={mu.muted ? t.rlUnmute : t.rlMute} /></div>}
       {menu && (
-        <div className="stack sc-menu" style={{ gap: 6, margin: "0 12px 8px" }}>
-          {p.mine ? (
-            <button className="danger" onClick={() => { setMenu(false); withUndo(t.tsDeleted, t.tsUndo, { icon: "🗑", apply: () => setGone(true), revert: () => setGone(false), commit: async () => { await postAct(p.id, { action: "delete" }); onDeleted?.(); } }); }}>🗑 {t.pfDelete}</button>
-          ) : reported ? <p className="note">✓ {t.pfReported}</p> : (
-            <><b>⚑ {t.pfReport}</b>
-              <div className="ex-chips">{(Object.keys(t.scReasons) as (keyof typeof t.scReasons)[]).map((r) => <button key={r} onClick={async () => { await postAct(p.id, { action: "report", reason: r }); setReported(true); }}>{t.scReasons[r]}</button>)}</div></>
-          )}
-        </div>
+        <PostMenu t={t} locale={locale} p={p} handle={author.handle} act={(body) => postAct(p.id, body)} onClose={() => setMenu(false)}
+          toast={(x, err) => toast(x, err ? { tone: "err" } : {})}
+          onPatch={(x) => setP((cur) => { const n = { ...cur, ...x }; if ("archived" in x && x.archived !== cur.archived) onMoved?.(n); return n; })}
+          onShare={() => setSharing(true)}
+          onDelete={() => withUndo(t.tsDeleted, t.tsUndo, { icon: "🗑", apply: () => setGone(true), revert: () => setGone(false), commit: async () => { await postAct(p.id, { action: "delete" }); onDeleted?.(); } })}
+          onHide={() => withUndo(t.pm.tHidden, t.tsUndo, { icon: "🙈", apply: () => setGone(true), revert: () => setGone(false), commit: async () => { await postAct(p.id, { action: "hide" }); } })}
+          onMute={() => withUndo(fmt(t.pm.tMuted, { h: author.handle }), t.tsUndo, { icon: "🔕", apply: () => setGone(true), revert: () => setGone(false), commit: async () => { await postAct(p.id, { action: "mute" }); } })} />
       )}
       {sharing && <ShareSheet t={t} locale={locale} post={p} onClose={() => setSharing(false)} />}
       {p.video && <FeedVideo t={t} locale={locale} p={p} onOpen={() => setReel(true)} onLike={(f) => void toggleLike(f)}
@@ -514,8 +518,8 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
           onClick={async () => { const on = !p.saved; setP({ ...p, saved: on }); toast(on ? t.tsSaved : t.tsUnsaved, { icon: "🔖" }); const r = await postAct(p.id, { action: on ? "save" : "unsave" }); if (!r) { setP((x) => ({ ...x, saved: !on })); toast(t.tsError, { tone: "err" }); } }}><I icon={Bookmark} size={25} solid={Boolean(p.saved)} /></button>
       </div>
       <div className="pf-body">
-        {p.likes > 0 && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}</b>}
-        {p.text && <p className={p.photo ? "" : "pf-big"}><b>{author.handle}</b> <RichText text={p.text} locale={locale} /></p>}
+        {p.likes > 0 && (!p.hideLikes || p.mine) && <b className="num" style={{ fontSize: 14 }}>{p.likes === 1 ? t.pfLike1 : fmt(t.pfLikes, { n: p.likes })}{p.hideLikes && <small className="hint" style={{ fontWeight: 400 }}> · {t.pm.tLikesOff}</small>}</b>}
+        {p.text && <p className={p.photo ? "" : "pf-big"}><b>{author.handle}</b> <RichText text={p.text} locale={locale} />{p.edited && <small className="hint"> · {t.pm.edited}</small>}</p>}
         {p.comments > 0 && !open && <button className="link-btn hint" onClick={() => { setOpen(true); void loadComments(); }}>{fmt(t.pfView, { n: p.comments })}</button>}
         {open && (
           <div className="stack pf-coms" style={{ gap: 8 }}>
@@ -533,7 +537,7 @@ export function PostCard({ t, locale, post, author, cities, onDeleted }: { t: Di
                 <input ref={cRef} value={txt} maxLength={300} onChange={(e) => setTxt(e.target.value)} placeholder={t.pfCommentPh} aria-label={t.pfCommentPh} />
                 <button className="link-btn" disabled={!txt.trim()}>{t.pfSend}</button>
               </form>
-            ) : <small className="hint">{t.pfOnlyCircle}</small>}
+            ) : <small className="hint">{p.commentsOff ? t.pm.tComOff : t.pfOnlyCircle}</small>}
           </div>
         )}
       </div>
@@ -614,26 +618,37 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
   const [page, setPage] = useState<Page | null>(null);
   const [open, setOpen] = useState<PostItem | null>(null);
   const [reel, setReel] = useState<string | null>(null);
+  const [isMe, setIsMe] = useState(false);
+  const [arch, setArch] = useState(false); // separador "Arquivo" (só no próprio perfil)
+  const base = `/api/social/u/${encodeURIComponent(handle)}/posts?${arch ? "archive=1&" : ""}`;
   useEffect(() => {
-    fetch(`/api/social/u/${encodeURIComponent(handle)}/posts`, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => setPage(r ?? { posts: [], authors: {}, next: null })).catch(() => setPage({ posts: [], authors: {}, next: null }));
-  }, [handle]);
+    setPage(null);
+    fetch(base, { cache: "no-store" }).then((x) => (x.ok ? x.json() : null)).then((r) => { setPage(r ?? { posts: [], authors: {}, next: null }); if (r?.me) setIsMe(true); }).catch(() => setPage({ posts: [], authors: {}, next: null }));
+  }, [base]);
+  const drop = (id: string) => setPage((pg) => (pg ? { ...pg, posts: pg.posts.filter((x) => x.id !== id) } : pg));
   async function more() {
     if (!page?.next) return;
-    const r: Page | null = await fetch(`/api/social/u/${encodeURIComponent(handle)}/posts?before=${encodeURIComponent(page.next)}`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
+    const r: Page | null = await fetch(`${base}before=${encodeURIComponent(page.next)}`).then((x) => (x.ok ? x.json() : null)).catch(() => null);
     if (r) setPage({ posts: [...page.posts, ...r.posts], authors: { ...page.authors, ...r.authors }, next: r.next });
   }
   return (
     <section className="stack" style={{ gap: 10 }}>
-      <h2 className="gp-h2">📸 {t.pfPostsT} {page && <small className="hint num">· {page.posts.length}{page.next ? "+" : ""}</small>}</h2>
+      {isMe ? (
+        <div className="ios-seg" role="tablist">
+          <button role="tab" aria-selected={!arch} className={!arch ? "on" : ""} onClick={() => setArch(false)}>{t.pm.postsTab}</button>
+          <button role="tab" aria-selected={arch} className={arch ? "on" : ""} onClick={() => setArch(true)}><Archive size={14} aria-hidden="true" /> {t.pm.archiveTab}</button>
+        </div>
+      ) : <h2 className="gp-h2">📸 {t.pfPostsT} {page && <small className="hint num">· {page.posts.length}{page.next ? "+" : ""}</small>}</h2>}
       {page === null && <div className="pf-grid">{[0, 1, 2].map((i) => <span key={i} className="pf-tile sk" />)}</div>}
-      {page && page.posts.length === 0 && <p className="hint">{t.pfNoPosts}</p>}
+      {page && page.posts.length === 0 && <p className="hint">{arch ? t.pm.archiveEmpty : t.pfNoPosts}</p>}
       {page && page.posts.length > 0 && <div className="pf-grid">{page.posts.map((p) => (
         <button key={p.id} className="pf-tile" onClick={() => (p.video === "ready" ? setReel(p.id) : setOpen(p))} aria-label={p.text.slice(0, 60) || t.pfPost}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {p.video === "ready" ? <><img src={posterUrl(p.id)} alt="" loading="lazy" /><span className="pf-tile-v" aria-hidden="true"><I icon={Play} size={14} solid /></span></>
             : p.video ? <span className="pf-tile-t">{p.video === "processing" ? "⏳" : "⚠️"}</span>
             : p.photo ? <><TileImg src={photoUrl(p.id)} text={p.text} />{(p.photos ?? 1) > 1 && <span className="pf-tile-v" aria-hidden="true">❐</span>}</> : <span className="pf-tile-t"><span>{p.text}</span></span>}
-          {p.likes > 0 && <small className="pf-tile-l"><I icon={Heart} size={12} solid /> {p.likes}</small>}
+          {p.likes > 0 && (!p.hideLikes || p.mine) && <small className="pf-tile-l"><I icon={Heart} size={12} solid /> {p.likes}</small>}
+          {p.pinned && !arch && <span className="pf-tile-pin" aria-label={t.pm.pinned}><Pin size={13} aria-hidden="true" /></span>}
         </button>
       ))}</div>}
       {page?.next && <button className="btn ghost press" onClick={() => void more()}>{t.pfMore}</button>}
@@ -643,7 +658,8 @@ export function ProfilePosts({ t, locale, handle, cities, author }: { t: Dict; l
           <div className="sheet pf-one" onClick={(e) => e.stopPropagation()}>
             <SheetX onClose={() => setOpen(null)} label={t.close} />
             <PostCard t={t} locale={locale} post={open} author={page?.authors[open.handle] ?? author} cities={cities}
-              onDeleted={() => { setPage(page ? { ...page, posts: page.posts.filter((x) => x.id !== open.id) } : page); setOpen(null); }} />
+              onDeleted={() => { drop(open.id); setOpen(null); }}
+              onMoved={(np) => { drop(np.id); setOpen(null); }} />
           </div>
         </div></Portal>
       )}

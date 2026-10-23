@@ -2384,3 +2384,44 @@ main:focus{outline:none}
 .ag-status.ok{background:color-mix(in srgb,#34c759 16%,transparent);color:#248a3d}
 .ag-more{display:grid;gap:4px;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,var(--ink) 4%,transparent)}
 .ag-more b{font-size:14px}.ag-more p{margin:0;font-size:14px;line-height:1.5;opacity:.8}
+
+/* Folha de ações estilo iOS (menu ⋯ das publicações) */
+.as-bg{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.38);display:flex;align-items:flex-end;justify-content:center;animation:as-fade .2s ease}
+.as{width:100%;max-width:520px;display:grid;gap:8px;padding:8px 10px calc(10px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;animation:as-up .28s cubic-bezier(.2,.9,.25,1)}
+.as-grab{justify-self:center;width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,.7);margin-bottom:2px}
+.as-sec{display:grid;gap:6px}
+.as-h{font-size:13px;font-weight:600;color:rgba(255,255,255,.85);padding:4px 14px 0;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.as-group{border-radius:14px;overflow:hidden;background:var(--as-bg,rgba(250,250,252,.96));-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px)}
+.as-row{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:10px 16px;border:0;background:none;color:var(--ink,#111);font:inherit;font-size:17px;text-align:start;cursor:pointer;position:relative}
+.as-row+.as-row::before{content:"";position:absolute;top:0;left:51px;right:0;height:.5px;background:rgba(60,60,67,.22)}
+.as-row:active{background:rgba(0,0,0,.06)}
+.as-row svg{flex:0 0 auto;color:#007aff}
+.as-row.red,.as-row.red svg{color:#ff3b30}
+.as-row.center{justify-content:center;font-weight:600}
+.as-row.center::before{left:0!important}
+.as-tx{flex:1;min-width:0;display:grid;gap:1px}
+.as-tx small{font-size:13px;opacity:.55}
+.as-chev{color:rgba(60,60,67,.35)!important}
+.as-cancel{min-height:56px;border:0;border-radius:14px;background:var(--as-bg,#fff);color:#007aff;font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.as-cancel:active{background:#e9e9ee}
+.as-msg{display:grid;gap:4px;padding:16px 18px;text-align:center}
+.as-msg b{font-size:15px}.as-msg small{font-size:13px;opacity:.6;line-height:1.4}
+.as-confirm .as-row::before{left:0}
+.as-msg+.as-row::before{content:"";position:absolute;top:0;left:0;right:0;height:.5px;background:rgba(60,60,67,.22)}
+.as-back{justify-self:start;display:flex;align-items:center;gap:2px;border:0;background:none;color:#fff;font:inherit;font-size:16px;font-weight:600;padding:4px 6px;cursor:pointer}
+.as-edit-h{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 2px;color:#fff}
+.as-edit-h b{font-size:16px}
+.as-link{border:0;background:none;color:#fff;font:inherit;font-size:16px;cursor:pointer;padding:6px}
+.as-link.bold{font-weight:700}.as-link:disabled{opacity:.45}
+.as-ta{width:100%;border:0;background:none;padding:14px 16px;font:inherit;font-size:16px;line-height:1.45;resize:none;color:var(--ink,#111);outline:none}
+.as-count{justify-self:end;color:rgba(255,255,255,.75);font-size:12px;padding-right:6px}
+@keyframes as-up{from{transform:translateY(100%)}to{transform:none}}
+@keyframes as-fade{from{opacity:0}to{opacity:1}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--as-bg:rgba(44,44,46,.96)}.as-row{color:#fff}.as-row+.as-row::before,.as-msg+.as-row::before{background:rgba(84,84,88,.6)}.as-cancel:active{background:#3a3a3c}.as-ta{color:#fff}}
+:root[data-theme="dark"]{--as-bg:rgba(44,44,46,.96)}
+@media (prefers-reduced-motion:reduce){.as,.as-bg{animation:none}}
+.pf-flag{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;opacity:.6;margin-inline-start:auto;margin-inline-end:4px}
+.pf-tile-pin{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff}
+.ios-seg{display:flex;padding:2px;border-radius:10px;background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.ios-seg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px;border:0;border-radius:8px;background:none;color:inherit;font:inherit;font-size:14px;font-weight:500;cursor:pointer}
+.ios-seg button.on{background:var(--bg,#fff);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.12)}
