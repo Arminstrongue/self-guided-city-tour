@@ -4,12 +4,11 @@
  * ou som próprio (o autor confirma que tem os direitos). Um só som a tocar de cada vez, com o som ligado/desligado partilhado.
  */
 import { useEffect, useRef, useState } from "react";
-import { Music2, Play, Pause, Check, Upload, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Check, Plus, Upload, Volume2, VolumeX, X } from "lucide-react";
 import { fmt } from "@/i18n/core";
 import type { Dict } from "@/i18n/dictionaries";
 import { MUSIC, MUSIC_ARTIST, type Track } from "@/data/music";
 import { claim, isMuted, onMuted, release, setMuted } from "@/lib/media-bus";
-import { SheetX } from "@/components/WinNav";
 import Portal from "@/components/Portal";
 
 export type PickedMusic = { lib: string; title: string; artist: string; url: string } | { own: string; title: string; artist: string; url: string };
@@ -59,54 +58,107 @@ export function SoundButton({ muted, onClick, t }: { muted: boolean; onClick: ()
     {muted ? <VolumeX size={18} aria-hidden="true" /> : <Volume2 size={18} aria-hidden="true" />}</button>;
 }
 
-/* ---------- Escolher música ---------- */
+/* ---------- Escolher música (escuro, estilo "estúdio": faixa em destaque, visualizador e lista) ---------- */
+const BARS = Array.from({ length: 36 }, (_, i) => 0.25 + 0.75 * Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.45)));
+const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
 export function MusicPicker({ t, current, onPick, onClose }: { t: Dict; current: PickedMusic | null; onPick: (m: PickedMusic | null) => void; onClose: () => void }) {
   const [tab, setTab] = useState<"lib" | "own">(current && "own" in current ? "own" : "lib");
-  const [preview, setPreview] = useState<string | null>(null);
+  const chosenId = current && "lib" in current ? current.lib : null;
+  const [focus, setFocus] = useState<string>(chosenId ?? MUSIC[0].id);   // faixa em destaque
+  const [playing, setPlaying] = useState(false);
+  const [pos, setPos] = useState(0);
+  const [mood, setMood] = useState<Track["mood"] | "all">("all");
   const a = useRef<HTMLAudioElement | null>(null);
-  useEffect(() => { a.current = new Audio(); return () => { a.current?.pause(); }; }, []);
-  function play(id: string, url: string, start = 0) {
+  useEffect(() => {
+    const el = new Audio(); a.current = el;
+    el.ontimeupdate = () => setPos(el.currentTime);
+    el.onplay = () => setPlaying(true);
+    el.onpause = () => setPlaying(false);
+    el.onended = () => { setPlaying(false); setPos(0); };
+    return () => { el.pause(); release(el); };
+  }, []);
+  useEffect(() => { const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); }; window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k); }, [onClose]);
+  const tr = MUSIC.find((x) => x.id === focus) ?? MUSIC[0];
+  const url = (id: string) => `/music/${id}.m4a`;
+  function play(id: string) {
     const el = a.current; if (!el) return;
-    if (preview === id) { el.pause(); setPreview(null); return; }
-    el.src = url; el.currentTime = start; void claim(el); setPreview(id);
-    el.onended = () => setPreview(null);
+    if (focus === id && !el.paused) { el.pause(); return; }
+    if (focus !== id || !el.src.endsWith(url(id))) { el.src = url(id); setPos(0); }
+    setFocus(id); void claim(el);
   }
   const pick = (m: PickedMusic) => { a.current?.pause(); onPick(m); onClose(); };
+  const moods = [...new Set(MUSIC.map((x) => x.mood))];
+  const list = MUSIC.filter((x) => mood === "all" || x.mood === mood);
+  const dur = Math.max(1, a.current?.duration && isFinite(a.current.duration) ? a.current.duration : 30);
+  const glow = { "--a1": tr.colors[0], "--a2": tr.colors[1] } as React.CSSProperties;
+
   return (
-    <Portal><div className="sheet-bg" style={{ zIndex: 97 }} onClick={onClose}>
-      <div className="sheet stack mu-pick" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()}>
-        <SheetX onClose={onClose} label={t.close} />
-        <b style={{ fontSize: 19 }} className="row"><span className="qi q4 sm"><Music2 size={16} aria-hidden="true" /></span>{t.muTitle}</b>
-        <div className="seg-2" role="tablist">
-          <button role="tab" aria-selected={tab === "lib"} className={tab === "lib" ? "on" : ""} onClick={() => setTab("lib")}>{t.muOriginals}</button>
-          <button role="tab" aria-selected={tab === "own"} className={tab === "own" ? "on" : ""} onClick={() => setTab("own")}>{t.muOwn}</button>
+    <Portal><div className="mu2-bg" onClick={onClose}>
+      <div className="mu2" role="dialog" aria-modal="true" aria-label={t.muTitle} onClick={(e) => e.stopPropagation()} style={glow}>
+        <span className="mu2-grab" aria-hidden="true" />
+        <div className="mu2-head">
+          <div><b>{t.muTitle}</b><small>{MUSIC_ARTIST} · {fmt(t.mu2.tracks, { n: MUSIC.length })}</small></div>
+          <button type="button" className="mu2-x" onClick={onClose} aria-label={t.close}><X size={18} aria-hidden="true" /></button>
         </div>
-        {tab === "lib" ? (
-          <div className="stack" style={{ gap: 8 }}>
-            <small className="hint">{t.muOriginalsSub}</small>
-            {MUSIC.map((tr) => <TrackRow key={tr.id} t={t} tr={tr} on={preview === tr.id} chosen={Boolean(current && "lib" in current && current.lib === tr.id)}
-              onPlay={() => play(tr.id, `/music/${tr.id}.m4a`)} onUse={() => pick({ lib: tr.id, title: tr.title, artist: MUSIC_ARTIST, url: `/music/${tr.id}.m4a` })} />)}
+        <div className="mu2-seg" role="tablist">
+          <button role="tab" aria-selected={tab === "lib"} className={tab === "lib" ? "on" : ""} onClick={() => setTab("lib")}>{t.muOriginals}</button>
+          <button role="tab" aria-selected={tab === "own"} className={tab === "own" ? "on" : ""} onClick={() => { a.current?.pause(); setTab("own"); }}>{t.muOwn}</button>
+        </div>
+
+        {tab === "lib" ? <>
+          <section className={`mu2-hero ${playing ? "on" : ""}`} aria-live="polite">
+            <div className="mu2-top">
+              <button type="button" className="mu2-art" onClick={() => play(tr.id)} aria-label={playing ? "Pause" : "Play"}>
+                <span className="mu2-halo" aria-hidden="true" />
+                <span className="mu2-disc" aria-hidden="true"><i /></span>
+                <span className="mu2-pp">{playing ? <Pause size={26} fill="currentColor" aria-hidden="true" /> : <Play size={26} fill="currentColor" aria-hidden="true" />}</span>
+              </button>
+              <div className="mu2-meta">
+                <small className="mu2-state">{playing ? t.mu2.playing : pos > 0 ? t.mu2.paused : t.mu2.tap}</small>
+                <b>{tr.title}</b>
+                <span>{t.muMood[tr.mood]} · {tr.bpm} BPM</span>
+              </div>
+            </div>
+            <div className="mu2-viz" aria-hidden="true">
+              {BARS.map((h, i) => <i key={i} style={{ "--h": h, "--d": `${0.6 + (i % 5) * 0.13}s`, "--o": `${(i % 7) * -0.11}s` } as React.CSSProperties} className={i / BARS.length <= pos / dur ? "past" : ""} />)}
+            </div>
+            <div className="mu2-time num"><span>{clock(pos)}</span><span>{clock(dur)}</span></div>
+            {chosenId === tr.id
+              ? <button type="button" className="mu2-cta done" onClick={onClose}><Check size={18} aria-hidden="true" /> {t.mu2.selected}</button>
+              : <button type="button" className="mu2-cta" onClick={() => pick({ lib: tr.id, title: tr.title, artist: MUSIC_ARTIST, url: url(tr.id) })}>{t.mu2.useThis}</button>}
+          </section>
+
+          <div className="mu2-chips" role="tablist">
+            <button className={mood === "all" ? "on" : ""} onClick={() => setMood("all")}>{t.mu2.all}</button>
+            {moods.map((m) => <button key={m} className={mood === m ? "on" : ""} onClick={() => setMood(m)}>{t.muMood[m]}</button>)}
           </div>
-        ) : <OwnSound t={t} onPick={pick} />}
-        {current && <button className="btn ghost press" onClick={() => { a.current?.pause(); onPick(null); onClose(); }}>{t.muRemove}</button>}
+
+          <ul className="mu2-list">
+            {list.map((x) => {
+              const on = focus === x.id, live = on && playing, chosen = chosenId === x.id;
+              return (
+                <li key={x.id} className={`${on ? "on" : ""} ${chosen ? "chosen" : ""}`}>
+                  <button type="button" className="mu2-row" onClick={() => play(x.id)} aria-label={`${x.title} · ${live ? "Pause" : "Play"}`}>
+                    <span className="mu2-mini" style={{ "--a1": x.colors[0], "--a2": x.colors[1] } as React.CSSProperties}>
+                      {live ? <span className="mu-eq on" aria-hidden="true"><i /><i /><i /><i /></span> : <Play size={14} fill="currentColor" aria-hidden="true" />}
+                    </span>
+                    <span className="mu2-rt"><b>{x.title}</b><small>{t.muMood[x.mood]} · {x.bpm} BPM</small></span>
+                    <small className="mu2-len num">0:30</small>
+                  </button>
+                  <button type="button" className={`mu2-add ${chosen ? "on" : ""}`} aria-label={chosen ? t.mu2.selected : t.muUse}
+                    onClick={() => (chosen ? onClose() : pick({ lib: x.id, title: x.title, artist: MUSIC_ARTIST, url: url(x.id) }))}>
+                    {chosen ? <Check size={16} aria-hidden="true" /> : <Plus size={18} aria-hidden="true" />}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <small className="mu2-foot">{t.mu2.free}</small>
+        </> : <div className="mu2-own"><OwnSound t={t} onPick={pick} /></div>}
+        {current && <button className="mu2-remove" onClick={() => { a.current?.pause(); onPick(null); onClose(); }}>{t.muRemove}</button>}
       </div>
     </div></Portal>
-  );
-}
-
-function TrackRow({ t, tr, on, chosen, onPlay, onUse }: { t: Dict; tr: Track; on: boolean; chosen: boolean; onPlay: () => void; onUse: () => void }) {
-  return (
-    <div className={`mu-row ${chosen ? "chosen" : ""}`}>
-      <button type="button" className="mu-cover press" style={{ background: `linear-gradient(135deg,${tr.colors[0]},${tr.colors[1]})` }} onClick={onPlay} aria-label={on ? "Pause" : "Play"}>
-        {on ? <Pause size={20} fill="currentColor" aria-hidden="true" /> : <Play size={20} fill="currentColor" aria-hidden="true" />}
-      </button>
-      <span className="stack" style={{ gap: 1, flex: 1, minWidth: 0 }}>
-        <b className="ad-ellip">{tr.title}</b>
-        <small className="hint">{t.muMood[tr.mood]} · {tr.bpm} BPM · 0:30</small>
-      </span>
-      <span className={`mu-eq ${on ? "on" : ""}`} aria-hidden="true"><i /><i /><i /><i /></span>
-      <button type="button" className={`sc-follow ${chosen ? "" : "on"}`} onClick={onUse}>{chosen ? <Check size={16} aria-hidden="true" /> : t.muUse}</button>
-    </div>
   );
 }
 

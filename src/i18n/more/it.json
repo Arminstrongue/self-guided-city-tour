@@ -1604,5 +1604,15 @@
 "delete": "Elimina",
 "onPost": "da @{h}",
 "inList": "Nell'elenco"
+},
+"mu2": {
+"all": "Tutte",
+"useThis": "Usa questo brano",
+"selected": "Selezionato",
+"tracks": "{n} brani originali",
+"tap": "Tocca un brano per ascoltarlo",
+"playing": "In riproduzione",
+"paused": "In pausa",
+"free": "Senza diritti · uso libero"
 }
 }

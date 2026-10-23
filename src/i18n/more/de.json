@@ -1577,5 +1577,15 @@
 "delete": "Löschen",
 "onPost": "bei @{h}",
 "inList": "In der Liste"
+},
+"mu2": {
+"all": "Alle",
+"useThis": "Diesen Titel verwenden",
+"selected": "Ausgewählt",
+"tracks": "{n} eigene Titel",
+"tap": "Tippen Sie auf einen Titel zum Anhören",
+"playing": "Läuft",
+"paused": "Pausiert",
+"free": "Lizenzfrei · frei nutzbar"
 }
 }

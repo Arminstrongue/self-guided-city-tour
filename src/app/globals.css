@@ -2561,3 +2561,69 @@ a.as-row{text-decoration:none}
 .err-card .btn{width:100%}
 .err-ic{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:color-mix(in srgb,var(--ink) 7%,transparent)}
 .err-code{opacity:.4;font-size:11px;word-break:break-word}
+
+/* ---------- Música: folha escura "estúdio" (premium) ---------- */
+.mu2-bg{position:fixed;inset:0;z-index:97;background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;animation:as-fade .2s ease}
+.mu2{--a1:#888;--a2:#555;position:relative;width:100%;max-width:560px;max-height:92dvh;overflow-y:auto;overscroll-behavior:contain;padding:8px 18px calc(18px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;color:#f5f5f7;
+  background:radial-gradient(120% 60% at 50% -10%,color-mix(in srgb,var(--a1) 28%,transparent),transparent 60%),linear-gradient(180deg,#121216,#08080a 60%);box-shadow:0 -1px 0 rgba(255,255,255,.08) inset,0 -20px 60px rgba(0,0,0,.5);animation:as-up .32s cubic-bezier(.2,.9,.25,1);transition:background .6s}
+.mu2-grab{display:block;width:38px;height:5px;border-radius:3px;background:rgba(255,255,255,.25);margin:2px auto 10px}
+.mu2-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.mu2-head b{display:block;font-size:28px;font-weight:700;letter-spacing:-.02em}
+.mu2-head small{font-size:13px;color:rgba(235,235,245,.55)}
+.mu2-x{width:34px;height:34px;border-radius:50%;border:0;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.1);cursor:pointer}
+.mu2-seg{display:grid;grid-template-columns:1fr 1fr;padding:3px;border-radius:12px;background:rgba(118,118,128,.24);margin-bottom:16px}
+.mu2-seg button{border:0;padding:8px;border-radius:9px;background:none;color:rgba(235,235,245,.7);font:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,color .2s}
+.mu2-seg button.on{background:rgba(255,255,255,.16);color:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.mu2-hero{position:relative;display:grid;gap:14px;padding:16px;border-radius:24px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.09);overflow:hidden}
+.mu2-hero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--a2) 45%,transparent),transparent 70%);filter:blur(20px);opacity:.55;pointer-events:none;transition:opacity .4s}
+.mu2-top{position:relative;display:flex;align-items:center;gap:16px}
+.mu2-art{position:relative;flex:0 0 104px;height:104px;border:0;border-radius:26px;padding:0;cursor:pointer;background:#141418;display:grid;place-items:center;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,0 14px 30px rgba(0,0,0,.45)}
+.mu2-halo{position:absolute;inset:-30%;background:conic-gradient(from 0deg,var(--a1),var(--a2),transparent 60%,var(--a1));opacity:.55;filter:blur(18px);animation:mu2-spin 8s linear infinite;animation-play-state:paused}
+.mu2-hero.on .mu2-halo,.mu2-hero.on .mu2-disc{animation-play-state:running}
+.mu2-disc{position:absolute;inset:14px;border-radius:50%;background:repeating-radial-gradient(circle,#1b1b20 0 2px,#111115 2px 4px);box-shadow:0 0 0 1px rgba(255,255,255,.06);animation:mu2-spin 4s linear infinite;animation-play-state:paused}
+.mu2-disc i{position:absolute;inset:36%;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--a2))}
+.mu2-pp{position:relative;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#111;background:rgba(255,255,255,.92);box-shadow:0 6px 18px rgba(0,0,0,.35);transition:transform .15s}
+.mu2-art:active .mu2-pp{transform:scale(.92)}
+.mu2-meta{min-width:0;display:grid;gap:3px}
+.mu2-meta b{font-size:22px;font-weight:700;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mu2-meta span{font-size:14px;color:rgba(235,235,245,.6)}
+.mu2-state{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:color-mix(in srgb,var(--a1) 70%,#fff)}
+.mu2-viz{position:relative;display:flex;align-items:center;gap:3px;height:44px}
+.mu2-viz i{flex:1;height:calc(var(--h) * 100%);min-height:3px;border-radius:2px;background:rgba(255,255,255,.22);transform-origin:center;transform:scaleY(.35);transition:background .2s,transform .3s}
+.mu2-viz i.past{background:linear-gradient(180deg,#fff,color-mix(in srgb,var(--a1) 80%,#fff))}
+.mu2-hero.on .mu2-viz i{animation:mu2-bar var(--d) ease-in-out var(--o) infinite alternate}
+.mu2-time{position:relative;display:flex;justify-content:space-between;font-size:12px;color:rgba(235,235,245,.5);margin-top:-6px}
+.mu2-cta{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border:0;border-radius:16px;background:#fff;color:#000;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:transform .12s}
+.mu2-cta:active{transform:scale(.98)}
+.mu2-cta.done{background:rgba(255,255,255,.12);color:#fff}
+.mu2-chips{display:flex;gap:8px;overflow-x:auto;margin:16px -18px 6px;padding:0 18px;scrollbar-width:none}
+.mu2-chips::-webkit-scrollbar{display:none}
+.mu2-chips button{flex:0 0 auto;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:rgba(235,235,245,.8);font:inherit;font-size:14px;cursor:pointer}
+.mu2-chips button.on{background:#fff;color:#000;border-color:#fff;font-weight:600}
+.mu2-list{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:2px}
+.mu2-list li{display:flex;align-items:center;gap:8px;padding:4px 4px 4px 0;border-radius:16px;transition:background .2s}
+.mu2-list li.on{background:rgba(255,255,255,.06)}
+.mu2-row{flex:1;min-width:0;display:flex;align-items:center;gap:12px;padding:8px;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer}
+.mu2-mini{position:relative;flex:0 0 46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:#18181d;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset;overflow:hidden}
+.mu2-mini::before{content:"";position:absolute;width:16px;height:16px;border-radius:50%;right:6px;bottom:6px;background:linear-gradient(135deg,var(--a1),var(--a2));filter:blur(.3px);opacity:.9;box-shadow:0 0 14px var(--a1)}
+.mu2-mini svg,.mu2-mini .mu-eq{position:relative}
+.mu2-rt{flex:1;min-width:0;display:grid;gap:2px}
+.mu2-rt b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mu2-rt small{font-size:13px;color:rgba(235,235,245,.5)}
+.mu2-len{color:rgba(235,235,245,.4);font-size:13px}
+.mu2-add{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .12s,background .2s}
+.mu2-add:active{transform:scale(.9)}
+.mu2-add.on{background:#fff;color:#000;border-color:#fff}
+.mu2-foot{display:block;text-align:center;margin:14px 0 4px;font-size:12px;color:rgba(235,235,245,.4)}
+.mu2-remove{display:block;margin:10px auto 0;border:0;background:none;color:#ff453a;font:inherit;font-size:15px;font-weight:600;cursor:pointer;padding:8px}
+.mu2-own{display:grid;gap:10px}
+.mu2-own .hint{color:rgba(235,235,245,.55)}
+.mu2-own .mu-drop{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18);color:#fff}
+.mu2-own .field input{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.14);color:#fff}
+.mu2-own .field label{color:rgba(235,235,245,.7)}
+.mu2-own .btn{background:#fff;color:#000}
+.mu2-own .btn.ghost{background:rgba(255,255,255,.1);color:#fff}
+.mu2-own .mu-range{accent-color:#fff}
+@keyframes mu2-spin{to{transform:rotate(360deg)}}
+@keyframes mu2-bar{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.mu2-halo,.mu2-disc,.mu2-hero.on .mu2-viz i{animation:none}.mu2-viz i{transform:none}}

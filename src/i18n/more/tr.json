@@ -2037,5 +2037,15 @@
 "delete": "Sil",
 "onPost": "@{h} gönderisinde",
 "inList": "Listede"
+},
+"mu2": {
+"all": "Tümü",
+"useThis": "Bu parçayı kullan",
+"selected": "Seçildi",
+"tracks": "{n} orijinal parça",
+"tap": "Dinlemek için bir parçaya dokunun",
+"playing": "Çalıyor",
+"paused": "Duraklatıldı",
+"free": "Telifsiz · ücretsiz kullanım"
 }
 }

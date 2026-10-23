@@ -1573,5 +1573,15 @@
 "delete": "Supprimer",
 "onPost": "chez @{h}",
 "inList": "Dans la liste"
+},
+"mu2": {
+"all": "Toutes",
+"useThis": "Utiliser ce titre",
+"selected": "Sélectionné",
+"tracks": "{n} titres originaux",
+"tap": "Touchez un titre pour l'écouter",
+"playing": "Lecture",
+"paused": "En pause",
+"free": "Libre de droits · utilisation gratuite"
 }
 }
