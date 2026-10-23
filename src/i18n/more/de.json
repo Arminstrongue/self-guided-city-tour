@@ -1402,5 +1402,17 @@
 "rsTzPick": "Zeitzone der Buchung",
 "rsTzErr": "Wählen Sie die Stadt oder die Zeitzone der Buchung, damit die Uhrzeit stimmt.",
 "sharePlan": "Mein Plan für {city} mit VOYBU: {n} bekannte Orte, {c} Fahrtkosten.",
-"shareSome": "Ich habe mit VOYBU schon {k} von {n} bekannten Orten in {city} gesehen."
+"shareSome": "Ich habe mit VOYBU schon {k} von {n} bekannten Orten in {city} gesehen.",
+"ocRows": {
+"route": "Route",
+"map": "Karte",
+"audio": "Audioguide",
+"photos": "Fotos",
+"res": "Buchungen & Tickets",
+"live": "Live-Daten",
+"gps": "Standort",
+"bat": "Akku"
+},
+"rfStops": "Stationen dieser Route",
+"rfLen": "Dauer"
 }

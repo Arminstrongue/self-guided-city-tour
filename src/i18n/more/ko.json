@@ -1862,5 +1862,17 @@
 "rsTzPick": "예약 시간대",
 "rsTzErr": "시간이 정확하도록 도시 또는 예약 시간대를 선택하세요.",
 "sharePlan": "VOYBU로 짠 {city} 계획: 명소 {n}곳, 교통비 {c}.",
-"shareSome": "VOYBU로 {city} 명소 {n}곳 중 {k}곳을 다녀왔어요."
+"shareSome": "VOYBU로 {city} 명소 {n}곳 중 {k}곳을 다녀왔어요.",
+"ocRows": {
+"route": "경로",
+"map": "지도",
+"audio": "오디오 가이드",
+"photos": "사진",
+"res": "예약 및 티켓",
+"live": "실시간 정보",
+"gps": "위치",
+"bat": "배터리"
+},
+"rfStops": "이 경로의 명소",
+"rfLen": "소요 시간"
 }

@@ -5,7 +5,9 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { offlineList, type OfflineInfo } from "@/lib/offline-client";
 import { canPrefetchTiles } from "@/lib/map-config";
 import { VOICE_LANG, pickVoice } from "@/lib/speech";
+import { AlertTriangle, BatteryLow, CheckCircle2, ChevronRight, Headphones, Image as ImageIcon, Info, LocateFixed, Map as MapIcon, Radio, Route, ShieldCheck, Ticket, XCircle, Luggage } from "lucide-react";
 import Portal from "./Portal";
+import { OfflineButton } from "./TravelTools";
 import { SheetX } from "./WinNav";
 
 type Lvl = "ok" | "warn" | "bad" | "info";
@@ -48,7 +50,35 @@ async function runChecks({ t, city, audioLang, langName, d, full, onFix }: { t: 
   return out;
 }
 
-const ICON: Record<Lvl, string> = { ok: "✅", warn: "⚠️", bad: "⛔", info: "ℹ️" };
+
+/* Linhas estilo iOS: ícone num quadrado colorido, título curto, explicação e estado à direita. */
+const ROW: Record<string, { I: typeof Route; c: string }> = {
+  route: { I: Route, c: "#007aff" }, map: { I: MapIcon, c: "#34c759" }, audio: { I: Headphones, c: "#af52de" }, photos: { I: ImageIcon, c: "#ff9500" },
+  res: { I: Ticket, c: "#ff2d55" }, live: { I: Radio, c: "#5ac8fa" }, gps: { I: LocateFixed, c: "#5856d6" }, bat: { I: BatteryLow, c: "#ff3b30" }
+};
+function State({ l }: { l: Lvl }) {
+  if (l === "ok") return <CheckCircle2 size={20} color="#34c759" aria-hidden="true" />;
+  if (l === "warn") return <AlertTriangle size={20} color="#ff9500" aria-hidden="true" />;
+  if (l === "bad") return <XCircle size={20} color="#ff3b30" aria-hidden="true" />;
+  return <Info size={20} style={{ opacity: .35 }} aria-hidden="true" />;
+}
+function Rows({ checks, t }: { checks: Check[]; t: Dict }) {
+  return (
+    <ul className="ios-group">
+      {checks.map((c) => {
+        const r = ROW[c.k] ?? ROW.live;
+        return (
+          <li key={c.k} className="ios-li">
+            <span className="ios-ic" style={{ background: r.c }}><r.I size={17} color="#fff" aria-hidden="true" /></span>
+            <span className="ios-tx"><b>{(t.ocRows as Record<string, string>)[c.k] ?? c.k}</b><small>{c.txt}</small>
+              {c.fix && <button type="button" className="ios-link" onClick={c.fix.run}>{c.fix.label}</button>}</span>
+            <State l={c.lvl} />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 /** Depois de descarregar: o que funciona sem internet, recurso a recurso (sempre visível no roteiro). */
 export function OfflineStatus({ t, locale, city, audioLang }: { t: Dict; locale: Locale; city: string; audioLang: string }) {
@@ -66,7 +96,7 @@ export function OfflineStatus({ t, locale, city, audioLang }: { t: Dict; locale:
   return (
     <div className="of-status">
       <b className="of-status-h">{t.ofWhat}</b>
-      <ul className="oc-list">{checks.map((c) => <li key={c.k} className={c.lvl}><span aria-hidden="true">{ICON[c.lvl]}</span><span>{c.txt}</span></li>)}</ul>
+      <Rows checks={checks} t={t} />
     </div>
   );
 }
@@ -90,24 +120,27 @@ export function OfflineCheck({ t, locale, city, audioLang }: { t: Dict; locale: 
   }, [open, tick, city, audioLang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const bad = checks?.some((c) => c.lvl === "bad"), warn = checks?.some((c) => c.lvl === "warn");
-  const icon = ICON;
+  const needDl = checks?.some((c) => c.k === "route" && c.lvl === "bad");
+  const tone = bad ? "bad" : warn ? "warn" : "ok";
   return (
     <>
-      <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => { setChecks(null); setOpen(true); }}>🧳 {t.ocBtn}</button>
+      <button type="button" className="ios-row press" onClick={() => { setChecks(null); setOpen(true); }}>
+        <span className="ios-ic" style={{ background: "#34c759" }}><Luggage size={17} color="#fff" aria-hidden="true" /></span>
+        <span className="ios-tx"><b>{t.ocTitle}</b></span><ChevronRight size={18} className="ios-chev" aria-hidden="true" />
+      </button>
       {open && (
         <Portal><div className="sheet-bg" onClick={() => setOpen(false)}>
-          <div className="sheet stack oc" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={t.ocTitle}>
+          <div className="sheet stack oc" style={{ gap: 16 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={t.ocTitle}>
             <SheetX onClose={() => setOpen(false)} label={t.close} />
-            <b style={{ fontSize: 18 }}>🧳 {t.ocTitle}</b>
             {!checks ? <p className="hint">…</p> : (
               <>
-                <p className={`oc-sum ${bad ? "bad" : warn ? "warn" : "ok"}`}>{bad ? t.ocSumBad : warn ? t.ocSumWarn : t.ocSumOk}</p>
-                <ul className="oc-list">
-                  {checks.map((c) => (
-                    <li key={c.k} className={c.lvl}><span aria-hidden="true">{icon[c.lvl]}</span><span>{c.txt}{c.fix && <> <button className="link-btn" onClick={c.fix.run}>{c.fix.label}</button></>}</span></li>
-                  ))}
-                </ul>
-                <p className="hint">{t.ocLive}</p>
+                <div className={`ios-hero ${tone}`}>
+                  <span className="ios-hero-ic">{tone === "ok" ? <ShieldCheck size={30} aria-hidden="true" /> : tone === "warn" ? <AlertTriangle size={30} aria-hidden="true" /> : <XCircle size={30} aria-hidden="true" />}</span>
+                  <b>{t.ocTitle}</b>
+                  <span>{bad ? t.ocSumBad : warn ? t.ocSumWarn : t.ocSumOk}</span>
+                </div>
+                {needDl && <OfflineButton t={t} locale={locale} city={city} compact />}
+                <Rows checks={checks} t={t} />
               </>
             )}
           </div>

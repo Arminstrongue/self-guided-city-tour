@@ -1374,5 +1374,17 @@
 "rsTzPick": "予約のタイムゾーン",
 "rsTzErr": "時刻を正しくするため、都市または予約のタイムゾーンを選んでください。",
 "sharePlan": "VOYBU で立てた{city}のプラン：名所 {n} か所、交通費 {c}。",
-"shareSome": "VOYBU で{city}の名所 {n} か所のうち {k} か所を訪れました。"
+"shareSome": "VOYBU で{city}の名所 {n} か所のうち {k} か所を訪れました。",
+"ocRows": {
+"route": "ルート",
+"map": "地図",
+"audio": "音声ガイド",
+"photos": "写真",
+"res": "予約とチケット",
+"live": "ライブ情報",
+"gps": "位置情報",
+"bat": "バッテリー"
+},
+"rfStops": "このルートのスポット",
+"rfLen": "所要時間"
 }

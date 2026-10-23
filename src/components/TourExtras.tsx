@@ -19,16 +19,43 @@ const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Mat
 export function RouteFit({ options, value, onChange, availMin, t, extName }: {
   options: RouteOption[]; value: string; onChange: (k: string) => void; availMin: number | null; t: Dict; extName: string;
 }) {
+  // Estilo iOS: escolha compacta da duração (pílulas) e, por baixo, as paragens do roteiro escolhido com nome.
+  const i = Math.max(0, options.findIndex((o) => o.key === value));
+  const cur = options[i];
+  const prev = new Set(i > 0 ? options[i - 1].plan.stops.map((s) => s.id) : []);
+  const ok = (o: RouteOption) => (availMin === null ? null : o.plan.minutesTour <= availMin);
   return (
-    <div className="field">
-      <label htmlFor="lvl"><b>{t.fitTitle}</b></label>
-      <select id="lvl" value={value} onChange={(e) => onChange(e.target.value)}>
+    <div className="rf">
+      <span className="rf-t">{t.fitTitle}</span>
+      <div className="rf-pills" role="radiogroup" aria-label={t.fitTitle}>
         {options.map((o) => {
-          const ok = availMin === null ? null : o.plan.minutesTour <= availMin;
-          const label = fmt(t.fitOpt, { n: o.plan.stops.length, h: hrs(o.plan.minutesTour) }) + (o.key === "ext" ? ` (${fmt(t.withExt, { x: extName })})` : "");
-          return <option key={o.key} value={o.key}>{label}{ok === null ? "" : ok ? ` ✓ ${t.fitsTag}` : ` · ${t.tooLong}`}</option>;
+          const f = ok(o);
+          return (
+            <button key={o.key} type="button" role="radio" aria-checked={o.key === value} className={`rf-p${o.key === value ? " on" : ""}${f === false ? " no" : ""}`} onClick={() => onChange(o.key)}>
+              <b className="num">{hrs(o.plan.minutesTour)}</b>
+              <small>{fmt(t.fitOpt, { n: o.plan.stops.length, h: "" }).replace(/\s*·\s*$/, "")}</small>
+              {f === true && <i className="rf-dot" aria-label={t.fitsTag} />}
+            </button>
+          );
         })}
-      </select>
+      </div>
+      {cur && (
+        <div className="rf-card">
+          <div className="rf-sum">
+            <span>{t.rfStops}</span>
+            {cur.key === "ext" && <small>+ {extName}</small>}
+            {ok(cur) === false && <small className="rf-warn">{t.tooLong}</small>}
+          </div>
+          <ol className="rf-list">
+            {cur.plan.stops.map((s, k) => (
+              <li key={s.id} className={i > 0 && !prev.has(s.id) ? "new" : ""}>
+                <span className="rf-n num">{k + 1}</span><span className="rf-name">{s.n}</span>
+                {i > 0 && !prev.has(s.id) && <span className="rf-new">+</span>}
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
     </div>
   );
 }

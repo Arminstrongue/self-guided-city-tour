@@ -1429,5 +1429,17 @@
 "rsTzPick": "Fuso orario della prenotazione",
 "rsTzErr": "Scegli la città o il fuso orario della prenotazione, così l'ora sarà corretta.",
 "sharePlan": "Il mio piano per {city} con VOYBU: {n} luoghi famosi, {c} di trasporti.",
-"shareSome": "Ho già visto {k} dei {n} luoghi famosi di {city} con VOYBU."
+"shareSome": "Ho già visto {k} dei {n} luoghi famosi di {city} con VOYBU.",
+"ocRows": {
+"route": "Percorso",
+"map": "Mappa",
+"audio": "Audioguida",
+"photos": "Foto",
+"res": "Prenotazioni e biglietti",
+"live": "Dati in tempo reale",
+"gps": "Posizione",
+"bat": "Batteria"
+},
+"rfStops": "Tappe di questo percorso",
+"rfLen": "Durata"
 }

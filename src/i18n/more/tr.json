@@ -1862,5 +1862,17 @@
 "rsTzPick": "Rezervasyon saat dilimi",
 "rsTzErr": "Saatin doğru olması için şehri veya rezervasyon saat dilimini seçin.",
 "sharePlan": "VOYBU ile {city} planım: {n} ünlü yer, ulaşımda {c}.",
-"shareSome": "VOYBU ile {city}'deki {n} ünlü yerden {k} tanesini gezdim."
+"shareSome": "VOYBU ile {city}'deki {n} ünlü yerden {k} tanesini gezdim.",
+"ocRows": {
+"route": "Rota",
+"map": "Harita",
+"audio": "Sesli rehber",
+"photos": "Fotoğraflar",
+"res": "Rezervasyonlar ve biletler",
+"live": "Canlı veriler",
+"gps": "Konum",
+"bat": "Pil"
+},
+"rfStops": "Bu rotadaki duraklar",
+"rfLen": "Süre"
 }

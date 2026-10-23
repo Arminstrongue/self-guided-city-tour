@@ -31,7 +31,7 @@ import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
-import { Wallet } from "lucide-react";
+import { ArrowLeftRight, ChevronRight, Wallet } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { CommentsButton } from "./Comments";
 import Portal from "@/components/Portal";
@@ -314,7 +314,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
           {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
           {!preview && <OfflineStatus t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
           {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
-          <button className="link-btn" style={{ alignSelf: "flex-start" }} onClick={() => setFxOpen(true)}>💱 {t.ttFx} · {city.cur} → {fx.cur}</button>
+          <button type="button" className="ios-row press" onClick={() => setFxOpen(true)}>
+            <span className="ios-ic" style={{ background: "#ff9500" }}><ArrowLeftRight size={17} color="#fff" aria-hidden="true" /></span>
+            <span className="ios-tx"><b>{t.ttFx}</b>{city.cur !== fx.cur && <small>{city.cur} → {fx.cur}</small>}</span><ChevronRight size={18} className="ios-chev" aria-hidden="true" />
+          </button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
 

@@ -1374,5 +1374,17 @@
 "rsTzPick": "预订所在时区",
 "rsTzErr": "请选择城市或预订所在时区，以确保时间正确。",
 "sharePlan": "我用 VOYBU 规划的{city}行程：{n} 个著名景点，交通费 {c}。",
-"shareSome": "我已用 VOYBU 游览了{city}的 {n} 个著名景点中的 {k} 个。"
+"shareSome": "我已用 VOYBU 游览了{city}的 {n} 个著名景点中的 {k} 个。",
+"ocRows": {
+"route": "路线",
+"map": "地图",
+"audio": "语音导览",
+"photos": "照片",
+"res": "预订与门票",
+"live": "实时数据",
+"gps": "定位",
+"bat": "电池"
+},
+"rfStops": "本路线的站点",
+"rfLen": "时长"
 }
