@@ -1614,5 +1614,16 @@
 "playing": "In riproduzione",
 "paused": "In pausa",
 "free": "Senza diritti · uso libero"
+},
+"cs": {
+"blockT": "Bloccare @{h}?",
+"blockS": "Non potrà vedere il tuo profilo né scriverti. Non riceverà avvisi.",
+"clearT": "Eliminare questa chat?",
+"clearS": "I messaggi vengono eliminati solo per te.",
+"next": "Livello successivo",
+"toGo": "mancano {n}",
+"earned": "{a} di {b} ottenuti",
+"pts": "punti",
+"done": "Ottenuto"
 }
 }

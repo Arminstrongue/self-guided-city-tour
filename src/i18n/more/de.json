@@ -1587,5 +1587,16 @@
 "playing": "Läuft",
 "paused": "Pausiert",
 "free": "Lizenzfrei · frei nutzbar"
+},
+"cs": {
+"blockT": "@{h} blockieren?",
+"blockS": "Die Person kann Ihr Profil nicht mehr sehen und Ihnen nicht schreiben. Sie wird nicht benachrichtigt.",
+"clearT": "Diesen Chat löschen?",
+"clearS": "Die Nachrichten werden nur für Sie gelöscht.",
+"next": "Nächstes Level",
+"toGo": "noch {n}",
+"earned": "{a} von {b} erreicht",
+"pts": "Punkte",
+"done": "Erreicht"
 }
 }

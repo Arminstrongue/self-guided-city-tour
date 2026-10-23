@@ -1583,5 +1583,16 @@
 "playing": "Lecture",
 "paused": "En pause",
 "free": "Libre de droits · utilisation gratuite"
+},
+"cs": {
+"blockT": "Bloquer @{h} ?",
+"blockS": "Cette personne ne pourra plus voir votre profil ni vous écrire. Elle ne sera pas avertie.",
+"clearT": "Supprimer cette discussion ?",
+"clearS": "Les messages sont supprimés uniquement pour vous.",
+"next": "Niveau suivant",
+"toGo": "encore {n}",
+"earned": "{a} sur {b} obtenus",
+"pts": "points",
+"done": "Obtenu"
 }
 }

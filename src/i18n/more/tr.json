@@ -2047,5 +2047,16 @@
 "playing": "Çalıyor",
 "paused": "Duraklatıldı",
 "free": "Telifsiz · ücretsiz kullanım"
+},
+"cs": {
+"blockT": "@{h} engellensin mi?",
+"blockS": "Profilinizi göremez ve size mesaj gönderemez. Bildirim gönderilmez.",
+"clearT": "Bu sohbet silinsin mi?",
+"clearS": "Mesajlar yalnızca sizin için silinir.",
+"next": "Sonraki seviye",
+"toGo": "{n} kaldı",
+"earned": "{b} rozetten {a} kazanıldı",
+"pts": "puan",
+"done": "Kazanıldı"
 }
 }

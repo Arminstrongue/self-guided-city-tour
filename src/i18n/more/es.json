@@ -1614,5 +1614,16 @@
 "playing": "Sonando",
 "paused": "En pausa",
 "free": "Sin derechos de autor · uso libre"
+},
+"cs": {
+"blockT": "¿Bloquear a @{h}?",
+"blockS": "No podrá ver su perfil ni enviarle mensajes. No recibirá aviso.",
+"clearT": "¿Eliminar este chat?",
+"clearS": "Los mensajes se eliminan solo para usted.",
+"next": "Siguiente nivel",
+"toGo": "faltan {n}",
+"earned": "{a} de {b} conseguidas",
+"pts": "puntos",
+"done": "Conseguida"
 }
 }

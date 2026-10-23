@@ -68,7 +68,7 @@ async function cityNames() {
 
 export type Score = {
   points: number; rewardPoints: number; level: number; nextAt: number | null; levelAt: number;
-  cities: number; countries: number; stops: number; gps: number; badges: BadgeId[];
+  cities: number; countries: number; stops: number; gps: number; badges: BadgeId[]; progress: Record<BadgeId, [number, number]>;
   breakdown: { k: "cities" | "declared" | "countries" | "stops" | "gps" | "posts" | "comments" | "friends" | "paid"; n: number; pts: number }[];
 };
 
@@ -108,7 +108,13 @@ export async function scoreOf(r: Raw, totalCities: number): Promise<Score> {
   if (r.commentDays >= 10) b.push("commenter");
   if (r.joined >= 3) b.push("connector");
   if (r.paid >= 1) b.push("ambassador");
-  return { points, rewardPoints, level, levelAt: LEVEL_AT[level], nextAt: LEVEL_AT[level + 1] ?? null, cities: allCities, countries: countries.size, stops: r.stops, gps: r.gps, badges: b, breakdown };
+  // Progresso de cada medalha (atual / meta) para mostrar quanto falta.
+  const progress: Record<BadgeId, [number, number]> = {
+    "first-city": [allCities, 1], "cities-5": [allCities, 5], "cities-10": [allCities, 10], "all-cities": [r.cities.size, Math.max(1, totalCities)],
+    "countries-3": [countries.size, 3], "countries-10": [countries.size, 10], "stops-10": [r.stops, 10], "stops-50": [r.stops, 50],
+    "gps-10": [r.gps, 10], storyteller: [r.postDays, 10], commenter: [r.commentDays, 10], connector: [r.joined, 3], ambassador: [r.paid, 1]
+  };
+  return { points, rewardPoints, level, levelAt: LEVEL_AT[level], nextAt: LEVEL_AT[level + 1] ?? null, cities: allCities, countries: countries.size, stops: r.stops, gps: r.gps, badges: b, breakdown, progress };
 }
 
 const totalCities = async () => (await loadCities()).length;

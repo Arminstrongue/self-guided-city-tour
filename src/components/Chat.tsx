@@ -13,6 +13,8 @@ import { useLive, type LiveEvent } from "@/lib/live-client";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { PostSheet } from "./PostExtras";
 import { I, Plus, Mic, SendHorizontal } from "./Ico";
+import { Ban, ChevronRight, Flag, MoreHorizontal, Trash2, UserRound } from "lucide-react";
+import Portal from "./Portal";
 
 type Ref = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
 type Msg = {
@@ -140,7 +142,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const [txt, setTxt] = useState("");
   const [sel, setSel] = useState<string | null>(null);
   const [menu, setMenu] = useState(false);
-  const [sure, setSure] = useState(false);
+  const [sheet, setSheet] = useState<"main" | "clear" | "block" | "report">("main");
   const [reported, setReported] = useState(false);
   const [sending, setSending] = useState(false);
   const [warn, setWarn] = useState("");
@@ -299,18 +301,46 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
       <header className="ch-head">
         <button className="ch-ic" onClick={onClose} aria-label={t.navBack} title={t.navBack}>←</button>
         {p ? <a className="ch-who" href={`/${locale}/u/${p.handle}`}><Avatar p={p} size={36} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}</b><small className="hint">@{p.handle}</small></span></a> : <span style={{ flex: 1 }} />}
-        {p && <button className="ch-ic" onClick={() => { setMenu(!menu); setSure(false); }} aria-label="⋯">⋯</button>}
+        {p && <button className="ch-ic" onClick={() => { setMenu(true); setSheet("main"); }} aria-label="⋯" aria-haspopup="dialog"><MoreHorizontal size={22} aria-hidden="true" /></button>}
         <button className="ch-ic" onClick={onClose} aria-label={t.close} title={t.close}>✕</button>
       </header>
       {menu && p && (
-        <div className="stack sc-menu ch-menu" style={{ gap: 6 }}>
-          <button className={sure ? "danger" : ""} onClick={async () => { if (!sure) return setSure(true); await post(handle, { action: "clear" }); onClose(); }}>🗑 {sure ? t.chClearSure : t.chClear}</button>
-          <button onClick={async () => { await act(p.handle, "block"); onClose(); }}>🚫 {t.scBlock}</button>
-          {reported ? <p className="note">✓ {t.scReportDone}</p> : (
-            <div className="stack" style={{ gap: 6 }}><b>⚑ {t.scReport}</b>
-              <div className="ex-chips">{(Object.keys(t.scReasons) as (keyof typeof t.scReasons)[]).map((r) => <button key={r} onClick={async () => { await act(p.handle, "report", { reason: r, note: "chat" }); setReported(true); }}>{t.scReasons[r]}</button>)}</div></div>
-          )}
-        </div>
+        <Portal><div className="as-bg" onClick={() => { setMenu(false); setSheet("main"); }}>
+          <div className="as" role="dialog" aria-modal="true" aria-label={p.name} onClick={(e) => e.stopPropagation()}>
+            <span className="as-grab" aria-hidden="true" />
+            {sheet === "main" && <>
+              <div className="as-who"><Avatar p={p} size={52} /><b>{p.name}</b><small>@{p.handle}</small></div>
+              <div className="as-sec"><div className="as-group">
+                <a className="as-row" href={`/${locale}/u/${p.handle}`}><UserRound size={21} strokeWidth={1.9} aria-hidden="true" /><span className="as-tx"><span>{t.acView}</span></span><ChevronRight size={18} className="as-chev" aria-hidden="true" /></a>
+              </div></div>
+              <div className="as-sec"><div className="as-group">
+                <button type="button" className="as-row red" onClick={() => setSheet("clear")}><Trash2 size={21} strokeWidth={1.9} aria-hidden="true" /><span className="as-tx"><span>{t.chClear}</span></span><ChevronRight size={18} className="as-chev" aria-hidden="true" /></button>
+                <button type="button" className="as-row red" onClick={() => setSheet("block")}><Ban size={21} strokeWidth={1.9} aria-hidden="true" /><span className="as-tx"><span>{t.scBlock}</span></span><ChevronRight size={18} className="as-chev" aria-hidden="true" /></button>
+                <button type="button" className="as-row red" onClick={() => setSheet("report")} disabled={reported}><Flag size={21} strokeWidth={1.9} aria-hidden="true" /><span className="as-tx"><span>{reported ? `✓ ${t.scReportDone}` : t.scReport}</span></span>{!reported && <ChevronRight size={18} className="as-chev" aria-hidden="true" />}</button>
+              </div></div>
+            </>}
+            {(sheet === "clear" || sheet === "block") && (
+              <div className="as-sec"><div className="as-group as-confirm">
+                <div className="as-msg"><b>{sheet === "clear" ? t.cs.clearT : fmt(t.cs.blockT, { h: p.handle })}</b><small>{sheet === "clear" ? t.cs.clearS : t.cs.blockS}</small></div>
+                <button type="button" className="as-row red center" onClick={async () => {
+                  if (sheet === "clear") await post(handle, { action: "clear" }); else await act(p.handle, "block");
+                  onClose();
+                }}>{sheet === "clear" ? t.chClear : t.scBlock}</button>
+              </div></div>
+            )}
+            {sheet === "report" && (
+              <div className="as-sec">
+                <span className="as-h">{t.pm.reportT}</span>
+                <div className="as-group">{(Object.keys(t.scReasons) as (keyof typeof t.scReasons)[]).map((r) => (
+                  <button key={r} type="button" className="as-row" onClick={async () => { await act(p.handle, "report", { reason: r, note: "chat" }); setReported(true); setMenu(false); setSheet("main"); toast(t.scReportDone, { icon: "✓" }); }}>
+                    <span className="as-tx"><span>{t.scReasons[r]}</span></span><ChevronRight size={18} className="as-chev" aria-hidden="true" />
+                  </button>
+                ))}</div>
+              </div>
+            )}
+            <button type="button" className="as-cancel" onClick={() => (sheet === "main" ? setMenu(false) : setSheet("main"))}>{t.pm.cancel}</button>
+          </div>
+        </div></Portal>
       )}
       <div className="ch-msgs" ref={box} onScroll={(e) => { const b = e.currentTarget; stick.current = b.scrollHeight - b.scrollTop - b.clientHeight < 80; }}>
         {th === null && <p className="hint" style={{ textAlign: "center" }}>{t.exLoading}</p>}
