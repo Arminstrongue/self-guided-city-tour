@@ -14,7 +14,9 @@ const Q: Record<string, string[]> = {
   pharmacy: ['nwr["amenity"="pharmacy"]'],
   atm: ['nwr["amenity"="atm"]', 'nwr["amenity"="bank"]["atm"="yes"]'],
   wifi: ['nwr["internet_access"="wlan"]["internet_access:fee"="no"]', 'nwr["internet_access"="wlan"]["amenity"="library"]'],
-  charge: ['nwr["amenity"="charging_station"]["socket:schuko"]', 'nwr["device_charging_station"="yes"]']
+  charge: ['nwr["amenity"="charging_station"]["socket:schuko"]', 'nwr["device_charging_station"="yes"]'],
+  luggage: ['nwr["amenity"="luggage_locker"]', 'nwr["amenity"="left_luggage"]'],
+  rest: ['nwr["leisure"="park"]["name"]', 'nwr["leisure"="garden"]["access"!="private"]["name"]']
 };
 const ENDPOINTS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
 type El = { id: number; lat?: number; lon?: number; center?: { lat: number; lon: number }; tags?: Record<string, string> };

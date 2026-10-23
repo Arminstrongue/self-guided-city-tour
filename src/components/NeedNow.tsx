@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 import { fmt } from "@/i18n/core";
 import { arrivalsFor } from "@/data/arrivals";
-import { BatteryCharging, ChevronRight, CloudOff, History, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
+import { BatteryCharging, ChevronRight, CloudOff, History, Timer, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import Portal from "./Portal";
 
@@ -17,7 +17,7 @@ const NEAR: { k: keyof Dict["nn"]["items"]; q: string; I: typeof Toilet }[] = [
 ];
 
 type NearItem = { id: number; lat: number; lng: number; m: number; name: string; hours: string; fee: string; price: string; wheelchair: string; changing: boolean; indoor: boolean };
-const API: Partial<Record<keyof Dict["nn"]["items"], string>> = { toilet: "toilets", water: "water", pharmacy: "pharmacy", atm: "atm", wifi: "wifi", charge: "charge" };
+const API: Partial<Record<keyof Dict["nn"]["items"], string>> = { luggage: "luggage", toilet: "toilets", water: "water", pharmacy: "pharmacy", atm: "atm", wifi: "wifi", charge: "charge" };
 
 export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
   const [kind, setKind] = useState<keyof Dict["nn"]["items"] | null>(null);
@@ -76,6 +76,7 @@ export function NeedNow({ t, locale, city = "lon", compact = false }: { t: Dict;
     { k: "go", I: MapPinned, label: t.nn.go, sub: t.nn.goSub, href: `/${locale}/arrive?city=${city}&go=1` },
     { k: "near", I: Search, label: t.nn.near, sub: t.nn.nearSub, run: () => setNear(true) },
     { k: "exp", I: Compass, label: t.nn.explore, sub: t.nn.exploreSub, href: `/${locale}/start?city=${city}` },
+    { k: "free", I: Timer, label: t.dx.free, sub: t.dx.freeSub, href: `/${locale}/free?city=${city}` },
     { k: "ess", I: CloudOff, label: t.ess.essentials, sub: t.ess.sub, href: `/${locale}/wallet/essentials?city=${city}` }
   ];
   return (

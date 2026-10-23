@@ -2852,3 +2852,38 @@ a.nt2-who small{opacity:.55}
 .nn-resume span{flex:1;font-weight:600;font-size:15px}
 .off-bar svg,.ess-off svg{flex:none}
 .off-bar a{white-space:nowrap}
+
+/* Durante o passeio: pausa, bagagem, encontro, tempo livre */
+.wt{display:grid;gap:8px;margin:10px 0}
+.wt-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.wt-i{display:grid;justify-items:center;gap:6px;padding:12px 4px;border:0;border-radius:16px;background:color-mix(in srgb,var(--ink) 5%,transparent);color:inherit;font:inherit;text-decoration:none;cursor:pointer;text-align:center}
+.wt-i small{font-size:12px;font-weight:600;line-height:1.2}
+.wt-ic{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--as-bg,#fff)}
+.wt-i.on{background:#1c1c1e;color:#fff}
+.wt-i.on .wt-ic{background:rgba(255,255,255,.14)}
+.wt-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;border:0;border-radius:14px;background:#1c1c1e;color:#fff;font:inherit;font-size:14px;cursor:pointer}
+.wt-bar b{margin-inline-start:auto}
+.wt-msg{display:grid;gap:4px;padding:14px 16px}
+.wt-msg b{font-size:18px}
+.wt-go{width:100%;margin-top:6px}
+.ft,.mt-make{display:grid;gap:12px}
+.ft{max-width:640px;margin:0 auto;padding:8px 16px 96px;gap:14px}
+.ft-seg{display:flex;flex-wrap:wrap}
+.ft-seg button{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap}
+.ft-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.ft-list li{display:flex;gap:12px;align-items:center}
+.ft-n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#1c1c1e;color:#fff;font-size:13px;font-weight:700;flex:none}
+.ft-tot{opacity:.6;font-size:14px;flex:none}
+.mt-places .ios-row{width:100%;border:0;background:none;color:inherit;font:inherit;text-align:start;cursor:pointer;display:flex;gap:10px;align-items:center}
+.mt-ok{margin-inline-start:auto;font-weight:700}
+.mt-field{display:grid;gap:6px}
+.mt-field input{padding:12px 14px;border-radius:12px;border:0;background:color-mix(in srgb,var(--ink) 6%,transparent);font:inherit;color:inherit}
+.mt-count{font-size:30px;letter-spacing:-.02em}
+.ft .ios-row{text-decoration:none;color:inherit}
+.wt-sheet{background:var(--bg,#f2f2f7);color:var(--ink,#111);border-radius:22px 22px 0 0;padding:8px 14px calc(16px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.2)}
+.wt-sheet .as-h,.mt-make .as-h{color:inherit;opacity:.6;text-shadow:none;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+.wt-sheet .nn-sh-h{color:inherit}
+.wt-sheet .as-group{background:var(--as-bg,#fff)}
+.wt-sheet .as-cancel{background:var(--as-bg,#fff)}
+.wt-sheet .as-grab{background:color-mix(in srgb,var(--ink) 25%,transparent)}
+.wt-sheet .mu2-x{background:color-mix(in srgb,var(--ink) 8%,transparent);color:inherit}

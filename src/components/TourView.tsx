@@ -19,6 +19,7 @@ import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
+import { WalkTools } from "./WalkTools";
 import { RatingCard } from "./Rating";
 import { OfflineButton } from "./TravelTools";
 import { OfflineCheck, OfflineStatus } from "./OfflineCheck";
@@ -164,6 +165,10 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
   const doneN = plan.stops.filter((s) => done[s.id]).length;
   const [going, setGoing] = useLocalState<boolean>(`sgct:go:${city.id}`, false);
   const started = going || doneN > 0;
+  // Folga para o regresso: tempo disponível menos o que falta das paragens por fazer (e o resto fixo do roteiro).
+  const stopsMin = plan.stops.reduce((a, s) => a + s.v + s.leg.min, 0);
+  const leftMin = plan.stops.filter((s) => !done[s.id]).reduce((a, s) => a + s.v + s.leg.min, 0);
+  const slack = avail === null ? null : Math.round(avail - leftMin - Math.max(0, plan.minutesTour - stopsMin));
   // Para "Continuar onde ficou" no início: último passeio em curso, com o nome legível e o progresso.
   useEffect(() => { if (started) try { localStorage.setItem("sgct:last-tour", JSON.stringify({ id: city.id, name: cityLabel, done: doneN, n: plan.stops.length, at: Date.now() })); } catch { /* ignorar */ } }, [started, city.id, cityLabel, doneN, plan.stops.length]);
   const [planOpen, setPlanOpen] = useState(false);
@@ -300,6 +305,8 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
+          <WalkTools t={t} locale={locale} cityId={city.id} slack={slack}
+            places={plan.stops.filter((s) => !done[s.id]).map((s) => ({ id: s.id, name: stopName(s, locale), lat: s.lat, lng: s.lng }))} />
           <button type="button" className="ios-row press" onClick={() => setPlanOpen(!planOpen)} aria-expanded={planOpen}>
             <span className="ios-tx"><b>{t.tg.plan}</b><small>{fmt(t.fitOpt, { n: plan.stops.length, h: hrs(plan.minutesTour) })}</small></span>
             <ChevronRight size={18} className="ios-chev" style={{ transform: planOpen ? "rotate(90deg)" : undefined }} aria-hidden="true" />
