@@ -581,7 +581,7 @@
 },
 "diary": "Mon journal",
 "diaryTitle": "Mon journal de voyage",
-"diarySub": "Vos souvenirs sont enregistrés uniquement sur cet appareil.",
+"diarySub": "Sans connexion, les souvenirs restent sur cet appareil. Connecté, ils sont aussi enregistrés dans votre compte.",
 "diaryEmpty": "Pas encore de souvenirs. Enregistrez des moments et des lieux en explorant une ville.",
 "diaryStamps": "{n} villes · {m} souvenirs",
 "diaryDelete": "Supprimer",
@@ -699,7 +699,7 @@
 "wBenefits": [
 "Pass et réservations sur tous vos appareils",
 "Envies, plans et villes visitées",
-"Souvenirs photo, toujours en sécurité"
+"Photos et souvenirs enregistrés dans votre compte et sur vos autres appareils"
 ],
 "gjSteps": [
 "Inscrivez-vous avec votre profil et votre licence de guide.",
@@ -1391,5 +1391,12 @@
 "agHow5": "La commission est calculée sur ce que le client paie réellement pour l'abonnement chaque mois.",
 "agHow6": "Chaque paiement mensuel compte une fois encaissé. La commission devient payable 30 jours après le paiement du client ; si ce paiement est remboursé ou contesté dans ce délai, sa commission est annulée.",
 "agHow7": "Si le client résilie, les commissions s'arrêtent à partir du mois suivant ; les paiements déjà effectués gardent leur commission.",
-"agHow8": "Vous recevez un lien et un code de parrainage, un message prêt à envoyer aux établissements, un suivi des prospects dans votre portail et la page établissements à leur montrer."
+"agHow8": "Vous recevez un lien et un code de parrainage, un message prêt à envoyer aux établissements, un suivi des prospects dans votre portail et la page établissements à leur montrer.",
+"tpDurHint": "Les choix ci-dessous sont du temps pour visiter, aller et retour compris. Si vous avez un vol, un train ou un bateau, utilisez l'heure de départ : nous ajoutons la marge.",
+"tpDurFits": "Vous avez choisi environ {h} de visite. La marge avant le départ n'est pas incluse.",
+"gdBioLang": "Rédigé par le guide en {l}",
+"rsTzPick": "Fuseau horaire de la réservation",
+"rsTzErr": "Choisissez la ville ou le fuseau horaire de la réservation pour que l'heure soit juste.",
+"sharePlan": "Mon programme à {city} avec VOYBU : {n} sites célèbres, {c} de transport.",
+"shareSome": "J'ai déjà vu {k} des {n} sites célèbres de {city} avec VOYBU."
 }

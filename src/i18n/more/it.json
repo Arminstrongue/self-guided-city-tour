@@ -600,7 +600,7 @@
 },
 "diary": "Il mio diario",
 "diaryTitle": "Il mio diario di viaggio",
-"diarySub": "I tuoi ricordi sono salvati solo su questo dispositivo.",
+"diarySub": "Senza accesso, i ricordi restano solo su questo dispositivo. Con l'accesso, vengono salvati anche nel tuo account.",
 "diaryEmpty": "Ancora nessun ricordo. Salva momenti e luoghi mentre esplori una città.",
 "diaryStamps": "{n} città · {m} ricordi",
 "diaryDelete": "Elimina",
@@ -733,7 +733,7 @@
 "wBenefits": [
 "Pass e prenotazioni su ogni dispositivo",
 "Desideri, piani e città visitate",
-"Ricordi fotografici, sempre al sicuro"
+"Foto e ricordi salvati nel tuo account e sugli altri dispositivi"
 ],
 "gjSteps": [
 "Iscriviti con il tuo profilo e la licenza di guida.",
@@ -1422,5 +1422,12 @@
 "agHow5": "La commissione è calcolata su quanto il cliente paga effettivamente per l'abbonamento ogni mese.",
 "agHow6": "Ogni pagamento mensile conta quando viene incassato. La commissione diventa pagabile 30 giorni dopo il pagamento del cliente; se quel pagamento viene rimborsato o contestato in quel periodo, la commissione è annullata.",
 "agHow7": "Se il cliente disdice, le commissioni si fermano dal mese successivo; i pagamenti già fatti mantengono la commissione.",
-"agHow8": "Ricevi un link e un codice di referral, un messaggio pronto per le attività, una pipeline nel tuo portale e la pagina per le attività da mostrare."
+"agHow8": "Ricevi un link e un codice di referral, un messaggio pronto per le attività, una pipeline nel tuo portale e la pagina per le attività da mostrare.",
+"tpDurHint": "Le opzioni qui sotto indicano il tempo per visitare, andata e ritorno inclusi. Se devi prendere un volo, un treno o una nave, usa l'orario di partenza: aggiungiamo noi il margine.",
+"tpDurFits": "Hai scelto circa {h} per visitare. Il margine prima della partenza non è incluso.",
+"gdBioLang": "Scritto dalla guida in {l}",
+"rsTzPick": "Fuso orario della prenotazione",
+"rsTzErr": "Scegli la città o il fuso orario della prenotazione, così l'ora sarà corretta.",
+"sharePlan": "Il mio piano per {city} con VOYBU: {n} luoghi famosi, {c} di trasporti.",
+"shareSome": "Ho già visto {k} dei {n} luoghi famosi di {city} con VOYBU."
 }

@@ -30,7 +30,8 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
   const tz = city?.tz ?? "UTC";
   const words = { today: t.tpToday, tomorrow: t.tpTomorrow };
   const when = (ms: number) => whenLabel(ms, tz, INTL_LOCALE[locale], words);
-  const bd = (o: QsOption) => breakdownOf(o, trip);
+  // "Cerca de 3 horas" = tempo para passear (com ida e regresso), sem margem de partida; só "até à partida" soma a margem.
+  const bd = (o: QsOption) => breakdownOf(o, time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip);
   const pickCity = (id: string) => { setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
   const upd = (v: Trip) => { setTrip(v); setErr(""); };
   useEffect(() => { if (pre) { const v = loadTrip(pre); setTrip(v); setLater(Boolean(v.startAt)); } }, [pre]);
@@ -119,6 +120,7 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
           )}
 
           <span className="bp-h">{t.qsHowLong}</span>
+          <small className="hint">{t.tpDurHint}</small>
           <div className="qs-time qs-dep">
             <span className="qs-dep-l"><Clock size={18} aria-hidden="true" />{t.tpUntilDep[trip.mode]}</span>
             <span className="hint">{fmt(t.tpCityTime, { c: city.name })}</span>
@@ -145,7 +147,8 @@ export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: 
                 <span className="qs-back-at">{fmt(t.bpBackAt, { p: endLabel(trip.end, t), t: when(win.start + bd(opt).total * 60000) })}</span>
                 {time?.k === "dep" && win.dep !== null && <span className="qs-back-at">{fmt(t.tpDepAt, { m: t.tpModes[trip.mode], t: when(win.dep) })}</span>}
               </div>
-              <TimeBreakdown b={bd(opt)} t={t} trip={trip} hrs={hrs} />
+              {time && time.k !== "dep" && <span className="hint">{fmt(t.tpDurFits, { h: hrs(time.min === Infinity ? bd(opt).total : time.min) })}</span>}
+              <TimeBreakdown b={bd(opt)} t={t} trip={time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip} hrs={hrs} />
               {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
               <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}</ol>
               <div className="qs-adj">

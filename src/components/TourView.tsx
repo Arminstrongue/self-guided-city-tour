@@ -244,7 +244,9 @@ export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers,
     } catch { setNotice(t.notifyDenied); }
   }
 
-  const shareText = fmt(t.shareText, { city: cityLabel, n: plan.stops.length, c: money(plan.transport) });
+  // Só diz "visitei" quando o passeio terminou; antes é um plano ou progresso parcial.
+  const shareVars = { city: cityLabel, n: plan.stops.length, k: doneN, c: money(plan.transport) };
+  const shareText = fmt(doneN >= plan.stops.length ? t.shareText : doneN > 0 ? t.shareSome : t.sharePlan, shareVars);
 
   return (
     <>

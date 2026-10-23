@@ -27,11 +27,25 @@ const KINDS: Record<string, Record<SafetyKind, string[]>> = {
 /** Temas que mencionam "segurança" mas não mudam a viagem (informática, finanças, desporto). */
 const OFF_TOPIC = /vulnerab|cyber|ciber|hacker|malware|ransomware|\bphp\b|software|data breach|phishing|exploit|\bcve-|bitcoin|crypto|stock market|shares|sicherheitslücke|faille|premier league|champions league|football|futebol|fútbol/i;
 
+/** Perturbação real: greve sozinha chega; os outros meios de transporte só contam com cancelamento, atraso, suspensão ou encerramento. */
+const STRIKE: Record<string, string[]> = { pt: ["greve"], en: ["strike", "walkout"], es: ["huelga"], fr: ["grève"], de: ["streik"], it: ["sciopero"], zh: ["罢工"], ar: ["إضراب"], ja: ["ストライキ", "スト"] };
+const DISRUPT: Record<string, string[]> = {
+  pt: ["cancelad", "suprimid", "atraso", "suspens", "interromp", "encerrad", "fechad", "perturba", "caos", "sem serviço", "avaria"],
+  en: ["cancel", "delay", "disruption", "suspend", "halt", "closed", "closure", "shut", "chaos", "outage", "no service", "breakdown"],
+  es: ["cancela", "retraso", "suspend", "interrump", "cerrad", "cierre", "caos", "avería"],
+  fr: ["annul", "retard", "perturb", "suspend", "interromp", "fermé", "fermeture", "chaos", "panne"],
+  de: ["ausfall", "fällt aus", "verspätung", "eingestellt", "gesperrt", "sperrung", "chaos", "störung"],
+  it: ["cancellat", "soppress", "ritard", "sospes", "interrott", "chius", "caos", "guasto"],
+  zh: ["取消", "延误", "停运", "暂停", "关闭"], ar: ["إلغاء", "تأخير", "توقف", "إغلاق"], ja: ["欠航", "遅延", "運休", "運転見合わせ", "閉鎖"]
+};
 export function safetyKind(title: string, locale: string): SafetyKind | null {
   if (OFF_TOPIC.test(title)) return null;
   const t = title.toLowerCase();
+  const has = (ws: string[] | undefined) => (ws ?? []).some((w) => t.includes(w.toLowerCase()));
   const k = KINDS[locale] ?? KINDS.en;
-  for (const kind of ["transport", "weather", "access", "crime"] as const) if (k[kind].some((w) => t.includes(w.toLowerCase()))) return kind;
+  const lang = KINDS[locale] ? locale : "en";
+  if (has(STRIKE[lang]) || (has(k.transport) && has(DISRUPT[lang]))) return "transport";
+  for (const kind of ["weather", "access", "crime"] as const) if (has(k[kind])) return kind;
   return null;
 }
 

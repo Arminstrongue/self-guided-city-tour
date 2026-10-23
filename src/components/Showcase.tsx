@@ -81,7 +81,7 @@ export function DestGrid({ locale, cities, from, labels }: { locale: string; cit
 
 /* ---------- Página da cidade ---------- */
 
-export type ShowStop = { id: string; name: string; area: string; minutes: number; top: boolean };
+export type ShowStop = { id: string; name: string; area: string; minutes: number; top: boolean; optional?: boolean };
 
 /** Herói da cidade com as fotografias das paragens mais famosas. */
 export function CityHero({ cityId, children }: { cityId: string; children: React.ReactNode }) {
@@ -107,7 +107,8 @@ export function CityGallery({ cityId, cityName, stops, sub, t, locale }: { cityI
           {stops.map((s) => (
             <button key={s.id} className="scard press" onClick={() => void openStop(s)}>
               <span className="ph">{m ? <Img src={m.stops[s.id]?.thumb} alt="" /> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
-                {s.top && <span className="cnt" style={{ left: 10, right: "auto", background: "linear-gradient(135deg,#ffb340,#ff7a1a)", color: "#1a0d00" }}>Top</span>}</span>
+                {s.top && !s.optional && <span className="cnt" style={{ left: 10, right: "auto", background: "linear-gradient(135deg,#ffb340,#ff7a1a)", color: "#1a0d00" }}>Top</span>}
+                {s.optional && <span className="cnt" style={{ left: 10, right: "auto" }}>+ {t.tpOptional}</span>}</span>
               <span className="tx"><b>{s.name}</b><small className="num">{s.area} · {s.minutes} min</small></span>
             </button>
           ))}

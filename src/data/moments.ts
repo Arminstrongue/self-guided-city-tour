@@ -428,3 +428,23 @@ export const AGENDA: Record<string, string> = {
   tun: "https://allevents.in/tunis", add: "https://allevents.in/addis-ababa", nbo: "https://allevents.in/nairobi", lad: "https://allevents.in/luanda",
   acc: "https://allevents.in/accra", kgl: "https://allevents.in/kigali", dkr: "https://allevents.in/dakar"
 };
+
+/**
+ * Dias da semana em que o momento acontece (0 = domingo … 6 = sábado), lidos do próprio texto inglês
+ * ("Tue & Sat", "on Sunday", "Monday to Saturday", "Friday and Saturday nights"). null = qualquer dia.
+ * Serve para nunca marcar "Agora" num dia em que o cartão diz que não há.
+ */
+export function momentDays(m: Pick<Moment, "when" | "en">): number[] | null {
+  const t = `${m.en[0]} ${m.en[1]}`.toLowerCase();
+  const D: Record<string, number> = { sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6 };
+  const range = t.match(/\b(mon|tue|wed|thu|fri|sat|sun)[a-z]* to (mon|tue|wed|thu|fri|sat|sun)[a-z]*/);
+  if (range) {
+    const out: number[] = []; let d = D[range[1]];
+    for (let i = 0; i < 7; i++) { out.push(d); if (d === D[range[2]]) break; d = (d + 1) % 7; }
+    return out;
+  }
+  const found = [...t.matchAll(/\b(mon|tue|wed|thu|fri|sat|sun)(day|days|s)?\b/g)].map((x) => D[x[1]]);
+  if (found.length) return [...new Set(found)].sort();
+  if (m.when === "weekend") return [6, 0];
+  return null;
+}

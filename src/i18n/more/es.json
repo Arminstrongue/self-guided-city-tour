@@ -98,7 +98,7 @@
 "wBenefits": [
 "Pases y reservas en cualquier dispositivo",
 "Lista de deseos, planes y ciudades visitadas",
-"Recuerdos con fotos, siempre a salvo"
+"Fotos y recuerdos guardados en tu cuenta y en tus otros dispositivos"
 ],
 "evTitle": "Agenda",
 "evCount": "{n} eventos en los próximos 30 días",
@@ -360,7 +360,7 @@
 },
 "diary": "Mi diario",
 "diaryTitle": "Mi diario de viaje",
-"diarySub": "Tus recuerdos se guardan solo en este dispositivo.",
+"diarySub": "Sin iniciar sesión, los recuerdos quedan solo en este dispositivo. Con sesión, también se guardan en tu cuenta.",
 "diaryEmpty": "Aún no hay recuerdos. Guarda momentos y lugares mientras exploras una ciudad.",
 "diaryStamps": "{n} ciudades · {m} recuerdos",
 "diaryDelete": "Eliminar",
@@ -1422,5 +1422,12 @@
 "agHow5": "La comisión se calcula sobre lo que el cliente paga realmente por la suscripción cada mes.",
 "agHow6": "Cada pago mensual cuenta cuando se cobra. La comisión pasa a ser pagadera 30 días después del pago del cliente; si ese pago se reembolsa o se disputa en ese plazo, se anula su comisión.",
 "agHow7": "Si el cliente cancela, las comisiones se detienen a partir del mes siguiente; los pagos ya hechos mantienen su comisión.",
-"agHow8": "Recibes un enlace y un código de referido, un mensaje listo para los negocios, una cartera de oportunidades en tu portal y la página para negocios para enseñarles."
+"agHow8": "Recibes un enlace y un código de referido, un mensaje listo para los negocios, una cartera de oportunidades en tu portal y la página para negocios para enseñarles.",
+"tpDurHint": "Las opciones de abajo son tiempo para pasear, con ida y vuelta. Si tienes que coger un vuelo, tren o barco, usa la hora de salida: nosotros añadimos el margen.",
+"tpDurFits": "Elegiste unas {h} para pasear. El margen antes de la salida no está incluido.",
+"gdBioLang": "Escrito por el guía en {l}",
+"rsTzPick": "Zona horaria de la reserva",
+"rsTzErr": "Elija la ciudad o la zona horaria de la reserva para que la hora sea correcta.",
+"sharePlan": "Mi plan para {city} con VOYBU: {n} lugares famosos, {c} en transporte.",
+"shareSome": "Ya visité {k} de {n} lugares famosos de {city} con VOYBU."
 }

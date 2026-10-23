@@ -17,7 +17,7 @@ import type { Airport, Stop } from "@/data/cities";
 import type { Museum } from "@/data/museums";
 
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
-export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string };
+export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string; days?: number[] | null };
 type Pos = { lat: number; lng: number };
 const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const KEY = "sgct:hobbies";
@@ -32,6 +32,11 @@ const pop = (p: Place) => (p.rating ? Math.max(0, p.rating - 4) * 4000 * Math.mi
 const tiktok = (q: string) => `https://www.tiktok.com/search?q=${encodeURIComponent(q)}`;
 const walkLink = (to: Pos) => `https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=walking`;
 const goLink = (to: Pos) => `https://www.google.com/maps/dir/?api=1&destination=${to.lat},${to.lng}&travelmode=transit`;
+
+/** Dia da semana na cidade (0 = domingo). */
+function weekdayNow(tz?: string): number {
+  try { return ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(new Intl.DateTimeFormat("en-GB", { timeZone: tz, weekday: "short" }).format(new Date())); } catch { return new Date().getDay(); }
+}
 
 /** Hora atual na cidade → que momentos são "agora". */
 function nowWhen(tz?: string): When[] {
@@ -116,7 +121,8 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
     void fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hobbies: next }) }).catch(() => null); // guarda na conta, se houver sessão
   }
 
-  const ms = useMemo(() => [...moments].sort((a, b) => (score(b.h, hobbies) + (now.includes(b.when) ? 2 : 0)) - (score(a.h, hobbies) + (now.includes(a.when) ? 2 : 0))), [moments, hobbies, now]);
+  const isNow = (m: MomentView) => now.includes(m.when) && (m.days?.includes(weekdayNow(tz)) ?? true);
+  const ms = useMemo(() => [...moments].sort((a, b) => (score(b.h, hobbies) + (isNow(b) ? 2 : 0)) - (score(a.h, hobbies) + (isNow(a) ? 2 : 0))), [moments, hobbies, now]);
   const cats = useMemo(() => rankCats(hobbies).filter((c) => data?.places?.some((p) => p.cat === c)), [hobbies, data]);
   const from = pos && distM(pos, center) < 40000 ? pos : center;
   const places = useMemo(() => (data?.places ?? []).filter((p) => cat === "all" || p.cat === cat)
@@ -164,7 +170,7 @@ export function Explore({ cityId, cityName, locale, t, moments, agenda, center, 
           {ms.map((m) => (
             <article key={m.id} className="card ex-m">
               <div className="ex-m-top"><span className="ex-ic" aria-hidden="true">{m.icon}</span>
-                <span className="ex-when">{WHEN_ICON[m.when]} {t.when[m.when]}{now.includes(m.when) && <b className="ex-now">● {t.exNow}</b>}</span></div>
+                <span className="ex-when">{WHEN_ICON[m.when]} {t.when[m.when]}{isNow(m) && <b className="ex-now">● {t.exNow}</b>}</span></div>
               <b className="ex-m-t">{m.title}</b>
               <p className="hint" style={{ margin: 0 }}>{m.text}</p>
               <div className="ex-tags">{m.h.map((h) => <span key={h} className={hobbies.includes(h) ? "on" : ""}>{HOBBY_ICON[h]} {t.hob[h]}</span>)}</div>

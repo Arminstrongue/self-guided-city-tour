@@ -66,12 +66,13 @@ export const BookBody = z.object({
  * Compara sem acentos, maiúsculas nem espaços; mantém a primeira ocorrência e a ordem.
  */
 export function dedupeText(text: string): string {
-  const norm = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  // Compara sem acentos, maiúsculas, pontuação nem espaços: "Sou guia." e "sou guia!" são a mesma frase.
+  const norm = (x: string) => x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
   const seen = new Set<string>();
-  return text.split(/\n{2,}/).map((para) => {
-    const parts = para.match(/[^.!?。！？]+[.!?。！？]*\s*/g) ?? [para];
+  return text.replace(/\r/g, "").split(/\n{2,}/).map((para) => para.split("\n").map((line) => {
+    const parts = line.match(/[^.!?。！？]+[.!?。！？]*\s*/g) ?? [line];
     return parts.filter((p) => { const k = norm(p); if (k.length < 12) return true; if (seen.has(k)) return false; seen.add(k); return true; }).join("").trim();
-  }).filter(Boolean).join("\n\n");
+  }).filter(Boolean).join("\n")).filter(Boolean).join("\n\n");
 }
 
 /** "Aeroporto", "Centro", "Hotel"… sem mais nada não chega para um ponto de encontro. */

@@ -51,7 +51,9 @@ export default async function GuidePage({ params, searchParams }: { params: { lo
             ? <>{g.meetingPoint}<br /><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${g.meetingPoint}, ${city ? cityName(city, "en") : ""}`)}`} target="_blank" rel="noopener noreferrer">{t.seeOnMaps} ↗</a></>
             : <span className="hint">{t.gdMeetTbc}</span>}</span></div>
         </div>
-        <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2><p style={{ whiteSpace: "pre-line" }}>{dedupeText(g.bio)}</p></section>
+        <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2>
+          {g.languages[0] && g.languages[0] !== params.locale && <span className="hint">✍️ {fmt(t.gdBioLang, { l: langNames([g.languages[0]], params.locale)[0] ?? g.languages[0] })}</span>}
+          <p style={{ whiteSpace: "pre-line" }} lang={g.languages[0] ?? undefined}>{dedupeText(g.bio)}</p></section>
         {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide t={t} locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
         {reviews.length > 0 && (
           <section className="stack" style={{ gap: 8 }}>

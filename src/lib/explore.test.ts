@@ -86,3 +86,14 @@ test("Ticketmaster: sessões do mesmo evento juntam-se numa entrada com a últim
   assert.equal(f.until, "2026-10-25"); assert.equal(f.runs, 3);
   assert.equal(out.find((x) => x.id === "4")!.until, undefined);
 });
+
+test("momentos com dias: nunca 'agora' num dia em que não acontecem", async () => {
+  const { MOMENTS, momentDays } = await import("@/data/moments");
+  const ladra = MOMENTS.lis.find((m) => m.id === "ladra")!;
+  assert.deepEqual(momentDays(ladra), [2, 6]); // terça e sábado
+  assert.ok(!momentDays(ladra)!.includes(5)); // sexta não
+  const rastro = MOMENTS.mad.find((m) => /Rastro/.test(m.en[0]));
+  if (rastro) assert.deepEqual(momentDays(rastro), [0]);
+  const pijp = Object.values(MOMENTS).flat().find((m) => /Monday to Saturday/.test(m.en[1]));
+  if (pijp) assert.deepEqual(momentDays(pijp), [1, 2, 3, 4, 5, 6]);
+});

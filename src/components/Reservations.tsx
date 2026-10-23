@@ -45,17 +45,29 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
 
 type Hit = { label: string; sub: string; lat: number; lng: number };
 
+/** Cidade do plano escolhido ou do roteiro mais recente neste telemóvel (se existir na lista). */
+function contextCity(cities: Record<string, string>): string {
+  try {
+    const p = JSON.parse(localStorage.getItem("sgct:planned") ?? "null") as { city?: string } | null;
+    const prog = Object.values(JSON.parse(localStorage.getItem("sgct:progress") ?? "{}") as Record<string, { city: string; at: number }>).sort((a, b) => b.at - a.at)[0];
+    for (const c of [prog?.city, p?.city]) if (c && cities[c]) return c;
+  } catch { /* ignorar */ }
+  return "";
+}
+
 /** Adicionar ou editar uma reserva. Mostra no fim o que ficou guardado, para o viajante confirmar. */
 function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
   t: Dict; locale: Locale; cities: Record<string, string>; tzOf: Record<string, string>; signed: boolean; initial: Reservation | null; onClose: (changed: boolean) => void;
 }) {
-  const [f, setF] = useState<ResInput>(() => initial ? { ...initial } : { kind: "ticket", title: "", city: "", localAt: "", tz: deviceTz(), place: "", lat: null, lng: null, ref: "", notes: "", photo: "", paid: false });
+  // Cidade pelo contexto (plano escolhido ou roteiro em curso); sem cidade, o fuso tem de ser escolhido (nunca assumido).
+  const [f, setF] = useState<ResInput>(() => initial ? { ...initial } : { kind: "ticket", title: "", city: contextCity(cities), localAt: "", tz: "", place: "", lat: null, lng: null, ref: "", notes: "", photo: "", paid: false });
   const [hits, setHits] = useState<Hit[] | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const set = (p: Partial<ResInput>) => setF((x) => ({ ...x, ...p }));
-  const tz = f.city && tzOf[f.city] ? tzOf[f.city] : f.tz || deviceTz();
-  const when = f.localAt ? zonedToDate(f.localAt, tz) : null;
+  const tz = f.city && tzOf[f.city] ? tzOf[f.city] : f.tz;
+  const zones = [...new Set([deviceTz(), ...Object.values(tzOf)])].sort();
+  const when = f.localAt && tz ? zonedToDate(f.localAt, tz) : null;
   async function find() {
     if (!f.city || f.place.trim().length < 3) return;
     const j = await fetch(`/api/geocode?city=${f.city}&lang=${locale}&q=${encodeURIComponent(f.place.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[] } | null;
@@ -63,6 +75,7 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
   }
   async function save(e: React.FormEvent) {
     e.preventDefault(); setErr("");
+    if (!f.city && !f.tz) { setErr(t.rsTzErr); return; }
     if (!f.title.trim() || !when || isNaN(when.getTime())) { setErr(t.rsErr); return; }
     setBusy(true);
     const r = await saveReservation(signed, { ...f, tz }, when.toISOString(), initial?.id);
@@ -85,7 +98,13 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
             </select></div>
           <div className="field"><label htmlFor="rs-w">{t.rsWhen}</label><input id="rs-w" type="datetime-local" value={f.localAt} onChange={(e) => set({ localAt: e.target.value })} required /></div>
         </div>
-        <p className="hint">{fmt(t.rsTzNote, { z: tz })}</p>
+        {f.city ? <p className="hint">{fmt(t.rsTzNote, { z: tz })}</p> : (
+          <div className="field"><label htmlFor="rs-tz">{t.rsTzPick}</label>
+            <select id="rs-tz" value={f.tz} onChange={(e) => set({ tz: e.target.value })} required>
+              <option value="">—</option>
+              {zones.map((z) => <option key={z} value={z}>{z.replace(/_/g, " ")}</option>)}
+            </select></div>
+        )}
         <div className="field"><label htmlFor="rs-p">{t.rsPlace}</label>
           <div className="bp-q"><input id="rs-p" value={f.place} maxLength={200} onChange={(e) => set({ place: e.target.value, lat: null, lng: null })} placeholder={t.rsPlacePh} />
             {f.city && <button type="button" className="btn ghost" onClick={() => void find()}>{t.bpSearch}</button>}</div></div>

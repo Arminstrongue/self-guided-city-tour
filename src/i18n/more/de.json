@@ -599,7 +599,7 @@
 },
 "diary": "Mein Tagebuch",
 "diaryTitle": "Mein Reisetagebuch",
-"diarySub": "Deine Erinnerungen werden nur auf diesem Gerät gespeichert.",
+"diarySub": "Ohne Anmeldung bleiben Erinnerungen nur auf diesem Gerät. Angemeldet werden sie auch in Ihrem Konto gespeichert.",
 "diaryEmpty": "Noch keine Erinnerungen. Speichere Momente und Orte, während du eine Stadt entdeckst.",
 "diaryStamps": "{n} Städte · {m} Erinnerungen",
 "diaryDelete": "Löschen",
@@ -706,7 +706,7 @@
 "wBenefits": [
 "Pässe und Buchungen auf jedem Gerät",
 "Wunschliste, Pläne und besuchte Städte",
-"Foto-Erinnerungen, immer sicher"
+"Fotos und Erinnerungen in Ihrem Konto und auf Ihren anderen Geräten"
 ],
 "gjSteps": [
 "Registriere dich mit deinem Profil und deiner Guide-Lizenz.",
@@ -1395,5 +1395,12 @@
 "agHow5": "Die Provision wird auf den Betrag berechnet, den der Kunde jeden Monat tatsächlich für das Abo zahlt.",
 "agHow6": "Jede Monatszahlung zählt, sobald sie bezahlt ist. Die Provision wird 30 Tage nach der Zahlung des Kunden fällig; wird diese Zahlung in dieser Zeit erstattet oder angefochten, entfällt die Provision.",
 "agHow7": "Kündigt der Kunde, endet die Provision ab dem Folgemonat; bereits geleistete Zahlungen behalten ihre Provision.",
-"agHow8": "Sie erhalten einen Empfehlungslink und -code, eine fertige Nachricht für Betriebe, eine Deal-Übersicht im Portal und die Seite für Betriebe zum Zeigen."
+"agHow8": "Sie erhalten einen Empfehlungslink und -code, eine fertige Nachricht für Betriebe, eine Deal-Übersicht im Portal und die Seite für Betriebe zum Zeigen.",
+"tpDurHint": "Die Optionen unten sind Zeit zum Erkunden, inkl. Hin- und Rückweg. Wenn Sie einen Flug, Zug oder ein Schiff erreichen müssen, nutzen Sie die Abfahrtszeit – wir rechnen den Puffer ein.",
+"tpDurFits": "Sie haben etwa {h} zum Erkunden gewählt. Der Puffer vor der Abfahrt ist nicht enthalten.",
+"gdBioLang": "Vom Guide auf {l} geschrieben",
+"rsTzPick": "Zeitzone der Buchung",
+"rsTzErr": "Wählen Sie die Stadt oder die Zeitzone der Buchung, damit die Uhrzeit stimmt.",
+"sharePlan": "Mein Plan für {city} mit VOYBU: {n} bekannte Orte, {c} Fahrtkosten.",
+"shareSome": "Ich habe mit VOYBU schon {k} von {n} bekannten Orten in {city} gesehen."
 }

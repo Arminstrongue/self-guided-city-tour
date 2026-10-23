@@ -211,7 +211,7 @@
 "wBenefits": [
 "Paslar ve rezervasyonlar her cihazda",
 "İstek listesi, planlar ve gezilen şehirler",
-"Fotoğraflı anılar, her zaman güvende"
+"Fotoğraflı anılar hesabınıza kaydedilir ve diğer cihazlarınızda da olur"
 ],
 "evTitle": "Etkinlikler",
 "evCount": "Önümüzdeki 30 günde {n} etkinlik",
@@ -736,7 +736,7 @@
 },
 "diary": "Günlüğüm",
 "diaryTitle": "Seyahat günlüğüm",
-"diarySub": "Anılarınız yalnızca bu cihazda saklanır.",
+"diarySub": "Giriş yapmadan anılar yalnızca bu cihazda kalır. Giriş yaptığınızda hesabınıza da kaydedilir.",
 "diaryEmpty": "Henüz anı yok. Bir şehri keşfederken anları ve yerleri kaydedin.",
 "diaryStamps": "{n} şehir · {m} anı",
 "diaryDelete": "Sil",
@@ -1855,5 +1855,12 @@
 "agHow5": "Komisyon, müşterinin her ay abonelik için fiilen ödediği tutar üzerinden hesaplanır.",
 "agHow6": "Her aylık ödeme tahsil edildiğinde sayılır. Komisyon, müşterinin ödemesinden 30 gün sonra ödenebilir hale gelir; bu sürede ödeme iade edilir veya itiraz edilirse komisyonu iptal edilir.",
 "agHow7": "Müşteri iptal ederse komisyonlar sonraki aydan itibaren durur; yapılmış ödemelerin komisyonu korunur.",
-"agHow8": "Bir yönlendirme bağlantısı ve kodu, işletmeler için hazır bir mesaj, portalda fırsat takibi ve işletmelere göstereceğiniz işletme sayfasını alırsınız."
+"agHow8": "Bir yönlendirme bağlantısı ve kodu, işletmeler için hazır bir mesaj, portalda fırsat takibi ve işletmelere göstereceğiniz işletme sayfasını alırsınız.",
+"tpDurHint": "Aşağıdaki seçenekler gidiş-dönüş dahil gezme süresidir. Yetişmeniz gereken bir uçuş, tren veya gemi varsa kalkış saatini kullanın — payı biz ekleriz.",
+"tpDurFits": "Gezmek için yaklaşık {h} seçtiniz. Kalkış öncesi pay dahil değildir.",
+"gdBioLang": "Rehber tarafından {l} yazıldı",
+"rsTzPick": "Rezervasyon saat dilimi",
+"rsTzErr": "Saatin doğru olması için şehri veya rezervasyon saat dilimini seçin.",
+"sharePlan": "VOYBU ile {city} planım: {n} ünlü yer, ulaşımda {c}.",
+"shareSome": "VOYBU ile {city}'deki {n} ünlü yerden {k} tanesini gezdim."
 }

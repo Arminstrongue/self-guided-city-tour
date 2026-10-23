@@ -8,7 +8,7 @@ import type { Locale } from "@/i18n/dictionaries";
 export type AlertKey =
   | "pickpocket" | "snatch" | "petition" | "bracelet" | "rose" | "cups" | "ring" | "stain" | "drugs"
   | "couvert" | "menu" | "taxi" | "bar" | "shoeshine" | "shop" | "photo" | "helpers" | "atm"
-  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law" | "fines" | "nightwalk";
+  | "fakepolice" | "lefttraffic" | "bikelane" | "heat" | "dress" | "camel" | "law" | "fines" | "nightwalk" | "photogov";
 
 export type NumK = "sos" | "police" | "ambulance" | "fire" | "health" | "nonurgent";
 export type CountrySafety = { nums: { k: NumK; n: string }[]; help: { lang: string; text: string }; pharmacy: string };
@@ -117,9 +117,9 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   tun: { alerts: ["shop", "pickpocket", "taxi", "dress"], hot: ["Medina", "Avenida Habib Bourguiba", "TGM"], night: ["Medina depois do pôr do sol"] },
   add: { alerts: ["pickpocket", "snatch", "helpers", "taxi", "nightwalk"], hot: ["Merkato", "Piazza", "Meskel Square"], night: ["Ruas sem iluminação", "Bole à saída dos bares"] },
   nbo: { alerts: ["snatch", "pickpocket", "atm", "taxi", "lefttraffic", "nightwalk"], hot: ["CBD (centro)", "Paragens de matatu", "Multibancos de rua"], night: ["Andar a pé no centro", "Uhuru Park", "River Road"], tp: "Polícia: 999 · 112 · use táxis de app" },
-  lad: { alerts: ["snatch", "atm", "taxi", "photo", "nightwalk"], hot: ["Marginal", "Mercados", "Paragens de candongueiro"], night: ["Andar a pé fora da Ilha e da Marginal", "Zonas sem iluminação"], tp: "Polícia: 113 · não fotografe edifícios do Estado, militares nem a polícia" },
+  lad: { alerts: ["snatch", "atm", "taxi", "photogov", "nightwalk"], hot: ["Marginal", "Mercados", "Paragens de candongueiro"], night: ["Andar a pé fora da Ilha e da Marginal", "Zonas sem iluminação"], tp: "Polícia: 113 · não fotografe edifícios do Estado, militares nem a polícia" },
   acc: { alerts: ["pickpocket", "snatch", "shop", "taxi"], hot: ["Makola", "Kwame Nkrumah Circle", "Jamestown sem guia"], night: ["Praias depois do anoitecer", "Ruas escuras de Osu"] },
-  kgl: { alerts: ["law", "photo"], hot: ["Mercado de Kimironko", "Paragens de mota-táxi"], night: [], tp: "Polícia: 112 · sacos de plástico proibidos; capacete obrigatório na mota-táxi" },
+  kgl: { alerts: ["law", "photogov"], hot: ["Mercado de Kimironko", "Paragens de mota-táxi"], night: [], tp: "Polícia: 112 · sacos de plástico proibidos; capacete obrigatório na mota-táxi" },
   dkr: { alerts: ["shop", "pickpocket", "snatch", "taxi", "nightwalk"], hot: ["Mercado Sandaga", "Porto de Gorée", "Plateau"], night: ["Corniche deserta", "Praias à noite"] }
 };
 
@@ -291,15 +291,27 @@ export const ALERT_TEXT = {
     ja: ["親切な「ガイド」", "親切な人が案内を申し出て、最後はじゅうたん店や土産物店へ。丁寧に断ればOK。"]
   },
   photo: {
-    pt: ["Fotos com figurantes", "\"Gladiadores\" e personagens posam para fotos e depois pedem gorjetas altas. Combine o preço antes ou recuse."],
-    en: ["Photos with costumed people", "Costumed \"gladiators\" and characters pose for photos and then ask for big tips. Agree a price first or decline."],
-    es: ["Fotos con disfraces", "\"Gladiadores\" y personajes posan para fotos y luego piden propinas altas. Acuerda el precio antes o declina."],
-    fr: ["Photos avec des costumés", "Des « gladiateurs » et personnages posent pour une photo puis réclament de gros pourboires. Fixez le prix avant ou refusez."],
-    de: ["Fotos mit Kostümierten", "„Gladiatoren“ und Figuren posieren für Fotos und verlangen dann hohes Trinkgeld. Preis vorher klären oder ablehnen."],
-    it: ["Foto con i figuranti", "\"Gladiatori\" e personaggi posano per una foto e poi chiedono mance alte. Concorda il prezzo prima o rifiuta."],
-    zh: ["与装扮者合影", "扮成“角斗士”等角色的人邀你合影，然后索要高额小费。先谈好价格或拒绝。"],
-    ar: ["صور مع المتنكّرين", "«مصارعون» وشخصيات تتصوّر معك ثم تطلب إكرامية كبيرة. اتفق على السعر مسبقاً أو ارفض."],
-    ja: ["コスプレ写真", "「剣闘士」やキャラクターが一緒に写真に写り、高額なチップを求めます。先に値段を決めるか断って。"]
+    pt: ["Fotos com figurantes", "Pessoas mascaradas ou artistas de rua posam para fotos e depois pedem gorjetas altas. Combine o preço antes ou recuse."],
+    en: ["Photos with costumed people", "People in costume or street performers pose for photos and then ask for big tips. Agree a price first or decline."],
+    es: ["Fotos con disfraces", "Personas disfrazadas o artistas callejeros posan para fotos y luego piden propinas altas. Acuerda el precio antes o declina."],
+    fr: ["Photos avec des costumés", "Des personnes costumées ou artistes de rue posent pour une photo puis réclament de gros pourboires. Fixez le prix avant ou refusez."],
+    de: ["Fotos mit Kostümierten", "Kostümierte oder Straßenkünstler posieren für Fotos und verlangen dann hohes Trinkgeld. Preis vorher klären oder ablehnen."],
+    it: ["Foto con i figuranti", "Persone in costume o artisti di strada posano per una foto e poi chiedono mance alte. Concorda il prezzo prima o rifiuta."],
+    zh: ["与装扮者合影", "装扮者或街头艺人邀你合影，然后索要高额小费。先谈好价格或拒绝。"],
+    ar: ["صور مع المتنكّرين", "أشخاص متنكّرون أو فنانو شارع يتصوّرون معك ثم يطلبون إكرامية كبيرة. اتفق على السعر مسبقاً أو ارفض."],
+    ja: ["コスプレ写真", "仮装した人や大道芸人が一緒に写真に写り、高額なチップを求めます。先に値段を決めるか断って。"]
+  },
+
+  photogov: {
+    pt: ["Fotografar edifícios oficiais", "Não fotografe edifícios do Estado, polícia, militares, pontes ou aeroportos: pode levar a multas ou à apreensão do telemóvel. Na dúvida, pergunte antes."],
+    en: ["Photographing official sites", "Don't photograph government buildings, police, the military, bridges or airports: it can lead to fines or your phone being taken. If in doubt, ask first."],
+    es: ["Fotografiar edificios oficiales", "No fotografíes edificios del Estado, policía, militares, puentes ni aeropuertos: puede acarrear multas o que te quiten el móvil. Ante la duda, pregunta."],
+    fr: ["Photographier des sites officiels", "Ne photographiez pas les bâtiments officiels, la police, l'armée, les ponts ou les aéroports : amendes ou confiscation du téléphone possibles. En cas de doute, demandez."],
+    de: ["Offizielle Gebäude fotografieren", "Fotografieren Sie keine Regierungsgebäude, Polizei, Militär, Brücken oder Flughäfen: Es drohen Bußgelder oder die Abnahme des Handys. Im Zweifel vorher fragen."],
+    it: ["Fotografare luoghi ufficiali", "Non fotografare edifici governativi, polizia, militari, ponti o aeroporti: rischi multe o il sequestro del telefono. Nel dubbio, chiedi prima."],
+    zh: ["拍摄官方场所", "不要拍摄政府建筑、警察、军人、桥梁或机场，否则可能被罚款或没收手机。不确定时先询问。"],
+    ar: ["تصوير المواقع الرسمية", "لا تصوّر المباني الحكومية أو الشرطة أو العسكريين أو الجسور أو المطارات: قد يؤدي ذلك إلى غرامات أو مصادرة الهاتف. اسأل أولاً عند الشك."],
+    ja: ["公的施設の撮影", "政府の建物、警察、軍、橋、空港は撮影しないでください。罰金やスマホ没収のおそれがあります。迷ったら先に確認を。"]
   },
   helpers: {
     pt: ["Ajudantes nas máquinas", "Desconhecidos que \"ajudam\" nas máquinas de bilhetes podem ficar com o cartão ou vender bilhetes falsos. Compre só na máquina ou na bilheteira."],
@@ -441,7 +453,8 @@ const MORE_ALERTS: Record<AlertKey, Record<"tr" | "ru" | "ko", T>> = {
   bar: { tr: ["Bar davetleri", "Güler yüzlü yabancılar sizi bir bara veya kulübe davet eder; sonra dev bir hesap ve ödeme baskısı gelir. Mekânları kendiniz seçin."], ru: ["Приглашения в бар", "Дружелюбные незнакомцы зовут в бар или клуб, а потом — огромный счёт и давление. Выбирайте заведения сами."], ko: ["술집 초대", "친절한 낯선 사람이 술집이나 클럽에 초대한 뒤 엄청난 계산서와 지불 압박이 따라와요. 장소는 직접 고르세요."] },
   shoeshine: { tr: ["Düşen fırça", "Bir ayakkabı boyacısı fırçasını düşürür; siz alırsınız, o da size para isteyeceği bir boyayla “teşekkür eder”. Yürüyün."], ru: ["Упавшая щётка", "Чистильщик обуви роняет щётку; вы поднимаете, а он «благодарит» чисткой, за которую потом требует деньги. Проходите мимо."], ko: ["떨어뜨린 솔", "구두닦이가 솔을 떨어뜨리고, 주워 주면 ‘감사’라며 구두를 닦은 뒤 돈을 요구해요. 지나가세요."] },
   shop: { tr: ["Güler yüzlü “rehberler”", "Yardımsever bir yabancı size etrafı göstermeyi teklif eder ve kendinizi halı veya hediyelik eşya dükkânında bulursunuz. Kibar bir hayır yeterli."], ru: ["Дружелюбные «гиды»", "Услужливый незнакомец предлагает показать город, и вы оказываетесь в ковровой или сувенирной лавке. Достаточно вежливого «нет»."], ko: ["친절한 ‘가이드’", "친절한 낯선 사람이 안내해 주겠다며 데려가면 카펫이나 기념품 가게에 도착해요. 정중히 거절하면 돼요."] },
-  photo: { tr: ["Kostümlü kişilerle fotoğraf", "Kostümlü “gladyatörler” ve karakterler fotoğraf için poz verir, sonra yüklü bahşiş ister. Önce fiyatta anlaşın ya da reddedin."], ru: ["Фото с людьми в костюмах", "«Гладиаторы» и персонажи в костюмах позируют, а потом требуют крупные чаевые. Договоритесь о цене заранее или откажитесь."], ko: ["분장한 사람과 사진", "분장한 ‘검투사’나 캐릭터가 사진을 찍어 준 뒤 큰 팁을 요구해요. 가격을 먼저 정하거나 거절하세요."] },
+  photo: { tr: ["Kostümlü kişilerle fotoğraf", "Kostümlü kişiler veya sokak sanatçıları fotoğraf için poz verir, sonra yüklü bahşiş ister. Önce fiyatta anlaşın ya da reddedin."], ru: ["Фото с людьми в костюмах", "Люди в костюмах или уличные артисты позируют для фото, а потом просят крупные чаевые. Договоритесь о цене заранее или откажитесь."], ko: ["분장한 사람과 사진", "분장한 사람이나 거리 공연자가 함께 사진을 찍은 뒤 큰 팁을 요구해요. 미리 가격을 정하거나 거절하세요."] },
+  photogov: { tr: ["Resmî yerleri fotoğraflamak", "Devlet binalarını, polisi, askerleri, köprüleri veya havalimanlarını fotoğraflamayın: para cezası ya da telefona el konulması söz konusu olabilir. Emin değilseniz önce sorun."], ru: ["Съёмка официальных объектов", "Не фотографируйте правительственные здания, полицию, военных, мосты и аэропорты: возможны штрафы или изъятие телефона. Если сомневаетесь, спросите."], ko: ["공공시설 촬영", "정부 건물, 경찰, 군인, 다리, 공항은 촬영하지 마세요. 벌금이나 휴대폰 압수로 이어질 수 있어요. 애매하면 먼저 물어보세요."] },
   helpers: { tr: ["Bilet makinesi “yardımcıları”", "Bilet makinelerinde “yardım eden” yabancılar kartınızı alıkoyabilir veya sahte bilet satabilir. Yalnızca makineden veya gişeden alın."], ru: ["«Помощники» у билетных автоматов", "Незнакомцы, «помогающие» у автоматов, могут оставить себе карту или продать фальшивый билет. Покупайте только в автомате или кассе."], ko: ["발권기 ‘도우미’", "발권기에서 ‘도와주는’ 낯선 사람이 카드를 가져가거나 가짜 표를 팔 수 있어요. 기계나 매표소에서만 사세요."] },
   atm: { tr: ["ATM'ler ve para", "Bağımsız değil, banka ATM'lerini kullanın ve her zaman yerel para biriminde ödemeyi seçin."], ru: ["Банкоматы и деньги", "Пользуйтесь банкоматами банков, а не независимыми, и всегда выбирайте списание в местной валюте."], ko: ["ATM과 돈", "독립 ATM 말고 은행 ATM을 쓰고, 항상 현지 통화로 결제를 선택하세요."] },
   fakepolice: { tr: ["Sahte polis", "Sivil giyimli “polisler” cüzdanınızı kontrol etmek ister. Gerçek polis bunu yapmaz. Kimlik isteyin ve karakola gitmeyi teklif edin."], ru: ["Фальшивая полиция", "«Полицейские» в штатском просят проверить кошелёк. Настоящая полиция так не делает. Попросите удостоверение и предложите пройти в участок."], ko: ["가짜 경찰", "사복 ‘경찰’이 지갑을 확인하겠다고 해요. 진짜 경찰은 그러지 않아요. 신분증을 요구하고 경찰서로 가자고 하세요."] },

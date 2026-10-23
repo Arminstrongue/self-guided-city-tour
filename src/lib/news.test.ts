@@ -30,6 +30,9 @@ test("isSafety works per language", () => {
   assert.ok(!isSafety("PHP security vulnerability affects Lisbon startups", "en"));
   assert.ok(!isSafety("Lisbon: new safety rules for e-scooters approved", "en"));
   assert.ok(isSafety("Lisbon metro strike on Friday", "en"));
+  // Notícia sobre transportes sem perturbação não é alerta.
+  assert.ok(!isSafety("Lisbon airport changes flight paths to reduce noise", "en"));
+  assert.ok(isSafety("Lisbon airport flights cancelled after outage", "en"));
 });
 
 test("só notícias cujo título nomeia a cidade", () => {

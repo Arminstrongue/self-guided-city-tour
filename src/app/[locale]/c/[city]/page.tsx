@@ -56,11 +56,13 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
   const fx = await fxContext();
   const opts = routeOptions(city); const core = opts.find((o) => o.key === "core") ?? opts[opts.length - 1];
   // Um só cálculo: paragens e duração do mesmo roteiro (o base, sem extensão), com visitas e deslocações entre paragens.
-  const meta = fmt(t.cityMeta, { n: core.plan.stops.length, h: hrs(core.plan.minutesTour) });
+  const nExt = city.stops.filter((s) => s.x).length;
+  const meta = fmt(t.cityMeta, { n: core.plan.stops.length, h: hrs(core.plan.minutesTour) }) + (nExt ? ` · ${fmt(t.tpExtVersion, { n: nExt })}` : "");
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const guides = (await listGuides(city.id).catch(() => [])).slice(0, 3);
   const free = isFreeCity(city.id);
-  const stops = city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top) }));
+  // Principais primeiro, opcionais (extensão) no fim e identificadas.
+  const stops = [...city.stops.filter((s) => !s.x), ...city.stops.filter((s) => s.x)].map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top), optional: Boolean(s.x) }));
   const [pulse, know] = await Promise.all([latestPulse(city.id).catch(() => null), cityKnowledge(city.id, params.locale).catch(() => ({ summary: null, history: null }))]);
   // Ainda sem história nesta língua: vai buscá-la em segundo plano (a próxima visita já a mostra).
   if (!know.summary || know.summary.lang !== params.locale) ensureKnowledge(city.id, params.locale);
