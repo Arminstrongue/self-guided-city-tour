@@ -123,6 +123,7 @@ export async function purgeExpired() {
   if (!old.length) return 0;
   const ids = old.map((o) => o.id);
   await (await import("./music")).deleteOwnMusic(old.map((o) => o.music?.own));
+  await (await import("./video")).deleteVideoFiles(ids).catch(() => null); // os ficheiros de vídeo também saem do disco
   await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, ids));
   await d.delete(schema.postComments).where(inArray(schema.postComments.postId, ids));
   await d.delete(schema.storyViews).where(inArray(schema.storyViews.postId, ids));

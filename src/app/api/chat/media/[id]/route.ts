@@ -1,3 +1,4 @@
+import { imageBytes } from "@/lib/strip-meta";
 import { createReadStream } from "node:fs";
 import { stat } from "node:fs/promises";
 import { Readable } from "node:stream";
@@ -32,5 +33,5 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
   const d = m.photo?.match(/^data:(image\/(?:jpeg|webp|png));base64,(.+)$/);
   if (!d) return new Response("not found", { status: 404 });
-  return new Response(Buffer.from(d[2], "base64"), { headers: { ...base, "Content-Type": d[1] } });
+  return new Response(imageBytes(d[1], d[2]), { headers: { ...base, "Content-Type": d[1] } });
 }

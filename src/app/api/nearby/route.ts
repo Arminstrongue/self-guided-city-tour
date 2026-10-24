@@ -36,7 +36,8 @@ export async function GET(req: Request) {
   const key = `${kind}|${lat.toFixed(3)}|${lng.toFixed(3)}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < 6 * 3600_000) return NextResponse.json(hit.out);
-  const around = `(around:1200,${lat},${lng})`;
+  // Para o Overpass vai a posição arredondada (~100 m); as distâncias calculam-se aqui com a posição exata.
+  const around = `(around:1200,${lat.toFixed(3)},${lng.toFixed(3)})`;
   const data = `[out:json][timeout:15];(${Q[kind].map((q) => `${q}${around};`).join("")});out center 40;`;
   let els: El[] | null = null;
   for (const url of ENDPOINTS) {

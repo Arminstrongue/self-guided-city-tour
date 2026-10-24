@@ -28,6 +28,8 @@ async function round() {
     lastKnowledge = Date.now();
     const gone = await purgeExpired().catch(() => 0);
     if (gone) log(`histórias expiradas apagadas: ${gone}`);
+    const kept = await (await import("../src/lib/retention")).purgeOld().catch((e) => { log(`conservação: ${e}`); return null; });
+    if (kept) log(`conservação: ${JSON.stringify(kept)}`);
   }
   const ach = await sweepAchievements().catch((e) => { log(`conquistas: ${e}`); return null; });
   if (ach) log(`conquistas: ${ach.users} viajantes, ${ach.announced} avisos`);

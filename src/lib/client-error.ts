@@ -3,7 +3,7 @@
 export function reportClientError(e: unknown, digest?: string) {
   try {
     const m = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
-    const body = JSON.stringify({ m, p: location.pathname + location.hash, d: digest ?? "" });
+    const body = JSON.stringify({ m, p: location.pathname, d: digest ?? "" });
     if (!navigator.sendBeacon?.("/api/client-error", new Blob([body], { type: "application/json" })))
       void fetch("/api/client-error", { method: "POST", body, keepalive: true, headers: { "Content-Type": "application/json" } }).catch(() => null);
   } catch { /* ignorar */ }

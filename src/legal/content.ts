@@ -107,53 +107,71 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
   if (doc === "privacy") return {
     title: "Política de privacidade",
     sections: [
+      { h: "Em resumo", p: [
+        "Usar a app é grátis. Guardamos só o necessário para o serviço funcionar, não vendemos dados, não usamos publicidade nem análise de terceiros, e pode apagar a sua conta e os seus dados a qualquer momento em Perfil → Apagar a conta."
+      ] },
       { h: "Responsável pelo tratamento", p: [`${who}.`] },
       { h: "Que dados tratamos", p: [
-        "Email e nome; hora e número (opcional) do próximo voo; cidade e plano comprados; dados de pagamento tratados pela Stripe (não guardamos o cartão).",
-        "Se entrar com Google, Apple ou Facebook: nome e email da conta.",
+        "Compra: email, nome, cidade e plano; hora e número do voo (opcionais) e o plano de viagem (início, fim, modalidade e horas). O pagamento é tratado pela Stripe; não guardamos o cartão.",
+        "Conta: email e nome; se entrar com Google, Apple ou Facebook, o nome e o email dessa conta.",
         "A nacionalidade indicada em \"Posso sair?\" fica só no seu dispositivo; não a guardamos.",
-        "Localização (só se a ativar): é usada no dispositivo para o guiar, mostrar o que está perto e calcular a hora de regresso. Se ativar o diário automático de percursos, o telemóvel deteta as cidades, os lugares por onde passa, a distância e os passos; só guardamos um percurso na sua conta depois de o confirmar, e pode apagá-lo ou desligar o diário a qualquer momento. Sem sessão iniciada, os percursos ficam só no telemóvel.",
-        "Pode apagar a conta e os dados associados a qualquer momento em Perfil → Apagar a conta.",
-        "Comerciantes: nome do negócio, contacto, redes sociais e dados de faturação.",
-        "Comerciais independentes: nome, email, telefone, país, carteira de negócios e comissões.",
-        "Reservas de guias: nome, email, telefone e nota do viajante, partilhados com o guia depois de ele aceitar.",
-        "Guias: dados do perfil público; dados profissionais e fiscais (registo da atividade, seguro, NIF, país fiscal, morada e data de nascimento); a conta bancária é tratada pela Stripe.",
-        "Avaliações: estrelas, NPS e comentários, sem o seu nome; os comentários sobre guias podem aparecer no perfil do guia.",
-        "Carteira: se entrar com o seu email, guardamos as memórias (fotos e notas), os lugares guardados e os interesses que escolher, para os ter em qualquer dispositivo. Pode apagá-los na própria carteira.",
-        "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes. Pode bloquear e denunciar perfis, e apagar o seu perfil na carteira a qualquer momento. Analisamos as denúncias e podemos remover perfis que violem as regras da comunidade.",
-        "Publicações, vídeos e histórias (opcional): as fotos, os vídeos (convertidos e guardados nos nossos servidores na UE), legendas, cidade e tema que publica, os gostos e os comentários. Num perfil privado só os seguidores aceites as veem; num perfil público, qualquer viajante com sessão iniciada. As histórias são apagadas automaticamente 24 horas depois. Só comentam os seus seguidores e as pessoas que segue. Pode apagar publicações e comentários a qualquer momento; ao apagar o perfil, apagamos tudo isto.",
-        "Mensagens privadas (opcional): só entre viajantes que se seguem num dos sentidos. Guardamos o texto, a data e se foi lida, para entregar a conversa nos seus dispositivos. A equipa não lê as conversas, exceto quando um dos participantes as denuncia por abuso ou segurança. Pode anular o envio das suas mensagens, apagar uma conversa do seu lado, bloquear e denunciar; ao apagar o perfil, as suas conversas são apagadas.",
-        "Convites (opcional): quando convida um amigo por email, enviamos-lhe um único email em seu nome; por SMS ou WhatsApp, a mensagem sai do seu telemóvel. Não guardamos o email nem o telefone de quem convida — só um código irreversível, para não enviar convites repetidos. Quem entra com um convite passa a seguir quem o convidou."
+        "Localização (só se a autorizar): serve para o guiar, mostrar o que está perto e calcular a hora de regresso. Para encontrar lugares perto de si, enviamos uma posição arredondada (cerca de 100 m) ao OpenStreetMap; para dar nome a um sítio onde parou, uma posição arredondada (cerca de 10 m). Não guardamos estas posições.",
+        "Diário automático de percursos (opcional): o telemóvel deteta as cidades, os lugares por onde passa, a distância e os passos. Só guardamos um percurso na sua conta depois de o confirmar; pode apagá-lo ou desligar o diário a qualquer momento. Sem sessão iniciada, fica só no telemóvel.",
+        "Carteira (com sessão): memórias (fotos e notas, com o local se o indicar), lugares guardados, interesses, planos, reservas e bilhetes que adicionar (incluindo a foto do bilhete) e grupos de despesas (com os nomes que escrever para os outros participantes).",
+        "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes.",
+        "Publicações, vídeos e histórias (opcional): fotos, vídeos (convertidos e guardados nos nossos servidores na UE, sem metadados de localização), legendas, cidade, tema, gostos e comentários. As histórias deixam de estar visíveis ao fim de 24 horas; ficam no seu arquivo privado durante 1 ano (ou enquanto estiverem num destaque seu) e depois são apagadas.",
+        "Mensagens privadas (opcional): texto, fotos, notas de voz e localização partilhada, com a data e se foi lida. A equipa não lê as conversas, exceto quando um participante as denuncia por abuso ou segurança.",
+        "Pedidos de reserva a negócios: nome, email, telefone e nota que escrever são enviados por email ao negócio escolhido. Ficam anónimos ao fim de 12 meses.",
+        "Reservas de guias: nome, email, telefone e nota, partilhados com o guia depois de ele aceitar. Nas avaliações de guias aparece o seu primeiro nome, as estrelas e o comentário; nas avaliações dos roteiros não aparece o nome.",
+        "Problemas reportados numa paragem: o tipo de problema e a nota; se não tiver sessão, um código irreversível derivado do endereço IP, só para contar cada pessoa uma vez (anónimo ao fim de 12 meses).",
+        "Convites (opcional): por email enviamos um único email em seu nome; por SMS ou WhatsApp a mensagem sai do seu telemóvel. Não guardamos o contacto de quem convida — só um código irreversível.",
+        "Comerciantes, comerciais independentes e guias: os dados de contacto, profissionais e fiscais que indicam ao aderir (os guias também o registo da atividade, seguro, NIF, morada e data de nascimento, por obrigação fiscal); contas bancárias e IBAN são tratados pela Stripe ou só para pagar comissões.",
+        "Contagens anónimas de utilização (páginas vistas, início do pagamento, roteiro concluído), sem cookies nem dados pessoais."
       ] },
       { h: "Para quê e com que fundamento", p: [
-        "Prestar o serviço comprado e calcular a hora de regresso (execução do contrato).",
-        "Faturação e obrigações fiscais (obrigação legal).",
-        "Guias: comunicação anual dos rendimentos à Autoridade Tributária ao abrigo da Diretiva (UE) 2021/514 (DAC7) (obrigação legal).",
-        "Segurança e prevenção de fraude (interesse legítimo).",
+        "Prestar o serviço que pediu: roteiro, hora de regresso, carteira, perfil e mensagens (execução do contrato).",
+        "Funções opcionais (diário de percursos, localização, perfil, publicações): só se as ativar (consentimento, que pode retirar desligando-as).",
+        "Faturação e obrigações fiscais, incluindo a comunicação anual dos rendimentos dos guias à Autoridade Tributária (DAC7) (obrigação legal).",
+        "Segurança, prevenção de fraude e moderação de denúncias (interesse legítimo).",
         "Não enviamos marketing sem o seu consentimento."
       ] },
-      { h: "Durante quanto tempo", p: ["Dados de acesso: até 24 meses após o último acesso. Percursos confirmados, memórias e publicações: até os apagar ou apagar a conta. Documentos de faturação e registos DAC7 dos guias: 10 anos, por obrigação legal."] },
+      { h: "Durante quanto tempo", p: [
+        "Conta, carteira, percursos, memórias e publicações: até os apagar ou apagar a conta.",
+        "Voo e plano de viagem de uma compra: apagados 90 dias depois de o passe terminar.",
+        "Pedidos de reserva a negócios, notificações e identificação de quem reportou um problema: 12 meses.",
+        "Denúncias de moderação: 24 meses. Contagens anónimas: cerca de 25 meses. Registos técnicos do servidor: rodam automaticamente e não guardam o conteúdo dos pedidos.",
+        "Faturação (compras) e registos DAC7 dos guias: 10 anos, por obrigação legal; ao apagar a conta ficam só os dados fiscais da compra."
+      ] },
       { h: "Com quem partilhamos", p: [
-        "Prestadores que tratam dados por nossa conta: Stripe (pagamentos), Hetzner (servidores na UE), Cloudflare (rede e segurança), fornecedor de email transacional, AeroDataBox (estado do voo, só o número do voo) e, se o usar, o fornecedor de login (Google, Apple, Facebook).",
-        "Algumas destas entidades podem transferir dados para fora do EEE ao abrigo de cláusulas contratuais-tipo ou decisões de adequação."
+        "Prestadores que tratam dados por nossa conta: Stripe (pagamentos), Hetzner (servidores na UE), Cloudflare (rede e segurança), Resend (envio de emails), AeroDataBox (estado do voo, só o número do voo) e, se o usar, o fornecedor de login (Google, Apple, Facebook).",
+        "Mapas e lugares: Google Maps Platform (mapas, pesquisa de moradas e percursos de transporte) e OpenStreetMap (mosaicos do mapa, nomes de sítios e lugares perto, com a posição arredondada). Ao abrir um mapa, o seu navegador liga-se a estes serviços (que recebem o endereço IP).",
+        "Notificações: se as ativar, o texto do aviso passa pelo serviço de notificações do seu navegador ou telemóvel (Google, Apple ou Mozilla).",
+        "Negócios e guias recebem apenas os dados dos pedidos que lhes enviar.",
+        "Alguns destes prestadores estão fora do EEE (por exemplo, nos EUA) e transferem dados ao abrigo do Quadro de Privacidade de Dados UE-EUA ou de cláusulas contratuais-tipo."
       ] },
       { h: "Os seus direitos", p: [
-        `Pode pedir acesso, retificação, apagamento, limitação, portabilidade ou opor-se ao tratamento através de ${c.email}.`,
-        "Pode também apresentar queixa à Comissão Nacional de Proteção de Dados (cnpd.pt)."
+        "Pode exportar os seus dados em Perfil → Descarregar os meus dados e apagar a conta em Perfil → Apagar a conta.",
+        `Pode também pedir acesso, retificação, apagamento, limitação, portabilidade ou opor-se ao tratamento através de ${c.email}.`,
+        "Pode apresentar queixa à Comissão Nacional de Proteção de Dados (cnpd.pt)."
       ] }
     ]
   };
   return {
     title: "Política de cookies",
     sections: [
-      { h: "Só cookies essenciais", p: [
-        "Usamos apenas cookies necessárias para o serviço funcionar, por isso não pedimos consentimento:",
-        "sgct_access — guarda o seu acesso pago neste dispositivo (até 31 dias).",
-        "next-auth.* — mantém a sessão quando entra com Google, Apple ou Facebook.",
-        "sgct_locale — lembra o idioma escolhido (12 meses)."
+      { h: "Só cookies necessárias ou funcionais", p: [
+        "Não usamos cookies de publicidade nem de análise. As cookies que usamos servem para o serviço funcionar ou para lembrar escolhas suas:",
+        "sgct_access — o seu acesso e sessão neste dispositivo (31 dias).",
+        "next-auth.* — sessão quando entra com Google, Apple ou Facebook.",
+        "sgct_locale — idioma escolhido (12 meses); sgct_lang_ok — já respondeu à pergunta do idioma (12 meses); sgct_cl — idioma do país onde está, calculado pela Cloudflare a partir do país do acesso (1 dia).",
+        "sgct_currency — moeda escolhida (12 meses).",
+        "sgct_ref — só se abrir um link de convite: liga a sua adesão a quem o convidou, para aplicar o desconto (30 dias).",
+        "sgct_admin, sgct_merchant, sgct_agent, sgct_guide — sessões das áreas de administração, negócios, comerciais e guias (7 a 30 dias)."
       ] },
-      { h: "Armazenamento no dispositivo", p: ["O progresso do roteiro (paragens visitadas, extensão ligada) fica guardado só no seu navegador."] },
-      { h: "Sem publicidade nem análise de terceiros", p: ["Não usamos cookies de publicidade nem de análise de terceiros. As fontes de letra são servidas pelos nossos próprios servidores."] }
+      { h: "Armazenamento no dispositivo", p: [
+        "O navegador guarda no seu dispositivo o progresso dos roteiros, os planos, a pergunta de boas-vindas, as cidades descarregadas para usar sem internet e, se usar o diário, as paragens por confirmar. Pode limpar tudo nas definições do navegador; ao apagar a conta, a app limpa-o também."
+      ] },
+      { h: "Mapas", p: ["Ao abrir um mapa, o navegador liga-se ao Google Maps e ao OpenStreetMap para mostrar o mapa; estes serviços recebem o endereço IP. As fontes de letra são servidas pelos nossos próprios servidores."] }
     ]
   };
 }
@@ -245,53 +263,71 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
   if (doc === "privacy") return {
     title: "Privacy policy",
     sections: [
+      { h: "In short", p: [
+        "Using the app is free. We keep only what the service needs, we don't sell data, we use no advertising or third-party analytics, and you can delete your account and data at any time in Profile → Delete account."
+      ] },
       { h: "Controller", p: [`${who}.`] },
       { h: "Data we process", p: [
-        "Email and name; next flight time and (optional) number; city and plan purchased; payment data handled by Stripe (we never store your card).",
-        "If you sign in with Google, Apple or Facebook: your account name and email.",
+        "Purchase: email, name, city and plan; flight time and number (optional) and the trip plan (start, end, mode and times). Payment is handled by Stripe; we never store your card.",
+        "Account: email and name; if you sign in with Google, Apple or Facebook, that account's name and email.",
         "The nationality entered in \"Can I leave?\" stays on your device; we don't store it.",
-        "Location (only if you turn it on): used on your device to guide you, show what's nearby and work out your return time. If you turn on the automatic route diary, your phone detects cities, the places you pass, distance and steps; we only save a route to your account after you confirm it, and you can delete it or turn the diary off at any time. Without signing in, routes stay on your phone only.",
-        "You can delete your account and its data at any time in Profile → Delete account.",
-        "Merchants: business name, contact details, social links and billing data.",
-        "Independent sales partners: name, email, phone, country, deal pipeline and commissions.",
-        "Guide bookings: traveller name, email, phone and note, shared with the guide once they accept.",
-        "Guides: public profile; professional and tax details (activity registration, insurance, tax ID, tax country, address and date of birth); bank details are handled by Stripe.",
-        "Ratings: stars, NPS and comments, without your name; comments about guides may appear on the guide's profile.",
-        "Wallet: if you sign in with your email, we store your memories (photos and notes), saved places and chosen interests so you have them on any device. You can delete them in the wallet.",
-        "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers. You can block and report profiles, and delete your profile in the wallet at any time. We review reports and may remove profiles that break the community rules.",
-        "Posts, videos and stories (optional): the photos, videos (converted and stored on our servers in the EU), captions, city and topic you share, plus likes and comments. On a private profile only approved followers see them; on a public profile, any signed-in traveller can. Stories are deleted automatically after 24 hours. Only your followers and people you follow can comment. You can delete posts and comments at any time; deleting your profile deletes all of this.",
-        "Private messages (optional): only between travellers where at least one follows the other. We store the text, the time and whether it was read, so the conversation reaches your devices. Our team does not read chats, except when a participant reports one for abuse or safety. You can unsend your messages, delete a chat on your side, block and report; deleting your profile deletes your chats.",
-        "Invites (optional): when you invite a friend by email, we send them a single email on your behalf; by SMS or WhatsApp, the message goes from your own phone. We don't store your friends' email or phone number — only an irreversible code, so we don't send repeated invites. Friends who join with an invite follow the person who invited them."
+        "Location (only if you allow it): used to guide you, show what's nearby and work out your return time. To find places near you we send a rounded position (about 100 m) to OpenStreetMap; to name a spot where you stopped, a rounded position (about 10 m). We don't store these positions.",
+        "Automatic route diary (optional): your phone detects cities, the places you pass, distance and steps. We only save a route to your account after you confirm it; you can delete it or turn the diary off at any time. Without signing in, it stays on your phone.",
+        "Wallet (signed in): memories (photos and notes, with the place if you add it), saved places, interests, plans, bookings and tickets you add (including the ticket photo) and expense groups (with the names you type for other participants).",
+        "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers.",
+        "Posts, videos and stories (optional): photos, videos (converted and stored on our EU servers, without location metadata), captions, city, topic, likes and comments. Stories stop being visible after 24 hours; they stay in your private archive for 1 year (or while they are in one of your highlights) and are then deleted.",
+        "Private messages (optional): text, photos, voice notes and shared location, with the time and whether it was read. Our team does not read chats, except when a participant reports one for abuse or safety.",
+        "Booking requests to businesses: the name, email, phone and note you enter are emailed to the business you chose. They are anonymised after 12 months.",
+        "Guide bookings: name, email, phone and note, shared with the guide once they accept. Guide reviews show your first name, stars and comment; route ratings don't show your name.",
+        "Problems reported at a stop: the kind of problem and the note; if you're not signed in, an irreversible code derived from your IP address, only so each person counts once (anonymised after 12 months).",
+        "Invites (optional): by email we send a single email on your behalf; by SMS or WhatsApp the message goes from your own phone. We don't store your friends' contact details — only an irreversible code.",
+        "Merchants, independent sales partners and guides: the contact, professional and tax details they give when joining (guides also activity registration, insurance, tax ID, address and date of birth, as required for tax reporting); bank accounts and IBAN are handled by Stripe or used only to pay commissions.",
+        "Anonymous usage counts (pages viewed, checkout started, route completed), with no cookies or personal data."
       ] },
       { h: "Purposes and legal bases", p: [
-        "Providing the service and computing your return time (contract).",
-        "Invoicing and tax obligations (legal obligation).",
-        "Guides: yearly income reporting to the Portuguese tax authority under Directive (EU) 2021/514 (DAC7) (legal obligation).",
-        "Security and fraud prevention (legitimate interest).",
+        "Providing the service you asked for: route, return time, wallet, profile and messages (contract).",
+        "Optional features (route diary, location, profile, posts): only if you turn them on (consent, which you can withdraw by turning them off).",
+        "Invoicing and tax obligations, including yearly reporting of guides' income to the Portuguese tax authority (DAC7) (legal obligation).",
+        "Security, fraud prevention and handling reports (legitimate interest).",
         "We do not send marketing without your consent."
       ] },
-      { h: "Retention", p: ["Access data: up to 24 months after your last access. Confirmed routes, memories and posts: until you delete them or your account. Invoicing records and guides' DAC7 records: 10 years, as required by law."] },
-      { h: "Processors", p: [
-        "Stripe (payments), Hetzner (EU servers), Cloudflare (network and security), our transactional email provider, AeroDataBox (flight status, flight number only) and, if used, your sign-in provider (Google, Apple, Facebook).",
-        "Some may transfer data outside the EEA under standard contractual clauses or adequacy decisions."
+      { h: "Retention", p: [
+        "Account, wallet, routes, memories and posts: until you delete them or your account.",
+        "Flight and trip plan of a purchase: deleted 90 days after the pass ends.",
+        "Booking requests to businesses, notifications and the identity of who reported a problem: 12 months.",
+        "Moderation reports: 24 months. Anonymous counts: about 25 months. Server logs rotate automatically and don't store request contents.",
+        "Invoicing (purchases) and guides' DAC7 records: 10 years, as required by law; when you delete your account only the tax details of the purchase remain."
+      ] },
+      { h: "Who we share data with", p: [
+        "Processors acting for us: Stripe (payments), Hetzner (EU servers), Cloudflare (network and security), Resend (email delivery), AeroDataBox (flight status, flight number only) and, if used, your sign-in provider (Google, Apple, Facebook).",
+        "Maps and places: Google Maps Platform (maps, address search and transit directions) and OpenStreetMap (map tiles, place names and nearby places, with a rounded position). When you open a map, your browser connects to these services (which receive your IP address).",
+        "Notifications: if you turn them on, the notification text goes through your browser's or phone's push service (Google, Apple or Mozilla).",
+        "Businesses and guides only receive the details of the requests you send them.",
+        "Some of these providers are outside the EEA (for example in the US) and transfer data under the EU-US Data Privacy Framework or standard contractual clauses."
       ] },
       { h: "Your rights", p: [
-        `You may request access, rectification, erasure, restriction, portability or object to processing at ${c.email}.`,
-        "You may also complain to the Portuguese data protection authority (cnpd.pt)."
+        "You can export your data in Profile → Download my data and delete your account in Profile → Delete account.",
+        `You may also request access, rectification, erasure, restriction, portability or object to processing at ${c.email}.`,
+        "You may complain to the Portuguese data protection authority (cnpd.pt)."
       ] }
     ]
   };
   return {
     title: "Cookie policy",
     sections: [
-      { h: "Essential cookies only", p: [
-        "We only use cookies needed for the service to work, so we do not ask for consent:",
-        "sgct_access — keeps your paid access on this device (up to 31 days).",
-        "next-auth.* — keeps you signed in with Google, Apple or Facebook.",
-        "sgct_locale — remembers your language (12 months)."
+      { h: "Only necessary or functional cookies", p: [
+        "We use no advertising or analytics cookies. Our cookies make the service work or remember your choices:",
+        "sgct_access — your access and session on this device (31 days).",
+        "next-auth.* — session when you sign in with Google, Apple or Facebook.",
+        "sgct_locale — chosen language (12 months); sgct_lang_ok — you've answered the language question (12 months); sgct_cl — the language of the country you're in, worked out by Cloudflare from the country of the connection (1 day).",
+        "sgct_currency — chosen currency (12 months).",
+        "sgct_ref — only if you open an invite link: links your sign-up to the person who invited you, to apply the discount (30 days).",
+        "sgct_admin, sgct_merchant, sgct_agent, sgct_guide — sessions for the admin, business, sales partner and guide areas (7 to 30 days)."
       ] },
-      { h: "On-device storage", p: ["Your route progress (visited stops, extension on/off) is stored only in your browser."] },
-      { h: "No third-party advertising or analytics", p: ["We use no advertising or third-party analytics cookies. Fonts are served from our own servers."] }
+      { h: "On-device storage", p: [
+        "Your browser stores on your device your route progress, plans, the welcome question, cities downloaded for offline use and, if you use the diary, stops waiting to be confirmed. You can clear it all in your browser settings; when you delete your account, the app clears it too."
+      ] },
+      { h: "Maps", p: ["When you open a map, your browser connects to Google Maps and OpenStreetMap to show it; these services receive your IP address. Fonts are served from our own servers."] }
     ]
   };
 }

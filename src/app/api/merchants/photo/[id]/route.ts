@@ -1,3 +1,4 @@
+import { imageBytes } from "@/lib/strip-meta";
 import { and, eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
 
@@ -12,5 +13,5 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     .where(and(eq(schema.merchantPhotos.merchantId, params.id), eq(schema.merchantPhotos.idx, i))).limit(1);
   const m = p?.data.match(/^data:(image\/(?:jpeg|png|webp));base64,(.+)$/);
   if (!m) return new Response(null, { status: 404 });
-  return new Response(Buffer.from(m[2], "base64"), { headers: { "Content-Type": m[1], "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" } });
+  return new Response(imageBytes(m[1], m[2]), { headers: { "Content-Type": m[1], "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" } });
 }

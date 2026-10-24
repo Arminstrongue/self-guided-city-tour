@@ -18,6 +18,15 @@ export function rateLimit(req: Request, scope: string, perMinute: number): boole
   return b.n <= perMinute;
 }
 
+/** Limite por chave qualquer (ex.: um email), numa janela à escolha. */
+export function rateLimitKey(key: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const b = buckets.get(`k:${key}`);
+  if (!b || b.reset < now) { buckets.set(`k:${key}`, { n: 1, reset: now + windowMs }); sweep(now); return true; }
+  b.n += 1;
+  return b.n <= max;
+}
+
 let lastSweep = 0;
 function sweep(now: number) {
   if (now - lastSweep < 60_000) return;

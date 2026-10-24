@@ -101,11 +101,11 @@ const MAIL: Record<string, { s: string; h: string; b: string; n: string }> = {
   ko: { s: "내 여행 — 로그인", h: "내 여행 열기", b: "패스, 일정, 티켓, 여행 추억이 담긴 내 여행을 열어 보세요.", n: "이 이메일을 요청하지 않았다면 무시하세요." }
 };
 
-/** Link de entrada (vale 31 dias, igual ao link do acesso pago). */
+/** Link de entrada: vale 30 minutos; ao abri-lo, o servidor cria uma sessão nova (o link nunca é a sessão). */
 export async function sendWalletLink(email: string, locale: string, city?: string) {
   const t = MAIL[locale] ?? MAIL.en;
   // Com cidade: depois de entrar, abre logo o roteiro dessa cidade (se tiver acesso) em vez da carteira.
-  const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email))}&locale=${locale}${city ? `&city=${city}` : "&to=wallet"}`;
+  const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email, 30 * 60))}&locale=${locale}${city ? `&city=${city}` : "&to=wallet"}`;
   const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f;max-width:520px">
 <p style="font-weight:600;color:#0071e3">📍 VOYBU</p><h2 style="margin:0 0 12px">${t.s}</h2><p>${t.b}</p>
 <p><a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${t.h}</a></p>

@@ -376,7 +376,7 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
           <button type="button" className="ac-del-btn" disabled={del !== "DELETE" || busy === "del"} onClick={async () => {
             setBusy("del");
             const r = await fetch("/api/me/account", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirm: "DELETE" }) }).catch(() => null);
-            if (r?.ok) { try { localStorage.clear(); } catch { /* ignorar */ } location.href = `/${locale}`; } else { setBusy(""); flash(t.acErr); }
+            if (r?.ok) { await wipeDevice(); location.href = `/${locale}`; } else { setBusy(""); flash(t.acErr); }
           }}>{t.acDeleteBtn}</button>
         </div>
       </>}
@@ -384,4 +384,12 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
       {editing && <ProfileEditor t={t} initial={prof} onClose={(c) => { setEditing(false); if (c) void load(); }} />}
     </div>
   );
+}
+
+/** Depois de apagar a conta: limpa também o que ficou neste aparelho (armazenamento, diário offline, cópias guardadas). */
+async function wipeDevice() {
+  try { localStorage.clear(); } catch { /* ignorar */ }
+  try { sessionStorage.clear(); } catch { /* ignorar */ }
+  try { indexedDB.deleteDatabase("sgct-diary"); } catch { /* ignorar */ }
+  try { if ("caches" in window) for (const k of await caches.keys()) await caches.delete(k); } catch { /* ignorar */ }
 }

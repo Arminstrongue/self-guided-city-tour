@@ -2,7 +2,7 @@
  * Gestão da conta do viajante: exportar os dados (RGPD, art. 20.º) e apagar a conta.
  * Compras (passes) e reservas de guias ficam guardadas, sem perfil, porque a lei obriga a manter registos fiscais.
  */
-import { eq, or } from "drizzle-orm";
+import { eq, inArray, or } from "drizzle-orm";
 import { db, schema } from "./db";
 import { deleteProfile } from "./social";
 import { settingsOf } from "./notify";
@@ -28,6 +28,14 @@ export async function exportData(email: string) {
     settingsOf(email),
     d.select({ day: schema.journeys.day, city: schema.journeys.cityName, km: schema.journeys.km, steps: schema.journeys.steps, places: schema.journeys.places, path: schema.journeys.path }).from(schema.journeys).where(eq(schema.journeys.email, email))
   ]);
+  // Também: reservas e bilhetes, check-ins, comentários em lugares, pedidos a negócios e a conta de login.
+  const [reservations, checkins, placeComments, businessRequests, account] = await Promise.all([
+    d.select().from(schema.reservations).where(eq(schema.reservations.email, email)),
+    d.select({ city: schema.checkins.city, stop: schema.checkins.stop, verified: schema.checkins.verified, at: schema.checkins.createdAt }).from(schema.checkins).where(eq(schema.checkins.email, email)),
+    d.select({ city: schema.placeComments.city, stop: schema.placeComments.stop, text: schema.placeComments.text, at: schema.placeComments.createdAt }).from(schema.placeComments).where(eq(schema.placeComments.author, email)),
+    d.select({ kind: schema.bookingRequests.kind, option: schema.bookingRequests.option, dateFrom: schema.bookingRequests.dateFrom, dateTo: schema.bookingRequests.dateTo, name: schema.bookingRequests.name, phone: schema.bookingRequests.phone, note: schema.bookingRequests.note, status: schema.bookingRequests.status, at: schema.bookingRequests.createdAt }).from(schema.bookingRequests).where(eq(schema.bookingRequests.email, email)),
+    d.select({ name: schema.users.name, provider: schema.users.provider, locale: schema.users.locale, createdAt: schema.users.createdAt }).from(schema.users).where(eq(schema.users.email, email))
+  ]);
   // Os outros viajantes aparecem pelo @nome, nunca pelo email.
   const handles = new Map((await d.select({ e: schema.travellerProfiles.email, h: schema.travellerProfiles.handle }).from(schema.travellerProfiles)).map((r) => [r.e, `@${r.h}`]));
   const who = (e: string) => (e === email ? "me" : handles.get(e) ?? "(deleted traveller)");
@@ -40,7 +48,7 @@ export async function exportData(email: string) {
     blocked: blocks.map((b) => who(b.blocked)),
     messagesSent: sent.map((m) => ({ to: who(m.to), text: m.text, at: m.at })),
     messagesReceived: received.map((m) => ({ from: who(m.from), text: m.text, at: m.at })),
-    purchases: accesses, guideBookings: bookings, notifications: notifs, journeys
+    purchases: accesses, guideBookings: bookings, notifications: notifs, journeys, reservations, checkins, placeComments, businessRequests, account: account[0] ?? null
   };
 }
 
@@ -60,6 +68,20 @@ export async function deleteAccount(email: string) {
   await d.delete(schema.reservations).where(eq(schema.reservations.email, email));
   await d.delete(schema.journeys).where(eq(schema.journeys.email, email));
   await d.update(schema.stopReports).set({ reporter: "" }).where(eq(schema.stopReports.reporter, email));
+  // Restos sociais e pedidos a negócios (antes ficavam para trás).
+  await d.delete(schema.closeFriends).where(or(eq(schema.closeFriends.email, email), eq(schema.closeFriends.friend, email)));
+  await d.delete(schema.highlights).where(eq(schema.highlights.author, email));
+  await d.delete(schema.postHides).where(eq(schema.postHides.email, email));
+  await d.delete(schema.userMutes).where(or(eq(schema.userMutes.email, email), eq(schema.userMutes.muted, email)));
+  await d.delete(schema.messageReactions).where(eq(schema.messageReactions.email, email));
+  await d.delete(schema.reports).where(or(eq(schema.reports.reporter, email), eq(schema.reports.target, email)));
+  await d.update(schema.bookingRequests).set({ name: "", email: "", phone: "", note: "" }).where(eq(schema.bookingRequests.email, email));
+  // Avaliações de guias: ficam as estrelas e o comentário, sem o nome.
+  const myBookings = (await d.select({ id: schema.guideBookings.id }).from(schema.guideBookings).where(eq(schema.guideBookings.email, email))).map((r) => r.id);
+  if (myBookings.length) await d.update(schema.guideReviews).set({ author: null }).where(inArray(schema.guideReviews.bookingId, myBookings));
+  // Compras: só ficam os dados que a lei fiscal obriga a guardar (sem voo nem plano de viagem).
+  await d.update(schema.accesses).set({ flightNo: null, flightAt: null, trip: null, userId: null }).where(eq(schema.accesses.email, email));
+  await d.delete(schema.users).where(eq(schema.users.email, email));
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })
     .onConflictDoUpdate({ target: schema.accountSettings.email, set: { sessionsAfter: new Date(), notif: {}, dmPolicy: "circle", updatedAt: new Date() } });

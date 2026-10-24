@@ -1,3 +1,4 @@
+import { imageBytes } from "@/lib/strip-meta";
 import { currentTraveller } from "@/lib/wallet";
 import { photoOf } from "@/lib/posts";
 import { isRemotePhoto, remotePhoto } from "@/lib/remote-photo";
@@ -18,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
   const m = data?.match(/^data:(image\/(?:jpeg|webp|png));base64,(.+)$/);
   if (!m) return new Response("not found", { status: 404 });
-  return new Response(Buffer.from(m[2], "base64"), {
+  return new Response(imageBytes(m[1], m[2]), {
     headers: { "Content-Type": m[1], "Cache-Control": "private, max-age=86400", "X-Content-Type-Options": "nosniff" }
   });
 }
