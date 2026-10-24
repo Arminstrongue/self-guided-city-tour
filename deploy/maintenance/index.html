@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>VOYBU — back in a moment</title>
+<style>
+:root{--bg:#ffffff;--ink:#102A43;--muted:#62758A;--line:#e3e8ee;--soft:#f5f7fa;--ring:#102A43}
+@media (prefers-color-scheme:dark){:root{--bg:#0d0f14;--ink:#ffffff;--muted:#a9b6c4;--line:#232833;--soft:#161a22;--ring:#ffffff}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px 16px calc(24px + env(safe-area-inset-bottom))}
+main{width:100%;max-width:440px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.brand{display:flex;align-items:center;gap:10px;direction:ltr}
+.brand b{font-size:30px;font-weight:800;letter-spacing:.04em}
+.road{width:100%;height:6px;border-radius:6px;background:var(--soft);overflow:hidden;position:relative}
+.road i{position:absolute;inset:0 auto 0 0;width:40%;border-radius:6px;background:linear-gradient(90deg,#56D8C3,#FF6B4A);animation:go 1.6s ease-in-out infinite}
+@keyframes go{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+@media (prefers-reduced-motion:reduce){.road i{animation:none;width:100%}}
+h1{margin:6px 0 0;font-size:26px;line-height:1.25}
+p{margin:0;color:var(--muted);font-size:16.5px;line-height:1.5}
+.card{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--soft);font-size:14.5px;color:var(--muted);text-align:start}
+button{min-height:48px;padding:0 24px;border-radius:999px;border:0;background:#FF6B4A;color:#102A43;font:inherit;font-weight:800;font-size:16px;cursor:pointer}
+small{color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand" aria-label="VOYBU">
+    <svg viewBox="1 1 112 112" width="44" height="44" aria-hidden="true"><path d="M18 18L54 102L94 28" fill="none" stroke="#FF6B4A" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="18" r="11" fill="#56D8C3" stroke="var(--ring)" stroke-width="4"/><circle cx="94" cy="28" r="13" fill="#FF6B4A" stroke="var(--ring)" stroke-width="4"/><circle cx="94" cy="28" r="4" fill="#FFF8F0"/></svg>
+    <b>VOYBU</b>
+  </div>
+  <h1 id="h">We're updating VOYBU</h1>
+  <p id="p">We're making a few improvements to give you a better experience. We'll be back in a few seconds.</p>
+  <div class="road" aria-hidden="true"><i></i></div>
+  <div class="card" id="c">Downloaded routes, tickets and bookings still work offline in the app.</div>
+  <button type="button" id="b">Try again</button>
+  <small id="s" aria-live="polite"></small>
+</main>
+<script>
+(function () {
+  var T = {
+    pt: ["Estamos a atualizar o VOYBU", "Estamos a fazer algumas melhorias para lhe dar uma experiência melhor. Voltamos dentro de segundos.", "Os roteiros descarregados, bilhetes e reservas continuam a funcionar sem internet na app.", "Tentar agora", "A verificar de novo em {n} s…", "Já está! A abrir…"],
+    en: ["We're updating VOYBU", "We're making a few improvements to give you a better experience. We'll be back in a few seconds.", "Downloaded routes, tickets and bookings still work offline in the app.", "Try again", "Checking again in {n} s…", "We're back! Opening…"],
+    es: ["Estamos actualizando VOYBU", "Estamos haciendo algunas mejoras para ofrecerte una mejor experiencia. Volvemos en unos segundos.", "Las rutas descargadas, los billetes y las reservas siguen funcionando sin internet en la app.", "Reintentar", "Volvemos a comprobar en {n} s…", "¡Ya está! Abriendo…"],
+    fr: ["Nous mettons VOYBU à jour", "Nous apportons quelques améliorations pour vous offrir une meilleure expérience. De retour dans quelques secondes.", "Les itinéraires téléchargés, billets et réservations fonctionnent toujours hors ligne dans l'app.", "Réessayer", "Nouvelle vérification dans {n} s…", "C'est reparti ! Ouverture…"],
+    de: ["Wir aktualisieren VOYBU", "Wir nehmen ein paar Verbesserungen vor, damit alles noch besser läuft. In wenigen Sekunden sind wir zurück.", "Heruntergeladene Routen, Tickets und Buchungen funktionieren in der App weiterhin offline.", "Erneut versuchen", "Neuer Versuch in {n} s…", "Wieder da! Wird geöffnet…"],
+    it: ["Stiamo aggiornando VOYBU", "Stiamo apportando alcuni miglioramenti per offrirti un'esperienza migliore. Torniamo tra pochi secondi.", "Gli itinerari scaricati, i biglietti e le prenotazioni funzionano ancora offline nell'app.", "Riprova", "Nuovo controllo tra {n} s…", "Eccoci! Apertura…"],
+    zh: ["VOYBU 正在更新", "我们正在进行一些改进，为您带来更好的体验。几秒钟后就回来。", "已下载的路线、门票和预订在应用中仍可离线使用。", "重试", "{n} 秒后再次检查…", "已恢复！正在打开…"],
+    ar: ["نقوم بتحديث VOYBU", "نجري بعض التحسينات لنمنحك تجربة أفضل. سنعود خلال ثوانٍ.", "المسارات التي نزّلتها والتذاكر والحجوزات تعمل دون إنترنت في التطبيق.", "أعد المحاولة", "إعادة التحقق خلال {n} ث…", "عدنا! جارٍ الفتح…"],
+    ja: ["VOYBU を更新しています", "より快適にご利用いただくため、改善を行っています。数秒で戻ります。", "ダウンロード済みのルート、チケット、予約はアプリでオフラインでも使えます。", "再試行", "{n} 秒後に再確認します…", "復旧しました！開いています…"],
+    ko: ["VOYBU를 업데이트하고 있어요", "더 나은 경험을 위해 몇 가지를 개선하고 있어요. 몇 초 후에 돌아올게요.", "다운로드한 루트, 티켓, 예약은 앱에서 오프라인으로도 계속 사용할 수 있어요.", "다시 시도", "{n}초 후 다시 확인…", "돌아왔어요! 여는 중…"],
+    ru: ["Мы обновляем VOYBU", "Мы вносим улучшения, чтобы сделать сервис удобнее. Вернёмся через несколько секунд.", "Скачанные маршруты, билеты и бронирования по-прежнему работают офлайн в приложении.", "Повторить", "Проверим снова через {n} с…", "Мы снова здесь! Открываем…"],
+    tr: ["VOYBU'yu güncelliyoruz", "Size daha iyi bir deneyim sunmak için birkaç iyileştirme yapıyoruz. Birkaç saniye içinde döneceğiz.", "İndirilen rotalar, biletler ve rezervasyonlar uygulamada çevrimdışı çalışmaya devam eder.", "Tekrar dene", "{n} sn içinde yeniden denenecek…", "Geri döndük! Açılıyor…"]
+  };
+  var seg = (location.pathname.split("/")[1] || "").toLowerCase();
+  var nav = ((navigator.languages && navigator.languages[0]) || navigator.language || "en").slice(0, 2).toLowerCase();
+  var L = T[seg] ? seg : T[nav] ? nav : "en";
+  var t = T[L];
+  document.documentElement.lang = L;
+  if (L === "ar") document.documentElement.dir = "rtl";
+  document.getElementById("h").textContent = t[0];
+  document.getElementById("p").textContent = t[1];
+  document.getElementById("c").textContent = t[2];
+  var b = document.getElementById("b"), s = document.getElementById("s");
+  b.textContent = t[3];
+  var wait = 5, left = wait, timer;
+  function check() {
+    clearInterval(timer);
+    fetch("/api/health", { cache: "no-store" }).then(function (r) {
+      if (r.ok) { s.textContent = t[5]; location.reload(); } else again();
+    }).catch(again);
+  }
+  function again() {
+    wait = Math.min(30, Math.round(wait * 1.5)); left = wait;
+    s.textContent = t[4].replace("{n}", left);
+    timer = setInterval(function () { left--; if (left <= 0) check(); else s.textContent = t[4].replace("{n}", left); }, 1000);
+  }
+  b.addEventListener("click", check);
+  s.textContent = t[4].replace("{n}", left);
+  timer = setInterval(function () { left--; if (left <= 0) check(); else s.textContent = t[4].replace("{n}", left); }, 1000);
+})();
+</script>
+</body>
+</html>

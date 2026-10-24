@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v9";
+const VERSION = "sgct-v10";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -25,6 +25,8 @@ async function networkFirst(req, cacheName) {
       const off = await caches.open(OFFLINE);
       if (await off.match(req)) await off.put(req, r.clone());
     }
+    // Servidor em atualização (502/503/504): mostra a cópia guardada, se houver; senão, a página "Voltamos já".
+    if (r.status >= 502 && r.status <= 504) return (await caches.match(req, { ignoreVary: true })) || r;
     return r;
   } catch {
     return (await caches.match(req, { ignoreVary: true })) || Response.error();

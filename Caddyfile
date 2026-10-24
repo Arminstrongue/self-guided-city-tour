@@ -6,16 +6,39 @@
 	reverse_proxy {
 		dynamic a app 3000
 		lb_policy least_conn
+		# Durante uma atualização (a app a reiniciar), espera até 20 s por ela em vez de falhar logo.
+		lb_try_duration 20s
+		lb_try_interval 500ms
 		health_uri /api/health
 		health_interval 15s
 	}
 	# Ficheiros estáticos com cache longa (a Cloudflare guarda-os na rede dela).
 	@static path /_next/static/* /icon-* /apple-touch-icon.png /music/*
 	header @static Cache-Control "public, max-age=31536000, immutable"
+
+	# Se a app continuar indisponível: página "Estamos a atualizar — voltamos já" (12 línguas, volta sozinha).
+	handle_errors {
+		@downapi expression `{err.status_code} in [502, 503, 504] && {path}.startsWith("/api/")`
+		@down expression `{err.status_code} in [502, 503, 504]`
+		handle @downapi {
+			header Retry-After "15"
+			header Cache-Control "no-store"
+			header Content-Type "application/json"
+			respond `{"error":"maintenance"}` 503
+		}
+		handle @down {
+			header Retry-After "15"
+			header Cache-Control "no-store"
+			root * /srv/maintenance
+			rewrite * /index.html
+			file_server {
+				status 503
+			}
+		}
+	}
 }
 
 # www → domínio principal
 www.{$DOMAIN} {
 	redir https://{$DOMAIN}{uri} permanent
 }
-

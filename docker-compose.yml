@@ -59,6 +59,7 @@ services:
       DOMAIN: ${DOMAIN:?defina DOMAIN no .env}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/maintenance:/srv/maintenance:ro
       - caddy_data:/data
     depends_on: [app]
 
