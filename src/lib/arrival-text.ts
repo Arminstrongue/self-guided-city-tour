@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 
 type Pack = { taxiApp: string; taxiRide: string; s: string[] };
-export const ARRIVAL_LANGS = ["es", "fr", "de", "it"] as const;
+export const ARRIVAL_LANGS = ["es", "fr", "de", "it", "zh", "ar", "ja", "ko", "ru", "tr"] as const;
 const TAXI_APP = /^Turn on data or airport Wi-Fi and book in the app \((.+)\), or follow the Taxi signs to the official rank\.$/;
 const TAXI_RIDE = /^Ride to the centre \((.+)\)\.$/;
 
