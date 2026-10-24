@@ -1,3 +1,4 @@
+import { emailBrand } from "./email";
 /** Email de acesso ao roteiro, na língua do cliente (12 línguas), com botão e texto simples. */
 import { INTL_LOCALE } from "@/i18n/core";
 import type { Locale } from "@/i18n/dictionaries";
@@ -87,10 +88,10 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
   const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:20px;padding:32px">
-<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:20px">📍 VOYBU</td></tr>
+<tr><td style="font-size:15px;font-weight:600;color:#102A43;padding-bottom:20px">${emailBrand()}</td></tr>
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:8px">${hello}</td></tr>
 <tr><td style="font-size:17px;line-height:1.5;padding-bottom:24px">${f(t.ready, { c: `<b>${esc(o.place)}</b>` })}</td></tr>
-<tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
+<tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#102A43;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:8px">${esc(validity)}</td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:20px">${t.tip}</td></tr>
 <tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:8px">${esc(whatTxt)}</td></tr>

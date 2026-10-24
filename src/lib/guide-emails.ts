@@ -1,3 +1,4 @@
+import { emailBrand } from "./email";
 /** Emails do marketplace de guias: ao turista na sua língua (9), ao guia em português e inglês. */
 import { INTL_LOCALE, isLocale } from "@/i18n/core";
 import type { Locale } from "@/i18n/dictionaries";
@@ -34,12 +35,12 @@ function shell(locale: Locale, title: string, rows: string) {
   return `<!doctype html><html lang="${locale}" dir="${locale === "ar" ? "rtl" : "ltr"}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:20px;padding:32px">
-<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:16px">📍 VOYBU</td></tr>
+<tr><td style="font-size:15px;font-weight:600;color:#102A43;padding-bottom:16px">${emailBrand()}</td></tr>
 <tr><td style="font-size:22px;font-weight:700;padding-bottom:12px">${title}</td></tr>${rows}
 </table></td></tr></table></body></html>`;
 }
 const p = (s: string, muted = false) => `<tr><td style="font-size:16px;line-height:1.5;padding-bottom:12px;${muted ? "color:#6e6e73" : ""}">${s}</td></tr>`;
-const btn = (href: string, label: string) => `<tr><td style="padding:8px 0 16px"><a href="${href}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:16px;padding:12px 26px;border-radius:999px">${esc(label)}</a></td></tr>`;
+const btn = (href: string, label: string) => `<tr><td style="padding:8px 0 16px"><a href="${href}" style="display:inline-block;background:#102A43;color:#fff;text-decoration:none;font-weight:600;font-size:16px;padding:12px 26px;border-radius:999px">${esc(label)}</a></td></tr>`;
 
 export type MailBooking = { guide: string; when: Date; tz?: string; amountCents: number; hours: number; people: number; locale?: string | null };
 

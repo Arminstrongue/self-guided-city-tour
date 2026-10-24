@@ -9,6 +9,7 @@ import { db, schema } from "./db";
 import { ACCESS_COOKIE, createAccessToken, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
 import { sendEmail } from "./email";
+import { signinEmail } from "./signin-email";
 import { env } from "./env";
 
 declare global { var __sgctRevoked: Map<string, { after: number; at: number }> | undefined } // eslint-disable-line no-var
@@ -86,31 +87,13 @@ export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: W
     .onConflictDoUpdate({ target: schema.travellerPrefs.email, set });
 }
 
-const MAIL: Record<string, { s: string; h: string; b: string; n: string }> = {
-  pt: { s: "A minha viagem — entrar", h: "Abrir A minha viagem", b: "Abra A minha viagem com os seus passes, planos, bilhetes e memórias de viagem.", n: "Se não pediu este email, ignore-o." },
-  en: { s: "My Trip — sign in", h: "Open My Trip", b: "Open My Trip with your passes, plans, tickets and travel memories.", n: "If you didn't request this email, ignore it." },
-  es: { s: "Mi viaje — acceder", h: "Abrir Mi viaje", b: "Abre Mi viaje con tus pases, planes, billetes y recuerdos de viaje.", n: "Si no pediste este correo, ignóralo." },
-  fr: { s: "Mon voyage — connexion", h: "Ouvrir Mon voyage", b: "Ouvrez Mon voyage avec vos pass, plans, billets et souvenirs de voyage.", n: "Si vous n'avez pas demandé cet e-mail, ignorez-le." },
-  de: { s: "Meine Reise — Anmeldung", h: "Meine Reise öffnen", b: "Öffnen Sie Meine Reise mit Ihren Pässen, Plänen, Tickets und Reiseerinnerungen.", n: "Wenn Sie diese E-Mail nicht angefordert haben, ignorieren Sie sie." },
-  it: { s: "Il mio viaggio — accesso", h: "Apri Il mio viaggio", b: "Apri Il mio viaggio con pass, piani, biglietti e ricordi di viaggio.", n: "Se non hai richiesto questa email, ignorala." },
-  zh: { s: "我的行程 — 登录", h: "打开我的行程", b: "打开“我的行程”，查看您的通行证、计划、票券和旅行回忆。", n: "如果您没有申请这封邮件，请忽略。" },
-  ar: { s: "رحلتي — تسجيل الدخول", h: "افتح رحلتي", b: "افتح رحلتي لتجد تذاكرك وخططك وبطاقاتك وذكريات سفرك.", n: "إذا لم تطلب هذه الرسالة، فتجاهلها." },
-  ja: { s: "マイトリップ — ログイン", h: "マイトリップを開く", b: "パス、プラン、チケット、旅の思い出が入ったマイトリップを開きましょう。", n: "このメールに心当たりがない場合は無視してください。" },
-  tr: { s: "Seyahatim — giriş", h: "Seyahatim'i aç", b: "Kartlarınız, planlarınız, biletleriniz ve seyahat anılarınızla Seyahatim'i açın.", n: "Bu e-postayı siz istemediyseniz yok sayın." },
-  ru: { s: "Моя поездка — вход", h: "Открыть «Мою поездку»", b: "Откройте «Мою поездку» с пропусками, планами, билетами и воспоминаниями о путешествиях.", n: "Если вы не запрашивали это письмо, просто проигнорируйте его." },
-  ko: { s: "내 여행 — 로그인", h: "내 여행 열기", b: "패스, 일정, 티켓, 여행 추억이 담긴 내 여행을 열어 보세요.", n: "이 이메일을 요청하지 않았다면 무시하세요." }
-};
 
 /** Link de entrada: vale 30 minutos; ao abri-lo, o servidor cria uma sessão nova (o link nunca é a sessão). */
 export async function sendWalletLink(email: string, locale: string, city?: string) {
-  const t = MAIL[locale] ?? MAIL.en;
   // Com cidade: depois de entrar, abre logo o roteiro dessa cidade (se tiver acesso) em vez da carteira.
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email, 30 * 60))}&locale=${locale}${city ? `&city=${city}` : "&to=wallet"}`;
-  const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f;max-width:520px">
-<p style="font-weight:600;color:#0071e3">📍 VOYBU</p><h2 style="margin:0 0 12px">${t.s}</h2><p>${t.b}</p>
-<p><a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${t.h}</a></p>
-<p style="color:#6e6e73;font-size:13px">${t.n}</p></div>`;
-  await sendEmail(email, `VOYBU — ${t.s}`, html, `${t.b}\n${link}`);
+  const m = signinEmail({ locale, email, link });
+  await sendEmail(email, m.subject, m.html, m.text);
   return link;
 }
 

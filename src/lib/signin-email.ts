@@ -1,0 +1,42 @@
+/** Email de entrada (link mágico) nas 12 línguas: claro, com a validade do link e o que fazer se não foi pedido. */
+import { emailBrand } from "./email";
+
+type T = { s: string; pre: string; h: string; b: string; btn: string; valid: string; safe: string; copy: string; foot: string };
+const TX: Record<string, T> = {
+  pt: { s: "O seu link para entrar na VOYBU", pre: "Toque para abrir A minha viagem. O link vale 30 minutos.", h: "Entrar na VOYBU", b: "Toque no botão para abrir A minha viagem neste dispositivo: passes, planos, bilhetes e memórias, tudo num só lugar.", btn: "Entrar", valid: "O botão funciona durante 30 minutos e foi pedido para {e}.", safe: "Não pediu este email? Pode ignorá-lo: ninguém entra na sua conta sem acesso à sua caixa de correio.", copy: "O botão não funciona? Copie este link para o navegador:", foot: "VOYBU · O seu próximo passo, em qualquer lugar." },
+  en: { s: "Your VOYBU sign-in link", pre: "Tap to open My Trip. The link works for 30 minutes.", h: "Sign in to VOYBU", b: "Tap the button to open My Trip on this device: passes, plans, tickets and memories, all in one place.", btn: "Sign in", valid: "The button works for 30 minutes and was requested for {e}.", safe: "Didn't ask for this? You can ignore it: no one can get into your account without access to your inbox.", copy: "Button not working? Copy this link into your browser:", foot: "VOYBU · Your next step, anywhere." },
+  es: { s: "Tu enlace para entrar en VOYBU", pre: "Toca para abrir Mi viaje. El enlace sirve 30 minutos.", h: "Entrar en VOYBU", b: "Toca el botón para abrir Mi viaje en este dispositivo: pases, planes, billetes y recuerdos, todo en un solo lugar.", btn: "Entrar", valid: "El botón funciona durante 30 minutos y se pidió para {e}.", safe: "¿No lo pediste? Puedes ignorarlo: nadie entra en tu cuenta sin acceso a tu correo.", copy: "¿El botón no funciona? Copia este enlace en el navegador:", foot: "VOYBU · Tu próximo paso, en cualquier lugar." },
+  fr: { s: "Votre lien de connexion VOYBU", pre: "Touchez pour ouvrir Mon voyage. Le lien est valable 30 minutes.", h: "Se connecter à VOYBU", b: "Touchez le bouton pour ouvrir Mon voyage sur cet appareil : pass, plans, billets et souvenirs, au même endroit.", btn: "Se connecter", valid: "Le bouton fonctionne pendant 30 minutes et a été demandé pour {e}.", safe: "Vous n'avez rien demandé ? Ignorez cet e-mail : personne ne peut accéder à votre compte sans votre boîte mail.", copy: "Le bouton ne marche pas ? Copiez ce lien dans votre navigateur :", foot: "VOYBU · Votre prochaine étape, partout." },
+  de: { s: "Ihr VOYBU-Anmeldelink", pre: "Tippen, um Meine Reise zu öffnen. Der Link gilt 30 Minuten.", h: "Bei VOYBU anmelden", b: "Tippen Sie auf die Schaltfläche, um Meine Reise auf diesem Gerät zu öffnen: Pässe, Pläne, Tickets und Erinnerungen an einem Ort.", btn: "Anmelden", valid: "Die Schaltfläche funktioniert 30 Minuten lang und wurde für {e} angefordert.", safe: "Nicht angefordert? Ignorieren Sie diese E-Mail: Ohne Zugriff auf Ihr Postfach kommt niemand in Ihr Konto.", copy: "Schaltfläche funktioniert nicht? Kopieren Sie diesen Link in Ihren Browser:", foot: "VOYBU · Ihr nächster Schritt, überall." },
+  it: { s: "Il tuo link per accedere a VOYBU", pre: "Tocca per aprire Il mio viaggio. Il link vale 30 minuti.", h: "Accedi a VOYBU", b: "Tocca il pulsante per aprire Il mio viaggio su questo dispositivo: pass, piani, biglietti e ricordi, tutto in un posto.", btn: "Accedi", valid: "Il pulsante funziona per 30 minuti ed è stato richiesto per {e}.", safe: "Non l'hai richiesto? Ignora questa email: nessuno può entrare nel tuo account senza accesso alla tua casella.", copy: "Il pulsante non funziona? Copia questo link nel browser:", foot: "VOYBU · Il tuo prossimo passo, ovunque." },
+  zh: { s: "您的 VOYBU 登录链接", pre: "点按即可打开“我的行程”。链接 30 分钟内有效。", h: "登录 VOYBU", b: "点按按钮，在此设备上打开“我的行程”：通行证、计划、票券和旅行回忆，尽在一处。", btn: "登录", valid: "该按钮 30 分钟内有效，由 {e} 申请。", safe: "不是您申请的？请忽略此邮件：没有您的邮箱，任何人都无法进入您的账户。", copy: "按钮无法使用？请将此链接复制到浏览器：", foot: "VOYBU · 您的下一步，随处可达。" },
+  ar: { s: "رابط تسجيل الدخول إلى VOYBU", pre: "اضغط لفتح رحلتي. الرابط صالح لمدة 30 دقيقة.", h: "تسجيل الدخول إلى VOYBU", b: "اضغط الزر لفتح رحلتي على هذا الجهاز: التذاكر والخطط والبطاقات والذكريات في مكان واحد.", btn: "تسجيل الدخول", valid: "يعمل الزر لمدة 30 دقيقة، وقد طُلب لـ {e}.", safe: "لم تطلب هذا؟ تجاهل الرسالة: لا يمكن لأحد دخول حسابك دون الوصول إلى بريدك.", copy: "الزر لا يعمل؟ انسخ هذا الرابط في المتصفح:", foot: "VOYBU · خطوتك التالية، في أي مكان." },
+  ja: { s: "VOYBU ログインリンク", pre: "タップしてマイトリップを開きます。リンクの有効期限は30分です。", h: "VOYBU にログイン", b: "ボタンをタップすると、この端末でマイトリップが開きます。パス、プラン、チケット、思い出をひとつに。", btn: "ログイン", valid: "このボタンは30分間有効で、{e} 宛てにリクエストされました。", safe: "心当たりがない場合は無視してください。メールボックスにアクセスできない限り、誰もアカウントに入れません。", copy: "ボタンが使えない場合は、このリンクをブラウザにコピーしてください：", foot: "VOYBU · どこでも、次の一歩を。" },
+  ko: { s: "VOYBU 로그인 링크", pre: "탭하여 내 여행을 열어요. 링크는 30분간 유효해요.", h: "VOYBU 로그인", b: "버튼을 탭하면 이 기기에서 내 여행이 열려요. 패스, 일정, 티켓, 추억을 한곳에서.", btn: "로그인", valid: "이 버튼은 30분간 작동하며 {e}에 대해 요청되었어요.", safe: "요청하지 않으셨나요? 무시하셔도 돼요. 메일함에 접근하지 않고는 아무도 계정에 들어갈 수 없어요.", copy: "버튼이 작동하지 않나요? 이 링크를 브라우저에 복사하세요:", foot: "VOYBU · 어디서든 다음 한 걸음." },
+  ru: { s: "Ссылка для входа в VOYBU", pre: "Нажмите, чтобы открыть «Мою поездку». Ссылка действует 30 минут.", h: "Вход в VOYBU", b: "Нажмите кнопку, чтобы открыть «Мою поездку» на этом устройстве: пропуска, планы, билеты и воспоминания в одном месте.", btn: "Войти", valid: "Кнопка работает 30 минут и запрошена для {e}.", safe: "Не запрашивали? Просто проигнорируйте письмо: без доступа к вашей почте никто не войдёт в аккаунт.", copy: "Кнопка не работает? Скопируйте эту ссылку в браузер:", foot: "VOYBU · Ваш следующий шаг, где угодно." },
+  tr: { s: "VOYBU giriş bağlantınız", pre: "Seyahatim'i açmak için dokunun. Bağlantı 30 dakika geçerli.", h: "VOYBU'ya giriş yapın", b: "Seyahatim'i bu cihazda açmak için düğmeye dokunun: kartlar, planlar, biletler ve anılar tek yerde.", btn: "Giriş yap", valid: "Düğme 30 dakika çalışır ve {e} için istendi.", safe: "Siz istemediniz mi? Bu e-postayı yok sayabilirsiniz: gelen kutunuza erişim olmadan kimse hesabınıza giremez.", copy: "Düğme çalışmıyor mu? Bu bağlantıyı tarayıcıya kopyalayın:", foot: "VOYBU · Bir sonraki adımınız, her yerde." }
+};
+
+const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
+
+export function signinEmail(o: { locale: string; email: string; link: string }) {
+  const t = TX[o.locale] ?? TX.en;
+  const dir = o.locale === "ar" ? "rtl" : "ltr";
+  const valid = t.valid.replace("{e}", `<b>${esc(o.email)}</b>`);
+  const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(t.pre)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:20px;padding:32px 28px">
+<tr><td style="padding-bottom:24px">${emailBrand()}</td></tr>
+<tr><td style="font-size:24px;font-weight:700;line-height:1.25;padding-bottom:12px;color:#102A43">${esc(t.h)}</td></tr>
+<tr><td style="font-size:16px;line-height:1.55;padding-bottom:24px">${esc(t.b)}</td></tr>
+<tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#102A43;color:#ffffff;text-decoration:none;font-weight:700;font-size:17px;padding:14px 40px;border-radius:999px">${esc(t.btn)}</a></td></tr>
+<tr><td style="font-size:14px;line-height:1.5;color:#6e6e73;padding-bottom:8px">⏱ ${valid}</td></tr>
+<tr><td style="font-size:14px;line-height:1.5;color:#6e6e73;padding-bottom:20px">🔒 ${esc(t.safe)}</td></tr>
+<tr><td style="font-size:12px;line-height:1.5;color:#86868b;border-top:1px solid #e5e5ea;padding-top:16px;word-break:break-all">${esc(t.copy)}<br><a href="${o.link}" style="color:#86868b">${o.link}</a></td></tr>
+</table>
+<p style="font-size:12px;color:#86868b;margin:16px 0 0">${esc(t.foot)}</p>
+</td></tr></table></body></html>`;
+  const text = `${t.h}\n\n${t.b}\n\n${o.link}\n\n${t.valid.replace("{e}", o.email)}\n${t.safe}\n\n${t.foot}`;
+  return { subject: t.s, html, text };
+}

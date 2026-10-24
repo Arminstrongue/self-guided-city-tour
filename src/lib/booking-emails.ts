@@ -1,3 +1,4 @@
+import { emailBrand } from "./email";
 /** Emails dos pedidos de reserva: ao negócio (pt/en/es/fr) e a confirmação ao viajante (12 idiomas). */
 import { isLocale } from "@/i18n/core";
 import type { Locale } from "@/i18n/dictionaries";
@@ -72,7 +73,7 @@ function shell(locale: string, title: string, rows: string) {
   return `<!doctype html><html lang="${locale}" dir="${locale === "ar" ? "rtl" : "ltr"}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#fff;border-radius:20px;padding:32px">
-<tr><td style="font-size:15px;font-weight:600;color:#0071e3;padding-bottom:16px">📍 VOYBU</td></tr>
+<tr><td style="font-size:15px;font-weight:600;color:#102A43;padding-bottom:16px">${emailBrand()}</td></tr>
 <tr><td style="font-size:22px;font-weight:700;padding-bottom:12px">${title}</td></tr>${rows}
 </table></td></tr></table></body></html>`;
 }

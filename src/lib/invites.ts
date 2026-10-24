@@ -7,7 +7,7 @@ import { createHmac } from "node:crypto";
 import { and, desc, eq, gt, isNotNull, isNull, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { env } from "./env";
-import { sendEmail } from "./email";
+import { sendEmail, emailBrand } from "./email";
 import { follow, myProfile } from "./social";
 import { notify } from "./notify";
 
@@ -65,9 +65,9 @@ export async function sendEmailInvites(me: string, emails: string[], locale: str
     if (recent.length || member.length) continue; // não insistir nem revelar quem já é membro
     const link = inviteLink(prof.handle, locale, "email");
     const html = `<div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;font-size:16px;color:#1d1d1f;max-width:520px">
-<p style="font-weight:600;color:#0071e3">📍 VOYBU</p><h2 style="margin:0 0 12px">${f(t.s)}</h2><p>${f(t.b)}</p>
+<p style="font-weight:600;color:#102A43">${emailBrand()}</p><h2 style="margin:0 0 12px">${f(t.s)}</h2><p>${f(t.b)}</p>
 ${note ? `<p style="background:#f5f5f7;border-radius:12px;padding:12px 14px"><span style="color:#6e6e73;font-size:13px">${f(t.note)}</span><br>${esc(note)}</p>` : ""}
-<p><a href="${link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${f(t.h)}</a></p>
+<p><a href="${link}" style="display:inline-block;background:#102A43;color:#fff;text-decoration:none;font-weight:600;padding:12px 26px;border-radius:999px">${f(t.h)}</a></p>
 <p style="color:#6e6e73;font-size:13px">${f(t.n)}</p></div>`;
     await sendEmail(email, f(t.s).replace(/&amp;/g, "&"), html, `${f(t.b)}\n${note ? `\n"${note}"\n` : ""}\n${link}`);
   }
