@@ -1,4 +1,13 @@
 {
+  "sgTitle": "Suggestion pour maintenant",
+  "sgNear": "À {m} min à pied",
+  "sgClosing": "Ferme à {t} : mieux vaut y aller maintenant",
+  "sgRain": "La pluie arrive : c'est en intérieur",
+  "sgHeat": "Il fait très chaud : c'est en intérieur",
+  "sgGo": "Voir",
+  "nxFar": "Vous êtes encore à {d} de {s}. Marquer comme visité ?",
+  "nxFarYes": "Oui, marquer",
+  "nxFarNo": "Pas encore",
   "arvSwitch": "Vous semblez être à {c}.",
   "arvSwitchBtn": "Passer à {c}",
   "arvFar": "Cette destination est à {d} : elle n'est pas dans cette ville.",

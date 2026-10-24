@@ -1,4 +1,13 @@
 {
+  "sgTitle": "Şimdi için öneri",
+  "sgNear": "Size {m} dk yürüme mesafesinde",
+  "sgClosing": "{t}'de kapanıyor: hemen gitmek en iyisi",
+  "sgRain": "Yağmur geliyor: kapalı bir mekân",
+  "sgHeat": "Çok sıcak: kapalı bir mekân",
+  "sgGo": "Gör",
+  "nxFar": "{s} noktasına hâlâ {d} var. Ziyaret edildi olarak işaretlensin mi?",
+  "nxFarYes": "Evet, işaretle",
+  "nxFarNo": "Henüz değil",
   "arvSwitch": "{c} şehrinde görünüyorsunuz.",
   "arvSwitchBtn": "{c} şehrine geç",
   "arvFar": "Bu hedef {d} uzakta: bu şehirde değil.",

@@ -15,6 +15,7 @@ import { SheetX } from "./WinNav";
 import { Share2 } from "lucide-react";
 import { toast } from "@/lib/toast";
 import { routeSharePath } from "@/lib/route-share";
+import { suggestNext, type SgStop } from "@/lib/next-suggest";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
@@ -346,12 +347,30 @@ export function Speak({ text, lang, fallback, t }: { text: string; lang: string;
 /* ---------- Guia prático ---------- */
 type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
 
-export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel }: {
-  city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number;
+export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel, pos }: {
+  city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number; pos?: { lat: number; lng: number } | null;
   startHop?: { m: "walk" | "metro"; min: number } | null; backLabel?: string;
   money: (v: number) => string; onDone: (id: string) => void; onOpen: (id: string) => void; t: Dict; locale: Locale;
 }) {
   const idx = stops.findIndex((s) => !done[s.id]);
+  // Tempo nas próximas horas (chuva ou calor), para a sugestão "para agora".
+  const [wx, setWx] = useState<{ rain: boolean; hot: boolean } | null>(null);
+  useEffect(() => {
+    fetch(`/api/weather?city=${city.id}`).then((r) => (r.ok ? r.json() : null)).then((w: Weather & { error?: string } | null) => {
+      if (!w || w.error || !w.hours) return;
+      const next = w.hours.slice(0, 3);
+      setWx({ rain: next.some((h) => h.rain >= 60), hot: next.some((h) => h.temp >= 32) });
+    }).catch(() => null);
+  }, [city.id]);
+  // "Cheguei" longe da paragem: pergunta antes de marcar.
+  const [far, setFar] = useState<{ id: string; d: number } | null>(null);
+  const markHere = (s: Stop) => {
+    const decide = (p: { lat: number; lng: number } | null) => { const d = p ? km(p, s) : null; if (d !== null && d > 0.4) setFar({ id: s.id, d }); else onDone(s.id); };
+    if (pos) return decide(pos);
+    // Sem posição ainda: pede-a uma vez; se não houver (recusada ou sem GPS), confia no viajante.
+    if (!navigator.geolocation) return decide(null);
+    navigator.geolocation.getCurrentPosition((g) => decide({ lat: g.coords.latitude, lng: g.coords.longitude }), () => decide(null), { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 });
+  };
   if (idx < 0) {
     return (
       <div className="card nx nx-done">
@@ -377,6 +396,16 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
   }
   const mode = leg.m === "walk" ? "walking" : "transit";
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}&travelmode=${mode}`;
+  const hmNow = new Intl.DateTimeFormat("en-GB", { timeZone: city.tz ?? "UTC", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date()).replace(/^24/, "00");
+  const remaining: SgStop[] = stops.filter((x) => !done[x.id]).map((x) => {
+    const mm = museums.map((m) => ({ m, d: km(m, x) })).filter((y) => y.d < 0.35).sort((u, v) => u.d - v.d)[0]?.m;
+    const b = mm?.h.find(([d]) => d.includes(today));
+    return { id: x.id, n: x.n, lat: x.lat, lng: x.lng, v: x.v, closedToday: Boolean(x.cl?.includes(today)) || Boolean(mm && !b), hours: b ? [b[1], b[2]] as [string, string] : null };
+  });
+  const sg = suggestNext({ remaining, pos, nowHM: hmNow, rainSoon: wx?.rain, hot: wx?.hot });
+  const sgStop = sg ? stops.find((x) => x.id === sg.id) : null;
+  const sgWhy = sg ? (sg.reason === "closing" ? fmt(t.sgClosing, { t: sg.closes ?? "" }) : sg.reason === "rain" ? t.sgRain : sg.reason === "heat" ? t.sgHeat : fmt(t.sgNear, { m: sg.walkMin ?? 1 })) : "";
+  const farStop = far ? stops.find((x) => x.id === far.id) : null;
   return (
     <div className="card nx" aria-live="polite">
       <div className="nx-top">
@@ -396,10 +425,23 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
         )}
         {after && <div className="nx-row dim"><span aria-hidden="true">↪</span><span>{fmt(t.nxThen, { s: after.n })}</span></div>}
       </div>
+      {sgStop && sg && sg.id !== s.id && (
+        <button type="button" className="nx-sg press" onClick={() => onOpen(sgStop.id)}>
+          <span aria-hidden="true">✨</span><span><small>{t.sgTitle}</small><b>{sgStop.n}</b><em>{sgWhy}</em></span><span className="nx-sg-go">{t.sgGo} ›</span>
+        </button>
+      )}
+      {sgStop && sg && sg.id === s.id && <p className="nx-sg-note">✨ {sgWhy}</p>}
+      {far && farStop ? (
+        <div className="nx-far" role="alertdialog" aria-live="assertive">
+          <p>{fmt(t.nxFar, { d: far.d < 1 ? `${Math.round(far.d * 1000)} m` : `${far.d.toFixed(1)} km`, s: farStop.n })}</p>
+          <div className="nx-acts"><button className="btn tram" onClick={() => setFar(null)}>{t.nxFarNo}</button><button className="btn ghost" onClick={() => { onDone(far.id); setFar(null); }}>{t.nxFarYes}</button></div>
+        </div>
+      ) : (
       <div className="nx-acts">
         <ExtLink className="btn tram" href={dir}>{t.directions}</ExtLink>
-        <button className="btn ghost" onClick={() => onDone(s.id)}>{t.nxHere}</button>
+        <button className="btn ghost" onClick={() => markHere(s)}>{t.nxHere}</button>
       </div>
+      )}
     </div>
   );
 }

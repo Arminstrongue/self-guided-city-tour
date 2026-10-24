@@ -1,4 +1,13 @@
 {
+  "sgTitle": "当前建议",
+  "sgNear": "距您步行 {m} 分钟",
+  "sgClosing": "{t} 关门：最好现在就去",
+  "sgRain": "快下雨了：这是室内场所",
+  "sgHeat": "天气很热：这是室内场所",
+  "sgGo": "查看",
+  "nxFar": "您距离{s}还有 {d}。标记为已到访？",
+  "nxFarYes": "是，标记",
+  "nxFarNo": "还没有",
   "arvSwitch": "您似乎在{c}。",
   "arvSwitchBtn": "切换到{c}",
   "arvFar": "此目的地距您{d}：不在这座城市。",

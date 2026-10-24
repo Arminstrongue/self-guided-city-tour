@@ -301,7 +301,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         {started && tab === "route" && !preview ? (<>
           {/* A caminhar: o próximo passo é a primeira coisa no ecrã; o plano fica recolhido. */}
         {(
-          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
@@ -394,7 +394,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             </button>
           )}
         {tab === "route" && !preview && (
-          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale}
+          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
