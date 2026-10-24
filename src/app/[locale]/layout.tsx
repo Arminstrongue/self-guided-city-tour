@@ -13,6 +13,7 @@ import { AutoTrackGate } from "@/components/AutoTrackGate";
 import { NavTracker } from "@/components/BackLink";
 import { LangSuggest } from "@/components/LangSuggest";
 import { Welcome } from "@/components/Welcome";
+import { Feel } from "@/components/Feel";
 import { SkipLink } from "@/components/SkipLink";
 import { SheetManager } from "@/components/SheetManager";
 import { isLocale, RTL } from "@/i18n/core";
@@ -61,6 +62,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <Toaster />
         <AutoTrackGate locale={params.locale} />
         <NavTracker />
+        <Feel />
         <Welcome locale={params.locale} />
         <LangSuggest locale={params.locale} />
         <OfflineBar text={t.ess.offline} link={t.ess.essentials} href={`/${params.locale}/wallet/essentials`} />

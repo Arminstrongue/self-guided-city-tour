@@ -60,7 +60,8 @@ const TRIP_SUB: Tab[] = ["passes", "res", "plans", "wish", "memories"];
 const PROFILE_SUB: Tab[] = ["places", "saved"];
 const SUB: Tab[] = [...TRIP_SUB, ...PROFILE_SUB];
 /** Vibração curta ao tocar (Android); no iPhone não faz nada. */
-const buzz = () => { try { navigator.vibrate?.(8); } catch { /* ignorar */ } };
+/** A vibração ao tocar é global (Feel); aqui fica só para pontos que não são botões. */
+const buzz = () => undefined;
 const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nível
 
 /** Cor do bilhete de cada cidade (estável). */
