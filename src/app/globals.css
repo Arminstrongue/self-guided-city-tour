@@ -1638,6 +1638,13 @@ html,body{overflow-x:clip}
 .hb-chip i{width:1px;height:12px;background:currentColor;opacity:.25}
 .hb-chip span{font-weight:700;opacity:.8}
 .bar.over .hb-ic,.bar.over .hb-chip{background:rgba(0,0,0,.28);border-color:rgba(255,255,255,.25);color:#fff}
+/* Botões coloridos: mala a vermelho, idioma com bandeira, moeda a vermelho */
+.hb-ic,.bar.over .hb-ic{background:#e5322d;border-color:#e5322d;color:#fff;box-shadow:0 2px 8px rgba(229,50,45,.35)}
+.hb-flag{font-size:16px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.hb-chip span{color:#e5322d;opacity:1}
+.bar.over .hb-chip span{color:#ff8a85}
+.pk-flag{font-size:22px;line-height:1;width:30px;text-align:center;flex:none;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.pk-flag.sm{font-size:16px;width:auto}
 .hb-bg{z-index:120}
 .hb-sheet{display:flex;flex-direction:column;gap:10px;max-height:82dvh;overflow:auto}
 .hb-h{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:6px}
@@ -2997,3 +3004,4 @@ a.ios-row{text-decoration:none;color:inherit}
 .nn-partner{font-weight:600;opacity:.6}
 .pl-search{position:sticky;top:-1px;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 7%,var(--surface,#fff))}
 .pl-search input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:inherit;outline:none}
+.pk-seg button .pk-flag.sm{display:inline-block;font-style:normal;font-size:18px;line-height:22px;height:22px;width:24px;flex:none;text-align:center;overflow:hidden}

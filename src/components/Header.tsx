@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Globe, Luggage, Check, X, Search } from "lucide-react";
+import { Luggage, Check, X, Search } from "lucide-react";
 import { LOCALES } from "@/i18n/core";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 import Portal from "@/components/Portal";
@@ -12,6 +12,9 @@ export const LANG_NAMES: Record<string, string> = {
   pt: "Português", en: "English", es: "Español", fr: "Français", de: "Deutsch", it: "Italiano", zh: "中文", ar: "العربية", ja: "日本語",
   tr: "Türkçe", ru: "Русский", ko: "한국어", hi: "हिन्दी", nl: "Nederlands"
 };
+/** Bandeira de cada idioma (emoji: sem imagens extra para carregar). */
+const FLAG: Record<string, string> = { pt: "🇵🇹", en: "🇬🇧", es: "🇪🇸", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", zh: "🇨🇳", ar: "🇸🇦", ja: "🇯🇵", ko: "🇰🇷", ru: "🇷🇺", tr: "🇹🇷" };
+
 /** Textos do seletor (curtos, para não carregar o dicionário inteiro no browser): idioma, moeda, pesquisar, sugeridas, todas. */
 const UI: Record<string, [string, string, string, string, string]> = {
   pt: ["Idioma", "Moeda", "Pesquisar", "Sugeridas", "Todas"], en: ["Language", "Currency", "Search", "Suggested", "All"],
@@ -45,7 +48,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
       <div className="bar-end">
         <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
-          <Globe size={14} strokeWidth={2.2} aria-hidden="true" /><b>{locale.toUpperCase()}</b>{currency && <><i aria-hidden="true" /><span>{SYM[currency] ?? currency}</span></>}
+          <span className="hb-flag" aria-hidden="true">{FLAG[locale] ?? "🌐"}</span><b>{locale.toUpperCase()}</b>{currency && <><i aria-hidden="true" /><span>{SYM[currency] ?? currency}</span></>}
         </button>
       </div>
       {open && <LocalePicker locale={locale} currency={currency} ui={UI[locale] ?? UI.en} onClose={() => setOpen(false)} onLang={pickLang} onCur={pickCur} />}
@@ -96,7 +99,7 @@ function LocalePicker({ locale, currency, ui, onClose, onLang, onCur }: {
           <div className="pk-top">
             <div className="pk-seg" role="tablist">
               <button role="tab" aria-selected={tab === "lang"} className={tab === "lang" ? "on" : ""} onClick={() => { setTab("lang"); setQ(""); }}>
-                <Globe size={15} strokeWidth={2.2} aria-hidden="true" /><span><small>{lt}</small><b>{LANG_NAMES[locale] ?? locale}</b></span>
+                <i className="pk-flag sm" aria-hidden="true">{FLAG[locale] ?? "🌐"}</i><span><small>{lt}</small><b>{LANG_NAMES[locale] ?? locale}</b></span>
               </button>
               {currency && <button role="tab" aria-selected={tab === "cur"} className={tab === "cur" ? "on" : ""} onClick={() => { setTab("cur"); setQ(""); }}>
                 <span className="pk-cs" aria-hidden="true">{symOf(currency, locale)}</span><span><small>{ct}</small><b>{currency}</b></span>
@@ -115,7 +118,7 @@ function LocalePicker({ locale, currency, ui, onClose, onLang, onCur }: {
               <div className="pk-grid">
                 {langs.map((x) => (
                   <button key={x.v} role="option" aria-selected={x.v === locale} lang={x.v} className={`pk-row press${x.v === locale ? " on" : ""}`} onClick={() => go("lang", x.v)} disabled={!!busy}>
-                    <span className="pk-code" aria-hidden="true">{x.v.toUpperCase()}</span>
+                    <span className="pk-flag" aria-hidden="true">{FLAG[x.v] ?? "🌐"}</span>
                     <span className="pk-tx"><b>{x.native}</b>{x.here !== x.native && <small lang={locale}>{x.here}</small>}</span>
                     {busy === x.v ? <i className="pk-spin" /> : x.v === locale && <Check size={16} strokeWidth={2.8} className="pk-ck" aria-hidden="true" />}
                   </button>

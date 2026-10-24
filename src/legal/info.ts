@@ -10,7 +10,8 @@ export function infoPT(doc: InfoDoc, c: Ctx): Info {
     title: "Contactos",
     lead: `Escreva-nos para ${c.hello}. Respondemos por email, normalmente no mesmo dia útil.`,
     blocks: [
-      { h: "Viajantes", p: [`Dúvidas sobre um roteiro, um pagamento ou o acesso: ${c.support}. Veja primeiro a página Apoio, com as perguntas mais frequentes.`, "Indique o email que usou na compra e a cidade. Nunca nos envie dados completos de cartão nem palavras-passe."] },
+      { h: "Viajantes", p: [`Dúvidas sobre um roteiro, um pagamento ou o acesso: ${c.support}. Veja primeiro a página Apoio, com as perguntas mais frequentes.`, "Respondemos em até 48 horas úteis (segunda a sexta-feira, exceto feriados em Portugal).",
+        "Indique o email que usou na compra e a cidade. Nunca nos envie dados completos de cartão nem palavras-passe."] },
       { h: "Negócios e parceiros", p: [`Restaurantes, cafés, lojas, alojamentos, guias e parceiros comerciais: ${c.hello}. Para se registar diretamente, use as páginas Negócios, Guias ou Parceiros comerciais no fundo de cada página.`] },
       { h: "Imprensa e parcerias", p: [`Pedidos de imprensa, cidades e turismo, aeroportos e companhias aéreas: ${c.hello}.`] },
       { h: "Empresa", li: [c.company, `NIPC ${c.nipc}`, "Registada em Lisboa, Portugal"] }
@@ -44,7 +45,7 @@ export function infoPT(doc: InfoDoc, c: Ctx): Info {
   };
   if (doc === "support") return {
     title: "Apoio",
-    lead: `Estamos aqui para ajudar. Veja as perguntas frequentes ou escreva-nos para ${c.support}.`,
+    lead: `Estamos aqui para ajudar. Veja as perguntas frequentes ou escreva-nos para ${c.support} — respondemos em até 48 horas úteis.`,
     blocks: [
       { h: "Perguntas frequentes", qa: [
         ["Paguei e não vejo o meu roteiro.", "Abra o link que recebeu no email de compra, ou entre na app com o mesmo email ou conta que usou ao pagar. Os roteiros comprados ficam em Minha viagem."],
@@ -52,7 +53,7 @@ export function infoPT(doc: InfoDoc, c: Ctx): Info {
         ["O roteiro funciona sem internet?", "Sim. Antes de sair, toque em \"Descarregar para offline\" na cidade e use \"Pronto para sair?\" para confirmar que fotos, áudio e mapa ficaram guardados."],
         ["O áudio-guia não fala ou fala noutra língua.", "O áudio usa a voz do seu telemóvel. Sem internet, adicione a voz do seu idioma nas definições de texto para voz do telemóvel."],
         ["Uma paragem está fechada ou a informação está errada.", "Use \"Reportar um problema\" nessa paragem. A nossa equipa revê cada relato e, quando várias pessoas reportam o mesmo, avisamos os outros viajantes."],
-        ["Posso pedir reembolso?", "Ao comprar, pede acesso imediato ao roteiro e, por isso, perde o direito de livre resolução de 14 dias (veja os Termos). Se houve um problema técnico que o impediu de usar o roteiro, escreva-nos e analisamos o seu caso."],
+        ["Posso pedir reembolso?", "Ao comprar, pede acesso imediato ao roteiro e, por isso, perde o direito de livre resolução de 14 dias (veja os Termos). Se um problema técnico do nosso lado o impediu de usar o roteiro, escreva-nos com o email da compra, a cidade e o que aconteceu (uma captura de ecrã ajuda). Respondemos em até 48 horas úteis e, se o problema for nosso, devolvemos o valor no mesmo meio de pagamento — o banco pode demorar 5 a 10 dias a mostrá-lo."],
         ["Fiz um pedido de reserva a um negócio. Está confirmado?", "Ainda não. O pedido vai por email para o negócio, que confirma diretamente consigo. A VOYBU não cobra nada por estes pedidos."]
       ] },
       { h: "Contacto", p: [
@@ -93,7 +94,8 @@ export function infoEN(doc: InfoDoc, c: Ctx): Info {
     title: "Contact",
     lead: `Email us at ${c.hello}. We reply by email, usually within one working day.`,
     blocks: [
-      { h: "Travellers", p: [`Questions about a route, a payment or access: ${c.support}. Check the Support page first for the most common questions.`, "Include the email you used to buy and the city. Never send us full card details or passwords."] },
+      { h: "Travellers", p: [`Questions about a route, a payment or access: ${c.support}. Check the Support page first for the most common questions.`, "We reply within 48 business hours (Monday to Friday, excluding public holidays in Portugal).",
+        "Include the email you used to buy and the city. Never send us full card details or passwords."] },
       { h: "Businesses and partners", p: [`Restaurants, cafés, shops, accommodation, guides and sales partners: ${c.hello}. To sign up directly, use the Businesses, Guides or Sales partners pages at the bottom of every page.`] },
       { h: "Press and partnerships", p: [`Press, cities and tourism boards, airports and airlines: ${c.hello}.`] },
       { h: "Company", li: [c.company, `NIPC ${c.nipc}`, "Registered in Lisbon, Portugal"] }
@@ -127,7 +129,7 @@ export function infoEN(doc: InfoDoc, c: Ctx): Info {
   };
   if (doc === "support") return {
     title: "Support",
-    lead: `We're here to help. Check the common questions below or email us at ${c.support}.`,
+    lead: `We're here to help. Check the common questions below or email us at ${c.support} — we reply within 48 business hours.`,
     blocks: [
       { h: "Common questions", qa: [
         ["I paid but can't see my route.", "Open the link in your purchase email, or sign in with the same email or account you used to pay. Purchased routes are in My Trip."],
@@ -135,7 +137,7 @@ export function infoEN(doc: InfoDoc, c: Ctx): Info {
         ["Does the route work offline?", "Yes. Before you go out, tap \"Download for offline\" in the city and use \"Ready to go out?\" to check that photos, audio and the map are saved."],
         ["The audio guide is silent or speaks another language.", "The audio uses your phone's voice. To use it offline, add your language's voice in your phone's text-to-speech settings."],
         ["A stop is closed or the information is wrong.", "Use \"Report a problem\" at that stop. Our team reviews every report, and when several people report the same thing we warn other travellers."],
-        ["Can I get a refund?", "When you buy, you ask for immediate access to the route and therefore lose the 14-day right of withdrawal (see the Terms). If a technical problem stopped you from using the route, email us and we'll look into it."],
+        ["Can I get a refund?", "When you buy, you ask for immediate access to the route and therefore lose the 14-day right of withdrawal (see the Terms). If a technical problem on our side stopped you from using the route, email us with your purchase email, the city and what happened (a screenshot helps). We reply within 48 business hours and, if the problem was ours, refund you to the same payment method — your bank may take 5 to 10 days to show it."],
         ["I sent a booking request to a business. Is it confirmed?", "Not yet. The request goes by email to the business, which confirms directly with you. VOYBU charges nothing for these requests."]
       ] },
       { h: "Contact", p: [
