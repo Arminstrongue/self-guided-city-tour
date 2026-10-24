@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Perfil de outro viajante: foto, nome, seguidores, seguir, cidades visitadas (se puder ver), bloquear e denunciar. */
 import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
@@ -10,7 +11,8 @@ import { HighlightsRow } from "./Highlights";
 
 type View = { profile: PublicProfile; relation: "self" | "none" | "requested" | "following" | "blocked"; followers: number; following: number; canSee: boolean; visited: { name: string; country: string }[]; cities: string[]; canMessage?: boolean };
 
-export function UserView({ t, locale, handle, cities }: { t: Dict; locale: Locale; handle: string; cities: Record<string, string> }) {
+export function UserView({ t: tProp, locale, handle, cities }: { t?: Dict; locale: Locale; handle: string; cities: Record<string, string> }) {
+  const t = useDict(tProp);
   const [v, setV] = useState<View | null | "none">(null);
   const [menu, setMenu] = useState(false);
   const [reported, setReported] = useState(false);

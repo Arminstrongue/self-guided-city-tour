@@ -17,7 +17,7 @@ export default async function WalletPage({ params }: { params: { locale: Locale 
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <WalletView t={t} locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} providers={enabledProviders()} />
+      <WalletView locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} providers={enabledProviders()} />
     </main>
   );
 }

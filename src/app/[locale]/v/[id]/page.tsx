@@ -14,7 +14,7 @@ export default async function VideoRoute({ params }: { params: { locale: Locale;
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <VideoPage t={t} locale={params.locale} id={params.id} cities={cities} />
+      <VideoPage locale={params.locale} id={params.id} cities={cities} />
     </main>
   );
 }

@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
 import { VerifyNote } from "./VerifyNote";
 import { safetyText } from "@/data/safety-en";
@@ -30,9 +31,10 @@ function useOnce() {
   return { pos, st, get };
 }
 
-export function SafetyPanel({ cityId, country, cityName, center, t, locale, compact = false }: {
-  cityId: string; country?: string; cityName: string; center: Pos; t: Dict; locale: Locale; compact?: boolean;
+export function SafetyPanel({ cityId, country, cityName, center, t: tProp, locale, compact = false }: {
+  cityId: string; country?: string; cityName: string; center: Pos; t?: Dict; locale: Locale; compact?: boolean;
 }) {
+  const t = useDict(tProp);
   const s = safetyFor(cityId, country);
   const geo = useOnce();
   if (!s) return null;

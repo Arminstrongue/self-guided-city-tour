@@ -13,7 +13,7 @@ export default function AccountPage({ params }: { params: { locale: Locale } }) 
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
       <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
-      <AccountView t={t} locale={params.locale} />
+      <AccountView locale={params.locale} />
     </main>
   );
 }

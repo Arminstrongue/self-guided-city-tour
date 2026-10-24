@@ -19,7 +19,7 @@ export default async function PlanPage({ params }: { params: { locale: Locale; i
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <PlanView t={getDict(params.locale)} locale={params.locale}
+      <PlanView locale={params.locale}
         plan={{ id: plan.id, title: plan.title, city: plan.city, cityName: plan.cityName, startDate: plan.startDate, days: plan.days, items: plan.items }}
         moments={ex?.moments ?? []} />
     </main>

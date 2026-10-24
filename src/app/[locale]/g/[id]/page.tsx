@@ -57,7 +57,7 @@ export default async function GuidePage({ params, searchParams }: { params: { lo
           {/* A biografia é escrita pelo guia na língua dele: tradução automática à distância de um toque. */}
           <a className="link-btn" style={{ alignSelf: "flex-start" }} target="_blank" rel="noopener noreferrer"
             href={`https://translate.google.com/?sl=auto&tl=${params.locale === "zh" ? "zh-CN" : params.locale}&text=${encodeURIComponent(dedupeText(g.bio).slice(0, 1800))}&op=translate`}>🌐 {t.gdTranslate} ↗</a></section>
-        {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide t={t} locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
+        {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
         {reviews.length > 0 && (
           <section className="stack" style={{ gap: 8 }}>
             <h2 style={{ fontSize: 20 }}>{t.gdRevTitle}</h2>

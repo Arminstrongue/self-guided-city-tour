@@ -87,7 +87,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
       </HomeHero>
 
       {/* Para quem acabou de chegar ou precisa de algo já: quatro entradas diretas (Londres primeiro). */}
-      <div className="sec nn-sec"><NeedNow t={t} locale={params.locale} city="lon" /></div>
+      <div className="sec nn-sec"><NeedNow locale={params.locale} city="lon" /></div>
 
       {/* O produto logo a seguir ao topo: escolher → roteiro → próximo passo → bilhete */}
       <section className="sec dm" aria-labelledby="dm-h">

@@ -33,7 +33,7 @@ export default async function Arrive({ params, searchParams }: { params: { local
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <ArriveFlow t={t} locale={params.locale} cities={cities} initial={initial} go={searchParams.go === "1"} />
+      <ArriveFlow locale={params.locale} cities={cities} initial={initial} go={searchParams.go === "1"} />
     </main>
   );
 }

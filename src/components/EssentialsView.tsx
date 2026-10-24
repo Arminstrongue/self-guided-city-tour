@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * Essenciais offline: tudo o que um viajante precisa sem internet num só ecrã — alojamento (e regresso),
  * reservas com referência, plano, número de emergência e frases na língua local. Lê só dados do telemóvel.
@@ -17,7 +18,8 @@ type Place = { label: string; lat: number; lng: number };
 type Planned = { city: string; n: number; h: string; base?: string; end?: string; names?: string[] };
 const SAVED = "sgct:ess:saved";
 
-export function EssentialsView({ t, locale, cities }: { t: Dict; locale: Locale; cities: EssCity[] }) {
+export function EssentialsView({ t: tProp, locale, cities }: { t?: Dict; locale: Locale; cities: EssCity[] }) {
+  const t = useDict(tProp);
   const e = t.ess;
   const [cityId, setCityId] = useState("lon");
   const [home, setHome] = useState<Place | null>(null);

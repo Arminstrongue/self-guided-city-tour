@@ -37,7 +37,7 @@ export default function Agents({ params, searchParams }: { params: { locale: Loc
           <p className="hint" style={{ margin: 0 }}>{fmt(t.agExample, { plan: t.mPlans.featured[0], price: eur(feat), c: eur(Math.round(feat * AGENT_COMMISSION)) })}</p>
         </section>
         {searchParams.expired && <p className="err">{t.agExpired}</p>}
-        <div id="join" style={{ scrollMarginTop: 80 }}><AgentSignup locale={params.locale} t={t} /></div>
+        <div id="join" style={{ scrollMarginTop: 80 }}><AgentSignup locale={params.locale} /></div>
       </div>
     </main>
   );

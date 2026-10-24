@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Partes interativas do marketplace de guias: registo/edição, link de entrada, reserva, portal e avaliação. */
 import { useMemo, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -24,7 +25,8 @@ async function shrink(file: File): Promise<string> {
 export type GuideFormValue = { name: string; email?: string; phone: string; city: string; languages: string[]; bio: string; hourly: string; maxPeople: string; meetingPoint: string; licenseNo: string; photo?: string | null;
   activityRegNo: string; insurer: string; policyNo: string; taxId: string; taxCountry: string; address: string; birthDate: string };
 
-export function GuideForm({ t, locale, cities, initial, mode, declared = false }: { t: Dict; locale: Locale; cities: CityOpt[]; initial?: Partial<GuideFormValue>; mode: "join" | "edit"; declared?: boolean }) {
+export function GuideForm({ t: tProp, locale, cities, initial, mode, declared = false }: { t?: Dict; locale: Locale; cities: CityOpt[]; initial?: Partial<GuideFormValue>; mode: "join" | "edit"; declared?: boolean }) {
+  const t = useDict(tProp);
   const [v, setV] = useState<GuideFormValue>({ name: "", email: "", phone: "", city: cities[0]?.id ?? "", languages: [locale === "pt" ? "pt" : "en"], bio: "", hourly: "35", maxPeople: "6", meetingPoint: "", licenseNo: "",
     activityRegNo: "", insurer: "", policyNo: "", taxId: "", taxCountry: locale === "pt" ? "PT" : "", address: "", birthDate: "", ...initial });
   const [indep, setIndep] = useState(declared);
@@ -107,7 +109,8 @@ export function GuideForm({ t, locale, cities, initial, mode, declared = false }
   );
 }
 
-export function GuideRelink({ t, locale }: { t: Dict; locale: Locale }) {
+export function GuideRelink({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
+  const t = useDict(tProp);
   const [email, setEmail] = useState(""); const [sent, setSent] = useState(false); const [dev, setDev] = useState<string | null>(null);
   return (
     <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
@@ -123,7 +126,8 @@ export function GuideRelink({ t, locale }: { t: Dict; locale: Locale }) {
 }
 
 /** Pedido de reserva: data/hora no fuso da cidade, duração, pessoas e contacto → checkout Stripe. */
-export function BookGuide({ t, locale, guide, tz }: { t: Dict; locale: Locale; guide: { id: string; name: string; hourlyCents: number; maxPeople: number }; tz?: string }) {
+export function BookGuide({ t: tProp, locale, guide, tz }: { t?: Dict; locale: Locale; guide: { id: string; name: string; hourlyCents: number; maxPeople: number }; tz?: string }) {
+  const t = useDict(tProp);
   const [date, setDate] = useState(""); const [time, setTime] = useState("10:00");
   const [hours, setHours] = useState(3); const [people, setPeople] = useState(2);
   const [name, setName] = useState(""); const [email, setEmail] = useState(""); const [phone, setPhone] = useState(""); const [note, setNote] = useState("");
@@ -189,7 +193,8 @@ export function BookGuide({ t, locale, guide, tz }: { t: Dict; locale: Locale; g
   );
 }
 
-export function PayoutsButton({ t, locale, ready }: { t: Dict; locale: Locale; ready: boolean }) {
+export function PayoutsButton({ t: tProp, locale, ready }: { t?: Dict; locale: Locale; ready: boolean }) {
+  const t = useDict(tProp);
   const [busy, setBusy] = useState(false);
   return (
     <button className={`btn ${ready ? "ghost" : "tram"} press`} disabled={busy} onClick={async () => {
@@ -201,7 +206,8 @@ export function PayoutsButton({ t, locale, ready }: { t: Dict; locale: Locale; r
   );
 }
 
-export function RespondButtons({ t, id }: { t: Dict; id: string }) {
+export function RespondButtons({ t: tProp, id }: { t?: Dict; id: string }) {
+  const t = useDict(tProp);
   const [busy, setBusy] = useState(false);
   const go = async (accept: boolean) => {
     setBusy(true);
@@ -216,7 +222,8 @@ export function RespondButtons({ t, id }: { t: Dict; id: string }) {
   );
 }
 
-export function GuideReviewForm({ t, bookingId, token, guide }: { t: Dict; bookingId: string; token: string; guide: string }) {
+export function GuideReviewForm({ t: tProp, bookingId, token, guide }: { t?: Dict; bookingId: string; token: string; guide: string }) {
+  const t = useDict(tProp);
   const [stars, setStars] = useState(0); const [comment, setComment] = useState(""); const [state, setState] = useState<"idle" | "busy" | "done" | "error">("idle");
   if (state === "done") return <div className="card stack" style={{ padding: 16 }}><b>✓ {t.gdRateThanks}</b></div>;
   return (
@@ -234,7 +241,8 @@ export function GuideReviewForm({ t, bookingId, token, guide }: { t: Dict; booki
   );
 }
 
-export function ShareProfile({ t, url, title }: { t: Dict; url: string; title: string }) {
+export function ShareProfile({ t: tProp, url, title }: { t?: Dict; url: string; title: string }) {
+  const t = useDict(tProp);
   const [copied, setCopied] = useState(false);
   return (
     <button className="btn ghost press" onClick={async () => {

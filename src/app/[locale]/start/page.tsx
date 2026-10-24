@@ -53,7 +53,7 @@ export default async function Start({ params, searchParams }: { params: { locale
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <QuickStart t={t} locale={params.locale} cities={cities} pre={pre} from={fmt(t.fromP, { p: p.local ?? p.main })} />
+      <QuickStart locale={params.locale} cities={cities} pre={pre} from={fmt(t.fromP, { p: p.local ?? p.main })} />
     </main>
   );
 }

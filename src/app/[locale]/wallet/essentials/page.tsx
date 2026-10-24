@@ -28,7 +28,7 @@ export default async function Essentials({ params }: { params: { locale: Locale 
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <EssentialsView t={t} locale={params.locale} cities={cities} />
+      <EssentialsView locale={params.locale} cities={cities} />
     </main>
   );
 }

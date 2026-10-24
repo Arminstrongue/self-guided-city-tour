@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v7";
+const VERSION = "sgct-v8";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -58,6 +58,11 @@ self.addEventListener("fetch", (e) => {
   }
   if (url.origin !== self.location.origin) return;
 
+  // Dicionário da língua (URL com versão): primeiro a cache — sem ele as páginas guardadas não abrem offline.
+  if (url.pathname.startsWith("/api/dict/")) {
+    e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then(async (r) => { if (r.ok) (await caches.open(STATIC)).put(req, r.clone()); return r; })));
+    return;
+  }
   if (url.pathname.startsWith("/api/")) {
     if (OFFLINE_API.test(url.pathname + url.search)) e.respondWith(networkFirst(req, PAGES));
     return;
@@ -95,7 +100,7 @@ self.addEventListener("message", (e) => {
           if (same && (r.headers.get("content-type") || "").includes("text/html")) {
             // A página precisa dos seus scripts e estilos: guarda-os também.
             const html = await r.clone().text();
-            const assets = [...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+)"/g)].map((m) => m[1]);
+            const assets = [...html.matchAll(/(?:src|href)="(\/_next\/static\/[^"]+|\/api\/dict\/[^"]+)"/g)].map((m) => m[1].replace(/&amp;/g, "&"));
             await Promise.all([...new Set(assets)].map(async (a) => { if (!(await st.match(a))) { const x = await fetch(a).catch(() => null); if (x && x.ok) await st.put(a, x); } }));
           }
           bytes += Number(r.headers.get("content-length") || 0);

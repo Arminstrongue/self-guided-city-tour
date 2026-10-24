@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * "Acabei de chegar" / "Quero chegar a um lugar": onde está → para onde vai → como quer ir → um passo de cada vez,
  * com o texto das placas, "Não encontro", "Mostrar a alguém" e "Ouvir". O passo atual fica guardado (volta onde estava).
@@ -24,7 +25,8 @@ function say(text: string, locale: string) {
   try { const u = new SpeechSynthesisUtterance(text); u.lang = locale; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch { /* sem voz */ }
 }
 
-export function ArriveFlow({ t, locale, cities, initial, go }: { t: Dict; locale: Locale; cities: ArriveCity[]; initial: string; go: boolean }) {
+export function ArriveFlow({ t: tProp, locale, cities, initial, go }: { t?: Dict; locale: Locale; cities: ArriveCity[]; initial: string; go: boolean }) {
+  const t = useDict(tProp);
   const a = t.arv;
   const tx = (s: { pt: string; en: string }) => (locale === "pt" ? s.pt : s.en);
   const [st, setSt] = useState<State>(fresh(initial));

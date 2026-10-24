@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Carteira do viajante: passes, reservas de guias, memórias, carimbos e interesses — na conta, em qualquer dispositivo. */
 import { useEffect, useMemo, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -12,7 +13,6 @@ import { SearchPick } from "./SearchPick";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
 import { NearSheet, NeedNow } from "./NeedNow";
-import { Composer, FeedTab } from "./Feed";
 import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
 import { CloudOff } from "lucide-react";
@@ -23,6 +23,8 @@ import { PointsCard, usePoints } from "./Points";
 import { useLiveConnection } from "@/lib/live-client";
 import dynamic from "next/dynamic";
 // Ecrãs e folhas que só carregam quando são abertos (a carteira abre mais depressa).
+const Composer = dynamic(() => import("./Feed").then((m) => m.Composer), { ssr: false });
+const FeedTab = dynamic(() => import("./Feed").then((m) => m.FeedTab), { ssr: false });
 const AddToPlan = dynamic(() => import("./Explore").then((m) => m.AddToPlan), { ssr: false });
 const CitySheet = dynamic(() => import("./CitySheet").then((m) => m.CitySheet), { ssr: false });
 const PostSheet = dynamic(() => import("./PostExtras").then((m) => m.PostSheet), { ssr: false });
@@ -64,7 +66,8 @@ const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nív
 /** Cor do bilhete de cada cidade (estável). */
 function hue(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
 
-export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, providers = [] }: { t: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; tzOf?: Record<string, string>; providers?: { id: string; name: string }[] }) {
+export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {}, providers = [] }: { t?: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; tzOf?: Record<string, string>; providers?: { id: string; name: string }[] }) {
+  const t = useDict(tProp);
   const [composing, setComposing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [pulling, setPulling] = useState(0);

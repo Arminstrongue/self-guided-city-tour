@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
 /** Agenda da cidade dentro da carteira: eventos dos próximos 30 dias e o que vale sempre a pena, sem sair da app. */
 import { useEffect, useMemo, useState } from "react";
@@ -20,7 +21,8 @@ function localDay(tz: string | undefined, plus = 0) {
   return new Intl.DateTimeFormat("sv-SE", { timeZone: tz ?? "UTC" }).format(new Date(Date.now() + plus * 86400_000));
 }
 
-export function AgendaView({ t, locale, cityId, cities, moments, tz, openId }: { t: Dict; locale: Locale; cityId: string; cities: Record<string, string>; moments: MomentView[]; tz?: string; openId?: string }) {
+export function AgendaView({ t: tProp, locale, cityId, cities, moments, tz, openId }: { t?: Dict; locale: Locale; cityId: string; cities: Record<string, string>; moments: MomentView[]; tz?: string; openId?: string }) {
+  const t = useDict(tProp);
   const [events, setEvents] = useState<CityEvent[] | null>(null);
   const [enabled, setEnabled] = useState(true);
   const [range, setRange] = useState<Range>("all");

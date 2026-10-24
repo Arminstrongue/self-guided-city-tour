@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Comentários de viajantes sobre uma cidade ou um lugar: ler, escrever, apagar os meus, denunciar. */
 import { useCallback, useEffect, useState } from "react";
 import { MessageCircle, Flag, Trash2, SendHorizontal } from "lucide-react";
@@ -25,7 +26,8 @@ function when(iso: string, locale: Locale) {
   return new Date(iso).toLocaleDateString(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" });
 }
 
-export function PlaceComments({ t, locale, city, stop = "", compact = false }: { t: Dict; locale: Locale; city: string; stop?: string; compact?: boolean }) {
+export function PlaceComments({ t: tProp, locale, city, stop = "", compact = false }: { t?: Dict; locale: Locale; city: string; stop?: string; compact?: boolean }) {
+  const t = useDict(tProp);
   const [items, setItems] = useState<Item[] | null>(null);
   const [total, setTotal] = useState(0);
   const [next, setNext] = useState<string | null>(null);

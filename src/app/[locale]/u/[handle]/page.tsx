@@ -16,7 +16,7 @@ export default async function UserPage({ params }: { params: { locale: Locale; h
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
       <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
-      <UserView t={t} locale={params.locale} handle={params.handle.toLowerCase()} cities={cities} />
+      <UserView locale={params.locale} handle={params.handle.toLowerCase()} cities={cities} />
     </main>
   );
 }

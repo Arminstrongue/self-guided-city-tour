@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** "Tenho X minutos livres": escolhe o tempo e o ponto de partida; mostra um mini-roteiro que volta ao início a tempo. */
 import { useEffect, useMemo, useState } from "react";
 import { Clock, LocateFixed, MapPinned, Navigation } from "lucide-react";
@@ -9,7 +10,8 @@ import { freeLoop, freeSingles, walkUrl, type FreeStop } from "@/lib/free-time";
 const MINS = [20, 40, 60, 90, 120];
 type P = { lat: number; lng: number };
 
-export function FreeTime({ t, cityName, center, stops, initial }: { t: Dict; cityName: string; center: P; stops: FreeStop[]; initial?: { min?: number; at?: P; bag?: boolean } }) {
+export function FreeTime({ t: tProp, cityName, center, stops, initial }: { t?: Dict; cityName: string; center: P; stops: FreeStop[]; initial?: { min?: number; at?: P; bag?: boolean } }) {
+  const t = useDict(tProp);
   const d = t.dx;
   const [min, setMin] = useState(initial?.min && MINS.includes(initial.min) ? initial.min : 40);
   const [from, setFrom] = useState<"here" | "center">(initial?.at ? "here" : "center");

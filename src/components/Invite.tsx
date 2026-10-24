@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Convidar amigos (email, SMS, WhatsApp, link, contactos do telemóvel) e a página de boas-vindas do convite. */
 import { useEffect, useState } from "react";
 import { fmt } from "@/i18n/core";
@@ -111,7 +112,8 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
 }
 
 /** Página de boas-vindas de quem recebeu um convite. */
-export function InviteLanding({ t, locale, inviter, signed }: { t: Dict; locale: Locale; inviter: (PublicProfile & { followers: number }) | null; signed: boolean }) {
+export function InviteLanding({ t: tProp, locale, inviter, signed }: { t?: Dict; locale: Locale; inviter: (PublicProfile & { followers: number }) | null; signed: boolean }) {
+  const t = useDict(tProp);
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [dev, setDev] = useState<string | null>(null);

@@ -12,7 +12,7 @@ export function reportClientError(e: unknown, digest?: string) {
 /** Depois de uma nova versão, um separador antigo pede ficheiros que já não existem: recarrega uma vez. */
 export function isChunkError(e: unknown) {
   const s = e instanceof Error ? `${e.name} ${e.message}` : String(e);
-  return /ChunkLoadError|Loading chunk|Loading CSS chunk|dynamically imported module|Importing a module script failed/i.test(s);
+  return /ChunkLoadError|Loading chunk|Loading CSS chunk|dynamically imported module|Importing a module script failed|dictionary not loaded/i.test(s);
 }
 export function reloadOnce(): boolean {
   try {

@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * Encontro do grupo: marcar um ponto e uma hora e partilhar um link. Quem abre vê o local, a contagem decrescente
  * e o caminho a pé. Tudo vai no próprio link (sem conta, sem servidor), por isso funciona para qualquer pessoa.
@@ -74,7 +75,8 @@ export function MeetMaker({ t, locale, places, onDone }: { t: Dict; locale: Loca
 }
 
 /** Página do encontro (quem recebe o link) ou, sem dados no link, o formulário para marcar um. */
-export function MeetView({ t, locale }: { t: Dict; locale: Locale }) {
+export function MeetView({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
+  const t = useDict(tProp);
   const d = t.dx;
   const [m, setM] = useState<Meet | null | undefined>(undefined);
   const [now, setNow] = useState(() => Date.now());

@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * Vídeos em ecrã inteiro, estilo TikTok: deslizar para cima/baixo, tocam sozinhos quando aparecem,
  * toque para pausar, duplo toque para gostar, som ligado/desligado, gostos, comentários e partilhar.
@@ -240,7 +241,8 @@ export function VideosTab({ t, locale, social, cities, onClose, onEdit }: { t: D
 }
 
 /** Página de um vídeo partilhado (/v/<id>). */
-export function VideoPage({ t, locale, id, cities }: { t: Dict; locale: Locale; id: string; cities: Record<string, string> }) {
+export function VideoPage({ t: tProp, locale, id, cities }: { t?: Dict; locale: Locale; id: string; cities: Record<string, string> }) {
+  const t = useDict(tProp);
   const [init, setInit] = useState<Page | null | "none" | "auth">(null);
   useEffect(() => {
     fetch(`/api/social/post/${id}`, { cache: "no-store" }).then(async (r) => {

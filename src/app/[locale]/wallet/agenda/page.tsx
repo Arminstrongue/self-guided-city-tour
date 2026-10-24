@@ -21,7 +21,7 @@ export default async function AgendaPage({ params, searchParams }: { params: { l
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
       <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
-      <AgendaView t={t} locale={params.locale} cityId={city.id} cities={cities} moments={moments} tz={tz} openId={searchParams.ev} />
+      <AgendaView locale={params.locale} cityId={city.id} cities={cities} moments={moments} tz={tz} openId={searchParams.ev} />
     </main>
   );
 }

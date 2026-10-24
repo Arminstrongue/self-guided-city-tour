@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { track } from "@/lib/track";
 import { useEffect, useState } from "react";
 import { loadTrip, saveTrip } from "./trip-store";
@@ -14,13 +15,14 @@ import { dualMoney, type FxContext } from "@/lib/currency";
 type Props = {
   locale: Locale; cityId: string; cityName: string; refCode: string;
   providers: { id: string; name: string }[]; sessionEmail: string | null;
-  prices: { city: number; trip: number; all: number }; fx: FxContext; t: Dict;
+  prices: { city: number; trip: number; all: number }; fx: FxContext; t?: Dict;
   /** Fuso da cidade: as horas do formulário são sempre na hora local da cidade. */
   tz: string;
 };
 
 
-export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionEmail, prices, fx, t, tz }: Props) {
+export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionEmail, prices, fx, t: tProp, tz }: Props) {
+  const t = useDict(tProp);
   // Dois perfis: escala (voo obrigatório) e férias curtas (voo de regresso opcional).
   const [mode, setMode] = useState<"layover" | "trip">("layover");
   const [plan, setPlan] = useState<"city" | "trip" | "all">("city");

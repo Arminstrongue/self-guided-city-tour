@@ -22,7 +22,7 @@ export default async function InvitePage({ params }: { params: { locale: Locale;
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <InviteLanding t={t} locale={params.locale} inviter={inviter} signed={Boolean(me)} />
+      <InviteLanding locale={params.locale} inviter={inviter} signed={Boolean(me)} />
     </main>
   );
 }

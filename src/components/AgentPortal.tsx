@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -11,10 +12,11 @@ type Comm = { id: string; description: string | null; amountCents: number; paidA
 const KINDS = ["shop", "food", "cafe", "guesthouse", "hotel", "exp", "company", "other"] as const;
 const STATUSES = ["new", "contacted", "proposal", "won", "lost"] as const;
 
-export function AgentPortal({ locale, t, agent, link, leads: initial, clients, comm, due, paid, cities }: {
-  locale: Locale; t: Dict; agent: { name: string; code: string; status: string }; link: string;
+export function AgentPortal({ locale, t: tProp, agent, link, leads: initial, clients, comm, due, paid, cities }: {
+  locale: Locale; t?: Dict; agent: { name: string; code: string; status: string }; link: string;
   leads: Lead[]; clients: Client[]; comm: Comm[]; due: number; paid: number; cities: { id: string; name: string }[];
 }) {
+  const t = useDict(tProp);
   const [leads, setLeads] = useState(initial);
   const [f, setF] = useState({ name: "", kind: "food", city: cities[0]?.id ?? "", contact: "", email: "", phone: "", notes: "" });
   const [err, setErr] = useState("");

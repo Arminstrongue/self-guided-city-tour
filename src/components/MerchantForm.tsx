@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { INTL_LOCALE } from "@/i18n/core";
@@ -9,7 +10,8 @@ type CityOpt = { id: string; name: string; stops: { id: string; name: string; la
 type Hit = { label: string; sub: string; lat: number; lng: number };
 type Plan = "basic" | "featured" | "partner";
 
-export function MerchantForm({ locale, t, cities, prices, agent, partnerPct }: { locale: Locale; t: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string; partnerPct: number }) {
+export function MerchantForm({ locale, t: tProp, cities, prices, agent, partnerPct }: { locale: Locale; t?: Dict; cities: CityOpt[]; prices: Record<Plan, number>; agent?: string; partnerPct: number }) {
+  const t = useDict(tProp);
   const [f, setF] = useState({ name: "", category: "food", city: cities[0].id, stopId: cities[0].stops[0].id, offer: "", email: "", instagram: "", tiktok: "", facebook: "", plan: "featured" as Plan });
   const [photos, setPhotos] = useState<string[]>([]);
   const [book, setBook] = useState({ on: true, options: [] as { name: string; price: string }[], url: "", phone: "" });

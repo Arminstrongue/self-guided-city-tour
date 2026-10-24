@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -48,7 +49,7 @@ const CityGuide = dynamic(() => import("./CityGuide").then((m) => m.CityGuide), 
 const FxConverter = dynamic(() => import("./TravelTools").then((m) => m.FxConverter), { ssr: false });
 
 type Props = {
-  locale: Locale; t: Dict; city: City; cityLabel: string; flightAt: string | null;
+  locale: Locale; t?: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
   flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
   explore?: Omit<React.ComponentProps<typeof Explore>, "cityId" | "cityName" | "locale" | "t">;
@@ -68,7 +69,8 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview, tripIn }: Props) {
+export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview, tripIn }: Props) {
+  const t = useDict(tProp);
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");

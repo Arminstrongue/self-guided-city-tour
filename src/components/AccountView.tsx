@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * "Definições e atividade" ao estilo do iOS: pesquisa no topo, secções agrupadas com ícones e setas,
  * e páginas de detalhe com navegação para trás. Perfil, privacidade, mensagens, bloqueados, silenciados,
@@ -34,7 +35,8 @@ const langName = (l: string, inL: string) => { try { return new Intl.DisplayName
 
 type Row = { k: string; I: LucideIcon; label: string; sub?: string; value?: string; href?: string; go?: Page; run?: () => void; red?: boolean; blue?: boolean; dl?: boolean };
 
-export function AccountView({ t, locale }: { t: Dict; locale: Locale }) {
+export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
+  const t = useDict(tProp);
   const s = t.st;
   const [a, setA] = useState<Acc | null | "auth">(null);
   const [social, setSocial] = useState<Social | null>(null);

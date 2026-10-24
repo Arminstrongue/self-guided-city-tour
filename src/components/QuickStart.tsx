@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -17,7 +18,8 @@ const fold = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCa
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}`;
 
 /** Primeira experiência: 1) cidade, 2) tempo disponível, 3) começar (ou comprar) com o roteiro que cabe. */
-export function QuickStart({ t, locale, cities, pre, from }: { t: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string }) {
+export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string }) {
+  const t = useDict(tProp);
   const [cityId, setCityId] = useState(pre);
   const [time, setTime] = useState<Time | null>(null);
   const [trip, setTrip] = useState<Trip>(defaultTrip());

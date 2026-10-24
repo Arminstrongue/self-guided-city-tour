@@ -5,14 +5,12 @@ import { Header } from "@/components/Header";
 import { fxContext } from "@/lib/fx";
 import { BuyForm } from "@/components/BuyForm";
 import { isFreeCity } from "@/lib/pricing";
-import { Explore } from "@/components/Explore";
 import { exploreProps } from "@/lib/explore-props";
 import { WebOnly } from "@/components/WebOnly";
 import { ExitCheck } from "@/components/ExitCheck";
 import { ChosenRoute } from "@/components/ChosenRoute";
 import Link from "next/link";
 import { cityName, COUNTRY } from "@/data/cities";
-import { SafetyPanel } from "@/components/Safety";
 import { Track } from "@/components/Track";
 import { GuideCard } from "@/components/GuideCard";
 import { listGuides } from "@/lib/guides";
@@ -26,7 +24,7 @@ import { dualMoney } from "@/lib/currency";
 import { routeOptions } from "@/lib/route-cost";
 import { formatMoney } from "@/lib/currency";
 import { CityGallery, CityHero, StickyBook } from "@/components/Showcase";
-import { PlaceComments } from "@/components/Comments";
+import { LazyComments, LazyExplore, LazySafety } from "@/components/CityLazy";
 import { CityHub, CityToday, CityHistory, GoodToKnow } from "@/components/CityInfo";
 import { latestPulse } from "@/lib/city-pulse";
 import { cityKnowledge, ensureKnowledge } from "@/lib/city-knowledge";
@@ -84,7 +82,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
-        <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} t={t} locale={params.locale} />
+        <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} locale={params.locale} />
         {free ? (
           <section className="sec book" id="book">
             <div className="sec-h reveal"><div><h2>🎁 {t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
@@ -93,20 +91,20 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         ) : (
         <section className="sec book" id="book">
           <div className="sec-h reveal"><div><h2>{fmt(t.buyTitle, { city: name })}</h2><p>{t.tpBuySub}</p></div></div>
-          <ChosenRoute t={t} locale={params.locale} city={city.id} tz={city.tz ?? "UTC"} coreN={city.stops.filter((x) => !x.x).length} extN={city.stops.filter((x) => x.x).length}>
+          <ChosenRoute locale={params.locale} city={city.id} tz={city.tz ?? "UTC"} coreN={city.stops.filter((x) => !x.x).length} extN={city.stops.filter((x) => x.x).length}>
             <div className="card bk-sum">
               <b>{meta}</b>
               <span>{fmt(t.bkTransport, { c: formatMoney(core.plan.transport, city.cur, INTL_LOCALE[params.locale]) })}</span>
               <p className="hint">{t.bkIncl}</p>
             </div>
           </ChosenRoute>
-          <ExitCheck city={city} locale={params.locale} t={t} compact onlyPlane />
+          <ExitCheck city={city} locale={params.locale} compact onlyPlane />
           <div className="book-card">
             <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>
               <BuyForm
                 locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
                 providers={enabledProviders()} sessionEmail={await sessionEmail()}
-                prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} t={t} tz={city.tz ?? "UTC"}
+                prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} tz={city.tz ?? "UTC"}
               />
             </WebOnly>
           </div>
@@ -115,11 +113,11 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
         <section className="sec" id="safety">
           <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
-          <SafetyPanel cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={params.locale} />
+          <LazySafety cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} locale={params.locale} />
         </section>
         <CityHub t={t} locale={params.locale} city={city} name={name} />
         <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />
-        <Explore cityId={city.id} cityName={name} locale={params.locale} t={t} {...exploreProps(city, params.locale)} />
+        <LazyExplore cityId={city.id} cityName={name} locale={params.locale} {...exploreProps(city, params.locale)} />
         {guides.length > 0 && (
           <section className="sec" id="guides">
             <div className="sec-h reveal"><div><h2>{fmt(t.gdTitle, { city: name })}</h2><p>{t.gdSub}</p></div><Link href={`/${params.locale}/guides/${city.id}`}>{t.gdSeeAll}</Link></div>
@@ -129,7 +127,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         <CityHistory t={t} name={name} k={know} />
         <section className="sec" id="comments">
           <div className="sec-h reveal"><div><h2>💬 {fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
-          <PlaceComments t={t} locale={params.locale} city={city.id} />
+          <LazyComments locale={params.locale} city={city.id} />
         </section>
       </div>
       {!free && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}

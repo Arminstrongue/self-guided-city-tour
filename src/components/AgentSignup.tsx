@@ -1,8 +1,10 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 
-export function AgentSignup({ locale, t }: { locale: Locale; t: Dict }) {
+export function AgentSignup({ locale, t: tProp }: { locale: Locale; t?: Dict }) {
+  const t = useDict(tProp);
   const [mode, setMode] = useState<"new" | "login">("new");
   const [f, setF] = useState({ name: "", email: "", phone: "", country: "" });
   const [state, setState] = useState<"idle" | "busy" | "sent" | "error">("idle");

@@ -24,7 +24,7 @@ export default async function Manage({ params, searchParams }: { params: { local
   const t = getDict(params.locale);
   const email = currentMerchantEmail();
   let body: React.ReactNode;
-  if (!email) body = <MerchantLogin t={t} locale={params.locale} expired={searchParams.expired === "1"} />;
+  if (!email) body = <MerchantLogin locale={params.locale} expired={searchParams.expired === "1"} />;
   else {
     const [rows, cities] = await Promise.all([merchantsOf(email), loadCities({ includeInactive: true })]);
     const ids = rows.map((r) => r.id);
@@ -39,7 +39,7 @@ export default async function Manage({ params, searchParams }: { params: { local
         billing: Boolean(r.stripeCustomerId) && r.plan !== "basic", stats: stats[r.id]
       };
     });
-    body = <MerchantPortal t={t} locale={params.locale} email={email} merchants={merchants}
+    body = <MerchantPortal locale={params.locale} email={email} merchants={merchants}
       bookings={bookings.map((b) => ({ id: b.id, merchantId: b.merchantId, option: b.option, dateFrom: b.dateFrom, dateTo: b.dateTo, time: b.time, people: b.people, units: b.units, name: b.name, email: b.email, phone: b.phone, note: b.note, status: b.status, createdAt: b.createdAt.toISOString() }))} />;
   }
   return (

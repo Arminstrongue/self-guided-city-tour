@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Peças visuais da página inicial e da página da cidade. */
 import { useEffect, useMemo, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -90,7 +91,8 @@ export function CityHero({ cityId, children }: { cityId: string; children: React
 }
 
 /** Galeria (grelha + todas as fotos) e carrossel de destaques com a fotografia de cada paragem. */
-export function CityGallery({ cityId, cityName, stops, sub, t, locale }: { cityId: string; cityName: string; stops: ShowStop[]; sub: string; t: Dict; locale: Locale }) {
+export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: { cityId: string; cityName: string; stops: ShowStop[]; sub: string; t?: Dict; locale: Locale }) {
+  const t = useDict(tProp);
   const m = useCityMedia(cityId);
   const [open, setOpen] = useState<{ title: string; photos: Photo[] } | null>(null);
   const all = useMemo(() => stops.map((s) => m?.stops[s.id]).filter((p): p is Photo => Boolean(p)), [m, stops]);

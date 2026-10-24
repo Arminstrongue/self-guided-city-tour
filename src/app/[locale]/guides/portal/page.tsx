@@ -60,7 +60,7 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
       <span className="bk-when">📅 {fmtWhen(b.startAt, L, tz)} · {b.hours} h · {b.people} 👤</span>
       <span className="row-between"><span className="hint">{b.status === "confirmed" ? `${b.email}${b.phone ? ` · ${b.phone}` : ""}` : ""}</span><b className="bk-net">{net(b.amountCents)}</b></span>
       {b.note && <p className="hint bk-note">“{b.note}”</p>}
-      {b.status === "requested" && b.respondBy && <><span className="bad-txt" style={{ fontSize: 14 }}>⏱ {fmt(t.gpReplyBy, { d: fmtWhen(b.respondBy, L, tz) })}</span><RespondButtons t={t} id={b.id} /></>}
+      {b.status === "requested" && b.respondBy && <><span className="bad-txt" style={{ fontSize: 14 }}>⏱ {fmt(t.gpReplyBy, { d: fmtWhen(b.respondBy, L, tz) })}</span><RespondButtons id={b.id} /></>}
     </div>
   );
 
@@ -85,7 +85,7 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
             <span className={`gp-pill ${approved ? "ok" : blocked ? "bad" : "wait"}`}>{approved ? "✓ " : blocked ? "✕ " : "⏳ "}{t.gpStatus[g.status]}</span>
             <span className={`gp-pill ${g.payoutsReady ? "ok" : "wait"}`}>{g.payoutsReady ? `✓ ${t.gpPayDone}` : t.gpPay}</span>
           </div>
-          {visible && <div className="grid2"><Link className="btn gp-light press" href={`/${L}/g/${g.id}`}>{t.gpView}</Link><ShareProfile t={t} url={profileUrl} title={g.name} /></div>}
+          {visible && <div className="grid2"><Link className="btn gp-light press" href={`/${L}/g/${g.id}`}>{t.gpView}</Link><ShareProfile url={profileUrl} title={g.name} /></div>}
         </section>
 
         {legalMissing && (
@@ -101,7 +101,7 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
             <ol>
               {t.gpSteps.map((s, i) => <li key={s} className={steps[i] ? "done" : i === current ? "now" : ""}><span className="gp-dot">{steps[i] ? "✓" : i + 1}</span><span>{s}</span></li>)}
             </ol>
-            {!g.payoutsReady && <><p className="hint">{t.gpPayHint}</p><PayoutsButton t={t} locale={L} ready={false} /></>}
+            {!g.payoutsReady && <><p className="hint">{t.gpPayHint}</p><PayoutsButton locale={L} ready={false} /></>}
             {g.payoutsReady && !approved && <p className="hint">{t.gpHidden}</p>}
           </section>
         )}
@@ -132,14 +132,14 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
         {g.payoutsReady && (
           <section className="card gp-pay">
             <div className="stack" style={{ gap: 2 }}><b>💳 {t.gpPayouts}</b><span className="hint">{t.gpPaySub}</span></div>
-            <PayoutsButton t={t} locale={L} ready />
+            <PayoutsButton locale={L} ready />
           </section>
         )}
 
         {past.length > 0 && <details className="card gp-fold"><summary><b>{t.gpPast}</b><span className="hint">{past.length}</span></summary><div className="stack" style={{ gap: 10, marginTop: 12 }}>{past.map(row)}</div></details>}
 
         <details className="card gp-fold" open={legalMissing || undefined}><summary><b>✎ {t.gpEdit}</b></summary>
-          <div style={{ marginTop: 14 }}><GuideForm t={t} locale={L} cities={cities} mode="edit" declared={Boolean(g.independentAt)}
+          <div style={{ marginTop: 14 }}><GuideForm locale={L} cities={cities} mode="edit" declared={Boolean(g.independentAt)}
             initial={{ activityRegNo: g.activityRegNo ?? "", insurer: g.insurer ?? "", policyNo: g.policyNo ?? "", taxId: g.taxId ?? "", taxCountry: g.taxCountry ?? "", address: g.address ?? "", birthDate: g.birthDate ?? "", name: g.name, phone: g.phone ?? "", city: g.city, languages: g.languages, bio: g.bio, hourly: String(g.hourlyCents / 100), maxPeople: String(g.maxPeople), meetingPoint: g.meetingPoint ?? "", licenseNo: g.licenseNo ?? "", photo: g.photo }} /></div>
         </details>
       </div>

@@ -21,8 +21,8 @@ export default async function GuideJoin({ params, searchParams }: { params: { lo
         <p className="hint">{t.gjSub}</p>
         <div className="card stack" style={{ gap: 8, padding: 14 }}>{t.gjSteps.map((s, i) => <p key={i}><b className="num">{i + 1}.</b> {s}</p>)}</div>
         {searchParams.expired && <p className="err">{t.gjExpired}</p>}
-        <GuideForm t={t} locale={params.locale} cities={cities} initial={{ city: first }} mode="join" />
-        <div className="card stack" style={{ gap: 8, padding: 14 }}><b>{t.gjHave}</b><GuideRelink t={t} locale={params.locale} /></div>
+        <GuideForm locale={params.locale} cities={cities} initial={{ city: first }} mode="join" />
+        <div className="card stack" style={{ gap: 8, padding: 14 }}><b>{t.gjHave}</b><GuideRelink locale={params.locale} /></div>
       </div>
     </main>
   );

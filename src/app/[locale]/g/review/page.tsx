@@ -16,7 +16,7 @@ export default async function GuideReview({ params, searchParams }: { params: { 
         {!r || !r.confirmed ? <p className="card" style={{ padding: 16 }}>{t.gdRateInvalid}</p>
           : r.review ? <p className="card" style={{ padding: 16 }}>✓ {t.gdRateThanks}</p>
           : !r.started ? <p className="card" style={{ padding: 16 }}>{t.gdRateEarly}</p>
-          : <GuideReviewForm t={t} bookingId={r.booking.id} token={searchParams.t!} guide={r.guide.name} />}
+          : <GuideReviewForm bookingId={r.booking.id} token={searchParams.t!} guide={r.guide.name} />}
       </div>
     </main>
   );

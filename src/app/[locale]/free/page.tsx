@@ -30,7 +30,7 @@ export default async function Free({ params, searchParams }: { params: { locale:
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <FreeTime t={t} cityName={cityName(city, params.locale)} center={cityCenterOf(city)} stops={stops}
+      <FreeTime cityName={cityName(city, params.locale)} center={cityCenterOf(city)} stops={stops}
         initial={{ min: Number.isFinite(min) ? min : undefined, bag: searchParams.bag === "1" }} />
     </main>
   );

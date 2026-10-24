@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /**
  * "De que precisa agora?": quatro entradas para quem acabou de chegar, está perdido ou tem uma necessidade imediata.
  * "Preciso de algo perto" abre o mapa com pesquisas úteis à volta do viajante (não lista estabelecimentos comerciais).
@@ -69,7 +70,8 @@ export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
   );
 }
 
-export function NeedNow({ t, locale, city = "lon", compact = false }: { t: Dict; locale: Locale; city?: string; compact?: boolean }) {
+export function NeedNow({ t: tProp, locale, city = "lon", compact = false }: { t?: Dict; locale: Locale; city?: string; compact?: boolean }) {
+  const t = useDict(tProp);
   const [near, setNear] = useState(false);
   const tiles = [
     { k: "arr", I: PlaneLanding, label: t.nn.arrived, sub: t.nn.arrivedSub, href: `/${locale}/arrive?city=${city}`, main: true },

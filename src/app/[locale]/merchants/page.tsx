@@ -34,7 +34,7 @@ export default async function Merchants({ params, searchParams }: { params: { lo
           </div>
         </div>
 
-        <MerchantForm locale={params.locale} t={t} cities={cities} partnerPct={Math.round(PARTNER_COMMISSION * 100)}
+        <MerchantForm locale={params.locale} cities={cities} partnerPct={Math.round(PARTNER_COMMISSION * 100)}
           prices={{ basic: MERCHANT_PLANS.basic.amount, featured: MERCHANT_PLANS.featured.amount, partner: MERCHANT_PLANS.partner.amount }}
           agent={searchParams.agent?.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12)} />
         <p className="hint"><a href={`/${params.locale}/agents`}>{t.agCta}</a></p>

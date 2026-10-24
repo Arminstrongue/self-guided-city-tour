@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Área do comerciante (iOS): entrar por link no email, ver estatísticas, editar o anúncio e responder a pedidos. */
 import { useState } from "react";
 import { Camera, Eye, ExternalLink, Hand, Inbox, LogOut, Mail, Pause, Play, Plus, Trash2, X } from "lucide-react";
@@ -16,7 +17,8 @@ export type PortalMerchant = {
 };
 export type PortalBooking = { id: string; merchantId: string; option: string; dateFrom: string; dateTo: string; time: string; people: number; units: number; name: string; email: string; phone: string; note: string; status: string; createdAt: string };
 
-export function MerchantLogin({ t, locale, expired }: { t: Dict; locale: Locale; expired: boolean }) {
+export function MerchantLogin({ t: tProp, locale, expired }: { t?: Dict; locale: Locale; expired: boolean }) {
+  const t = useDict(tProp);
   const m = t.mp;
   const [email, setEmail] = useState("");
   const [state, setState] = useState<"idle" | "busy" | "sent" | "err">("idle");
@@ -45,7 +47,8 @@ export function MerchantLogin({ t, locale, expired }: { t: Dict; locale: Locale;
   );
 }
 
-export function MerchantPortal({ t, locale, email, merchants, bookings: initBookings }: { t: Dict; locale: Locale; email: string; merchants: PortalMerchant[]; bookings: PortalBooking[] }) {
+export function MerchantPortal({ t: tProp, locale, email, merchants, bookings: initBookings }: { t?: Dict; locale: Locale; email: string; merchants: PortalMerchant[]; bookings: PortalBooking[] }) {
+  const t = useDict(tProp);
   const m = t.mp;
   const [sel, setSel] = useState(merchants[0]?.id ?? "");
   const [bookings, setBookings] = useState(initBookings);

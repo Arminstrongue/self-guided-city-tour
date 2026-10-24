@@ -20,7 +20,7 @@ export default function Meet({ params }: { params: { locale: Locale } }) {
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <MeetView t={t} locale={params.locale} />
+      <MeetView locale={params.locale} />
     </main>
   );
 }

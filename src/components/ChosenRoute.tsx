@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -13,7 +14,8 @@ const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60))
  * "O seu roteiro": o que o viajante escolheu no planeador domina o resumo da compra (paragens, tempos, custo de
  * transporte dessa versão, início e fim). Sem escolha, mostra o resumo geral da cidade (`children`).
  */
-export function ChosenRoute({ t, locale, city, tz, coreN, extN, children }: { t: Dict; locale: Locale; city: string; tz: string; coreN: number; extN: number; children?: React.ReactNode }) {
+export function ChosenRoute({ t: tProp, locale, city, tz, coreN, extN, children }: { t?: Dict; locale: Locale; city: string; tz: string; coreN: number; extN: number; children?: React.ReactNode }) {
+  const t = useDict(tProp);
   const [p, setP] = useState<Planned | null>(null);
   const [trip, setTrip] = useState<Trip | null>(null);
   useEffect(() => {

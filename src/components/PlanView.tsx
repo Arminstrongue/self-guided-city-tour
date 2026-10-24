@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 /** Plano de viagem: dias com lugares reais, criação automática pelos interesses, rota do dia e partilha. */
 import { toast } from "@/lib/toast";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,7 +13,8 @@ import type { MomentView } from "./Explore";
 type Plan = { id: string; title: string; city: string | null; cityName: string; startDate: string | null; days: number; items: PlanItem[] };
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-export function PlanView({ t, locale, plan: initial, moments }: { t: Dict; locale: Locale; plan: Plan; moments: MomentView[] }) {
+export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dict; locale: Locale; plan: Plan; moments: MomentView[] }) {
+  const t = useDict(tProp);
   const [plan, setPlan] = useState(initial);
   const [day, setDay] = useState(1);
   const [places, setPlaces] = useState<Place[] | null>(null);

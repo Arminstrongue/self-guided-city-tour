@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
 import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
 /** "O que viver": momentos curados, mapa de diversão (OpenStreetMap), eventos e diário, ordenados pelos interesses do viajante. */
@@ -64,10 +65,11 @@ async function shrink(file: File): Promise<string> {
 }
 
 export type RouteForMap = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null };
-export function Explore({ cityId, cityName, locale, t, moments, agenda, center, tz, gmapsKey, customs = [], bare = false, route, focusIn }: {
-  cityId: string; cityName: string; locale: Locale; t: Dict; moments: MomentView[]; agenda?: string; center: Pos; tz?: string; gmapsKey?: string; customs?: CustomView[]; bare?: boolean;
+export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, center, tz, gmapsKey, customs = [], bare = false, route, focusIn }: {
+  cityId: string; cityName: string; locale: Locale; t?: Dict; moments: MomentView[]; agenda?: string; center: Pos; tz?: string; gmapsKey?: string; customs?: CustomView[]; bare?: boolean;
   route?: RouteForMap; focusIn?: Focus | null;
 }) {
+  const t = useDict(tProp);
   const [hobbies, setHobbies] = useState<Hobby[]>([]);
   const [picking, setPicking] = useState(false);
   const [tab, setTab] = useState<"moments" | "places" | "events" | "customs">("moments");

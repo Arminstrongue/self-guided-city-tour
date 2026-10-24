@@ -1,4 +1,5 @@
 "use client";
+import { useDict } from "@/i18n/client-dict";
 import { useEffect, useState } from "react";
 import type { City } from "@/data/cities";
 import { ZONE_COUNTRY, zoneOf } from "@/data/city-meta";
@@ -18,7 +19,8 @@ export const NAT_KEY = "sgct:nat";
  * "Posso sair do aeroporto?": ferramenta opcional para quem viaja de avião. A hora de partida é a MESMA do plano
  * de viagem (planeador e compra), na hora local da cidade.
  */
-export function ExitCheck({ city, locale, t, compact = false, onlyPlane = false }: { city: City; locale: Locale; t: Dict; compact?: boolean; onlyPlane?: boolean }) {
+export function ExitCheck({ city, locale, t: tProp, compact = false, onlyPlane = false }: { city: City; locale: Locale; t?: Dict; compact?: boolean; onlyPlane?: boolean }) {
+  const t = useDict(tProp);
   const tz = city.tz ?? "UTC";
   const [isPlane, setIsPlane] = useState(true);
   const [nat, setNat] = useState("");

@@ -19,7 +19,7 @@ export default async function Portal({ params }: { params: { locale: Locale } })
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />
-      <AgentPortal locale={params.locale} t={t} cities={cities}
+      <AgentPortal locale={params.locale} cities={cities}
         agent={{ name: agent.name, code: agent.code, status: agent.status }}
         link={`${env.appUrl}/${params.locale}/merchants?agent=${agent.code}`}
         leads={s.leads.map((l) => ({ id: l.id, name: l.name, kind: l.kind, city: l.city, contact: l.contact, email: l.email, phone: l.phone, status: l.status, notes: l.notes }))}

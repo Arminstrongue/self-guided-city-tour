@@ -44,7 +44,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
       {preview && <Header locale={params.locale} currency={requestCurrency()} />}
       <TourView
         preview={preview ? { buy: `/${params.locale}/c/${city.id}#book`, price: fmt(t.fromP, { p: price.local ?? price.main }), signIn: `/${params.locale}/wallet?signin=1&city=${city.id}` } : undefined}
-        locale={params.locale} t={t} city={shown} cityLabel={cityName(city, params.locale)}
+        locale={params.locale} city={shown} cityLabel={cityName(city, params.locale)}
         flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={fx}
         flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()} tripIn={access?.trip ?? null}
         museums={MUSEUMS[city.id] ?? []} plan={access ? access.plan ?? access.scope : preview ? "preview" : "free"}
