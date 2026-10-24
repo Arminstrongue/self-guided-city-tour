@@ -3071,3 +3071,4 @@ a.ios-row{text-decoration:none;color:inherit}
 .bw li.free::before{content:"€0";font-size:11px;top:2px;color:var(--cobalt-ink)}
 .bw li.est::before{content:"≈";color:var(--muted)}
 .bw li.no,.bw li.est{color:var(--muted)}
+.hero-link{display:inline-block;margin-top:12px;color:inherit;opacity:.85;font-weight:600;font-size:15px;text-decoration:underline;text-underline-offset:3px}

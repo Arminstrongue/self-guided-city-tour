@@ -42,7 +42,7 @@ export function CityToday({ t, locale, city, name, pulse }: { t: Dict; locale: L
   if (empty) return null;
   return (
     <section className="sec today" id="today">
-      <div className="sec-h"><div><h2>🆕 {fmt(t.tdTitle, { city: name })}</h2><p>{df.format(new Date(`${pulse.day}T12:00:00Z`))} · {t.tdAuto}</p></div></div>
+      <div className="sec-h"><div><h2>{fmt(t.tdTitle, { city: name })}</h2><p>{df.format(new Date(`${pulse.day}T12:00:00Z`))} · {t.tdAuto}</p></div></div>
       <div className="td-grid">
         {d.weather && <div className="card td-wx"><span className="td-ic" aria-hidden="true">{WX(d.weather.code)}</span><b className="num">{d.weather.min}° – {d.weather.max}°</b><small className="hint">{d.weather.rain >= 50 ? `🌂 ${t.tdRain}` : t.tdDry}</small></div>}
         {tr && (tr.visitors >= 3 || tr.comments > 0 || tr.posts > 0) && <div className="card td-wx"><span className="td-ic" aria-hidden="true">🔥</span>{tr.visitors > 0 && <b className="num">{fmt(t.tdVisitors, { n: tr.visitors })}</b>}{tr.comments + tr.posts > 0 && <small className="hint">{fmt(t.tdActivity, { c: tr.comments, p: tr.posts })}</small>}</div>}
@@ -70,7 +70,7 @@ export function CityHistory({ t, name, k }: { t: Dict; name: string; k: { summar
   const paras = (s: string) => s.split(/\n+/).filter((p) => p.trim().length > 1);
   return (
     <section className="sec hist" id="history">
-      <div className="sec-h"><div><h2>🏛️ {fmt(t.hiTitle, { city: name })}</h2><p>{t.hiSub}</p></div></div>
+      <div className="sec-h"><div><h2>{fmt(t.hiTitle, { city: name })}</h2><p>{t.hiSub}</p></div></div>
       <article className="card hist-card">
         {k.summary && paras(k.summary.text).map((p, i) => <p key={`s${i}`} lang={k.summary!.lang}>{p}</p>)}
         {k.history && <details>
@@ -89,7 +89,7 @@ export function GoodToKnow({ t, locale, city, name }: { t: Dict; locale: Locale;
   const tx = (o: { pt: string; en: string }) => (locale === "pt" ? o.pt : o.en);
   return (
     <section className="sec" id="goodtoknow">
-      <div className="sec-h"><div><h2>💡 {fmt(t.gkTitle, { city: name })}</h2><p>{t.gkSub}</p></div></div>
+      <div className="sec-h"><div><h2>{fmt(t.gkTitle, { city: name })}</h2><p>{t.gkSub}</p></div></div>
       <div className="card rows" style={{ paddingBlock: 6 }}>
         <div><span>🚨 {t.emergency}</span><a className="num" href={`tel:${g.emergency.split(" ")[0]}`}><b>{emergencyText(g.emergency, t)}</b></a></div>
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}

@@ -13,7 +13,6 @@ import { cityCenterOf } from "@/lib/city-center";
 import { NextCard, BackNow, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
-import { CurrencyPicker } from "./CurrencyPicker";
 import { ExtLink } from "./ExtLink";
 import type { Focus } from "./MapView";
 import { stopName, lineText } from "@/data/stop-names";
@@ -26,7 +25,7 @@ import { SheetX } from "./WinNav";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
-import { ArrowLeftRight, ChevronRight, Wallet } from "lucide-react";
+import { ArrowLeftRight, ChevronRight } from "lucide-react";
 import { toast } from "@/lib/toast";
 import Portal from "@/components/Portal";
 import { achievementText } from "@/lib/achievement-text";
@@ -279,19 +278,15 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
               </select>
             ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
           </div>
-          <span className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
-            <a className="hb-ic press" href={`/${locale}/wallet`} aria-label={t.wallet} title={t.wallet}><Wallet size={18} strokeWidth={2} aria-hidden="true" /></a>
-            <CurrencyPicker current={fx.cur} label={t.currency} />
-          </span>
           {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{when(leave)}</b></div>
             : backAt && <div className="clock"><small>{t.bpBackShort}</small><b className="num">{when(backAt)}</b></div>}
         </div>
-        <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>
-        <div className="tabs" role="tablist">
+        {!preview && <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>}
+        {!preview && <div className="tabs" role="tablist">
           {(preview ? (["route"] as const) : (["route", ...(explore ? ["live" as const] : ["map" as const]), "cost", "museums", "guide"] as const)).map((k) => (
             <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map" || k === "live") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
-        </div>
+        </div>}
       </header>
 
       <div className="stack" style={{ marginTop: 14 }}>

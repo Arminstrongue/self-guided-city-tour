@@ -264,7 +264,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     <div className="stack wl wl-app" style={{ gap: 14 }}>
       {/* Barra de cima: título + notificações e mensagens (como no Instagram) */}
       <div className="wl-bar">
-        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand"><span className="wl-logo"><I icon={MapPin} size={15} stroke={2.6} /></span>{t.wallet}</b>}
+        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand">{t.wallet}</b>}
         <span className="row" style={{ gap: 4 }}>
           {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}><I icon={Settings} size={22} /></button>}
           {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}><I icon={Menu} size={22} /></a>}

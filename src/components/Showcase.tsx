@@ -91,7 +91,7 @@ export function CityHero({ cityId, children }: { cityId: string; children: React
 }
 
 /** Galeria (grelha + todas as fotos) e carrossel de destaques com a fotografia de cada paragem. */
-export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: { cityId: string; cityName: string; stops: ShowStop[]; sub: string; t?: Dict; locale: Locale }) {
+export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: { cityId: string; cityName: string; stops: ShowStop[]; sub?: string; t?: Dict; locale: Locale }) {
   const t = useDict(tProp);
   const m = useCityMedia(cityId);
   const [open, setOpen] = useState<{ title: string; photos: Photo[] } | null>(null);
@@ -104,7 +104,7 @@ export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: 
   return (
     <>
       <section className="sec reveal">
-        <div className="sec-h"><div><h2>{t.highlights}</h2><p>{sub}</p></div></div>
+        <div className="sec-h"><div><h2>{t.highlights}</h2>{sub && <p>{sub}</p>}</div></div>
         <div className="rail">
           {stops.map((s) => (
             <button key={s.id} className="scard press" onClick={() => void openStop(s)}>

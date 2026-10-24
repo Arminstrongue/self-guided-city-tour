@@ -75,17 +75,18 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           <p>{t.heroSub}</p>
           <div className="stats" tabIndex={0}><span className="num">{meta}</span><span><b>{LOCALES.length}</b> {t.statLangs}</span></div>
           <div className="ctas">{free
-            ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>🎁 {t.freeCta}</Link>
-            : <><a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a><Link className="btn ghost press" href={`/${params.locale}/tour/${city.id}`}>🎧 {t.qsTry}</Link></>}<Link className="btn ghost press" href={`/${params.locale}/start?city=${city.id}`}>⏱ {t.qsByTime}</Link></div>
+            ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.freeCta}</Link>
+            : <><a className="btn tram press" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a><Link className="btn ghost press" href={`/${params.locale}/tour/${city.id}`}>{t.qsTry}</Link></>}</div>
+          <Link className="hero-link" href={`/${params.locale}/start?city=${city.id}`}>{t.qsByTime} →</Link>
         </div>
         <PageQR label={t.qrScan} />
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
-        <CityGallery cityId={city.id} cityName={name} stops={stops} sub={meta} locale={params.locale} />
+        <CityGallery cityId={city.id} cityName={name} stops={stops} locale={params.locale} />
         {free ? (
           <section className="sec book" id="book">
-            <div className="sec-h reveal"><div><h2>🎁 {t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
+            <div className="sec-h reveal"><div><h2>{t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
             <div className="book-card"><Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.freeCta}</Link></div>
           </section>
         ) : (
@@ -126,7 +127,7 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
         )}
         <CityHistory t={t} name={name} k={know} />
         <section className="sec" id="comments">
-          <div className="sec-h reveal"><div><h2>💬 {fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
+          <div className="sec-h reveal"><div><h2>{fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
           <LazyComments locale={params.locale} city={city.id} />
         </section>
       </div>

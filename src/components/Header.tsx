@@ -69,6 +69,9 @@ const SYM: Record<string, string> = { EUR: "€", GBP: "£", USD: "$", JPY: "¥"
 export function Header({ locale, currency, over = false }: { locale: string; currency?: string; over?: boolean }) {
   const [open, setOpen] = useState(false);
   const [l, c] = UI[locale] ?? UI.en;
+  // Dentro de "Minha viagem" o botão da mala levaria à própria página: não aparece.
+  const [inWallet, setInWallet] = useState(false);
+  useEffect(() => { setInWallet(/^\/[a-z]{2}\/wallet(\/|$)/.test(location.pathname)); }, []);
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -80,7 +83,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
     <div className={`bar${over ? " over" : ""}`}>
       <Link className="brand" href={`/${locale}`} aria-label="VOYBU"><span className="mark" aria-hidden="true"><BrandMark size={30} ring="auto" /></span><span className="word">VOYBU</span></Link>
       <div className="bar-end">
-        <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>
+        {!inWallet && <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>}
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
           <span className="hb-flag" aria-hidden="true">{FLAG[locale] ?? "🌐"}</span><b>{locale.toUpperCase()}</b>{currency && <><i aria-hidden="true" /><span>{SYM[currency] ?? currency}</span></>}
         </button>
