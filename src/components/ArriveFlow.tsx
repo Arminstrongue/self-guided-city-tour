@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, ChevronRight, Hand, Home, LocateFixed, MapPin, Plane, Search, Ship, TrainFront, Volume2, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
+import { useArrivalTx } from "@/lib/arrival-text";
 import { arrivalsFor, fareText, optionName, type ArrivalOption, type ArrivalPoint, type Step } from "@/data/arrivals";
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
@@ -28,7 +29,7 @@ function say(text: string, locale: string) {
 export function ArriveFlow({ t: tProp, locale, cities, initial, go }: { t?: Dict; locale: Locale; cities: ArriveCity[]; initial: string; go: boolean }) {
   const t = useDict(tProp);
   const a = t.arv;
-  const tx = (s: { pt: string; en: string }) => (locale === "pt" ? s.pt : s.en);
+  const tx = useArrivalTx(locale);
   const [st, setSt] = useState<State>(fresh(initial));
   const [ready, setReady] = useState(false);
   // Retoma onde estava (até 12 h), se for a mesma cidade.
