@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import type { Transport } from "@/data/transport";
+import { TRANSPORT, type Transport } from "@/data/transport";
 import type { Museum } from "@/data/museums";
 
 type Extra = { id: string; name: string; price: number; qty: number };
@@ -13,8 +13,8 @@ const EMPTY: State = { tr: {}, mu: {}, extras: [] };
 /** Tipo de paragem para procurar no mapa (o Google Maps mostra as próximas partidas de cada estação). */
 const STOP_Q: Record<string, string> = { "🚇": "metro station", "🚋": "tram stop", "🚊": "tram stop", "🚌": "bus stop", "🚆": "train station", "⛴": "ferry terminal", "🚠": "funicular", "🚡": "cable car" };
 
-export function CostPlanner({ cityId, t, locale, transport, museums, base, money, cityName, center }: {
-  cityId: string; t: Dict; locale: Locale; transport: Transport[]; museums: Museum[]; base: number; money: (v: number) => React.ReactNode;
+export function CostPlanner({ cityId, t, locale, museums, base, money, cityName, center }: {
+  cityId: string; t: Dict; locale: Locale; museums: Museum[]; base: number; money: (v: number) => React.ReactNode;
   cityName: string; center: { lat: number; lng: number };
 }) {
   const key = `sgct:costs:${cityId}`;
@@ -24,6 +24,7 @@ export function CostPlanner({ cityId, t, locale, transport, museums, base, money
   const save = (n: State) => { setS(n); try { localStorage.setItem(key, JSON.stringify(n)); } catch { /* ignorar */ } };
   const step = (k: "tr" | "mu", id: string, d: number) => save({ ...s, [k]: { ...s[k], [id]: Math.max(0, (s[k][id] ?? 0) + d) } });
   const name = (x: Transport) => (locale === "pt" ? x.pt : x.en);
+  const transport = TRANSPORT[cityId] ?? [];
   const sumTr = useMemo(() => transport.reduce((a, x) => a + x.price * (s.tr[x.id] ?? 0), 0), [transport, s.tr]);
   const sumMu = useMemo(() => museums.reduce((a, x) => a + x.price * (s.mu[x.id] ?? 0), 0), [museums, s.mu]);
   const sumEx = s.extras.reduce((a, x) => a + x.price * x.qty, 0);

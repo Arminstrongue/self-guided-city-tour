@@ -20,26 +20,27 @@ import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
-import { WalkTools } from "./WalkTools";
-import { RatingCard } from "./Rating";
-import { OfflineButton } from "./TravelTools";
-import { OfflineCheck, OfflineStatus } from "./OfflineCheck";
-import { PlanChanged } from "./PlanChanged";
-import { StopReport } from "./StopReport";
 import { zonedToDate } from "@/lib/zoned";
 import { RouteSketch } from "./RouteSketch";
 import { SheetX } from "./WinNav";
-import { TRANSPORT } from "@/data/transport";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
 import { ArrowLeftRight, ChevronRight, Wallet } from "lucide-react";
 import { toast } from "@/lib/toast";
-import { CommentsButton } from "./Comments";
 import Portal from "@/components/Portal";
-import { OfferCard } from "@/components/OfferCard";
 import { achievementText } from "@/lib/achievement-text";
 // Separadores carregados só quando abertos.
+// Partes que só aparecem depois de uma ação (começar, abrir uma paragem, sem rede…): carregadas quando são precisas.
+const WalkTools = dynamic(() => import("./WalkTools").then((m) => m.WalkTools), { ssr: false });
+const RatingCard = dynamic(() => import("./Rating").then((m) => m.RatingCard), { ssr: false });
+const OfflineButton = dynamic(() => import("./TravelTools").then((m) => m.OfflineButton), { ssr: false });
+const OfflineCheck = dynamic(() => import("./OfflineCheck").then((m) => m.OfflineCheck), { ssr: false });
+const OfflineStatus = dynamic(() => import("./OfflineCheck").then((m) => m.OfflineStatus), { ssr: false });
+const PlanChanged = dynamic(() => import("./PlanChanged").then((m) => m.PlanChanged), { ssr: false });
+const StopReport = dynamic(() => import("./StopReport").then((m) => m.StopReport), { ssr: false });
+const CommentsButton = dynamic(() => import("./Comments").then((m) => m.CommentsButton), { ssr: false });
+const OfferCard = dynamic(() => import("@/components/OfferCard").then((m) => m.OfferCard), { ssr: false });
 const MapView = dynamic(() => import("./MapView").then((m) => m.MapView), { ssr: false });
 const DayPlan = dynamic(() => import("./Museums").then((m) => m.DayPlan), { ssr: false });
 const MuseumsTab = dynamic(() => import("./Museums").then((m) => m.MuseumsTab), { ssr: false });
@@ -559,7 +560,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
             </div>
             <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
-            <CostPlanner cityId={city.id} t={t} locale={locale} transport={TRANSPORT[city.id] ?? []} museums={museums} base={plan.transport + plan.entries} money={both} cityName={cityLabel} center={cityCenterOf(city)} />
+            <CostPlanner cityId={city.id} t={t} locale={locale} museums={museums} base={plan.transport + plan.entries} money={both} cityName={cityLabel} center={cityCenterOf(city)} />
           </>
         )}
 
