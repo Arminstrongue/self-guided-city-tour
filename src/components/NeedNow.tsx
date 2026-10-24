@@ -34,7 +34,7 @@ export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
   const q = NEAR.find((n) => n.k === kind)?.q ?? "";
   if (kind) return (
     <Portal><div className="as-bg" onClick={onClose}>
-      <div className="as nn-sheet" role="dialog" aria-modal="true" aria-label={t.nn.items[kind]} onClick={(e) => e.stopPropagation()}>
+      <div className="as nn-sheet wt-sheet" role="dialog" aria-modal="true" aria-label={t.nn.items[kind]} onClick={(e) => e.stopPropagation()}>
         <span className="as-grab" aria-hidden="true" />
         <div className="nn-sh-h"><button type="button" className="mu2-x nn-x" onClick={() => setKind(null)} aria-label={t.arv.back}><ChevronRight size={18} style={{ transform: "rotate(180deg)" }} aria-hidden="true" /></button><b>{t.nn.items[kind]}</b><button type="button" className="mu2-x nn-x" onClick={onClose} aria-label={t.close}><X size={18} aria-hidden="true" /></button></div>
         <div className="as-group nn-res">
@@ -53,7 +53,7 @@ export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
   );
   return (
     <Portal><div className="as-bg" onClick={onClose}>
-      <div className="as nn-sheet" role="dialog" aria-modal="true" aria-label={t.nn.near} onClick={(e) => e.stopPropagation()}>
+      <div className="as nn-sheet wt-sheet" role="dialog" aria-modal="true" aria-label={t.nn.near} onClick={(e) => e.stopPropagation()}>
         <span className="as-grab" aria-hidden="true" />
         <div className="nn-sh-h"><b>{t.nn.near}</b><button type="button" className="mu2-x nn-x" onClick={onClose} aria-label={t.close}><X size={18} aria-hidden="true" /></button></div>
         <div className="nn-grid">

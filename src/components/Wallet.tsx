@@ -11,7 +11,7 @@ import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
 import { SearchPick } from "./SearchPick";
 import { InterestsOnboarding, ONBOARDED } from "./Interests";
 import { NewsFeed } from "./NewsFeed";
-import { NeedNow } from "./NeedNow";
+import { NearSheet, NeedNow } from "./NeedNow";
 import { Composer, FeedTab } from "./Feed";
 import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
@@ -189,6 +189,7 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
   // #post:<id> e #tag:<hashtag> abrem por cima de qualquer separador.
   const [deep, setDeep] = useState<{ post?: string; tag?: string } | null>(null);
   const [tools, setTools] = useState<{ tab: ToolTab; split?: string } | null>(null);
+  const [near, setNear] = useState(false);
   useEffect(() => {
     const read = () => {
       const h = decodeURIComponent(window.location.hash.slice(1));
@@ -435,14 +436,15 @@ export function WalletView({ t, locale, cities, free, countryOf, tzOf = {}, prov
       {/* ---------- Barra de baixo ---------- */}
       <nav className="nv" aria-label={t.wallet}>
         <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
+        <button className={near ? "on" : ""} onClick={() => { buzz(); setNear(true); }} aria-label={t.nn.near}><span><I icon={MapPin} on={near} /></span><small>{t.nvNear}</small></button>
         <button className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
         <button className={section === "trip" ? "on" : ""} onClick={() => go("trip")} aria-label={t.wallet}><span><I icon={Luggage} on={section === "trip"} /></span><small>{t.nvTrip}</small></button>
-        <button onClick={() => { buzz(); setTools({ tab: "fx" }); }} aria-label={t.wQuickTools}><span><I icon={Wrench} /></span><small>{t.wQuickTools}</small></button>
         <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
           <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={Users} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>
       </nav>
 
+      {near && <NearSheet t={t} onClose={() => setNear(false)} />}
       {tools && <ToolsSheet t={t} locale={locale} cities={cities} mine={myCities} localCur={myCities[0] ? currencyForCountry(countryOf[myCities[0]]) : null} tab={tools.tab} split={tools.split ?? null} signed={Boolean(signed)}
         onClose={() => { setTools(null); if (/^#(split|tools|offline)/.test(window.location.hash)) history.replaceState(null, "", window.location.pathname + (tab !== "home" ? `#${tab}` : "")); }} />}
       {deep?.post && signed && <PostSheet t={t} locale={locale} id={deep.post} cities={cities} onClose={closeDeep} />}
