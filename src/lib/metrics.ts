@@ -5,7 +5,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 
-export const EVENTS = ["view_city", "plan_done", "checkout_start", "tour_open", "first_stop", "stop_done", "tour_done", "sos_open", "share_loc", "rating_open", "client_error", "checkout_error", "stop_report", "offline_saved"] as const;
+export const EVENTS = ["view_city", "plan_done", "checkout_start", "tour_open", "first_stop", "stop_done", "tour_done", "sos_open", "share_loc", "rating_open", "client_error", "checkout_error", "stop_report", "offline_saved", "offer_view", "offer_tap"] as const;
 export type EventName = (typeof EVENTS)[number];
 export const isEvent = (v: unknown): v is EventName => typeof v === "string" && (EVENTS as readonly string[]).includes(v);
 

@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const d = await db();
   const [m] = await d.select().from(schema.merchants).where(eq(schema.merchants.id, b.merchantId)).limit(1);
   const kind = m ? bookKind(m.category) : null;
-  if (!m || !kind || m.status !== "active" || m.bookMode !== "request") return NextResponse.json({ error: "unavailable" }, { status: 404 });
+  if (!m || !kind || m.status !== "active" || m.paused || m.bookMode !== "request") return NextResponse.json({ error: "unavailable" }, { status: 404 });
   const bad = checkBooking(kind, b);
   if (bad) return NextResponse.json({ error: bad }, { status: 400 });
   const option = m.bookOptions.some((o) => o.name === b.option) ? b.option : "";

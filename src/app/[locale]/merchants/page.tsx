@@ -17,6 +17,7 @@ export default async function Merchants({ params, searchParams }: { params: { lo
       <div className="stack">
         <h1 style={{ fontSize: 28, lineHeight: 1.15 }}>{t.bzTitle}</h1>
         <p className="hint" style={{ fontSize: 15 }}>{t.bzSub}</p>
+        <a className="ios-row press" href={`/${params.locale}/merchants/manage`} style={{ textDecoration: "none" }}><span className="ios-tx"><b>{t.mp.manage}</b><small>{t.mp.sub}</small></span><span aria-hidden="true">›</span></a>
 
         {/* Exemplo de anúncio, antes de pedir o registo */}
         <span className="label">{t.mPreviewT}</span>

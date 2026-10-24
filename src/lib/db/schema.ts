@@ -44,12 +44,17 @@ export const merchants = pgTable("merchants", {
   lat: doublePrecision("lat"),
   lng: doublePrecision("lng"),
   locale: text("locale").notNull().default("en"),
+  /** Gerido pelo próprio negócio na Área do comerciante. */
+  hours: text("hours"),
+  paused: boolean("paused").notNull().default(false),
+  updatedAt: timestamp("updated_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [
   uniqueIndex("merchants_ref_idx").on(t.refCode),
   index("merchants_sub_idx").on(t.stripeSubscriptionId),
   index("merchants_agent_idx").on(t.agentId),
-  index("merchants_city_stop_idx").on(t.city, t.stopId)
+  index("merchants_city_stop_idx").on(t.city, t.stopId),
+  index("merchants_email_idx").on(t.email)
 ]);
 
 /** Fotos do negócio (data URL JPEG reduzida no telemóvel, ≤ ~450 KB cada; até 4 por negócio). */
@@ -181,7 +186,7 @@ export const events = pgTable("events", {
   ref: text("ref"),
   platform: text("platform"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
-}, (t) => [index("events_name_created_idx").on(t.name, t.createdAt), index("events_city_idx").on(t.city)]);
+}, (t) => [index("events_name_created_idx").on(t.name, t.createdAt), index("events_city_idx").on(t.city), index("events_stop_idx").on(t.stop, t.createdAt)]);
 
 /** Avaliação no fim do roteiro: estrelas, NPS (0–10) e comentário. Uma por compra. */
 export const ratings = pgTable("ratings", {

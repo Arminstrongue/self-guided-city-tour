@@ -36,6 +36,7 @@ export default async function MerchantDone({ params, searchParams }: { params: {
           ? <p>{fmt(t.mDoneSub, { city: cityName(city, params.locale), stop: stop?.n ?? "" })}</p>
           : <p className="note">{m.plan === "basic" ? t.mReview : t.mPending}</p>}
         {m.bookMode === "request" && bookKind(m.category) && <p className="hint">{fmt(t.mDoneNext, { email: m.email })}</p>}
+        <a className="ios-row press" href={`/${params.locale}/merchants/manage`} style={{ textDecoration: "none" }}><span className="ios-tx"><b>{t.mp.title}</b><small>{t.mp.sub}</small></span><span aria-hidden="true">›</span></a>
         <span className="label">{t.mYour}</span>
         <div className="offer" style={{ borderStyle: "solid" }}>
           {m.photoCount > 0 && <img className="mb-thumb" src={`/api/merchants/photo/${m.id}`} alt="" />}

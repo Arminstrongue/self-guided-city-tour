@@ -2887,3 +2887,42 @@ a.nt2-who small{opacity:.55}
 .wt-sheet .as-cancel{background:var(--as-bg,#fff)}
 .wt-sheet .as-grab{background:color-mix(in srgb,var(--ink) 25%,transparent)}
 .wt-sheet .mu2-x{background:color-mix(in srgb,var(--ink) 8%,transparent);color:inherit}
+
+/* Área do comerciante */
+.mp-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.mp-out{background:color-mix(in srgb,var(--ink) 7%,transparent);color:inherit}
+.mp-h{padding:0 2px}
+.mp-badges{display:flex;gap:6px;flex-wrap:wrap}
+.mp-badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--ink) 8%,transparent);white-space:nowrap;align-self:center}
+.mp-badge.on{background:#1c1c1e;color:#fff}
+.mp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mp-stats div{display:grid;justify-items:center;gap:2px;padding:12px 6px;border-radius:14px;background:var(--as-bg,#fff)}
+.mp-stats b{font-size:22px;letter-spacing:-.02em}
+.mp-stats small{opacity:.6;font-size:12px}
+.mp-form{gap:12px}
+.mp-form textarea{padding:12px 14px;border-radius:12px;border:0;background:color-mix(in srgb,var(--ink) 6%,transparent);font:inherit;color:inherit;resize:vertical}
+.mp-socials{display:grid;gap:1px;border-radius:12px;overflow:hidden}
+.mp-soc{display:flex;align-items:center;gap:10px;padding:0 14px;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.mp-soc span{width:84px;font-size:14px;opacity:.7}
+.mp-soc input{flex:1;border:0;background:none;padding:12px 0;font:inherit;color:inherit;min-width:0}
+.mp-switch{display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:600}
+.mp-switch input{appearance:none;width:51px;height:31px;border-radius:999px;background:color-mix(in srgb,var(--ink) 18%,transparent);position:relative;cursor:pointer;flex:none;transition:background .2s}
+.mp-switch input::after{content:"";position:absolute;top:2px;left:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:transform .2s}
+.mp-switch input:checked{background:#34c759}
+.mp-switch input:checked::after{transform:translateX(20px)}
+.mp-opt{display:grid;grid-template-columns:1fr 110px 32px;gap:6px;align-items:center}
+.mp-opt input{padding:10px 12px;border-radius:10px;border:0;background:color-mix(in srgb,var(--ink) 6%,transparent);font:inherit;color:inherit;min-width:0}
+.mp-x{width:32px;height:32px;background:color-mix(in srgb,var(--ink) 7%,transparent);color:inherit}
+.mp-photos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mp-ph{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.mp-ph img{width:100%;height:100%;object-fit:cover}
+.mp-ph-x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;display:grid;place-items:center;background:rgba(0,0,0,.6);color:#fff;cursor:pointer}
+.mp-add{display:grid;place-items:center;align-content:center;gap:2px;cursor:pointer;text-align:center}
+.mp-add small{font-size:11px;opacity:.7}
+.mp-save{width:100%}
+.mp-req li{align-items:flex-start}
+.mp-req a{color:inherit}
+.mp-ans{display:grid;gap:6px;flex:none}
+.mp-ans .btn{padding:8px 14px;min-height:0;font-size:14px}
+.mp-h{color:inherit!important;opacity:.6;text-shadow:none!important;text-transform:uppercase;letter-spacing:.04em;font-size:12px}
+a.ios-row{text-decoration:none;color:inherit}

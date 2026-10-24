@@ -2,18 +2,8 @@
 import { useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { INTL_LOCALE } from "@/i18n/core";
-import { MAX_OPTIONS, MAX_PHOTOS, MAX_PHOTO_CHARS, bookKind } from "@/lib/booking";
-
-/** Foto do negócio reduzida no telemóvel: lado maior ≤ 1280 px, JPEG ≤ ~350 KB. */
-async function shrink(file: File): Promise<string> {
-  const img = await createImageBitmap(file);
-  const k = Math.min(1, 1280 / Math.max(img.width, img.height));
-  const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
-  c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-  let q = 0.82, data = c.toDataURL("image/jpeg", q);
-  while (data.length > MAX_PHOTO_CHARS - 10_000 && q > 0.3) { q -= 0.08; data = c.toDataURL("image/jpeg", q); }
-  return data;
-}
+import { MAX_OPTIONS, MAX_PHOTOS, bookKind } from "@/lib/booking";
+import { shrink } from "@/lib/photo-shrink";
 
 type CityOpt = { id: string; name: string; stops: { id: string; name: string; lat: number; lng: number }[] };
 type Hit = { label: string; sub: string; lat: number; lng: number };

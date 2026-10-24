@@ -1,12 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { track } from "@/lib/track";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { Offer } from "@/lib/merchants";
 import { fmt } from "@/i18n/core";
 import Portal from "./Portal";
 import { SheetX } from "./WinNav";
 
-const photo = (id: string, i = 0) => `/api/merchants/photo/${id}?i=${i}`;
+const photo = (id: string, i = 0, v = 0) => `/api/merchants/photo/${id}?i=${i}${v ? `&v=${v}` : ""}`;
 const today = () => new Date().toISOString().slice(0, 10);
 const plusDays = (d: string, n: number) => new Date(Date.parse(`${d}T00:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
 
@@ -17,7 +18,7 @@ export function OfferCard({ o, t, locale }: { o: Offer; t: Dict; locale: Locale 
   return (
     <>
       <button type="button" className="offer mb-offer press" onClick={() => setOpen(true)}>
-        {o.photos > 0 && <img className="mb-thumb" src={photo(o.id)} alt="" loading="lazy" />}
+        {o.photos > 0 && <img className="mb-thumb" src={photo(o.id, 0, o.rev)} alt="" loading="lazy" />}
         <div style={{ flex: 1, minWidth: 0, textAlign: "start" }}>
           <span className="cat">{cat}</span>
           <b>{o.name}</b>{o.offer}
@@ -33,27 +34,31 @@ export function OfferCard({ o, t, locale }: { o: Offer; t: Dict; locale: Locale 
 function OfferSheet({ o, t, locale, cat, onClose }: { o: Offer; t: Dict; locale: Locale; cat: string; onClose: () => void }) {
   const [form, setForm] = useState(false);
   const wa = o.phone ? `https://wa.me/${o.phone.replace(/\D/g, "")}` : null;
+  // Estatísticas do negócio (Área do comerciante): vistas e contactos, anónimos.
+  useEffect(() => { track("offer_view", { stop: o.id, locale }); }, [o.id, locale]);
+  const tap = () => track("offer_tap", { stop: o.id, locale });
   return (
     <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={o.name}>
         <SheetX onClose={onClose} label={t.close} />
         {o.photos > 0 && (
           <div className="mb-gallery" aria-label={fmt(t.mbPhotos, { b: o.name })}>
-            {Array.from({ length: o.photos }, (_, i) => <img key={i} src={photo(o.id, i)} alt="" loading={i ? "lazy" : "eager"} />)}
+            {Array.from({ length: o.photos }, (_, i) => <img key={i} src={photo(o.id, i, o.rev)} alt="" loading={i ? "lazy" : "eager"} />)}
           </div>
         )}
         <span className="label">{cat} · <span className="ad-tag">{t.adPartner}</span></span>
         <b style={{ fontSize: 20 }}>{o.name}</b>
         <p style={{ margin: 0 }}>{o.offer}</p>
+        {o.hours && <p className="hint" style={{ margin: 0 }}>🕒 {o.hours}</p>}
         {o.address && <p className="hint" style={{ margin: 0 }}>📍 {o.address}{o.lat !== null && o.lng !== null && <> · <a href={`https://www.google.com/maps/dir/?api=1&destination=${o.lat},${o.lng}`} target="_blank" rel="noopener noreferrer">{t.directions}</a></>}</p>}
         {o.options.length > 0 && (
           <ul className="mb-opts">{o.options.map((x) => <li key={x.name}><span>{x.name}</span>{x.price && <b>{x.price}</b>}</li>)}</ul>
         )}
         {form && o.book ? <BookForm o={o} t={t} locale={locale} /> : (
           <div className="stack" style={{ gap: 8 }}>
-            {o.book && <button type="button" className="btn tram press" onClick={() => setForm(true)}>{t.mbReq[o.book]}</button>}
-            {o.bookingUrl && <a className="btn ghost press" href={o.bookingUrl} target="_blank" rel="noopener noreferrer nofollow">{t.mbOwnSite} ↗</a>}
-            <div className="mb-links">
+            {o.book && <button type="button" className="btn tram press" onClick={() => { tap(); setForm(true); }}>{t.mbReq[o.book]}</button>}
+            {o.bookingUrl && <a className="btn ghost press" href={o.bookingUrl} onClick={tap} target="_blank" rel="noopener noreferrer nofollow">{t.mbOwnSite} ↗</a>}
+            <div className="mb-links" onClick={tap}>
               {wa && <a className="press" href={wa} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
               {o.phone && <a className="press" href={`tel:${o.phone}`}>{t.mbCall}</a>}
               {o.instagram && <a className="press" href={`https://instagram.com/${o.instagram}`} target="_blank" rel="noopener noreferrer">Instagram</a>}

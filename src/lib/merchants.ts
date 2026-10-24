@@ -45,13 +45,13 @@ export async function activeOffers(cityId: string) {
 async function loadOffers(cityId: string) {
   const d = await db();
   const rows = await d.select().from(schema.merchants)
-    .where(and(eq(schema.merchants.city, cityId), eq(schema.merchants.status, "active")));
+    .where(and(eq(schema.merchants.city, cityId), eq(schema.merchants.status, "active"), eq(schema.merchants.paused, false)));
   const rank = { partner: 0, featured: 1, basic: 2 } as const;
   return rows.sort((a, b) => rank[a.plan] - rank[b.plan]).map((m) => ({
     id: m.id, stopId: m.stopId, name: m.name, category: m.category, offer: m.offer,
     instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic",
     photos: m.photoCount, book: m.bookMode === "request" ? bookKind(m.category) : null, options: m.bookOptions,
-    bookingUrl: m.bookingUrl, phone: m.phone, address: m.address, lat: m.lat, lng: m.lng
+    bookingUrl: m.bookingUrl, phone: m.phone, address: m.address, lat: m.lat, lng: m.lng, hours: m.hours, rev: m.updatedAt ? m.updatedAt.getTime() : 0
   }));
 }
 export type Offer = Awaited<ReturnType<typeof loadOffers>>[number];
