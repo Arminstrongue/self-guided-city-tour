@@ -78,7 +78,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
   const pickCur = (v: string) => { document.cookie = `${CURRENCY_COOKIE}=${v}; path=/; max-age=${365 * 86400}; samesite=lax`; window.location.reload(); };
   return (
     <div className={`bar${over ? " over" : ""}`}>
-      <Link className="brand" href={`/${locale}`} aria-label="VOYBU"><span className="mark" aria-hidden="true"><BrandMark size={20} reverse /></span><span className="word">VOYBU</span></Link>
+      <Link className="brand" href={`/${locale}`} aria-label="VOYBU"><span className="mark" aria-hidden="true"><BrandMark size={30} ring="auto" /></span><span className="word">VOYBU</span></Link>
       <div className="bar-end">
         <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
