@@ -1,4 +1,9 @@
 {
+  "bfLabel": "Margen antes de la salida",
+  "bfRec": "Recomendado: {d}",
+  "bfReset": "Restablecer",
+  "bfLess": "Menos margen",
+  "bfMore": "Más margen",
   "featMore": "Ver todas las funciones (+{n})",
 "metro": "metro",
 "vTitle": "Ciudades visitadas",

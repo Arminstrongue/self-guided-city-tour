@@ -3050,3 +3050,12 @@ a.ios-row{text-decoration:none;color:inherit}
 .wc-h .g2{background:linear-gradient(90deg,#d63cff,#6e6bff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .wc-btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;border-radius:14px;background:#4b5cff;color:#fff;font-weight:700;font-size:17px;text-decoration:none}
 .wc-skip{border:0;background:none;color:#8fa2ff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;padding:8px 12px;margin-top:-10px}
+/* Margem antes da partida (ajustável) */
+.bf{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.bf-l{font-weight:600;font-size:14.5px}
+.bf-ctl{display:flex;align-items:center;gap:8px}
+.bf-b{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.bf-b:disabled{opacity:.35;cursor:default}
+.bf-v{min-width:62px;text-align:center;font-size:15px}
+.bf .hint{grid-column:1/-1;margin:0}
+.bf-reset{border:0;background:none;padding:0;color:var(--cobalt-ink);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}

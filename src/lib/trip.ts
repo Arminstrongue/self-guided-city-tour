@@ -14,10 +14,22 @@ import { zonedToDate } from "./zoned";
 export type Mode = "plane" | "train" | "bus" | "ship" | "stay" | "walk";
 export type PlaceKind = "station" | "bus" | "port" | "hotel" | "address" | "here";
 export type Endpoint = { kind: "airport" } | { kind: PlaceKind; lat: number; lng: number; label: string };
-export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string };
+/** buffer: margem antes da partida escolhida pelo viajante, em minutos (vazio = a recomendada para a modalidade). */
+export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string; buffer?: number };
 
 /** Margem antes da partida (chegar com tempo ao aeroporto, à estação ou ao navio). */
 export const BUFFER_MIN: Record<Mode, number> = { plane: 150, train: 45, bus: 20, ship: 60, stay: 0, walk: 0 };
+/** Limites e passo da margem ajustável (minutos). */
+export const BUFFER_RANGE: Record<Mode, { min: number; max: number; step: number }> = {
+  plane: { min: 60, max: 300, step: 15 }, train: { min: 10, max: 120, step: 5 }, bus: { min: 5, max: 90, step: 5 },
+  ship: { min: 30, max: 180, step: 15 }, stay: { min: 0, max: 0, step: 0 }, walk: { min: 0, max: 0, step: 0 }
+};
+/** Margem em vigor: a escolhida (dentro dos limites) ou a recomendada. */
+export function bufferOf(t: Pick<Trip, "mode"> & { buffer?: number }): number {
+  const r = BUFFER_RANGE[t.mode];
+  if (typeof t.buffer !== "number" || !Number.isFinite(t.buffer) || r.max === 0) return BUFFER_MIN[t.mode];
+  return Math.min(r.max, Math.max(r.min, Math.round(t.buffer)));
+}
 
 /** Onde a partida acontece, para cada modalidade (o fim do percurso tem de ser deste tipo). */
 export const END_FOR_MODE: Record<Mode, Endpoint["kind"] | null> = { plane: "airport", train: "station", bus: "bus", ship: "port", stay: null, walk: null };
@@ -61,28 +73,28 @@ export const shapeOf = (city: City, plan: RoutePlan): RouteShape => ({
  * tour = visitas + deslocações entre paragens; to/back = ida e regresso; total = to + tour + back;
  * needed = total + margem antes da partida.
  */
-export function breakdownOf(r: RouteShape, trip: Pick<Trip, "start" | "end" | "mode">): Breakdown {
+export function breakdownOf(r: RouteShape, trip: Pick<Trip, "start" | "end" | "mode"> & { buffer?: number }): Breakdown {
   // Ponto ainda por escolher (sem coordenadas): usa o tempo de referência da cidade, nunca NaN.
   const ok = (e: Endpoint) => e.kind === "airport" || (Number.isFinite(e.lat) && Number.isFinite(e.lng));
   const to = trip.start.kind === "airport" || !r.first || !ok(trip.start) ? r.air : hop(trip.start, r.first).min;
   const back = trip.end.kind === "airport" || !r.last || !ok(trip.end) ? r.ret : hop(r.last, trip.end).min;
-  const buffer = BUFFER_MIN[trip.mode];
+  const buffer = bufferOf(trip);
   const total = to + r.tour + back;
   return { tour: r.tour, to, back, buffer, total, needed: total + buffer };
 }
-export const breakdown = (city: City, plan: RoutePlan, trip: Pick<Trip, "start" | "end" | "mode">) => breakdownOf(shapeOf(city, plan), trip);
+export const breakdown = (city: City, plan: RoutePlan, trip: Pick<Trip, "start" | "end" | "mode"> & { buffer?: number }) => breakdownOf(shapeOf(city, plan), trip);
 
 /** Instante de início (agora, se não houver data) e instante limite (partida menos a margem), no fuso da cidade. */
-export function tripWindow(trip: Pick<Trip, "startAt" | "deadline" | "mode">, tz: string, now = Date.now()): { start: number; limit: number | null; dep: number | null } {
+export function tripWindow(trip: Pick<Trip, "startAt" | "deadline" | "mode"> & { buffer?: number }, tz: string, now = Date.now()): { start: number; limit: number | null; dep: number | null } {
   const s = trip.startAt ? zonedToDate(trip.startAt, tz).getTime() : NaN;
   const start = Number.isFinite(s) && s > now ? s : now;
   const d = trip.deadline ? zonedToDate(trip.deadline, tz).getTime() : NaN;
   const dep = Number.isFinite(d) ? d : null;
-  return { start, limit: dep === null ? null : dep - BUFFER_MIN[trip.mode] * 60_000, dep };
+  return { start, limit: dep === null ? null : dep - bufferOf(trip) * 60_000, dep };
 }
 
 /** Minutos disponíveis para o percurso (do início até à hora limite já sem a margem). */
-export function availableMin(trip: Pick<Trip, "startAt" | "deadline" | "mode">, tz: string, now = Date.now()): number | null {
+export function availableMin(trip: Pick<Trip, "startAt" | "deadline" | "mode"> & { buffer?: number }, tz: string, now = Date.now()): number | null {
   const w = tripWindow(trip, tz, now);
   return w.limit === null ? null : Math.round((w.limit - w.start) / 60_000);
 }
@@ -113,7 +125,8 @@ export function parseTrip(v: unknown): Trip | null {
   const mode = ["plane", "train", "bus", "ship", "stay", "walk"].includes(String(o.mode)) ? (o.mode as Mode) : null;
   const dt = (x: unknown) => (typeof x === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(x) ? x : "");
   if (!start || !end || !mode) return null;
-  return { v: 2, start, end, mode, startAt: dt(o.startAt), deadline: dt(o.deadline), ...(typeof o.key === "string" ? { key: o.key.slice(0, 8) } : {}) };
+  return { v: 2, start, end, mode, startAt: dt(o.startAt), deadline: dt(o.deadline), ...(typeof o.key === "string" ? { key: o.key.slice(0, 8) } : {}),
+    ...(typeof o.buffer === "number" && Number.isFinite(o.buffer) && BUFFER_RANGE[mode].max > 0 ? { buffer: bufferOf({ mode, buffer: o.buffer }) } : {}) };
 }
 
 /** Plano completo: início e fim com posição, e o fim de acordo com a modalidade. */

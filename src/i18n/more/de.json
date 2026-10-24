@@ -1,4 +1,9 @@
 {
+  "bfLabel": "Puffer vor der Abfahrt",
+  "bfRec": "Empfohlen: {d}",
+  "bfReset": "Zurücksetzen",
+  "bfLess": "Weniger Puffer",
+  "bfMore": "Mehr Puffer",
   "featMore": "Alle Funktionen ansehen (+{n})",
 "plAddTo": "+ Plan",
 "wTabs": {

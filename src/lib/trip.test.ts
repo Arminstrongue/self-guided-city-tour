@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { CITIES } from "@/data/cities";
 import { optionByKey, planRoute } from "./route-cost";
-import { AIRPORT, availableMin, breakdown, endMatchesMode, parseTrip, tripReady, whenLabel, type Trip } from "./trip";
+import { AIRPORT, availableMin, bufferOf, breakdown, endMatchesMode, parseTrip, tripReady, whenLabel, type Trip } from "./trip";
 
 const lis = CITIES.find((c) => c.id === "lis")!;
 const stationSA = { kind: "station" as const, lat: 38.7139, lng: -9.1225, label: "Santa Apolónia" };
@@ -73,4 +73,20 @@ test("bus and walk modes accept ending at any place", () => {
   assert.equal(endMatchesMode({ mode: "bus", end: { kind: "bus", lat: 53.47, lng: -2.24, label: "Chorlton Street" } }), true);
   assert.equal(endMatchesMode({ mode: "walk", end: place }), true);
   assert.equal(endMatchesMode({ mode: "ship", end: place }), false);
+});
+
+test("margem ajustável: limites, contas e validação", () => {
+  assert.equal(bufferOf({ mode: "plane" }), 150);
+  assert.equal(bufferOf({ mode: "plane", buffer: 90 }), 90);
+  assert.equal(bufferOf({ mode: "plane", buffer: 10 }), 60);
+  assert.equal(bufferOf({ mode: "train", buffer: 999 }), 120);
+  assert.equal(bufferOf({ mode: "stay", buffer: 30 }), 0);
+  const b = breakdown(lis, planRoute(lis, false), { start: AIRPORT, end: AIRPORT, mode: "plane", buffer: 120 });
+  assert.equal(b.buffer, 120);
+  assert.equal(b.needed, b.total + 120);
+  const t = parseTrip({ v: 2, start: AIRPORT, end: AIRPORT, mode: "plane", startAt: "", deadline: "2026-10-24T18:00", buffer: 105 });
+  assert.equal(t?.buffer, 105);
+  assert.equal(parseTrip({ v: 2, start: AIRPORT, end: AIRPORT, mode: "stay", startAt: "", deadline: "", buffer: 50 })?.buffer, undefined);
+  const now = Date.parse("2026-10-24T08:00:00Z");
+  assert.equal(availableMin({ mode: "plane", startAt: "", deadline: "2026-10-24T18:00", buffer: 90 }, "Europe/Lisbon", now), 9 * 60 - 90);
 });

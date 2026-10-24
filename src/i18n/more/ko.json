@@ -1,4 +1,9 @@
 {
+  "bfLabel": "출발 전 여유 시간",
+  "bfRec": "권장: {d}",
+  "bfReset": "초기화",
+  "bfLess": "줄이기",
+  "bfMore": "늘리기",
   "featMore": "모든 기능 보기 (+{n})",
 "photos": "사진",
 "close": "닫기",

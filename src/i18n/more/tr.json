@@ -1,4 +1,9 @@
 {
+  "bfLabel": "Kalkıştan önce pay süresi",
+  "bfRec": "Önerilen: {d}",
+  "bfReset": "Sıfırla",
+  "bfLess": "Daha az",
+  "bfMore": "Daha fazla",
   "featMore": "Tüm özellikleri gör (+{n})",
 "photos": "Fotoğraflar",
 "close": "Kapat",

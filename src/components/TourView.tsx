@@ -5,7 +5,7 @@ import type { City, Leg, Stop } from "@/data/cities";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { hasExtension, minutesLeft, optionByKey, routeOptions, type Base, type CityHop } from "@/lib/route-cost";
-import { BUFFER_MIN, breakdown, defaultTrip, endLegs, parseTrip, sameEnd, tripReady, whenLabel, type Endpoint, type Trip } from "@/lib/trip";
+import { bufferOf, breakdown, defaultTrip, endLegs, parseTrip, sameEnd, tripReady, whenLabel, type Endpoint, type Trip } from "@/lib/trip";
 import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
 import { loadTrip, saveTrip, tripKey } from "./trip-store";
 import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
@@ -134,7 +134,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const hm = (d: Date) => (Number.isFinite(d.getTime()) ? d.toLocaleTimeString(INTL_LOCALE[locale], { hour: "2-digit", minute: "2-digit" }) : "—");
   const legs = endLegs(city, plan, trip.start, trip.end);
   const bd = breakdown(city, plan, trip);
-  const buffer = BUFFER_MIN[trip.mode];
+  const buffer = bufferOf(trip);
   // Hora de sair da última paragem: partida − margem da modalidade − regresso ao ponto final (aeroporto, estação, terminal…).
   const leave = flightDate ? new Date(flightDate.getTime() - (buffer + bd.back) * 60_000) : null;
   const bp = { to: legs.toHop, back: legs.backHop, minutesTotal: bd.total };

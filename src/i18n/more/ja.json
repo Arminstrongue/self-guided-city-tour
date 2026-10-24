@@ -1,4 +1,9 @@
 {
+  "bfLabel": "出発前の余裕時間",
+  "bfRec": "おすすめ：{d}",
+  "bfReset": "元に戻す",
+  "bfLess": "減らす",
+  "bfMore": "増やす",
   "featMore": "すべての機能を見る（+{n}）",
 "plAddTo": "+ プラン",
 "wTabs": {

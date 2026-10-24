@@ -3,6 +3,7 @@ import { useDict } from "@/i18n/client-dict";
 import { track } from "@/lib/track";
 import { useEffect, useState } from "react";
 import { loadTrip, saveTrip } from "./trip-store";
+import { BufferPicker } from "./BufferPicker";
 import { cityNowLocal, defaultTrip, type Trip } from "@/lib/trip";
 import { zonedToDate } from "@/lib/zoned";
 import { endLabel } from "./TripPicker";
@@ -130,6 +131,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
       <div className="field"><label htmlFor="flight">{t.tpDepField[tm]}{mode === "trip" || (tm === "stay" || tm === "walk") ? ` (${t.tpOptional})` : ""}</label>
         <input id="flight" type="datetime-local" min={cityNowLocal(tz)} value={flight} onChange={(e) => setFlight(e.target.value)} required={mode === "layover" && (tm !== "stay" && tm !== "walk")} />
         <span className="hint">{t.tpDepHint[tm]} {fmt(t.tpCityTime, { c: cityName })}</span></div>
+      <BufferPicker trip={trip} onChange={(v) => { setTrip(v); saveTrip(cityId, v); }} t={t} />
       {tm === "plane" && (
         <div className="field"><label htmlFor="fno">{t.flightNo}</label>
           <input id="fno" autoCapitalize="characters" autoComplete="off" placeholder="TP1234" maxLength={10} value={flightNo} onChange={(e) => setFlightNo(e.target.value)} />

@@ -7,6 +7,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
 import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
 import { loadTrip, saveTrip } from "./trip-store";
+import { BufferPicker } from "./BufferPicker";
 import { track } from "@/lib/track";
 
 type LL = { lat: number; lng: number };
@@ -136,6 +137,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; 
             <input type="datetime-local" min={trip.startAt || cityNowLocal(tz)} value={trip.deadline} onChange={(e) => upd({ ...trip, deadline: e.target.value })} aria-label={t.tpUntilDep[trip.mode]} />
             <button className="btn tram" disabled={!trip.deadline} onClick={() => choose("dep", null)}>{t.qsNext}</button>
             {trip.mode !== "stay" && trip.mode !== "walk" && <small className="hint">{trip.mode === "plane" ? t.qsUntilHint : trip.mode === "train" ? t.qsHintTrain : trip.mode === "bus" ? t.tpDepHint.bus : t.qsHintShip}</small>}
+            <BufferPicker trip={trip} onChange={upd} t={t} />
           </div>
           {TIMES.map((x) => (
             <button key={x.k} className="qs-time press" onClick={() => choose(x.k, x.min)}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>

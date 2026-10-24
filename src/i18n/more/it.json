@@ -1,4 +1,9 @@
 {
+  "bfLabel": "Margine prima della partenza",
+  "bfRec": "Consigliato: {d}",
+  "bfReset": "Ripristina",
+  "bfLess": "Meno margine",
+  "bfMore": "Più margine",
   "featMore": "Vedi tutte le funzioni (+{n})",
 "plAddTo": "+ Piano",
 "wTabs": {

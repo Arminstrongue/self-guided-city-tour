@@ -1,4 +1,9 @@
 {
+  "bfLabel": "出发前预留时间",
+  "bfRec": "建议：{d}",
+  "bfReset": "恢复默认",
+  "bfLess": "减少",
+  "bfMore": "增加",
   "featMore": "查看全部功能（+{n}）",
 "plAddTo": "+ 计划",
 "wTabs": {
