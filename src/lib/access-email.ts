@@ -33,6 +33,22 @@ const TX: Record<Locale, T> = {
   ko: { hi: "안녕하세요,", hiName: "{n}님, 안녕하세요.", ready: "{c} 경로가 준비됐어요. 어떤 기기에서든 열 수 있어요:", open: "경로 열기", until: "이용 기간: {d}까지.", tip: "이 이메일을 보관하세요. 링크로 다른 휴대폰이나 컴퓨터에서도 경로를 다시 열 수 있어요.", help: "도움이 필요하신가요? 이 이메일에 답장해 주세요." }
 };
 
+/** Confirmação em suporte duradouro (Diretiva 2011/83/UE, art. 8.º, n.º 7): pediu acesso imediato e perdeu a livre resolução de 14 dias. */
+const WD: Partial<Record<Locale, string>> = {
+  pt: "Na compra pediu acesso imediato ao roteiro e aceitou perder o direito de livre resolução de 14 dias. Se um problema técnico do nosso lado o impedir de usar o roteiro, responda a este email e devolvemos o valor.",
+  en: "When you bought, you asked for immediate access to the route and accepted losing the 14-day right of withdrawal. If a technical problem on our side stops you from using the route, reply to this email and we'll refund you.",
+  es: "Al comprar pediste acceso inmediato a la ruta y aceptaste perder el derecho de desistimiento de 14 días. Si un problema técnico nuestro te impide usar la ruta, responde a este email y te devolvemos el importe.",
+  fr: "Lors de l'achat, vous avez demandé un accès immédiat à l'itinéraire et accepté de perdre le droit de rétractation de 14 jours. Si un problème technique de notre côté vous empêche de l'utiliser, répondez à cet e-mail et nous vous rembourserons.",
+  de: "Beim Kauf haben Sie den sofortigen Zugang zur Route verlangt und auf das 14-tägige Widerrufsrecht verzichtet. Wenn ein technisches Problem auf unserer Seite die Nutzung verhindert, antworten Sie auf diese E-Mail und wir erstatten den Betrag.",
+  it: "All'acquisto hai chiesto l'accesso immediato all'itinerario e accettato di perdere il diritto di recesso di 14 giorni. Se un problema tecnico da parte nostra ti impedisce di usarlo, rispondi a questa email e ti rimborsiamo.",
+  zh: "购买时，您要求立即访问路线，并同意放弃14天无理由撤销权。如因我方技术问题导致无法使用路线，请回复此邮件，我们将为您退款。",
+  ar: "عند الشراء طلبت الوصول الفوري إلى المسار ووافقت على التنازل عن حق الانسحاب خلال 14 يومًا. إذا منعتك مشكلة تقنية من جهتنا من استخدام المسار، فرد على هذه الرسالة وسنعيد لك المبلغ.",
+  ja: "ご購入時、ルートへの即時アクセスを希望し、14日間の撤回権を放棄することに同意されました。当社側の技術的な問題でルートを利用できない場合は、このメールに返信してください。返金いたします。",
+  ko: "구매 시 루트에 즉시 접근을 요청하고 14일 청약철회권을 포기하는 데 동의하셨습니다. 저희 측 기술 문제로 루트를 이용할 수 없다면 이 이메일에 회신해 주세요. 환불해 드립니다.",
+  ru: "При покупке вы запросили немедленный доступ к маршруту и согласились отказаться от права на отказ от договора в течение 14 дней. Если из-за технической проблемы на нашей стороне маршрут не работает, ответьте на это письмо, и мы вернём деньги.",
+  tr: "Satın alırken rotaya hemen erişim istediniz ve 14 günlük cayma hakkından vazgeçmeyi kabul ettiniz. Bizden kaynaklı teknik bir sorun rotayı kullanmanızı engellerse bu e-postayı yanıtlayın, ücreti iade edelim.",
+};
+
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const f = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? "");
 
@@ -48,6 +64,7 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
     try { return new Intl.NumberFormat(INTL_LOCALE[o.locale], { style: "unit", unit: days ? "day" : "hour", unitDisplay: "long" }).format(days ? Math.round(h / 24) : h); } catch { return days ? `${Math.round(h / 24)} d` : `${h} h`; }
   };
   const validity = o.startsOnOpen ? f(START[o.locale] ?? START.en, { h: dur(o.startsOnOpen.hours), d: when }) : f(t.until, { d: when });
+  const wdTxt = WD[o.locale] ?? WD.en!;
   const hello = first ? f(t.hiName, { n: esc(first) }) : t.hi;
   const dir = o.locale === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
@@ -59,8 +76,9 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
 <tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:8px">${esc(validity)}</td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:20px">${t.tip}</td></tr>
+<tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:16px">${esc(wdTxt)}</td></tr>
 <tr><td style="font-size:12px;line-height:1.5;color:#86868b;word-break:break-all;border-top:1px solid #e5e5ea;padding-top:16px"><a href="${o.link}" style="color:#86868b">${o.link}</a><br><br>${t.help}</td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${t.help}`;
+  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${wdTxt}\n\n${t.help}`;
   return { subject: `VOYBU — ${o.place}`, html, text };
 }

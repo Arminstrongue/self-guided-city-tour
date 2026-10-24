@@ -9,7 +9,7 @@ import { settingsOf } from "./notify";
 
 export async function exportData(email: string) {
   const d = await db();
-  const [profile, prefs, plans, memories, posts, comments, likes, follows, blocks, sent, received, accesses, bookings, notifs, settings] = await Promise.all([
+  const [profile, prefs, plans, memories, posts, comments, likes, follows, blocks, sent, received, accesses, bookings, notifs, settings, journeys] = await Promise.all([
     d.select().from(schema.travellerProfiles).where(eq(schema.travellerProfiles.email, email)),
     d.select().from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, email)),
     d.select().from(schema.travellerPlans).where(eq(schema.travellerPlans.email, email)),
@@ -25,7 +25,8 @@ export async function exportData(email: string) {
     d.select({ city: schema.accesses.city, plan: schema.accesses.plan, amountCents: schema.accesses.amountCents, createdAt: schema.accesses.createdAt, expiresAt: schema.accesses.expiresAt }).from(schema.accesses).where(eq(schema.accesses.email, email)),
     d.select({ city: schema.guideBookings.city, startAt: schema.guideBookings.startAt, hours: schema.guideBookings.hours, status: schema.guideBookings.status, amountCents: schema.guideBookings.amountCents }).from(schema.guideBookings).where(eq(schema.guideBookings.email, email)),
     d.select({ type: schema.notifications.type, text: schema.notifications.text, createdAt: schema.notifications.createdAt }).from(schema.notifications).where(eq(schema.notifications.email, email)),
-    settingsOf(email)
+    settingsOf(email),
+    d.select({ day: schema.journeys.day, city: schema.journeys.cityName, km: schema.journeys.km, steps: schema.journeys.steps, places: schema.journeys.places, path: schema.journeys.path }).from(schema.journeys).where(eq(schema.journeys.email, email))
   ]);
   // Os outros viajantes aparecem pelo @nome, nunca pelo email.
   const handles = new Map((await d.select({ e: schema.travellerProfiles.email, h: schema.travellerProfiles.handle }).from(schema.travellerProfiles)).map((r) => [r.e, `@${r.h}`]));
@@ -39,7 +40,7 @@ export async function exportData(email: string) {
     blocked: blocks.map((b) => who(b.blocked)),
     messagesSent: sent.map((m) => ({ to: who(m.to), text: m.text, at: m.at })),
     messagesReceived: received.map((m) => ({ from: who(m.from), text: m.text, at: m.at })),
-    purchases: accesses, guideBookings: bookings, notifications: notifs
+    purchases: accesses, guideBookings: bookings, notifications: notifs, journeys
   };
 }
 
@@ -57,6 +58,7 @@ export async function deleteAccount(email: string) {
   await (await import("./achievements")).purgeAchievements(email);
   await (await import("./split")).purgeSplit(email);
   await d.delete(schema.reservations).where(eq(schema.reservations.email, email));
+  await d.delete(schema.journeys).where(eq(schema.journeys.email, email));
   await d.update(schema.stopReports).set({ reporter: "" }).where(eq(schema.stopReports.reporter, email));
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })

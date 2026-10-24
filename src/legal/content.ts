@@ -109,7 +109,9 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Que dados tratamos", p: [
         "Email e nome; hora e número (opcional) do próximo voo; cidade e plano comprados; dados de pagamento tratados pela Stripe (não guardamos o cartão).",
         "Se entrar com Google, Apple ou Facebook: nome e email da conta.",
-        "A localização (se a ativar) e a nacionalidade indicada em \"Posso sair?\" ficam só no seu dispositivo; não as guardamos.",
+        "A nacionalidade indicada em \"Posso sair?\" fica só no seu dispositivo; não a guardamos.",
+        "Localização (só se a ativar): é usada no dispositivo para o guiar, mostrar o que está perto e calcular a hora de regresso. Se ativar o diário automático de percursos, o telemóvel deteta as cidades, os lugares por onde passa, a distância e os passos; só guardamos um percurso na sua conta depois de o confirmar, e pode apagá-lo ou desligar o diário a qualquer momento. Sem sessão iniciada, os percursos ficam só no telemóvel.",
+        "Pode apagar a conta e os dados associados a qualquer momento em Perfil → Apagar a conta.",
         "Comerciantes: nome do negócio, contacto, redes sociais e dados de faturação.",
         "Comerciais independentes: nome, email, telefone, país, carteira de negócios e comissões.",
         "Reservas de guias: nome, email, telefone e nota do viajante, partilhados com o guia depois de ele aceitar.",
@@ -128,7 +130,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Segurança e prevenção de fraude (interesse legítimo).",
         "Não enviamos marketing sem o seu consentimento."
       ] },
-      { h: "Durante quanto tempo", p: ["Dados de acesso: até 24 meses após o último acesso. Documentos de faturação e registos DAC7 dos guias: 10 anos, por obrigação legal."] },
+      { h: "Durante quanto tempo", p: ["Dados de acesso: até 24 meses após o último acesso. Percursos confirmados, memórias e publicações: até os apagar ou apagar a conta. Documentos de faturação e registos DAC7 dos guias: 10 anos, por obrigação legal."] },
       { h: "Com quem partilhamos", p: [
         "Prestadores que tratam dados por nossa conta: Stripe (pagamentos), Hetzner (servidores na UE), Cloudflare (rede e segurança), fornecedor de email transacional, AeroDataBox (estado do voo, só o número do voo) e, se o usar, o fornecedor de login (Google, Apple, Facebook).",
         "Algumas destas entidades podem transferir dados para fora do EEE ao abrigo de cláusulas contratuais-tipo ou decisões de adequação."
@@ -243,7 +245,9 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Data we process", p: [
         "Email and name; next flight time and (optional) number; city and plan purchased; payment data handled by Stripe (we never store your card).",
         "If you sign in with Google, Apple or Facebook: your account name and email.",
-        "Your location (if you turn it on) and the nationality entered in \"Can I leave?\" stay on your device; we don't store them.",
+        "The nationality entered in \"Can I leave?\" stays on your device; we don't store it.",
+        "Location (only if you turn it on): used on your device to guide you, show what's nearby and work out your return time. If you turn on the automatic route diary, your phone detects cities, the places you pass, distance and steps; we only save a route to your account after you confirm it, and you can delete it or turn the diary off at any time. Without signing in, routes stay on your phone only.",
+        "You can delete your account and its data at any time in Profile → Delete account.",
         "Merchants: business name, contact details, social links and billing data.",
         "Independent sales partners: name, email, phone, country, deal pipeline and commissions.",
         "Guide bookings: traveller name, email, phone and note, shared with the guide once they accept.",
@@ -262,7 +266,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Security and fraud prevention (legitimate interest).",
         "We do not send marketing without your consent."
       ] },
-      { h: "Retention", p: ["Access data: up to 24 months after your last access. Invoicing records and guides' DAC7 records: 10 years, as required by law."] },
+      { h: "Retention", p: ["Access data: up to 24 months after your last access. Confirmed routes, memories and posts: until you delete them or your account. Invoicing records and guides' DAC7 records: 10 years, as required by law."] },
       { h: "Processors", p: [
         "Stripe (payments), Hetzner (EU servers), Cloudflare (network and security), our transactional email provider, AeroDataBox (flight status, flight number only) and, if used, your sign-in provider (Google, Apple, Facebook).",
         "Some may transfer data outside the EEA under standard contractual clauses or adequacy decisions."
