@@ -3,6 +3,9 @@
  * com o nome que aparece nas placas. Começa por Londres. Preços aproximados (confirmar no local);
  * escrito pela VOYBU a partir da informação pública dos operadores — sem dados ao vivo.
  */
+import { ARRIVALS_MORE } from "./arrivals-more";
+import { ARRIVALS_WORLD } from "./arrivals-world";
+
 export type Step = { pt: string; en: string; sign?: string; min?: number };
 export type ArrivalOption = {
   id: string; name: string; min: number; fare: string; note?: { pt: string; en: string };
@@ -130,4 +133,18 @@ export const ARRIVALS: Record<string, ArrivalPoint[]> = {
   ]
 };
 
-export const arrivalsFor = (city: string) => ARRIVALS[city] ?? [];
+/** Nomes das opções estão em português; noutras línguas trocamos as palavras comuns (os nomes próprios ficam). */
+const EN_WORDS: [RegExp, string][] = [
+  [/Táxi oficial/g, "Official taxi"], [/táxi autorizado \(balcão pré-pago\)/g, "authorised taxi (prepaid counter)"], [/táxi do balcão/g, "taxi from the counter"],
+  [/táxi do aeroporto/g, "airport taxi"], [/táxi amarelo/g, "yellow taxi"], [/táxi oficial/g, "official taxi"], [/transfer do hotel/g, "hotel transfer"],
+  [/Comboio urbano para/g, "Local train to"], [/Comboio regional/g, "Regional train"], [/Comboio para/g, "Train to"], [/Comboio/g, "Train"], [/comboio/g, "train"],
+  [/Autocarro/g, "Bus"], [/autocarro/g, "bus"], [/Elétrico/g, "Tram"], [/elétrico/g, "tram"], [/A pé ou/g, "On foot or"], [/A pé/g, "On foot"],
+  [/linha Vermelha/g, "Red line"], [/linha Amarela/g, "Yellow line"], [/linha Prata/g, "Silver line"], [/Linha Azul/g, "Blue Line"], [/Linha (\d)/g, "Line $1"],
+  [/linha (\d+)/g, "line $1"], [/linha E, violeta/g, "line E, violet"], [/\(só T2\)/g, "(T2 only)"], [/grátis/g, "free"], [/ ou /g, " or "]
+];
+export function optionName(o: Pick<ArrivalOption, "name">, locale: string): string {
+  return locale === "pt" ? o.name : EN_WORDS.reduce((a, [re, to]) => a.replace(re, to), o.name);
+}
+export const fareText = (fare: string, locale: string) => (locale === "pt" ? fare : fare.replace("grátis", "free"));
+
+export const arrivalsFor = (city: string): ArrivalPoint[] => ARRIVALS[city] ?? ARRIVALS_MORE[city] ?? ARRIVALS_WORLD[city] ?? [];

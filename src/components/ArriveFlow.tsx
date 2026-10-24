@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, Check, ChevronRight, Hand, Home, LocateFixed, MapPin, Plane, Search, Ship, TrainFront, Volume2, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
-import { arrivalsFor, type ArrivalOption, type ArrivalPoint, type Step } from "@/data/arrivals";
+import { arrivalsFor, fareText, optionName, type ArrivalOption, type ArrivalPoint, type Step } from "@/data/arrivals";
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
 import type { GuideStep } from "@/lib/route-steps";
@@ -127,8 +127,8 @@ export function ArriveFlow({ t, locale, cities, initial, go }: { t: Dict; locale
       <div className="arv-list">
         {point.options.map((o) => (
           <button key={o.id} type="button" className="arv-opt press" onClick={() => set({ opt: o.id, step: 0 })}>
-            <span className="arv-tx"><b>{o.name}</b>{o.note && <small>{tx(o.note)}</small>}</span>
-            <span className="arv-meta num"><b>{o.min} min</b>{o.fare && <small>{o.fare}</small>}</span>
+            <span className="arv-tx"><b>{optionName(o, locale)}</b>{o.note && <small>{tx(o.note)}</small>}</span>
+            <span className="arv-meta num"><b>{o.min} min</b>{o.fare && <small>{fareText(o.fare, locale)}</small>}</span>
           </button>
         ))}
       </div>
