@@ -8,6 +8,7 @@ import { isFreeCity } from "@/lib/pricing";
 import { exploreProps } from "@/lib/explore-props";
 import { WebOnly } from "@/components/WebOnly";
 import { ExitCheck } from "@/components/ExitCheck";
+import { CityTabs } from "@/components/CityTabs";
 import { ChosenRoute } from "@/components/ChosenRoute";
 import Link from "next/link";
 import { cityName, COUNTRY } from "@/data/cities";
@@ -83,6 +84,8 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
+        <CityTabs tabs={[{ key: "route", label: t.route }, { key: "today", label: t.hbToday }, { key: "safety", label: t.qsEssSafety }, { key: "know", label: t.hbTips }]}>
+          <>
         <CityGallery cityId={city.id} cityName={name} stops={stops} locale={params.locale} />
         {free ? (
           <section className="sec book" id="book">
@@ -111,12 +114,8 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           </div>
         </section>
         )}
-        <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
-        <section className="sec" id="safety">
-          <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
-          <LazySafety cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} locale={params.locale} />
-        </section>
-        <CityHub t={t} locale={params.locale} city={city} name={name} />
+          </>
+          <>
         <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />
         <LazyExplore cityId={city.id} cityName={name} locale={params.locale} {...exploreProps(city, params.locale)} />
         {guides.length > 0 && (
@@ -125,11 +124,23 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
             {guides.map((g) => <GuideCard key={g.id} g={g} t={t} locale={params.locale} />)}
           </section>
         )}
-        <CityHistory t={t} name={name} k={know} />
         <section className="sec" id="comments">
           <div className="sec-h reveal"><div><h2>{fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
           <LazyComments locale={params.locale} city={city.id} />
         </section>
+        <CityHub t={t} locale={params.locale} city={city} name={name} />
+          </>
+          <>
+        <section className="sec" id="safety">
+          <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
+          <LazySafety cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} locale={params.locale} />
+        </section>
+          </>
+          <>
+        <GoodToKnow t={t} locale={params.locale} city={city} name={name} />
+        <CityHistory t={t} name={name} k={know} />
+          </>
+        </CityTabs>
       </div>
       {!free && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}
     </main>
