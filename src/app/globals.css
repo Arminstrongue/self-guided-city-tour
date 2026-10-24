@@ -2950,3 +2950,15 @@ a.ios-row{text-decoration:none;color:inherit}
 .pc-card .pc-main{padding-bottom:14px}
 .pc-card .pc-main>.hint:last-child{padding-inline-end:124px;min-height:34px;display:flex;align-items:center}
 .pc-acts{position:absolute;inset-inline-end:12px;bottom:12px;padding:0}
+
+/* Regras de acesso nos lugares do plano */
+.pa-chips{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0 2px;padding:0;border:0;background:none;cursor:pointer;text-align:start;font:inherit}
+.pa-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:12px;font-weight:600;background:color-mix(in srgb,var(--ink) 6%,transparent);color:inherit;white-space:nowrap}
+.pa-chip.warn{background:#fff4d6;color:#7a4b00}
+.pa-chip.more{opacity:.7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pa-chip.warn{background:#3a2c0b;color:#ffd27a}}
+:root[data-theme="dark"] .pa-chip.warn{background:#3a2c0b;color:#ffd27a}
+.pa-place{margin:0 4px;font-weight:700;font-size:17px}
+.pa-row{align-items:flex-start;cursor:default}
+.pa-ic{font-size:20px;line-height:1.2}
+.pa-note{margin:0 4px;font-size:12px;opacity:.6}

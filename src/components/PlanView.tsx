@@ -9,12 +9,15 @@ import type { PlanItem } from "@/lib/db/schema";
 import { autoPlan, candidates, dayRoute } from "@/lib/autoplan";
 import { CAT_ICON, HOBBIES, type Hobby, type Place } from "@/lib/explore";
 import type { MomentView } from "./Explore";
+import Portal from "./Portal";
+import { RULE_ICON, WARN, officialRulesUrl, placeRules } from "@/lib/place-rules";
 
 type Plan = { id: string; title: string; city: string | null; cityName: string; startDate: string | null; days: number; items: PlanItem[] };
 const uid = () => Math.random().toString(36).slice(2, 10);
 
 export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dict; locale: Locale; plan: Plan; moments: MomentView[] }) {
   const t = useDict(tProp);
+  const [rulesOf, setRulesOf] = useState<PlanItem | null>(null);
   const [plan, setPlan] = useState(initial);
   const [day, setDay] = useState(1);
   const [places, setPlaces] = useState<Place[] | null>(null);
@@ -101,6 +104,16 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
             <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}>
               <b className="ad-ellip">{i.title}</b>
               {i.note && <span className="hint">{i.note}</span>}
+              {(() => {
+                const rules = placeRules(i.title, i.icon);
+                if (!rules.length) return null;
+                return (
+                  <button type="button" className="pa-chips press" onClick={() => setRulesOf(i)} aria-label={`${t.pa.title}: ${i.title}`}>
+                    {rules.slice(0, 2).map((r) => <span key={r} className={`pa-chip${WARN.has(r) ? " warn" : ""}`}>{RULE_ICON[r]} {t.pa[r]}</span>)}
+                    {rules.length > 2 && <span className="pa-chip more">{fmt(t.pa.more, { n: rules.length - 2 })}</span>}
+                  </button>
+                );
+              })()}
               <span className="ex-acts sm">
                 {i.lat !== undefined && <a href={`https://www.google.com/maps/dir/?api=1&destination=${i.lat},${i.lng}&travelmode=walking`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>}
                 {plan.days > 1 && <select aria-label={t.plDays} value={i.day} onChange={(e) => update(i.id, { day: Number(e.target.value) })}>{Array.from({ length: plan.days }, (_, k) => k + 1).map((n) => <option key={n} value={n}>{fmt(t.plDay, { n })}</option>)}</select>}
@@ -150,6 +163,26 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
         <button className="btn ghost press" onClick={() => void share()}>↗ {t.plShare}</button>
         <button className={`btn ghost press ${del ? "danger" : ""}`} onClick={async () => { if (!del) { setDel(true); setTimeout(() => setDel(false), 4000); return; } await fetch(`/api/me/plans/${plan.id}`, { method: "DELETE" }).catch(() => null); window.location.href = `/${locale}/wallet`; }}>🗑 {del ? `${t.plDelete}?` : t.plDelete}</button>
       </div>
+
+      {rulesOf && (
+        <Portal><div className="as-bg" onClick={() => setRulesOf(null)}>
+          <div className="as wt-sheet" role="dialog" aria-modal="true" aria-label={t.pa.title} onClick={(e) => e.stopPropagation()}>
+            <span className="as-grab" aria-hidden="true" />
+            <div className="nn-sh-h"><span /><b>{t.pa.title}</b><button type="button" className="mu2-x nn-x" onClick={() => setRulesOf(null)} aria-label={t.close}>✕</button></div>
+            <p className="pa-place">{rulesOf.icon ?? "📍"} {rulesOf.title}</p>
+            <div className="as-group">
+              {placeRules(rulesOf.title, rulesOf.icon).map((r) => (
+                <div key={r} className="as-row pa-row">
+                  <span className="pa-ic" aria-hidden="true">{RULE_ICON[r]}</span>
+                  <span className="as-tx"><span>{t.pa[r]}{WARN.has(r) ? " ⚠️" : ""}</span><small>{t.pa[`${r}L` as keyof Dict["pa"]]}</small></span>
+                </div>
+              ))}
+            </div>
+            <p className="pa-note">{t.pa.note}</p>
+            <a className="nn-more" href={officialRulesUrl(rulesOf.title, plan.cityName)} target="_blank" rel="noopener noreferrer">{t.pa.official} ↗</a>
+          </div>
+        </div></Portal>
+      )}
     </div>
   );
 }
