@@ -49,6 +49,22 @@ const WD: Partial<Record<Locale, string>> = {
   tr: "Satın alırken rotaya hemen erişim istediniz ve 14 günlük cayma hakkından vazgeçmeyi kabul ettiniz. Bizden kaynaklı teknik bir sorun rotayı kullanmanızı engellerse bu e-postayı yanıtlayın, ücreti iade edelim.",
 };
 
+/** O que foi comprado (serviço de informação) e o que não está incluído. */
+const WHAT: Partial<Record<Locale, string>> = {
+  pt: "Comprou o acesso digital à informação do roteiro (paragens, mapa, áudio-guia, tempos e custos estimados). Bilhetes de transporte, entradas e reservas não estão incluídos e pagam-se à parte.",
+  en: "You bought digital access to the route information (stops, map, audio guide, estimated times and costs). Transport tickets, entry fees and bookings are not included and are paid separately.",
+  es: "Has comprado el acceso digital a la información de la ruta (paradas, mapa, audioguía, tiempos y costes estimados). Los billetes de transporte, entradas y reservas no están incluidos y se pagan aparte.",
+  fr: "Vous avez acheté l'accès numérique aux informations de l'itinéraire (étapes, carte, audioguide, temps et coûts estimés). Les billets de transport, entrées et réservations ne sont pas inclus et se paient à part.",
+  de: "Sie haben digitalen Zugang zu den Routeninformationen gekauft (Stopps, Karte, Audioguide, geschätzte Zeiten und Kosten). Fahrkarten, Eintritte und Buchungen sind nicht enthalten und werden separat bezahlt.",
+  it: "Hai acquistato l'accesso digitale alle informazioni dell'itinerario (tappe, mappa, audioguida, tempi e costi stimati). Biglietti dei trasporti, ingressi e prenotazioni non sono inclusi e si pagano a parte.",
+  zh: "您购买的是路线信息的数字访问权限（站点、地图、语音导览、预估时间和费用）。交通票、门票和预订不包括在内，需另行支付。",
+  ar: "اشتريت وصولًا رقميًا إلى معلومات المسار (المحطات والخريطة والدليل الصوتي والأوقات والتكاليف التقديرية). تذاكر المواصلات والدخول والحجوزات غير مشمولة وتُدفع بشكل منفصل.",
+  ja: "ご購入いただいたのはルート情報へのデジタルアクセスです（スポット、地図、音声ガイド、目安の時間と費用）。交通チケット、入場料、予約は含まれず、別途お支払いください。",
+  ko: "구매하신 것은 루트 정보에 대한 디지털 이용권입니다(정류장, 지도, 오디오 가이드, 예상 시간과 비용). 교통 승차권, 입장료, 예약은 포함되지 않으며 별도로 지불합니다.",
+  ru: "Вы купили цифровой доступ к информации о маршруте (остановки, карта, аудиогид, ориентировочное время и стоимость). Билеты на транспорт, входные билеты и бронирования не включены и оплачиваются отдельно.",
+  tr: "Rota bilgilerine dijital erişim satın aldınız (duraklar, harita, sesli rehber, tahmini süreler ve maliyetler). Ulaşım biletleri, giriş ücretleri ve rezervasyonlar dahil değildir ve ayrıca ödenir.",
+};
+
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const f = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k) => v[k] ?? "");
 
@@ -65,6 +81,7 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
   };
   const validity = o.startsOnOpen ? f(START[o.locale] ?? START.en, { h: dur(o.startsOnOpen.hours), d: when }) : f(t.until, { d: when });
   const wdTxt = WD[o.locale] ?? WD.en!;
+  const whatTxt = WHAT[o.locale] ?? WHAT.en!;
   const hello = first ? f(t.hiName, { n: esc(first) }) : t.hi;
   const dir = o.locale === "ar" ? "rtl" : "ltr";
   const html = `<!doctype html><html lang="${o.locale}" dir="${dir}"><body style="margin:0;background:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1d1d1f">
@@ -76,9 +93,10 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
 <tr><td align="center" style="padding-bottom:24px"><a href="${o.link}" style="display:inline-block;background:#0071e3;color:#fff;text-decoration:none;font-weight:600;font-size:17px;padding:14px 32px;border-radius:999px">${t.open}</a></td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:8px">${esc(validity)}</td></tr>
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:20px">${t.tip}</td></tr>
+<tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:8px">${esc(whatTxt)}</td></tr>
 <tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:16px">${esc(wdTxt)}</td></tr>
 <tr><td style="font-size:12px;line-height:1.5;color:#86868b;word-break:break-all;border-top:1px solid #e5e5ea;padding-top:16px"><a href="${o.link}" style="color:#86868b">${o.link}</a><br><br>${t.help}</td></tr>
 </table></td></tr></table></body></html>`;
-  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${wdTxt}\n\n${t.help}`;
+  const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${whatTxt}\n${wdTxt}\n\n${t.help}`;
   return { subject: `VOYBU — ${o.place}`, html, text };
 }
