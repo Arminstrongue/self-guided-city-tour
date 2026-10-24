@@ -1,4 +1,5 @@
 "use client";
+import { BackLink } from "./BackLink";
 import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
 /** Agenda da cidade dentro da carteira: eventos dos próximos 30 dias e o que vale sempre a pena, sem sair da app. */
@@ -72,7 +73,7 @@ export function AgendaView({ t: tProp, locale, cityId, cities, moments, tz, open
 
   return (
     <div className="stack ag" style={{ gap: 14 }}>
-      <a className="link-btn" href={`/${locale}/wallet`}>← {t.wallet}</a>
+      <BackLink className="link-btn" fallback={`/${locale}/wallet`} label={t.wallet} />
       <section className="gp-hero ag-hero">
         <span className="label" style={{ color: "rgba(255,255,255,.7)" }}>📅 {t.evTitle}</span>
         <h1 className="gp-name">{cities[cityId]}</h1>

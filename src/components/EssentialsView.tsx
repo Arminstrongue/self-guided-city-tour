@@ -12,6 +12,7 @@ import { cachedReservations, type Reservation } from "@/lib/trip-local";
 import { offlineReady, saveUrls } from "@/lib/offline-client";
 import { LOCAL_LANG, PHRASES, PHRASE_KEYS, SPEECH_LANG, type PhraseKey } from "@/data/phrases";
 import Portal from "./Portal";
+import { BackLink } from "./BackLink";
 
 export type EssCity = { id: string; name: string; country: string; emergency: string; emergencyTel: string };
 type Place = { label: string; lat: number; lng: number };
@@ -68,6 +69,7 @@ export function EssentialsView({ t: tProp, locale, cities }: { t?: Dict; locale:
 
   return (
     <div className="ess">
+      <BackLink fallback={`/${locale}/wallet`} label={t.navBack} />
       <h1 className="arv-h">{e.title}</h1>
       <p className="ess-sub">{e.sub}</p>
       {!online && <p className="ess-off"><CloudOff size={16} aria-hidden="true" /> {e.offline}</p>}

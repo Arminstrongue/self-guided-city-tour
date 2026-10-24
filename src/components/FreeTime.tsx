@@ -5,12 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import { Clock, LocateFixed, MapPinned, Navigation } from "lucide-react";
 import type { Dict } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
+import { BackLink } from "./BackLink";
 import { freeLoop, freeSingles, walkUrl, type FreeStop } from "@/lib/free-time";
 
 const MINS = [20, 40, 60, 90, 120];
 type P = { lat: number; lng: number };
 
-export function FreeTime({ t: tProp, cityName, center, stops, initial }: { t?: Dict; cityName: string; center: P; stops: FreeStop[]; initial?: { min?: number; at?: P; bag?: boolean } }) {
+export function FreeTime({ t: tProp, cityName, center, stops, initial, back }: { t?: Dict; back: string; cityName: string; center: P; stops: FreeStop[]; initial?: { min?: number; at?: P; bag?: boolean } }) {
   const t = useDict(tProp);
   const d = t.dx;
   const [min, setMin] = useState(initial?.min && MINS.includes(initial.min) ? initial.min : 40);
@@ -34,6 +35,7 @@ export function FreeTime({ t: tProp, cityName, center, stops, initial }: { t?: D
 
   return (
     <div className="ft">
+      <BackLink fallback={back} label={t.navBack} />
       <h1 className="arv-h">{d.free}</h1>
       <p className="ess-sub">{d.freeSub} · {cityName}</p>
       <section className="ess-card">

@@ -9,6 +9,7 @@ import { Clock, LocateFixed, MapPin, Navigation, Share2 } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { toast } from "@/lib/toast";
+import { BackLink } from "./BackLink";
 
 export type MeetPlace = { id: string; name: string; lat: number; lng: number };
 type Meet = { lat: number; lng: number; at: number; p: string; n: string };
@@ -82,11 +83,12 @@ export function MeetView({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => { setM(parseMeet(new URLSearchParams(location.search))); const i = setInterval(() => setNow(Date.now()), 30000); return () => clearInterval(i); }, []);
   if (m === undefined) return null;
-  if (!m) return <div className="ess"><h1 className="arv-h">{d.meetMake}</h1><p className="ess-sub">{d.meetSub}</p><MeetMaker t={t} locale={locale} places={[]} /></div>;
+  if (!m) return <div className="ess"><BackLink fallback={`/${locale}/wallet`} label={t.navBack} /><h1 className="arv-h">{d.meetMake}</h1><p className="ess-sub">{d.meetSub}</p><MeetMaker t={t} locale={locale} places={[]} /></div>;
   const mins = Math.round((m.at - now) / 60000);
   const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(m.at));
   return (
     <div className="ess">
+      <BackLink fallback={`/${locale}`} label={t.navBack} />
       <span className="ess-h"><MapPin size={18} aria-hidden="true" /> {d.meetTitle}</span>
       <h1 className="arv-h">{m.p || d.meetTitle}</h1>
       <section className="ess-card mt-time">

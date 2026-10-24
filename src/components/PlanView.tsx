@@ -10,6 +10,7 @@ import { autoPlan, candidates, dayRoute } from "@/lib/autoplan";
 import { CAT_ICON, HOBBIES, type Hobby, type Place } from "@/lib/explore";
 import type { MomentView } from "./Explore";
 import Portal from "./Portal";
+import { BackLink } from "./BackLink";
 import { RULE_ICON, WARN, officialRulesUrl, placeRules } from "@/lib/place-rules";
 
 type Plan = { id: string; title: string; city: string | null; cityName: string; startDate: string | null; days: number; items: PlanItem[] };
@@ -76,7 +77,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
 
   return (
     <div className="stack" style={{ gap: 16 }}>
-      <a className="mini" href={`/${locale}/wallet`}>{t.plBack}</a>
+      <BackLink fallback={`/${locale}/wallet#plans`} label={t.plBack.replace(/^\s*←\s*/, "")} />
       <section className="gp-hero">
         <span className="label" style={{ color: "rgba(255,255,255,.7)" }}>🗺 {plan.cityName}</span>
         <input className="pl-title" value={plan.title} maxLength={120} aria-label={t.plName} onChange={(e) => save({ title: e.target.value })} />
