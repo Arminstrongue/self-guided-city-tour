@@ -2,7 +2,7 @@
   "id": "/",
   "name": "VOYBU",
   "short_name": "VOYBU",
-  "description": "VOYBU — your self-guided tour. City routes with an audio guide, transport, safety and your trip essentials in one place.",
+  "description": "VOYBU — your self-guided tour. Free to use: walking routes that fit your time, with an audio guide, transport tips and trip essentials. Full city routes from €4.99.",
   "start_url": "/wallet?src=pwa",
   "scope": "/",
   "display": "standalone",

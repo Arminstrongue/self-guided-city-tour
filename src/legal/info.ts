@@ -21,6 +21,12 @@ export function infoPT(doc: InfoDoc, c: Ctx): Info {
     title: "Sobre nós",
     lead: "A VOYBU é o seu self guided tour: o acompanhante de viagem que lhe diz o que fazer a seguir, como lá chegar e o que fazer se o plano mudar.",
     blocks: [
+      { h: "Em poucas palavras", li: [
+        "A VOYBU é uma app gratuita que monta um passeio a pé por uma cidade, à medida do tempo que tem.",
+        "Só paga se quiser o roteiro completo de uma cidade: é um serviço de informação (paragens, mapa, áudio-guia, tempos e custos estimados), pago uma vez, sem subscrição.",
+        "Não vendemos bilhetes, entradas, visitas guiadas nem alojamento, e não somos agência de viagens. Esses serviços paga-os diretamente a quem os presta.",
+        "As informações oficiais (entrada no país, emergências, segurança) são um resumo com data e fonte: confirme sempre nos sites oficiais antes de viajar."
+      ] },
       { h: "Porque existimos", p: [
         "Numa escala, num fim de semana ou num dia livre numa cidade nova, o tempo é curto e a informação está espalhada. A VOYBU junta num só sítio o roteiro, os transportes mais baratos, a hora a que tem de voltar e o essencial da viagem.",
         "O nosso objetivo é simples: que saiba sempre qual é o seu próximo passo, perceba porquê e tenha uma alternativa se algo mudar."
@@ -105,6 +111,12 @@ export function infoEN(doc: InfoDoc, c: Ctx): Info {
     title: "About us",
     lead: "VOYBU is your self-guided tour: the travel companion that tells you what to do next, how to get there and what to do if your plans change.",
     blocks: [
+      { h: "In a nutshell", li: [
+        "VOYBU is a free app that builds a walking route around a city to fit the time you have.",
+        "You only pay if you want a city's full route: it is an information service (stops, map, audio guide, estimated times and costs), paid once, with no subscription.",
+        "We don't sell tickets, entry, guided tours or accommodation, and we are not a travel agency. You pay for those directly to whoever provides them.",
+        "Official information (entry rules, emergencies, safety) is a dated, sourced summary: always check the official websites before you travel."
+      ] },
       { h: "Why we exist", p: [
         "On a layover, a weekend or a free day in a new city, time is short and information is scattered. VOYBU brings together your route, the cheapest transport, the time you need to head back and your trip essentials.",
         "Our aim is simple: that you always know your next step, understand why, and have an alternative if something changes."

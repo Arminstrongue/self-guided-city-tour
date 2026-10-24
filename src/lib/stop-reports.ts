@@ -4,7 +4,7 @@ import { db, schema } from "./db";
 export const REPORT_KINDS = ["entrance", "closed", "price", "access", "other"] as const;
 export type ReportKind = (typeof REPORT_KINDS)[number];
 /** A partir de quantos relatos em aberto (pessoas diferentes, últimos 30 dias) a paragem mostra um aviso de incerteza. */
-export const WARN_AT = 2;
+export const WARN_AT = 3;
 
 export async function addStopReport(city: string, stop: string, kind: ReportKind, note: string, reporter: string) {
   const d = await db();
