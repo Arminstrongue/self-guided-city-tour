@@ -49,7 +49,7 @@ export function PlanChanged({ t, locale, left, remaining, deadline, endSet, onSe
   return (
     <div className="card pc">
       <b className="pc-h">{t.pcTitle}</b>
-      <div className="pc-acts">
+      <div className="pcg-acts">
         <button className={`press ${mode === "late" ? "on" : ""}`} onClick={() => { setMode("late"); setExtra(15); }}>⏰ {t.pcLate}</button>
         <button className={`press ${mode === "pause" ? "on" : ""}`} onClick={() => { setMode("pause"); setExtra(30); }}>☕ {t.pcPause}</button>
         <button className="press" onClick={() => { setSkippedName(left[0].n); onSkip([left[0].id]); setMode("skipped"); setExtra(0); }}>⏭ {t.pcSkip}</button>

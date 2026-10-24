@@ -51,13 +51,26 @@ export function useNear<T extends Element>(margin = "300px") {
 
 /* ---------- Imagem ---------- */
 
+/** Fotos do Wikimedia: várias resoluções, para ecrãs de alta densidade verem a imagem nítida. */
+function wikiSrcSet(src: string): string | undefined {
+  const m = src.match(/\/(\d{3,4})px-/);
+  if (!m || !/upload\.wikimedia\.org/.test(src)) return undefined;
+  return [500, 960, 1280].map((w) => `${src.replace(/\/\d{3,4}px-/, `/${w}px-`)} ${w}w`).join(", ");
+}
+
+/** Autor e licença de uma foto (obrigatório nas licenças Creative Commons), discreto no canto da imagem. */
+export function Credit({ p }: { p?: Photo | null }) {
+  if (!p) return null;
+  return <span className="ph-credit" title={`${p.credit} · ${p.license}`}>© {p.credit}{p.license ? ` · ${p.license}` : ""}</span>;
+}
+
 export function Img({ src, alt = "", className = "", eager = false }: { src?: string | null; alt?: string; className?: string; eager?: boolean }) {
   const [ok, setOk] = useState(false);
   const [bad, setBad] = useState(false);
   if (!src || bad) return null;
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className={`img ${ok ? "ok" : ""} ${className}`} loading={eager ? "eager" : "lazy"} decoding="async"
+    <img src={src} srcSet={wikiSrcSet(src)} sizes={wikiSrcSet(src) ? "(min-width: 760px) 50vw, 100vw" : undefined} alt={alt} className={`img ${ok ? "ok" : ""} ${className}`} loading={eager ? "eager" : "lazy"} decoding="async"
       referrerPolicy="no-referrer" onLoad={() => setOk(true)} onError={() => setBad(true)} ref={(el) => { if (el?.complete && el.naturalWidth) setOk(true); }} />
   );
 }

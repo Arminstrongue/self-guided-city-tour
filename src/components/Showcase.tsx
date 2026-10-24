@@ -3,7 +3,7 @@ import { useDict } from "@/i18n/client-dict";
 /** Peças visuais da página inicial e da página da cidade. */
 import { useEffect, useMemo, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { Img, Lightbox, PhotoGrid, Slides, useCityMedia, useNear, type Photo } from "./Media";
+import { Credit, Img, Lightbox, PhotoGrid, Slides, useCityMedia, useNear, type Photo } from "./Media";
 
 const memo = new Map<string, Promise<Photo[]>>();
 function covers(id: string): Promise<Photo[]> {
@@ -108,7 +108,7 @@ export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: 
         <div className="rail">
           {stops.map((s) => (
             <button key={s.id} className="scard press" onClick={() => void openStop(s)}>
-              <span className="ph">{m ? <Img src={m.stops[s.id]?.thumb} alt="" /> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
+              <span className="ph">{m ? <><Img src={m.stops[s.id]?.thumb} alt="" /><Credit p={m.stops[s.id]} /></> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
                 {s.top && !s.optional && <span className="cnt" style={{ left: 10, right: "auto", background: "linear-gradient(135deg,#ffb340,#ff7a1a)", color: "#1a0d00" }}>Top</span>}
                 {s.optional && <span className="cnt" style={{ left: 10, right: "auto" }}>+ {t.tpOptional}</span>}</span>
               <span className="tx"><b>{s.name}</b><small className="num">{s.area} · {s.minutes} min</small></span>

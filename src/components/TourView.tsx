@@ -17,7 +17,7 @@ import { ExtLink } from "./ExtLink";
 import type { Focus } from "./MapView";
 import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
-import { Img, StopMedia, useCityMedia } from "./Media";
+import { Credit, Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
 import { zonedToDate } from "@/lib/zoned";
 import { RouteSketch } from "./RouteSketch";
@@ -461,7 +461,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                     <span className="pin num">{done[s.id] ? "✓" : i + 1}</span>
                     <div className="body">
                       <button className="cover" tabIndex={-1} aria-hidden="true" onClick={() => setOpen(isOpen ? "" : s.id)}>
-                        {cm ? <Img src={cm.stops[s.id]?.thumb.replace("/500px-", "/960px-")} alt="" /> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
+                        {cm ? <><Img src={cm.stops[s.id]?.thumb.replace("/500px-", "/960px-")} alt="" /><Credit p={cm.stops[s.id]} /></> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
                         <span className="ov"><span>{s.a}</span><span className="num">{s.v} min</span></span>
                       </button>
                       <button className="head" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? "" : s.id)}>
