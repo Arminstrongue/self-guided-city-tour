@@ -21,8 +21,14 @@ export function LangSuggest({ locale }: { locale: string }) {
     if (d) { const same = out.find((x) => x.v === d); if (same) same.why = `${cl} · ${dl}`; else out.push({ v: d, why: dl }); }
     if (!out.some((x) => x.v === locale)) out.unshift({ v: locale, why: "" });
     if (out.length < 2) { done(); return; }
-    const id = setTimeout(() => setOpts(out), 900);
-    return () => clearTimeout(id);
+    let id = 0;
+    const show = () => { id = window.setTimeout(() => setOpts(out), 600); };
+    // Se o ecrã de boas-vindas estiver aberto, pergunta só depois de ele fechar.
+    const start = window.setTimeout(() => {
+      if ((window as unknown as { __sgctWelcome?: boolean }).__sgctWelcome) window.addEventListener("sgct:welcome-done", show, { once: true });
+      else show();
+    }, 300);
+    return () => { clearTimeout(start); clearTimeout(id); window.removeEventListener("sgct:welcome-done", show); };
   }, [locale]);
   if (!opts) return null;
   const [q] = LANG_SRC[locale] ?? LANG_SRC.en;

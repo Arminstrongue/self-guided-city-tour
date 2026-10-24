@@ -116,6 +116,16 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     let done = false; try { done = Boolean(localStorage.getItem(ONBOARDED)); } catch { /* ignorar */ }
     if (!done && !new URLSearchParams(window.location.search).get("signin")) setOnboard(true);
   }, [signed]);
+  // Vindo do ecrã de boas-vindas: depois de entrar, volta à página onde estava (até 30 min).
+  useEffect(() => {
+    if (!w || w === "anon") return;
+    try {
+      const r = JSON.parse(localStorage.getItem("sgct:after-signin") || "null") as { to?: string; at?: number } | null;
+      if (!r) return;
+      localStorage.removeItem("sgct:after-signin");
+      if (r.to && /^\/[a-z]{2}(\/|\?|#|$)/.test(r.to) && !r.to.startsWith("//") && Date.now() - (r.at ?? 0) < 30 * 60_000 && !r.to.includes("/wallet")) window.location.replace(r.to);
+    } catch { /* ignorar */ }
+  }, [w]);
   // Vindo de "Entrar" num roteiro (?signin=1&city=…): foca o email; se já tem sessão, volta ao roteiro.
   const [retCity, setRetCity] = useState<string | null>(null);
   useEffect(() => {

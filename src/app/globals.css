@@ -3031,3 +3031,19 @@ a.ios-row{text-decoration:none;color:inherit}
 .feats-more[open]>summary{margin-bottom:10px}
 .feats-more[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
 .feats-more .feat2.reveal{opacity:1;transform:none}
+/* Boas-vindas: entrar ou criar conta, ou continuar sem conta */
+.wc{position:fixed;inset:0;z-index:200;background:#0d0f14;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px calc(24px + env(safe-area-inset-bottom));animation:wcIn .3s ease}
+@keyframes wcIn{from{opacity:0}to{opacity:1}}
+.wc-x{position:absolute;top:calc(14px + env(safe-area-inset-top));right:14px;width:40px;height:40px;border-radius:999px;border:0;background:rgba(255,255,255,.1);color:#fff;display:grid;place-items:center;cursor:pointer}
+[dir=rtl] .wc-x{right:auto;left:14px}
+.wc-in{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px;margin-top:-8vh}
+.wc-brand{display:flex;align-items:center;gap:10px;direction:ltr}
+.wc-mark{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#2f7cff,#5b5bf0);box-shadow:0 8px 24px rgba(47,124,255,.45)}
+.wc-word{font-size:34px;font-weight:800;letter-spacing:-.02em}
+.wc-word span{color:#7fb2ff}
+.wc-h{margin:0;font-size:clamp(24px,6.4vw,30px);line-height:1.25;font-weight:500;letter-spacing:-.01em}
+.wc-h em{font-style:normal;font-weight:600}
+.wc-h .g1{background:linear-gradient(90deg,#ff6a3d,#ff3d6e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wc-h .g2{background:linear-gradient(90deg,#d63cff,#6e6bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.wc-btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;border-radius:14px;background:#4b5cff;color:#fff;font-weight:700;font-size:17px;text-decoration:none}
+.wc-skip{border:0;background:none;color:#8fa2ff;font:inherit;font-size:16px;font-weight:600;cursor:pointer;padding:8px 12px;margin-top:-10px}
