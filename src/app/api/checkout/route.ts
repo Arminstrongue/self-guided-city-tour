@@ -15,6 +15,7 @@ import { REF_COOKIE } from "@/lib/invites";
 import { quote } from "@/lib/referrals";
 import { currentTraveller } from "@/lib/wallet";
 import { parseTrip } from "@/lib/trip";
+import { company } from "@/legal/content";
 
 export const runtime = "nodejs";
 
@@ -28,6 +29,7 @@ const Body = z.object({
   locale: z.enum(LOCALES),
   ref: z.string().max(16).optional(),
   consent: z.literal(true), // pedido de acesso imediato (perda do direito de livre resolução)
+  terms: z.literal(true), // aceitou os Termos e a Política de privacidade
   trip: z.unknown().optional() // plano de viagem (início, fim, modalidade); validado com parseTrip
 });
 
@@ -57,7 +59,7 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "ar" ? "auto" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: q.amount, product_data: { name: `VOYBU · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), trip: tripMeta },
+      metadata: { consentImmediate: new Date().toISOString(), termsAccepted: new Date().toISOString(), termsVersion: company().updated, plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), trip: tripMeta },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

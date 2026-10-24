@@ -13,7 +13,7 @@ export function company() {
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
     email: v("COMPANY_EMAIL", env.contact),
-    updated: "19 de outubro de 2026"
+    updated: "24 de outubro de 2026"
   };
 }
 
@@ -25,12 +25,14 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Quem somos", p: [`A VOYBU é explorada por ${who}.`] },
       { h: "O serviço", p: [
-        "Vendemos acesso digital a roteiros autoguiados por cidade, com indicações de transporte, custos estimados e uma contagem até à hora recomendada de regresso ao aeroporto.",
+        "Usar a app VOYBU é gratuito: criar e planear roteiros, as ferramentas de viagem e a primeira paragem de cada cidade não têm custo.",
+        "O que se paga é um serviço de informação: o acesso digital ao roteiro selecionado (ou, no Passe Todas as Cidades, aos roteiros de todas as cidades), com as paragens, o mapa, o áudio-guia, as indicações de transporte, os tempos e custos estimados e a contagem até à hora recomendada de regresso.",
+        "A VOYBU não vende nem inclui bilhetes de transporte, entradas em museus ou monumentos, visitas guiadas, alojamento, reservas ou seguros, e não é agência de viagens nem operador turístico. Esses serviços são contratados e pagos à parte, diretamente a quem os presta.",
         "O acesso a uma cidade é válido durante 48 horas; o passe de férias curtas (3 dias) é válido durante 72 horas nessa cidade; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa quando abre um roteiro pela primeira vez, o que tem de acontecer até 30 dias depois do pagamento; se não o abrir nesse prazo, o passe expira. Os passes incluem o roteiro, o áudio-guia e as ferramentas da app; as entradas em museus e monumentos e os bilhetes de transporte não estão incluídos, salvo indicação expressa."
       ] },
       { h: "Preços e pagamento", p: ["Os preços incluem IVA à taxa aplicável. O pagamento é processado pela Stripe; não guardamos dados de cartões."] },
       { h: "Direito de livre resolução", p: [
-        "O roteiro é conteúdo digital fornecido de imediato. Ao pagar, pede expressamente o acesso imediato e reconhece que perde o direito de livre resolução de 14 dias (Decreto-Lei n.º 24/2014, art.º 17.º).",
+        "O roteiro é conteúdo digital fornecido de imediato. Antes de pagar, aceita expressamente estes Termos e a Política de privacidade e pede o acesso imediato, reconhecendo que perde o direito de livre resolução de 14 dias (Decreto-Lei n.º 24/2014, art.º 17.º). Enviamos a confirmação por email.",
         `Se o acesso não funcionar por razões técnicas da nossa parte, contacte ${c.email} e devolvemos o valor pago.`
       ] },
       { h: "Responsabilidade do viajante", p: [
@@ -164,12 +166,14 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Who we are", p: [`VOYBU is operated by ${who}.`] },
       { h: "The service", p: [
-        "We sell digital access to self-guided city routes with transport directions, estimated costs and a countdown to the recommended time to head back to the airport.",
+        "Using the VOYBU app is free: creating and planning routes, the travel tools and the first stop of every city cost nothing.",
+        "What you pay for is an information service: digital access to the selected route (or, with the All-Cities Pass, to the routes of every city), with its stops, map, audio guide, transport directions, estimated times and costs, and the countdown to the recommended time to head back.",
+        "VOYBU does not sell or include transport tickets, museum or monument entry, guided tours, accommodation, bookings or insurance, and is not a travel agency or tour operator. Those services are contracted and paid for separately, directly with whoever provides them.",
         "City access lasts 48 hours; the short-break pass (3 days) lasts 72 hours in that city; the All-Cities Pass lasts 30 days in all available cities. Validity starts when you first open a route, which must happen within 30 days of payment; if you don't open it within that time, the pass expires. Passes include the route, the audio guide and the app tools; museum and monument entry and transport tickets are not included unless expressly stated."
       ] },
       { h: "Prices and payment", p: ["Prices include VAT at the applicable rate. Payments are processed by Stripe; we do not store card details."] },
       { h: "Right of withdrawal", p: [
-        "The route is digital content supplied immediately. By paying you expressly request immediate access and acknowledge that you lose the 14-day right of withdrawal.",
+        "The route is digital content supplied immediately. Before paying, you expressly accept these Terms and the Privacy policy and request immediate access, acknowledging that you lose the 14-day right of withdrawal. We send you the confirmation by email.",
         `If access fails for technical reasons on our side, contact ${c.email} and we will refund you.`
       ] },
       { h: "Traveller responsibility", p: [

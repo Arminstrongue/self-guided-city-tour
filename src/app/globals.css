@@ -3059,3 +3059,15 @@ a.ios-row{text-decoration:none;color:inherit}
 .bf-v{min-width:62px;text-align:center;font-size:15px}
 .bf .hint{grid-column:1/-1;margin:0}
 .bf-reset{border:0;background:none;padding:0;color:var(--cobalt-ink);font:inherit;font-weight:600;cursor:pointer;text-decoration:underline}
+.err-ic.spin{animation:errSpin 1.2s linear infinite}@keyframes errSpin{to{transform:rotate(360deg)}}@media (prefers-reduced-motion:reduce){.err-ic.spin{animation:none}}
+/* Compra: o que está a comprar */
+.bw{padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface)}
+.bw>b{display:block;font-size:15px;margin-bottom:6px}
+.bw ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.bw li{position:relative;padding-inline-start:24px;font-size:14px;line-height:1.45;color:var(--ink)}
+.bw li::before{position:absolute;inset-inline-start:0;top:0;font-weight:800}
+.bw li.ok::before{content:"✓";color:#1f9d55}
+.bw li.no::before{content:"✕";color:#d93025}
+.bw li.free::before{content:"€0";font-size:11px;top:2px;color:var(--cobalt-ink)}
+.bw li.est::before{content:"≈";color:var(--muted)}
+.bw li.no,.bw li.est{color:var(--muted)}

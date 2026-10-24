@@ -45,6 +45,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [consent, setConsent] = useState(false);
+  const [terms, setTerms] = useState(false);
   const [flightNo, setFlightNo] = useState("");
   // Preço em euros; se o viajante usar outra moeda, mostra-se também o valor aproximado nela.
   const price = (c: number) => dualMoney(c / 100, "EUR", fx, INTL_LOCALE[locale]);
@@ -68,13 +69,14 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
     if ((needFlight && !when) || (when && (isNaN(when.getTime()) || when.getTime() < Date.now()))) return setError(t.errDep);
     const fno = tm === "plane" ? flightNo.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
     if (fno && !/^([A-Z]{2}|[A-Z]\d|\d[A-Z])\d{1,4}[A-Z]?$/.test(fno)) return setError(t.errFlightNo);
+    if (!terms) return setError(t.errTerms);
     if (!consent) return setError(t.errConsent);
     setBusy(true);
     try {
       track("checkout_start", { city: cityId, locale, ref: refCode || undefined });
       const res = await fetch("/api/checkout", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when ? when.toISOString() : undefined, flightNo: fno || undefined, locale, ref: refCode || undefined, consent, trip })
+        body: JSON.stringify({ city: cityId, plan, email, name, flightAt: when ? when.toISOString() : undefined, flightNo: fno || undefined, locale, ref: refCode || undefined, consent, terms, trip })
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error ?? "checkout");
@@ -138,8 +140,17 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
           <span className="hint">{t.flightNoHint}</span></div>
       )}
       {tm === "plane" && <p className="note">{t.entryNote}</p>}
-      <label className="consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /> <span>{t.consent}</span></label>
-      <p className="hint">{t.termsNote.split(/(\{terms\}|\{privacy\})/).map((part, i) => part === "{terms}" ? <a key={i} href={`/${locale}/legal/terms`} target="_blank">{t.lTerms}</a> : part === "{privacy}" ? <a key={i} href={`/${locale}/legal/privacy`} target="_blank">{t.lPrivacy}</a> : part)}</p>
+      <section className="bw" aria-labelledby="bw-h">
+        <b id="bw-h">{t.bwTitle}</b>
+        <ul>
+          <li className="ok">{plan === "all" ? fmt(t.bwWhatAll, { h: t.tpDur30d }) : fmt(t.bwWhat, { city: cityName, h: plan === "trip" ? t.tpDur72 : t.tpDur48 })}</li>
+          <li className="no">{t.bwNot}</li>
+          <li className="free">{t.bwFree}</li>
+          <li className="est">{t.bwEst}</li>
+        </ul>
+      </section>
+      <label className="consent"><input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} required /> <span>{t.bwTerms.split(/(\{terms\}|\{privacy\})/).map((part, i) => part === "{terms}" ? <a key={i} href={`/${locale}/legal/terms`} target="_blank" rel="noopener">{t.bwTermsL}</a> : part === "{privacy}" ? <a key={i} href={`/${locale}/legal/privacy`} target="_blank" rel="noopener">{t.bwPrivL}</a> : part)}</span></label>
+      <label className="consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} required /> <span>{t.consent}</span></label>
       {error && <p className="err" role="alert">{error}</p>}
       <button className="btn tram" type="submit" disabled={busy}>
         {busy ? t.redirecting : `${t.pay} ${chosen.local ?? chosen.main}`}
