@@ -13,6 +13,9 @@ import { ExitCheck, NAT_KEY } from "./ExitCheck";
 import { ExtLink } from "./ExtLink";
 import Portal from "./Portal";
 import { SheetX } from "./WinNav";
+import { Share2 } from "lucide-react";
+import { toast } from "@/lib/toast";
+import { routeSharePath } from "@/lib/route-share";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
@@ -20,9 +23,11 @@ const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Mat
 
 const MODE_ICON: Record<Leg["m"], string> = { walk: "🚶", metro: "🚇", tram: "🚊", bus: "🚌", train: "🚆", ferry: "⛴", car: "🚕" };
 
-export function RouteFit({ options, value, onChange, availMin, t, extName, locale, single, money, from, tz, ticket, night = false }: {
+export function RouteFit({ options, value, onChange, availMin, t, extName, locale, single, money, from, tz, ticket, night = false, share }: {
   options: RouteOption[]; value: string; onChange: (k: string) => void; availMin: number | null; t: Dict; extName: string;
   locale: Locale; single: number; money: (v: number) => string; from: { lat: number; lng: number; n: string } | null; tz: string; ticket?: string; night?: boolean;
+  /** Partilhar o roteiro escolhido com amigos (link com as paragens; nunca a posição). */
+  share?: { cityId: string; cityName: string; fromName: string | null };
 }) {
   const [times, setTimes] = useState<{ a: { lat: number; lng: number; n: string }; b: Stop } | null>(null);
   // Estilo iOS: escolha compacta da duração (pílulas) e, por baixo, as paragens do roteiro escolhido com nome.
@@ -30,6 +35,15 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
   const cur = options[i];
   const prev = new Set(i > 0 ? options[i - 1].plan.stops.map((s) => s.id) : []);
   const ok = (o: RouteOption) => (availMin === null ? null : o.plan.minutesTour <= availMin);
+  async function shareRoute(o: RouteOption) {
+    if (!share) return;
+    const url = location.origin + routeSharePath(locale, share.cityId, o.plan.stops.map((s) => s.id), share.fromName);
+    const text = fmt(t.rs.msg, { n: o.plan.stops.length, c: share.cityName, h: hrs(o.plan.minutesTour) });
+    try {
+      if (navigator.share) await navigator.share({ title: t.rs.title, text, url });
+      else { await navigator.clipboard.writeText(`${text}\n${url}`); toast(t.rs.copied); }
+    } catch { /* partilha cancelada */ }
+  }
   return (
     <div className="rf">
       <span className="rf-t">{t.fitTitle}</span>
@@ -70,6 +84,12 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
               );
             })}
           </ol>
+          {share && (
+            <button type="button" className="rf-share press" onClick={() => void shareRoute(cur)}>
+              <Share2 size={18} aria-hidden="true" />
+              <span className="ios-tx"><b>{t.rs.share}</b><small>{t.rs.shareSub}</small></span>
+            </button>
+          )}
         </div>
       )}
       {times && <TransitSheet a={times.a} b={times.b} t={t} locale={locale} tz={tz} onClose={() => setTimes(null)}

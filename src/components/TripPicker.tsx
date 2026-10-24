@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BedDouble, LocateFixed, Plane, Search, Ship, TrainFront, Home } from "lucide-react";
+import { BedDouble, LocateFixed, Plane, Search, Ship, TrainFront, Home, Footprints, Bus } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { FAR_KM, km } from "@/lib/route-cost";
@@ -8,7 +8,7 @@ import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type End
 
 type Hit = { label: string; sub: string; lat: number; lng: number };
 type Kind = Endpoint["kind"];
-const ICON: Record<Kind, string> = { airport: "✈", station: "🚆", port: "🛳", hotel: "🏨", address: "📍", here: "📍" };
+const ICON: Record<Kind, string> = { airport: "✈", station: "🚆", bus: "🚌", port: "🛳", hotel: "🏨", address: "📍", here: "📍" };
 
 export const endLabel = (e: Endpoint, t: Dict) => (e.kind === "airport" ? t.bpAirport : e.kind === "here" ? t.bpHereLabel : e.label);
 export const endIcon = (e: Endpoint) => ICON[e.kind];
@@ -90,8 +90,8 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
       setMsg(""); onChange({ kind: "here", ...pos, label: t.bpHereLabel });
     }, () => setMsg(t.bpDenied), { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
   }
-  const icon = (k: Kind) => k === "airport" ? <Plane size={15} aria-hidden="true" /> : k === "station" ? <TrainFront size={15} aria-hidden="true" /> : k === "port" ? <Ship size={15} aria-hidden="true" /> : k === "here" ? <LocateFixed size={15} aria-hidden="true" /> : <BedDouble size={15} aria-hidden="true" />;
-  const searchKind = want === "station" || want === "port" || want === "hotel" ? want : null;
+  const icon = (k: Kind) => k === "airport" ? <Plane size={15} aria-hidden="true" /> : k === "station" ? <TrainFront size={15} aria-hidden="true" /> : k === "bus" ? <Bus size={15} aria-hidden="true" /> : k === "port" ? <Ship size={15} aria-hidden="true" /> : k === "here" ? <LocateFixed size={15} aria-hidden="true" /> : <BedDouble size={15} aria-hidden="true" />;
+  const searchKind = want === "station" || want === "bus" || want === "port" || want === "hotel" ? want : null;
   return (
     <>
       {kinds.length > 1 && (
@@ -133,6 +133,11 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
     let end: Endpoint = value.end;
     if (need === "airport") end = AIRPORT;
     else if (need) end = value.end.kind === need ? value.end : value.start.kind === need ? value.start : { kind: need, lat: NaN, lng: NaN, label: "" };
+    else if (mode === "walk") {
+      // A pé: termina num lugar à escolha (qualquer morada ou ponto de interesse), nunca no aeroporto por omissão.
+      setOther(true);
+      end = value.end.kind !== "airport" && endpointReady(value.end) && !sameEnd(value.end, value.start) ? value.end : { kind: "hotel", lat: NaN, lng: NaN, label: "" };
+    }
     else end = other ? value.end : value.start;
     set({ mode, end });
   }
@@ -146,24 +151,27 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
         onChange={(s) => onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end })} />
 
       <span className="bp-h">{t.tpLeave}</span>
-      <div className="bp-seg tp-seg" role="radiogroup" aria-label={t.tpLeave}>
-        {(["plane", "train", "ship", "stay"] as const).map((m) => (
+      <div className="bp-seg tp-modes" role="radiogroup" aria-label={t.tpLeave}>
+        {(["plane", "train", "bus", "ship", "walk", "stay"] as const).map((m) => (
           <button key={m} type="button" role="radio" aria-checked={value.mode === m} className={value.mode === m ? "on" : ""} onClick={() => pickMode(m)}>
-            {m === "plane" ? <Plane size={15} aria-hidden="true" /> : m === "train" ? <TrainFront size={15} aria-hidden="true" /> : m === "ship" ? <Ship size={15} aria-hidden="true" /> : <Home size={15} aria-hidden="true" />}{t.tpModes[m]}
+            {m === "plane" ? <Plane size={15} aria-hidden="true" /> : m === "train" ? <TrainFront size={15} aria-hidden="true" /> : m === "bus" ? <Bus size={15} aria-hidden="true" /> : m === "ship" ? <Ship size={15} aria-hidden="true" /> : m === "walk" ? <Footprints size={15} aria-hidden="true" /> : <Home size={15} aria-hidden="true" />}{t.tpModes[m]}
           </button>
         ))}
       </div>
 
       <span className="bp-h">{t.tpEnd}</span>
       {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
-      {(needKind === "station" || needKind === "port") && (
+      {(needKind === "station" || needKind === "port" || needKind === "bus") && (
         <>
           <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
-            kinds={needKind === "station" ? ["station", "airport"] : [needKind]} onChange={(e) => set({ end: e })} />
+            kinds={needKind === "station" ? ["station", "airport"] : needKind === "bus" ? ["bus", "hotel", "station"] : [needKind]} onChange={(e) => set({ end: e })} />
           {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
         </>
       )}
-      {!needKind && (
+      {value.mode === "walk" && (
+        <EndpointChooser key="walk" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["hotel", "station", "port", "airport"]} onChange={(e) => set({ end: e })} />
+      )}
+      {!needKind && value.mode !== "walk" && (
         <>
           <div className="bp-seg tp-seg" role="radiogroup">
             <button type="button" role="radio" aria-checked={!other} className={!other ? "on" : ""} onClick={() => { setOther(false); set({ end: value.start }); }}>{t.tpSameAsStart}</button>

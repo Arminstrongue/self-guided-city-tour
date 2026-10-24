@@ -54,7 +54,8 @@ test("hora com dia: hoje, amanhã ou data completa", () => {
 
 test("plano recebido do navegador ou do servidor é validado", () => {
   assert.equal(parseTrip({ start: { kind: "station", lat: "x" }, end: AIRPORT, mode: "plane" }), null);
-  assert.equal(parseTrip({ start: AIRPORT, end: AIRPORT, mode: "bus" }), null);
+  assert.equal(parseTrip({ start: AIRPORT, end: AIRPORT, mode: "rocket" }), null);
+  assert.equal(parseTrip({ start: AIRPORT, end: AIRPORT, mode: "bus" })?.mode, "bus");
   const ok = parseTrip({ start: AIRPORT, end: stationSA, mode: "train", startAt: "2026-10-24T09:00", deadline: "bad" });
   assert.equal(ok?.end.kind, "station");
   assert.equal(ok?.deadline, "");
@@ -64,4 +65,12 @@ test("ponto final ainda por escolher (comboio sem estação) não dá NaN", () =
   const t: Trip = { v: 2, start: AIRPORT, end: { kind: "station", lat: NaN, lng: NaN, label: "" }, mode: "train", startAt: "", deadline: "" };
   const b = breakdown(lis, planRoute(lis, false), t);
   assert.ok(Number.isFinite(b.back) && Number.isFinite(b.needed));
+});
+
+test("bus and walk modes accept ending at any place", () => {
+  const place = { kind: "hotel" as const, lat: 53.46, lng: -2.23, label: "Manchester Museum" };
+  assert.equal(endMatchesMode({ mode: "bus", end: place }), true);
+  assert.equal(endMatchesMode({ mode: "bus", end: { kind: "bus", lat: 53.47, lng: -2.24, label: "Chorlton Street" } }), true);
+  assert.equal(endMatchesMode({ mode: "walk", end: place }), true);
+  assert.equal(endMatchesMode({ mode: "ship", end: place }), false);
 });

@@ -2928,3 +2928,25 @@ a.nt2-who small{opacity:.55}
 a.ios-row{text-decoration:none;color:inherit}
 .arv-ctx{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.arv{grid-template-columns:minmax(0,1fr)}
 .wt-sheet .nn-note,.wt-sheet .nn-load{color:inherit;opacity:.6;text-shadow:none}.wt-sheet .nn-near{background:var(--as-bg,#fff)}
+.rf-share{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:12px 14px;border:0;border-radius:14px;background:color-mix(in srgb,var(--ink) 6%,transparent);color:inherit;font:inherit;text-align:start;cursor:pointer}
+.rs-list li{align-items:flex-start}
+.rs-leg{opacity:.55;font-size:12px}
+
+/* Cartões dos planos */
+.pc-card{position:relative;display:grid;border-radius:20px;background:var(--surface,#fff);box-shadow:0 1px 2px rgba(0,0,0,.05),0 0 0 1px color-mix(in srgb,var(--ink) 6%,transparent);overflow:hidden}
+.pc-main{display:grid;gap:6px;padding:16px 16px 12px;color:inherit;text-decoration:none}
+.pc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-inline-end:4px}
+.pc-st{flex:none;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;background:color-mix(in srgb,var(--ink) 8%,transparent);white-space:nowrap}
+.pc-st.now,.pc-st.today{background:#1c1c1e;color:#fff}
+.pc-st.past{opacity:.55}
+.pc-prev{display:flex;flex-wrap:wrap;gap:6px}
+.pc-prev span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 9px;border-radius:999px;font-size:13px;background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.pc-prev .pc-more{font-weight:600}
+.pc-acts{display:flex;justify-content:flex-end;gap:6px;padding:0 12px 12px}
+.pc-ic{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 6%,transparent);color:inherit;cursor:pointer;text-decoration:none}
+.pc-ic.red{color:#d70015}
+.pc-ic:active{transform:scale(.94)}
+.tp-modes{grid-template-columns:repeat(3,1fr)}.tp-modes button{font-size:14px;padding:6px 4px;white-space:nowrap}
+.pc-card .pc-main{padding-bottom:14px}
+.pc-card .pc-main>.hint:last-child{padding-inline-end:124px;min-height:34px;display:flex;align-items:center}
+.pc-acts{position:absolute;inset-inline-end:12px;bottom:12px;padding:0}

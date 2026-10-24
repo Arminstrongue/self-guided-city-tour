@@ -11,12 +11,13 @@ export const dynamic = "force-dynamic";
 /** Lista das estações de comboio ou terminais de navio da cidade, para escolher sem escrever. */
 type Hit = { label: string; sub: string; lat: number; lng: number };
 const cache = new Map<string, { at: number; hits: Hit[] }>();
-const Q = { station: { text: "train station", type: "train_station", osm: "railway station" }, port: { text: "cruise ship terminal ferry terminal", type: "", osm: "ferry terminal" } } as const;
+const Q = { station: { text: "train station", type: "train_station", osm: "railway station" }, bus: { text: "bus station coach station", type: "bus_station", osm: "bus station" }, port: { text: "cruise ship terminal ferry terminal", type: "", osm: "ferry terminal" } } as const;
 
 export async function GET(req: Request) {
   if (!rateLimit(req, "stations", 30)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const u = new URL(req.url);
-  const kind = u.searchParams.get("kind") === "port" ? "port" : "station";
+  const k0 = u.searchParams.get("kind");
+  const kind = k0 === "port" ? "port" : k0 === "bus" ? "bus" : "station";
   const lang = (u.searchParams.get("lang") ?? "en").slice(0, 5);
   const city = await loadCity(u.searchParams.get("city") ?? "");
   if (!city) return NextResponse.json({ hits: [] });

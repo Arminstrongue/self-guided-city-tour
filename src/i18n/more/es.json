@@ -1337,42 +1337,54 @@
 "station": "Estación de tren",
 "port": "Terminal de cruceros",
 "hotel": "Hotel o dirección",
-"here": "Mi ubicación"
+"here": "Mi ubicación",
+"bus": "Estación de autobuses"
 },
 "tpModes": {
 "plane": "Avión",
 "train": "Tren",
 "ship": "Barco",
-"stay": "Me quedo"
+"stay": "Me quedo",
+"walk": "A pie",
+"bus": "Autobús"
 },
 "tpSearchPh": {
 "station": "Nombre de la estación",
 "port": "Terminal de cruceros o puerto",
-"hotel": "Nombre del hotel o dirección"
+"hotel": "Nombre del hotel o dirección",
+"bus": "Estación o parada de autobús"
 },
 "tpUntilDep": {
 "plane": "Hasta mi vuelo",
 "train": "Hasta mi tren",
 "ship": "Hasta que salga el barco (embarque)",
-"stay": "Hasta la hora de volver"
+"stay": "Hasta la hora de volver",
+"walk": "Hasta la hora de llegar",
+"bus": "Hasta mi autobús"
 },
 "tpReturnSub": {
 "plane": "Sal antes de las {t} para estar en el aeropuerto 2h30 antes del vuelo",
 "train": "Sal antes de las {t} para estar en la estación 45 min antes del tren",
 "ship": "Sal antes de las {t} para estar en la terminal 1 h antes del embarque",
-"stay": "Sal antes de las {t} para volver a tiempo"
+"stay": "Sal antes de las {t} para volver a tiempo",
+"walk": "Sal antes de las {t} para llegar a pie a tiempo",
+"bus": "Sal antes de las {t} para estar en la parada 20 min antes del autobús"
 },
 "tpDepField": {
 "plane": "Salida del vuelo",
 "train": "Salida del tren",
 "ship": "Hora de embarque",
-"stay": "Volver antes de"
+"stay": "Volver antes de",
+"walk": "Llegar antes de",
+"bus": "Salida del autobús"
 },
 "tpDepHint": {
 "plane": "Planificamos para que estés en el aeropuerto 2h30 antes.",
 "train": "Planificamos para que estés en la estación 45 min antes.",
 "ship": "Planificamos para que estés en la terminal 1 h antes del embarque.",
-"stay": "Te avisamos cuándo volver."
+"stay": "Te avisamos cuándo volver.",
+"walk": "Te avisamos cuándo ir a pie.",
+"bus": "Planificamos para que estés en la parada 20 min antes."
 },
 "bdSubtotal": "Tiempo de la ruta, con ida y vuelta",
 "tpStartHere": "Tu ruta empieza aquí",
@@ -1645,7 +1657,8 @@
 "station": "Elija la estación",
 "port": "Elija la terminal",
 "hotel": "Elija el hotel o la dirección",
-"here": "Obteniendo su ubicación…"
+"here": "Obteniendo su ubicación…",
+"bus": "Elige la estación de autobuses"
 },
 "emb": {
 "pick": "Elija su nacionalidad para buscar su embajada o consulado",
@@ -1857,5 +1870,36 @@
 "stCancelled": "Cancelado",
 "viewApp": "Ver en la app"
 },
-"nvNear": "Cerca"
+"nvNear": "Cerca",
+"rs": {
+"share": "Compartir esta ruta",
+"shareSub": "Envíala a tus amigos: verán las paradas, los tiempos y el mapa.",
+"title": "Ruta compartida",
+"lead": "{n} paradas en {c} · {h}",
+"openMap": "Abrir la ruta en el mapa",
+"doIt": "Hacer esta ruta con VOYBU",
+"doItSub": "Planifícala con tu tiempo, transporte y audioguía.",
+"msg": "Mira esta ruta de {n} paradas en {c} ({h}):",
+"copied": "Enlace copiado",
+"invalid": "Este enlace de ruta ya no es válido.",
+"visit": "{v} min de visita",
+"forward": "Reenviar",
+"from": "Desde {p}"
+},
+"pc": {
+"delete": "Eliminar plan",
+"deleted": "Plan eliminado",
+"undo": "Deshacer",
+"duplicate": "Duplicar plan",
+"duplicated": "Plan duplicado",
+"copy": "(copia)",
+"map": "Mapa",
+"now": "En curso",
+"inDays": "Dentro de {n} días",
+"tomorrow": "Mañana",
+"today": "Hoy",
+"past": "Terminado",
+"empty": "Aún sin lugares: toca para añadir",
+"one": "1 lugar"
+}
 }

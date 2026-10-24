@@ -1310,42 +1310,54 @@
 "station": "Bahnhof",
 "port": "Kreuzfahrtterminal",
 "hotel": "Hotel oder Adresse",
-"here": "Mein Standort"
+"here": "Mein Standort",
+"bus": "Busbahnhof"
 },
 "tpModes": {
 "plane": "Flugzeug",
 "train": "Zug",
 "ship": "Schiff",
-"stay": "Ich bleibe"
+"stay": "Ich bleibe",
+"walk": "Zu Fuß",
+"bus": "Bus / Fernbus"
 },
 "tpSearchPh": {
 "station": "Name des Bahnhofs",
 "port": "Kreuzfahrtterminal oder Hafen",
-"hotel": "Hotelname oder Adresse"
+"hotel": "Hotelname oder Adresse",
+"bus": "Busbahnhof oder Haltestelle"
 },
 "tpUntilDep": {
 "plane": "Bis zu meinem Flug",
 "train": "Bis zu meinem Zug",
 "ship": "Bis das Schiff ablegt (Einschiffung)",
-"stay": "Bis ich zurück sein muss"
+"stay": "Bis ich zurück sein muss",
+"walk": "Bis ich dort sein muss",
+"bus": "Bis zu meinem Bus"
 },
 "tpReturnSub": {
 "plane": "Brechen Sie bis {t} auf, um 2h30 vor dem Flug am Flughafen zu sein",
 "train": "Brechen Sie bis {t} auf, um 45 Min. vor dem Zug am Bahnhof zu sein",
 "ship": "Brechen Sie bis {t} auf, um 1 Std. vor der Einschiffung am Terminal zu sein",
-"stay": "Brechen Sie bis {t} auf, um rechtzeitig zurück zu sein"
+"stay": "Brechen Sie bis {t} auf, um rechtzeitig zurück zu sein",
+"walk": "Gehen Sie bis {t} los, um rechtzeitig zu Fuß dort zu sein",
+"bus": "Gehen Sie bis {t} los, um 20 Min. vor dem Bus an der Haltestelle zu sein"
 },
 "tpDepField": {
 "plane": "Abflug",
 "train": "Abfahrt des Zuges",
 "ship": "Einschiffungszeit",
-"stay": "Zurück bis"
+"stay": "Zurück bis",
+"walk": "Dort sein bis",
+"bus": "Busabfahrt"
 },
 "tpDepHint": {
 "plane": "Wir planen, dass Sie 2h30 vorher am Flughafen sind.",
 "train": "Wir planen, dass Sie 45 Min. vorher am Bahnhof sind.",
 "ship": "Wir planen, dass Sie 1 Std. vor der Einschiffung am Terminal sind.",
-"stay": "Wir sagen Ihnen, wann Sie zurückmüssen."
+"stay": "Wir sagen Ihnen, wann Sie zurückmüssen.",
+"walk": "Wir sagen Ihnen, wann Sie losgehen sollten.",
+"bus": "Wir planen, dass Sie 20 Min. vorher an der Haltestelle sind."
 },
 "bdSubtotal": "Dauer der Route inkl. Hin- und Rückweg",
 "tpStartHere": "Ihre Route beginnt hier",
@@ -1618,7 +1630,8 @@
 "station": "Bahnhof wählen",
 "port": "Terminal wählen",
 "hotel": "Hotel oder Adresse wählen",
-"here": "Standort wird ermittelt…"
+"here": "Standort wird ermittelt…",
+"bus": "Wählen Sie den Busbahnhof"
 },
 "emb": {
 "pick": "Wählen Sie Ihre Staatsangehörigkeit, um Ihre Botschaft oder Ihr Konsulat zu finden",
@@ -1830,5 +1843,36 @@
 "stCancelled": "Gekündigt",
 "viewApp": "In der App ansehen"
 },
-"nvNear": "In der Nähe"
+"nvNear": "In der Nähe",
+"rs": {
+"share": "Diese Route teilen",
+"shareSub": "Schicken Sie sie Freunden: Sie sehen Stopps, Zeiten und Karte.",
+"title": "Geteilte Route",
+"lead": "{n} Stopps in {c} · {h}",
+"openMap": "Route auf der Karte öffnen",
+"doIt": "Diese Route mit VOYBU machen",
+"doItSub": "Planen Sie sie nach Ihrer Zeit, mit Verkehrsmitteln und Audioguide.",
+"msg": "Schau dir diese Route mit {n} Stopps in {c} an ({h}):",
+"copied": "Link kopiert",
+"invalid": "Dieser Routenlink ist nicht mehr gültig.",
+"visit": "{v} Min. Besuch",
+"forward": "Weiterleiten",
+"from": "Ab {p}"
+},
+"pc": {
+"delete": "Plan löschen",
+"deleted": "Plan gelöscht",
+"undo": "Rückgängig",
+"duplicate": "Plan duplizieren",
+"duplicated": "Plan dupliziert",
+"copy": "(Kopie)",
+"map": "Karte",
+"now": "Läuft gerade",
+"inDays": "In {n} Tagen",
+"tomorrow": "Morgen",
+"today": "Heute",
+"past": "Beendet",
+"empty": "Noch keine Orte – zum Hinzufügen tippen",
+"one": "1 Ort"
+}
 }

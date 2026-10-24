@@ -57,7 +57,10 @@ export async function walletFor(email: string) {
     hobbies: prefs[0]?.hobbies ?? [],
     saved: prefs[0]?.saved ?? [],
     visited: prefs[0]?.visited ?? [],
-    plans: plans.map((p) => ({ id: p.id, title: p.title, city: p.city, cityName: p.cityName, startDate: p.startDate, days: p.days, count: p.items.length, updatedAt: p.updatedAt.toISOString() }))
+    plans: plans.map((p) => ({ id: p.id, title: p.title, city: p.city, cityName: p.cityName, startDate: p.startDate, days: p.days, count: p.items.length, updatedAt: p.updatedAt.toISOString(),
+      // Para o cartão: primeiros lugares (por dia e hora) e pontos para abrir o percurso no mapa.
+      preview: [...p.items].sort((a, b) => a.day - b.day || (a.time ?? "99").localeCompare(b.time ?? "99")).slice(0, 3).map((i) => ({ icon: i.icon ?? "📍", title: i.title.slice(0, 40) })),
+      pts: [...p.items].sort((a, b) => a.day - b.day || (a.time ?? "99").localeCompare(b.time ?? "99")).filter((i) => Number.isFinite(i.lat) && Number.isFinite(i.lng)).slice(0, 10).map((i) => ({ lat: i.lat as number, lng: i.lng as number })) }))
   };
 }
 export type Wallet = Awaited<ReturnType<typeof walletFor>>;

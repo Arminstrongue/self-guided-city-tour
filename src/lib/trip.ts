@@ -1,7 +1,8 @@
 /**
  * Plano de viagem: UMA fonte para o planeador, a página da cidade (compra), o roteiro e a carteira.
  * - start / end: onde começa e onde tem de terminar (aeroporto, estação, terminal de cruzeiros, hotel, morada, onde estou).
- * - mode: como sai da cidade (avião, comboio, navio) ou "stay" (não sai: só tem de voltar ao ponto final).
+ * - mode: como sai da cidade (avião, comboio, navio), "stay" (não sai: só tem de voltar ao ponto final)
+ *   ou "walk" (termina a pé num lugar à escolha: museu, morada, restaurante).
  * - startAt: data e hora de início, na hora local da cidade ("AAAA-MM-DDTHH:MM"); vazio = agora.
  * - deadline: hora da partida (ou "voltar até"), na hora local da cidade; vazio = sem hora limite.
  * Todas as contas de tempo usam `breakdown`, para os números serem iguais em todos os ecrãs.
@@ -10,16 +11,16 @@ import type { City } from "@/data/cities";
 import { hop, type CityHop, type RoutePlan } from "./route-cost";
 import { zonedToDate } from "./zoned";
 
-export type Mode = "plane" | "train" | "ship" | "stay";
-export type PlaceKind = "station" | "port" | "hotel" | "address" | "here";
+export type Mode = "plane" | "train" | "bus" | "ship" | "stay" | "walk";
+export type PlaceKind = "station" | "bus" | "port" | "hotel" | "address" | "here";
 export type Endpoint = { kind: "airport" } | { kind: PlaceKind; lat: number; lng: number; label: string };
 export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string };
 
 /** Margem antes da partida (chegar com tempo ao aeroporto, à estação ou ao navio). */
-export const BUFFER_MIN: Record<Mode, number> = { plane: 150, train: 45, ship: 60, stay: 0 };
+export const BUFFER_MIN: Record<Mode, number> = { plane: 150, train: 45, bus: 20, ship: 60, stay: 0, walk: 0 };
 
 /** Onde a partida acontece, para cada modalidade (o fim do percurso tem de ser deste tipo). */
-export const END_FOR_MODE: Record<Mode, Endpoint["kind"] | null> = { plane: "airport", train: "station", ship: "port", stay: null };
+export const END_FOR_MODE: Record<Mode, Endpoint["kind"] | null> = { plane: "airport", train: "station", bus: "bus", ship: "port", stay: null, walk: null };
 
 export const AIRPORT: Endpoint = { kind: "airport" };
 export const defaultTrip = (): Trip => ({ v: 2, start: AIRPORT, end: AIRPORT, mode: "plane", startAt: "", deadline: "" });
@@ -31,7 +32,8 @@ export const sameEnd = (a: Endpoint, b: Endpoint) =>
 export function endMatchesMode(t: Pick<Trip, "end" | "mode">): boolean {
   const need = END_FOR_MODE[t.mode];
   // De comboio também se pode terminar no aeroporto (muitos têm estação ferroviária).
-  return !need || t.end.kind === need || (t.mode === "train" && t.end.kind === "airport");
+  // De autocarro pode terminar numa estação de autocarros, numa paragem qualquer (morada) ou numa estação de comboios.
+  return !need || t.end.kind === need || (t.mode === "train" && t.end.kind === "airport") || (t.mode === "bus" && ["hotel", "address", "station", "airport"].includes(t.end.kind));
 }
 
 export type Leg = { min: number; how: "airport" | CityHop["m"] };
@@ -108,7 +110,7 @@ export function parseTrip(v: unknown): Trip | null {
     return { kind: e.kind as PlaceKind, lat: e.lat, lng: e.lng, label: String(e.label ?? "").slice(0, 120) };
   };
   const start = ep(o.start), end = ep(o.end);
-  const mode = ["plane", "train", "ship", "stay"].includes(String(o.mode)) ? (o.mode as Mode) : null;
+  const mode = ["plane", "train", "bus", "ship", "stay", "walk"].includes(String(o.mode)) ? (o.mode as Mode) : null;
   const dt = (x: unknown) => (typeof x === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(x) ? x : "");
   if (!start || !end || !mode) return null;
   return { v: 2, start, end, mode, startAt: dt(o.startAt), deadline: dt(o.deadline), ...(typeof o.key === "string" ? { key: o.key.slice(0, 8) } : {}) };

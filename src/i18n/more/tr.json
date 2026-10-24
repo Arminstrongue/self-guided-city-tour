@@ -1770,42 +1770,54 @@
 "station": "Tren istasyonu",
 "port": "Kruvaziyer terminali",
 "hotel": "Otel veya adres",
-"here": "Konumum"
+"here": "Konumum",
+"bus": "Otogar"
 },
 "tpModes": {
 "plane": "Uçak",
 "train": "Tren",
 "ship": "Gemi",
-"stay": "Şehirde kalıyorum"
+"stay": "Şehirde kalıyorum",
+"walk": "Yürüyerek",
+"bus": "Otobüs"
 },
 "tpSearchPh": {
 "station": "İstasyon adı",
 "port": "Kruvaziyer terminali veya liman",
-"hotel": "Otel adı veya adres"
+"hotel": "Otel adı veya adres",
+"bus": "Otogar veya durak"
 },
 "tpUntilDep": {
 "plane": "Uçuşuma kadar",
 "train": "Trenime kadar",
 "ship": "Gemi kalkana kadar (biniş)",
-"stay": "Dönmem gereken saate kadar"
+"stay": "Dönmem gereken saate kadar",
+"walk": "Orada olmam gereken saate kadar",
+"bus": "Otobüsüme kadar"
 },
 "tpReturnSub": {
 "plane": "Uçuştan 2,5 saat önce havalimanında olmak için en geç {t}'de çıkın",
 "train": "Trenden 45 dk önce istasyonda olmak için en geç {t}'de çıkın",
 "ship": "Binişten 1 saat önce terminalde olmak için en geç {t}'de çıkın",
-"stay": "Zamanında dönmek için en geç {t}'de çıkın"
+"stay": "Zamanında dönmek için en geç {t}'de çıkın",
+"walk": "Yürüyerek zamanında varmak için {t} saatine kadar çıkın",
+"bus": "Otobüsten 20 dk önce durakta olmak için {t} saatine kadar çıkın"
 },
 "tpDepField": {
 "plane": "Uçuş kalkışı",
 "train": "Tren kalkışı",
 "ship": "Biniş saati",
-"stay": "Dönüş saati"
+"stay": "Dönüş saati",
+"walk": "Varış saati",
+"bus": "Otobüs kalkışı"
 },
 "tpDepHint": {
 "plane": "Havalimanında 2,5 saat önce olacak şekilde planlıyoruz.",
 "train": "İstasyonda 45 dk önce olacak şekilde planlıyoruz.",
 "ship": "Terminalde binişten 1 saat önce olacak şekilde planlıyoruz.",
-"stay": "Ne zaman döneceğinizi söyleriz."
+"stay": "Ne zaman döneceğinizi söyleriz.",
+"walk": "Ne zaman yürümeye başlayacağınızı söyleriz.",
+"bus": "Durakta 20 dk önce olmanızı planlarız."
 },
 "bdSubtotal": "Gidiş ve dönüş dahil rota süresi",
 "tpStartHere": "Rotanız burada başlıyor",
@@ -2078,7 +2090,8 @@
 "station": "İstasyonu seçin",
 "port": "Terminali seçin",
 "hotel": "Oteli veya adresi seçin",
-"here": "Konum alınıyor…"
+"here": "Konum alınıyor…",
+"bus": "Otogarı seçin"
 },
 "emb": {
 "pick": "Büyükelçiliğinizi veya konsolosluğunuzu bulmak için uyruğunuzu seçin",
@@ -2290,5 +2303,36 @@
 "stCancelled": "İptal edildi",
 "viewApp": "Uygulamada gör"
 },
-"nvNear": "Yakında"
+"nvNear": "Yakında",
+"rs": {
+"share": "Bu rotayı paylaş",
+"shareSub": "Arkadaşlarına gönder: durakları, süreleri ve haritayı görürler.",
+"title": "Paylaşılan rota",
+"lead": "{c} şehrinde {n} durak · {h}",
+"openMap": "Rotayı haritada aç",
+"doIt": "Bu rotayı VOYBU ile yap",
+"doItSub": "Zamanına, ulaşıma ve sesli rehbere göre planla.",
+"msg": "{c} şehrindeki {n} duraklı bu rotaya bak ({h}):",
+"copied": "Bağlantı kopyalandı",
+"invalid": "Bu rota bağlantısı artık geçerli değil.",
+"visit": "{v} dk ziyaret",
+"forward": "İlet",
+"from": "Başlangıç: {p}"
+},
+"pc": {
+"delete": "Planı sil",
+"deleted": "Plan silindi",
+"undo": "Geri al",
+"duplicate": "Planı çoğalt",
+"duplicated": "Plan çoğaltıldı",
+"copy": "(kopya)",
+"map": "Harita",
+"now": "Şu an",
+"inDays": "{n} gün sonra",
+"tomorrow": "Yarın",
+"today": "Bugün",
+"past": "Bitti",
+"empty": "Henüz yer yok — eklemek için dokunun",
+"one": "1 yer"
+}
 }

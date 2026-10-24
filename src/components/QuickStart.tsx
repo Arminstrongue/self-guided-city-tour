@@ -135,7 +135,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; 
             <span className="hint">{fmt(t.tpCityTime, { c: city.name })}</span>
             <input type="datetime-local" min={trip.startAt || cityNowLocal(tz)} value={trip.deadline} onChange={(e) => upd({ ...trip, deadline: e.target.value })} aria-label={t.tpUntilDep[trip.mode]} />
             <button className="btn tram" disabled={!trip.deadline} onClick={() => choose("dep", null)}>{t.qsNext}</button>
-            {trip.mode !== "stay" && <small className="hint">{trip.mode === "plane" ? t.qsUntilHint : trip.mode === "train" ? t.qsHintTrain : t.qsHintShip}</small>}
+            {trip.mode !== "stay" && trip.mode !== "walk" && <small className="hint">{trip.mode === "plane" ? t.qsUntilHint : trip.mode === "train" ? t.qsHintTrain : trip.mode === "bus" ? t.tpDepHint.bus : t.qsHintShip}</small>}
           </div>
           {TIMES.map((x) => (
             <button key={x.k} className="qs-time press" onClick={() => choose(x.k, x.min)}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>

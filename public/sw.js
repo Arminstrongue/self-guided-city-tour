@@ -73,7 +73,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   // Páginas: roteiro, plano, carteira e cidade — rede primeiro, cópia sem rede.
-  if (req.mode === "navigate" && /^\/[a-z]{2}\/(tour|plan|wallet|c|arrive|free|meet)(\/|$)/.test(url.pathname)) e.respondWith(networkFirst(req, PAGES));
+  if (req.mode === "navigate" && /^\/[a-z]{2}\/(tour|plan|wallet|c|arrive|free|meet|r)(\/|$)/.test(url.pathname)) e.respondWith(networkFirst(req, PAGES));
 });
 
 let trimming = false;

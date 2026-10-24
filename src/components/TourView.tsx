@@ -167,6 +167,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const doneN = plan.stops.filter((s) => done[s.id]).length;
   const [going, setGoing] = useLocalState<boolean>(`sgct:go:${city.id}`, false);
   const started = going || doneN > 0;
+  // Partilhar o roteiro: só o nome de um ponto público (estação, porto, hotel, aeroporto), nunca uma morada ou a posição.
+  const routeShare = { cityId: city.id, cityName: cityLabel, fromName: trip.start.kind === "airport" ? city.ap?.name ?? null : ["station", "port", "hotel"].includes(trip.start.kind) && "label" in trip.start ? trip.start.label : null };
   // Folga para o regresso: tempo disponível menos o que falta das paragens por fazer (e o resto fixo do roteiro).
   const stopsMin = plan.stops.reduce((a, s) => a + s.v + s.leg.min, 0);
   const leftMin = plan.stops.filter((s) => !done[s.id]).reduce((a, s) => a + s.v + s.leg.min, 0);
@@ -323,7 +325,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
-            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night}
+            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
             from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
           <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
@@ -362,7 +364,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
-            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night}
+            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
             from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
           <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
           {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}

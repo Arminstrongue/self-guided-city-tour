@@ -63,7 +63,7 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
     setError("");
     if (!/^\S+@\S+\.\S+$/.test(email)) return setError(t.errEmail);
     const when = flight ? zonedToDate(flight, tz) : null;
-    const needFlight = mode === "layover" && tm !== "stay";
+    const needFlight = mode === "layover" && (tm !== "stay" && tm !== "walk");
     if ((needFlight && !when) || (when && (isNaN(when.getTime()) || when.getTime() < Date.now()))) return setError(t.errDep);
     const fno = tm === "plane" ? flightNo.toUpperCase().replace(/[^A-Z0-9]/g, "") : "";
     if (fno && !/^([A-Z]{2}|[A-Z]\d|\d[A-Z])\d{1,4}[A-Z]?$/.test(fno)) return setError(t.errFlightNo);
@@ -127,8 +127,8 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
       <div className="field"><label htmlFor="name">{t.name}</label>
         <input id="name" autoComplete="given-name" value={name} onChange={(e) => setName(e.target.value)} /></div>
       <p className="hint">{endLabel(trip.start, t)} → {endLabel(trip.end, t)} · {t.tpModes[tm]} · <a href={`/${locale}/start?city=${cityId}`}>{t.bpChange}</a></p>
-      <div className="field"><label htmlFor="flight">{t.tpDepField[tm]}{mode === "trip" || tm === "stay" ? ` (${t.tpOptional})` : ""}</label>
-        <input id="flight" type="datetime-local" min={cityNowLocal(tz)} value={flight} onChange={(e) => setFlight(e.target.value)} required={mode === "layover" && tm !== "stay"} />
+      <div className="field"><label htmlFor="flight">{t.tpDepField[tm]}{mode === "trip" || (tm === "stay" || tm === "walk") ? ` (${t.tpOptional})` : ""}</label>
+        <input id="flight" type="datetime-local" min={cityNowLocal(tz)} value={flight} onChange={(e) => setFlight(e.target.value)} required={mode === "layover" && (tm !== "stay" && tm !== "walk")} />
         <span className="hint">{t.tpDepHint[tm]} {fmt(t.tpCityTime, { c: cityName })}</span></div>
       {tm === "plane" && (
         <div className="field"><label htmlFor="fno">{t.flightNo}</label>

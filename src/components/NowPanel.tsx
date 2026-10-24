@@ -28,7 +28,7 @@ async function quietPos(): Promise<LL | null> {
  */
 export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass }: {
   t: Dict; locale: Locale; cities: Record<string, string>; signed: boolean; bookings: Booking[];
-  planned: { city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null; hasPass: boolean;
+  planned: { city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "bus" | "ship" | "stay" | "walk"; startAt?: string } | null; hasPass: boolean;
 }) {
   const [res, setRes] = useState<Reservation[]>([]);
   const [prog, setProg] = useState<Progress[]>([]);

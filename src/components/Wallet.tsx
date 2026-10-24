@@ -15,7 +15,8 @@ import { NewsFeed } from "./NewsFeed";
 import { NearSheet, NeedNow } from "./NeedNow";
 import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
-import { CloudOff } from "lucide-react";
+import { CloudOff, Copy, Trash2 } from "lucide-react";
+import { toast, withUndo } from "@/lib/toast";
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
@@ -502,11 +503,47 @@ function Wishlist({ t, locale, cities, signed, list, setList }: { t: Dict; local
 }
 
 /* ---------- Planos de viagem ---------- */
+/** Estado do plano em relação a hoje: a decorrer, hoje, amanhã, daqui a N dias ou terminado. */
+function planStatus(start: string | null, days: number): { k: "now" | "today" | "tomorrow" | "past" | "in"; n: number } | null {
+  if (!start) return null;
+  const day = (s: Date) => Math.floor((s.getTime() - s.getTimezoneOffset() * 60000) / 86400_000);
+  const a = day(new Date(`${start}T12:00:00`)), today = day(new Date());
+  if (today > a + days - 1) return { k: "past", n: 0 };
+  if (today === a) return { k: days > 1 ? "now" : "today", n: 0 };
+  if (today > a) return { k: "now", n: 0 };
+  if (a - today === 1) return { k: "tomorrow", n: 1 };
+  return { k: "in", n: a - today };
+}
+const mapUrl = (pts: { lat: number; lng: number }[]) => {
+  const ll = (p: { lat: number; lng: number }) => `${p.lat},${p.lng}`;
+  if (pts.length === 1) return `https://www.google.com/maps/search/?api=1&query=${ll(pts[0])}`;
+  const q = new URLSearchParams({ api: "1", origin: ll(pts[0]), destination: ll(pts[pts.length - 1]), travelmode: "walking" });
+  if (pts.length > 2) q.set("waypoints", pts.slice(1, -1).map(ll).join("|"));
+  return `https://www.google.com/maps/dir/?${q.toString()}`;
+};
 function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: Record<string, string>; plans: Wallet["plans"] }) {
   const [open, setOpen] = useState(false);
   const [f, setF] = useState({ title: "", city: Object.keys(cities)[0] ?? "", other: "", start: "", days: 2 });
   const [busy, setBusy] = useState(false);
   const d = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short" });
+  // Apagar sem abrir o plano: some logo e pode anular durante 5 s.
+  const [list, setList] = useState(plans);
+  useEffect(() => setList(plans), [plans]);
+  function remove(id: string) {
+    const before = list;
+    withUndo(t.pc.deleted, t.pc.undo, {
+      apply: () => setList((l) => l.filter((x) => x.id !== id)), revert: () => setList(before),
+      commit: () => fetch(`/api/me/plans/${id}`, { method: "DELETE" }).catch(() => null), icon: "🗑"
+    });
+  }
+  async function duplicate(p: Wallet["plans"][number]) {
+    const full = await fetch(`/api/me/plans/${p.id}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { items?: unknown[] } | null;
+    const r = await fetch("/api/me/plans", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: `${p.title} ${t.pc.copy}`.slice(0, 120), city: p.city, cityName: p.cityName, startDate: p.startDate, days: p.days, items: full?.items ?? [] }) }).then((x) => (x.ok ? x.json() : null)).catch(() => null) as { id?: string } | null;
+    if (!r?.id) { toast(t.tsError, { tone: "err" }); return; }
+    toast(t.pc.duplicated);
+    setList((l) => [{ ...p, id: r.id!, title: `${p.title} ${t.pc.copy}`.slice(0, 120), updatedAt: new Date().toISOString() }, ...l]);
+  }
   async function create(e: React.FormEvent) {
     e.preventDefault(); setBusy(true);
     const other = f.city === "__other";
@@ -534,13 +571,33 @@ function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: 
           <button className="btn press" disabled={busy || (f.city === "__other" && !f.other.trim())}>{t.plCreate}</button>
         </form>
       )}
-      {plans.map((p) => (
-        <a key={p.id} href={`/${locale}/plan/${p.id}`} className="card wl-pass on">
-          <span className="wl-pass-l"><span className="label">📍 {p.cityName}{p.startDate ? ` · ${d.format(new Date(`${p.startDate}T12:00:00`))}` : ""}</span><b className="wl-city">{p.title}</b><span className="hint">{p.days === 1 ? fmt(t.plDay, { n: 1 }) : fmt(t.plDaysN, { n: p.days })} · {fmt(t.plItems, { n: p.count })}</span></span>
-          <span className="wl-pass-r"><b className="wl-open">→</b></span>
-        </a>
-      ))}
-      {!plans.length && !open && <button className="btn ghost press" onClick={() => setOpen(true)}>{t.plNew}</button>}
+      {list.map((p) => {
+        const st = planStatus(p.startDate, p.days);
+        const end = p.startDate ? new Date(new Date(`${p.startDate}T12:00:00`).getTime() + (p.days - 1) * 86400_000) : null;
+        const dates = p.startDate ? (p.days > 1 && end ? `${d.format(new Date(`${p.startDate}T12:00:00`))} – ${d.format(end)}` : d.format(new Date(`${p.startDate}T12:00:00`))) : "";
+        const more = p.count - p.preview.length;
+        return (
+          <article key={p.id} className="pc-card">
+            <a href={`/${locale}/plan/${p.id}`} className="pc-main press">
+              <span className="pc-top">
+                <span className="label">📍 {p.cityName}{dates ? ` · ${dates}` : ""}</span>
+                {st && <span className={`pc-st ${st.k}`}>{st.k === "in" ? fmt(t.pc.inDays, { n: st.n }) : t.pc[st.k]}</span>}
+              </span>
+              <b className="wl-city">{p.title}</b>
+              {p.preview.length ? (
+                <span className="pc-prev">{p.preview.map((x, i) => <span key={i}>{x.icon} {x.title}</span>)}{more > 0 && <span className="pc-more">+{more}</span>}</span>
+              ) : <span className="hint">{t.pc.empty}</span>}
+              <span className="hint">{p.days === 1 ? fmt(t.plDay, { n: 1 }) : fmt(t.plDaysN, { n: p.days })} · {p.count === 1 ? t.pc.one : fmt(t.plItems, { n: p.count })}</span>
+            </a>
+            <span className="pc-acts">
+              {p.pts.length > 0 && <a className="pc-ic" href={mapUrl(p.pts)} target="_blank" rel="noopener noreferrer" aria-label={t.pc.map} title={t.pc.map}><I icon={MapIcon} size={17} /></a>}
+              <button type="button" className="pc-ic" aria-label={t.pc.duplicate} title={t.pc.duplicate} onClick={() => void duplicate(p)}><Copy size={17} aria-hidden="true" /></button>
+              <button type="button" className="pc-ic red" aria-label={t.pc.delete} title={t.pc.delete} onClick={() => remove(p.id)}><Trash2 size={17} aria-hidden="true" /></button>
+            </span>
+          </article>
+        );
+      })}
+      {!list.length && !open && <button className="btn ghost press" onClick={() => setOpen(true)}>{t.plNew}</button>}
     </section>
   );
 }
