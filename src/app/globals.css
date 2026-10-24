@@ -3005,3 +3005,21 @@ a.ios-row{text-decoration:none;color:inherit}
 .pl-search{position:sticky;top:-1px;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 7%,var(--surface,#fff))}
 .pl-search input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:inherit;outline:none}
 .pk-seg button .pk-flag.sm{display:inline-block;font-style:normal;font-size:18px;line-height:22px;height:22px;width:24px;flex:none;text-align:center;overflow:hidden}
+/* Idioma do país / do dispositivo */
+.pk-src{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 2px 10px}
+.pk-src-b{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:start}
+.pk-src-b>span:nth-child(2){display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.2}
+.pk-src-b b{font-size:14px}.pk-src-b small{font-size:11px;color:var(--muted)}
+.pk-src-b.on{border-color:var(--cobalt-ink);background:var(--cobalt-soft);color:var(--cobalt-ink)}
+.ls-ban{position:fixed;z-index:140;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom));max-width:440px;margin:0 auto;padding:12px;border-radius:20px;
+  background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);
+  border:.5px solid color-mix(in srgb,var(--ink) 12%,transparent);box-shadow:0 12px 36px rgba(0,0,0,.22);animation:pkUp .35s ease}
+.ls-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.ls-top b{font-size:15px}
+.ls-x{width:28px;height:28px;border-radius:999px;border:0;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--ink);cursor:pointer}
+.ls-opts{display:grid;gap:8px}
+.ls-o{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:start}
+.ls-o.on{border-color:var(--cobalt-ink);background:var(--cobalt-soft);color:var(--cobalt-ink)}
+.ls-f{font-size:24px;line-height:1;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.ls-t{display:flex;flex-direction:column;flex:1;line-height:1.2}
+.ls-t small{font-size:12px;color:var(--muted)}

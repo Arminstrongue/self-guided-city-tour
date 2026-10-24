@@ -46,6 +46,14 @@ export function pickLocale(req: NextRequest): string {
   return browserLangs(req).find((l) => LOCALES.includes(l)) ?? "en";
 }
 
+/** Guarda a língua do país atual num cookie legível pelo browser, para o aviso "idioma do país / do dispositivo". */
+function rememberCountryLang(req: NextRequest, res: NextResponse) {
+  const cc = (req.headers.get("cf-ipcountry") ?? "").toUpperCase();
+  if (!cc) return;
+  const cl = COUNTRY_LANG[cc] ?? "-";
+  if (req.cookies.get("sgct_cl")?.value !== cl) res.cookies.set("sgct_cl", cl, { path: "/", maxAge: 86400, sameSite: "lax" });
+}
+
 /**
  * - "/" e caminhos sem idioma → "/{idioma}/…"
  * - QR curto "/lis?ref=ABC" → "/{idioma}/c/lis?ref=ABC"
@@ -56,6 +64,7 @@ export function middleware(req: NextRequest) {
   if (LOCALES.includes(first)) {
     const res = NextResponse.next();
     if (req.cookies.get("sgct_locale")?.value !== first) res.cookies.set("sgct_locale", first, { path: "/", maxAge: 31536000, sameSite: "lax" });
+    rememberCountryLang(req, res);
     return res;
   }
   const locale = pickLocale(req);
@@ -65,6 +74,7 @@ export function middleware(req: NextRequest) {
   const res = NextResponse.redirect(url);
   res.headers.set("Vary", "CF-IPCountry, Accept-Language, Cookie");
   res.headers.set("Cache-Control", "private, no-store");
+  rememberCountryLang(req, res);
   return res;
 }
 

@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { Luggage, Check, X, Search } from "lucide-react";
 import { LOCALES } from "@/i18n/core";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
@@ -13,7 +12,43 @@ export const LANG_NAMES: Record<string, string> = {
   tr: "Türkçe", ru: "Русский", ko: "한국어", hi: "हिन्दी", nl: "Nederlands"
 };
 /** Bandeira de cada idioma (emoji: sem imagens extra para carregar). */
-const FLAG: Record<string, string> = { pt: "🇵🇹", en: "🇬🇧", es: "🇪🇸", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", zh: "🇨🇳", ar: "🇸🇦", ja: "🇯🇵", ko: "🇰🇷", ru: "🇷🇺", tr: "🇹🇷" };
+export const FLAG: Record<string, string> = { pt: "🇵🇹", en: "🇬🇧", es: "🇪🇸", fr: "🇫🇷", de: "🇩🇪", it: "🇮🇹", zh: "🇨🇳", ar: "🇸🇦", ja: "🇯🇵", ko: "🇰🇷", ru: "🇷🇺", tr: "🇹🇷" };
+
+/** Idioma do país (cookie posto pelo servidor a partir do país do IP) e do dispositivo (navigator.languages). */
+export function countryLang(): string | null {
+  const m = typeof document !== "undefined" ? document.cookie.match(/(?:^|; )sgct_cl=([a-z]{2})/) : null;
+  return m && (LOCALES as readonly string[]).includes(m[1]) ? m[1] : null;
+}
+export function deviceLang(): string | null {
+  if (typeof navigator === "undefined") return null;
+  for (const l of navigator.languages?.length ? navigator.languages : [navigator.language]) {
+    const v = (l || "").toLowerCase().split("-")[0];
+    if ((LOCALES as readonly string[]).includes(v)) return v;
+  }
+  return null;
+}
+/** Etiquetas: [pergunta, idioma do país, idioma do dispositivo]. */
+export const LANG_SRC: Record<string, [string, string, string]> = {
+  pt: ["Em que idioma prefere?", "Idioma do país", "Idioma do dispositivo"],
+  en: ["Which language do you prefer?", "Country language", "Device language"],
+  es: ["¿En qué idioma prefieres?", "Idioma del país", "Idioma del dispositivo"],
+  fr: ["Quelle langue préférez-vous ?", "Langue du pays", "Langue de l'appareil"],
+  de: ["Welche Sprache bevorzugen Sie?", "Landessprache", "Gerätesprache"],
+  it: ["Quale lingua preferisci?", "Lingua del paese", "Lingua del dispositivo"],
+  zh: ["您想使用哪种语言？", "所在国家语言", "设备语言"],
+  ar: ["ما اللغة التي تفضلها؟", "لغة البلد", "لغة الجهاز"],
+  ja: ["どの言語で表示しますか？", "国の言語", "端末の言語"],
+  ko: ["어떤 언어를 사용할까요?", "국가 언어", "기기 언어"],
+  ru: ["Какой язык вам удобнее?", "Язык страны", "Язык устройства"],
+  tr: ["Hangi dili tercih edersiniz?", "Ülke dili", "Cihaz dili"]
+};
+/** Muda de idioma mantendo a página e lembra que o viajante já escolheu. */
+export function switchLang(v: string) {
+  const rest = location.pathname.split("/").slice(2).join("/");
+  document.cookie = `sgct_locale=${v}; path=/; max-age=31536000; samesite=lax`;
+  document.cookie = `sgct_lang_ok=1; path=/; max-age=31536000; samesite=lax`;
+  location.href = `/${v}${rest ? `/${rest}` : ""}${location.search}${location.hash}`;
+}
 
 /** Textos do seletor (curtos, para não carregar o dicionário inteiro no browser): idioma, moeda, pesquisar, sugeridas, todas. */
 const UI: Record<string, [string, string, string, string, string]> = {
@@ -31,8 +66,6 @@ const SYM: Record<string, string> = { EUR: "€", GBP: "£", USD: "$", JPY: "¥"
 
 /** Barra superior em vidro. `over` = transparente por cima de uma fotografia (página inicial e da cidade). */
 export function Header({ locale, currency, over = false }: { locale: string; currency?: string; over?: boolean }) {
-  const path = usePathname() ?? `/${locale}`;
-  const rest = path.split("/").slice(2).join("/");
   const [open, setOpen] = useState(false);
   const [l, c] = UI[locale] ?? UI.en;
   useEffect(() => {
@@ -40,7 +73,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     window.addEventListener("keydown", k); return () => window.removeEventListener("keydown", k);
   }, [open]);
-  const pickLang = (v: string) => { document.cookie = `sgct_locale=${v}; path=/; max-age=31536000; samesite=lax`; window.location.href = `/${v}${rest ? `/${rest}` : ""}`; };
+  const pickLang = (v: string) => switchLang(v);
   const pickCur = (v: string) => { document.cookie = `${CURRENCY_COOKIE}=${v}; path=/; max-age=${365 * 86400}; samesite=lax`; window.location.reload(); };
   return (
     <div className={`bar${over ? " over" : ""}`}>
@@ -114,7 +147,8 @@ function LocalePicker({ locale, currency, ui, onClose, onLang, onCur }: {
             {q && <button onClick={() => setQ("")} aria-label="✕"><X size={14} /></button>}
           </label>
           <div className="pk-body" role="listbox" aria-label={tab === "lang" ? lt : ct}>
-            {tab === "lang" ? (
+            {tab === "lang" ? (<>
+              {!f && <LangSources locale={locale} onPick={(v) => go("lang", v)} />}
               <div className="pk-grid">
                 {langs.map((x) => (
                   <button key={x.v} role="option" aria-selected={x.v === locale} lang={x.v} className={`pk-row press${x.v === locale ? " on" : ""}`} onClick={() => go("lang", x.v)} disabled={!!busy}>
@@ -124,7 +158,7 @@ function LocalePicker({ locale, currency, ui, onClose, onLang, onCur }: {
                   </button>
                 ))}
               </div>
-            ) : (
+            </>) : (
               <>
                 {!f && <><h4 className="pk-h">{sg}</h4><div className="pk-chips">{curs.filter((x) => SUGGESTED.includes(x.v)).map(curRow)}</div><h4 className="pk-h">{all}</h4></>}
                 <div className="pk-list">{curs.filter((x) => f || !SUGGESTED.includes(x.v)).map(curRow)}</div>
@@ -135,5 +169,30 @@ function LocalePicker({ locale, currency, ui, onClose, onLang, onCur }: {
         </div>
       </div>
     </Portal>
+  );
+}
+
+/** No seletor: atalhos para o idioma do país onde está e o do dispositivo. */
+function LangSources({ locale, onPick }: { locale: string; onPick: (v: string) => void }) {
+  const [src, setSrc] = useState<{ v: string; why: string }[]>([]);
+  useEffect(() => {
+    const [, cl, dl] = LANG_SRC[locale] ?? LANG_SRC.en;
+    const c = countryLang(), d = deviceLang();
+    const out: { v: string; why: string }[] = [];
+    if (c) out.push({ v: c, why: cl });
+    if (d) { const same = out.find((x) => x.v === d); if (same) same.why = `${cl} · ${dl}`; else out.push({ v: d, why: dl }); }
+    setSrc(out);
+  }, [locale]);
+  if (!src.length) return null;
+  return (
+    <div className="pk-src">
+      {src.map((x) => (
+        <button key={x.v} type="button" className={`pk-src-b press${x.v === locale ? " on" : ""}`} onClick={() => onPick(x.v)} lang={x.v}>
+          <span className="pk-flag sm" aria-hidden="true">{FLAG[x.v] ?? "🌐"}</span>
+          <span><b>{LANG_NAMES[x.v]}</b><small lang={locale}>{x.why}</small></span>
+          {x.v === locale && <Check size={15} strokeWidth={2.8} aria-hidden="true" />}
+        </button>
+      ))}
+    </div>
   );
 }
