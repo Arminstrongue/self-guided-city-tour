@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
+import { BrandMark } from "./BrandMark";
 
 /** [frase com *destaques*, entrar ou criar conta, continuar sem conta, fechar] */
 const TX: Record<string, [string, string, string, string]> = {
@@ -70,8 +71,8 @@ export function Welcome({ locale }: { locale: string }) {
       <button type="button" className="wc-x press" onClick={() => finish(true)} aria-label={close}><X size={22} aria-hidden="true" /></button>
       <div className="wc-in">
         <div className="wc-brand" aria-label="VOYBU">
-          <span className="wc-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="#fff"><path fillRule="evenodd" d="M12 2a7 7 0 0 0-7 7c0 4.9 5.6 11.6 6.3 12.4a.9.9 0 0 0 1.4 0C13.4 20.6 19 13.9 19 9a7 7 0 0 0-7-7zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z" /></svg></span>
-          <span className="wc-word">VOY<span>BU</span></span>
+          <BrandMark size={58} reverse className="wc-sym" />
+          <span className="wc-word">VOYBU</span>
         </div>
         <h1 id="wc-h" className="wc-h">{parts.map((p, i) => (i % 2 ? <em key={i} className={i === 1 ? "g1" : "g2"}>{p}</em> : <span key={i}>{p}</span>))}</h1>
         <a className="wc-btn press" href={`/${locale}/wallet?signin=1`} onClick={() => { rememberReturn(); try { sessionStorage.setItem(SEEN, "1"); } catch { /* ignorar */ } }}>{signIn}</a>

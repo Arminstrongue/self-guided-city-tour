@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v8";
+const VERSION = "sgct-v9";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { ErrorTracker } from "@/components/ErrorTracker";
 import { notFound } from "next/navigation";
 import "@fontsource-variable/inter";
+import "@fontsource-variable/manrope";
 import "../globals.css";
 import Link from "next/link";
 import { ServiceWorker } from "@/components/ServiceWorker";
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "VOYBU", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
-  icons: { icon: "/icon-192.png", apple: "/apple-touch-icon.png" }
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/apple-touch-icon.png" }
 };
 export const viewport: Viewport = {
   width: "device-width", initialScale: 1, viewportFit: "cover",

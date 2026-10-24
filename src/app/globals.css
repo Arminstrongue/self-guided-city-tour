@@ -297,11 +297,14 @@ h1,h2,h3{letter-spacing:-.025em;font-weight:700}
   -webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:.5px solid var(--glass-line)}
 .bar.over{position:absolute;inset:0 0 auto 0;margin:0;background:transparent;border:0;-webkit-backdrop-filter:none;backdrop-filter:none}
 .bar.over .brand{color:#fff}
-.bar.over .brand .word span{color:rgba(255,255,255,.72)}
 .brand{display:inline-flex;align-items:center;gap:9px;font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:-.02em}
 .brand .word{color:inherit}
-.brand .word span{color:var(--muted);font-weight:600}
-.brand .mark{width:28px;height:28px;border-radius:8px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#2997ff,#5e5ce6);color:#fff;font-size:15px;box-shadow:0 2px 8px rgba(41,151,255,.35)}
+.brand .mark{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;background:#102A43;box-shadow:0 2px 8px rgba(16,42,67,.3)}
+.brand .word{font-family:"Manrope Variable",Manrope,var(--display);font-weight:800;letter-spacing:.04em;color:#102A43}
+.bar.over .brand .word{color:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .brand .word{color:#fff}}
+:root[data-theme="dark"] .brand .word{color:#fff}
+.bar.over .brand .mark{box-shadow:0 2px 10px rgba(0,0,0,.35)}
 .pick{position:relative;display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 12px;border-radius:980px;background:var(--cobalt-soft);color:var(--ink);font-weight:600;font-size:14px}
 .bar.over .pick{background:rgba(255,255,255,.18);color:#fff;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
 .pick select{position:absolute;inset:0;opacity:0;width:100%;cursor:pointer;font-size:16px}
@@ -3038,9 +3041,7 @@ a.ios-row{text-decoration:none;color:inherit}
 [dir=rtl] .wc-x{right:auto;left:14px}
 .wc-in{width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:28px;margin-top:-8vh}
 .wc-brand{display:flex;align-items:center;gap:10px;direction:ltr}
-.wc-mark{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#2f7cff,#5b5bf0);box-shadow:0 8px 24px rgba(47,124,255,.45)}
-.wc-word{font-size:34px;font-weight:800;letter-spacing:-.02em}
-.wc-word span{color:#7fb2ff}
+.wc-word{font-family:"Manrope Variable",Manrope,sans-serif;font-size:38px;font-weight:800;letter-spacing:.04em}
 .wc-h{margin:0;font-size:clamp(24px,6.4vw,30px);line-height:1.25;font-weight:500;letter-spacing:-.01em}
 .wc-h em{font-style:normal;font-weight:600}
 .wc-h .g1{background:linear-gradient(90deg,#ff6a3d,#ff3d6e);-webkit-background-clip:text;background-clip:text;color:transparent}
