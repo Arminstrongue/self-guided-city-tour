@@ -47,6 +47,19 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
     return p;
   }
   useEffect(() => { if (adding === "places") void loadPlaces(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [adding]);
+  // Pesquisa: filtra as sugestões e, a partir de 3 letras, procura também no mapa da cidade.
+  const [q, setQ] = useState("");
+  const [hits, setHits] = useState<{ label: string; sub: string; lat: number; lng: number }[] | null>(null);
+  useEffect(() => {
+    setHits(null);
+    if (!plan.city || q.trim().length < 3) return;
+    const id = setTimeout(() => {
+      fetch(`/api/geocode?city=${plan.city}&lang=${locale}&q=${encodeURIComponent(q.trim())}`).then((r) => (r.ok ? r.json() : null))
+        .then((j: { hits?: { label: string; sub: string; lat: number; lng: number }[] } | null) => setHits(j?.hits ?? [])).catch(() => setHits([]));
+    }, 450);
+    return () => clearTimeout(id);
+  }, [q, plan.city, locale]);
+  const norm = (x: string) => x.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 
   async function auto() {
     setBusy(true);
@@ -91,7 +104,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
       <div className="ex-tabs" role="tablist">
         {Array.from({ length: plan.days }, (_, k) => k + 1).map((n) => (
           <button key={n} role="tab" aria-selected={day === n} className={day === n ? "on" : ""} onClick={() => setDay(n)}>
-            {fmt(t.plDay, { n })}{dayDate(n) ? <small style={{ display: "block", fontWeight: 500 }}>{dayDate(n)}</small> : null}
+            {fmt(t.plDay, { n })}{dayDate(n) ? <small style={{ display: "block", fontWeight: 500 }} suppressHydrationWarning>{dayDate(n)}</small> : null}
           </button>
         ))}
       </div>
@@ -134,9 +147,14 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
       {adding === "places" && (
         <div className="ex-modal" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) setAdding(null); }}>
           <div className="card stack ex-sheet" style={{ maxHeight: "85vh" }}>
-            <div className="row-between"><b>{t.plAddPlaces} · {fmt(t.plDay, { n: day })}</b><button className="link-btn" onClick={() => setAdding(null)}>✕</button></div>
+            <div className="row-between"><b>{t.plAddPlaces} · {fmt(t.plDay, { n: day })}</b><button className="link-btn" onClick={() => { setAdding(null); setQ(""); }}>✕</button></div>
+            <label className="pl-search"><span aria-hidden="true">🔍</span>
+              <input type="text" inputMode="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.plSearch} aria-label={t.plSearch} autoComplete="off" enterKeyHint="search" />
+              {q && <button type="button" className="link-btn" onClick={() => setQ("")} aria-label={t.close}>✕</button>}
+            </label>
             {[...moments.map((m) => ({ key: `m:${m.id}`, title: m.title, icon: m.icon, lat: m.lat, lng: m.lng, sub: m.text, kind: "moment" as const })),
-              ...(places ?? []).slice(0, 80).map((p) => ({ key: p.id, title: p.name, icon: CAT_ICON[p.cat], lat: p.lat, lng: p.lng, sub: p.rating ? `★ ${p.rating.toFixed(1)} · ${t.cat[p.cat]}` : t.cat[p.cat], kind: "place" as const }))]
+              ...(places ?? []).slice(0, q ? 400 : 80).map((p) => ({ key: p.id, title: p.name, icon: CAT_ICON[p.cat], lat: p.lat, lng: p.lng, sub: p.rating ? `★ ${p.rating.toFixed(1)} · ${t.cat[p.cat]}` : t.cat[p.cat], kind: "place" as const }))]
+              .filter((c) => !q.trim() || norm(`${c.title} ${c.sub}`).includes(norm(q.trim())))
               .map((c) => (
                 <div key={c.key} className="ex-row">
                   <span className="ex-ic sm" aria-hidden="true">{c.icon}</span>
@@ -145,6 +163,16 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
                 </div>
               ))}
             {places === null && <p className="hint">{t.exLoading}</p>}
+            {q.trim().length >= 3 && <>
+              <span className="label">📍 {t.plOnMap}</span>
+              {hits === null ? <p className="hint">{t.exLoading}</p> : hits.length === 0 ? <p className="hint">{t.plNoMatch}</p> : hits.map((h, i) => (
+                <div key={`g${i}`} className="ex-row">
+                  <span className="ex-ic sm" aria-hidden="true">📍</span>
+                  <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}><b className="ad-ellip">{h.label}</b><span className="hint ad-ellip">{h.sub}</span></div>
+                  <button className="mini" disabled={inPlan.has(h.label)} onClick={() => add({ title: h.label.slice(0, 80), icon: "📍", lat: h.lat, lng: h.lng, kind: "place" })}>{inPlan.has(h.label) ? "✓" : "+"}</button>
+                </div>
+              ))}
+            </>}
           </div>
         </div>
       )}

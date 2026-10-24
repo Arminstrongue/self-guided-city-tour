@@ -2397,5 +2397,8 @@
 "del": "Sil"
 },
 "nnNoPartners": "Yakınınızda henüz ortak restoran veya kafe yok. Yalnızca VOYBU'ya kayıtlı işletmeleri gösteriyoruz.",
-"nnPartner": "VOYBU ortağı"
+"nnPartner": "VOYBU ortağı",
+"plSearch": "Bir yer ara…",
+"plOnMap": "Haritada bulunanlar",
+"plNoMatch": "Bir şey bulunamadı — başka bir ad deneyin."
 }

@@ -1933,5 +1933,8 @@
 "del": "Supprimer"
 },
 "nnNoPartners": "Pas encore de restaurants ou cafés partenaires près de vous. Nous ne montrons que les commerces inscrits sur VOYBU.",
-"nnPartner": "Partenaire VOYBU"
+"nnPartner": "Partenaire VOYBU",
+"plSearch": "Rechercher un lieu…",
+"plOnMap": "Trouvés sur la carte",
+"plNoMatch": "Rien trouvé — essayez un autre nom."
 }

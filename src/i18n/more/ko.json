@@ -2397,5 +2397,8 @@
 "del": "삭제"
 },
 "nnNoPartners": "아직 근처에 제휴 식당이나 카페가 없어요. VOYBU에 등록된 업체만 보여 드려요.",
-"nnPartner": "VOYBU 파트너"
+"nnPartner": "VOYBU 파트너",
+"plSearch": "장소 검색…",
+"plOnMap": "지도에서 찾은 장소",
+"plNoMatch": "찾지 못했어요. 다른 이름으로 검색해 보세요."
 }

@@ -1909,5 +1909,8 @@
 "del": "削除"
 },
 "nnNoPartners": "近くに提携レストラン・カフェはまだありません。VOYBU に登録された店舗だけを表示します。",
-"nnPartner": "VOYBU パートナー"
+"nnPartner": "VOYBU パートナー",
+"plSearch": "場所を検索…",
+"plOnMap": "地図で見つかった場所",
+"plNoMatch": "見つかりません。別の名前でお試しください。"
 }

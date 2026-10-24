@@ -1909,5 +1909,8 @@
 "del": "删除"
 },
 "nnNoPartners": "附近还没有合作餐厅或咖啡馆。我们只显示在 VOYBU 注册的商家。",
-"nnPartner": "VOYBU 合作伙伴"
+"nnPartner": "VOYBU 合作伙伴",
+"plSearch": "搜索地点…",
+"plOnMap": "地图上找到的地点",
+"plNoMatch": "没有找到——换个名称试试。"
 }

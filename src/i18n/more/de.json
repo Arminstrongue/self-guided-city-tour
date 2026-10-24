@@ -1937,5 +1937,8 @@
 "del": "Löschen"
 },
 "nnNoPartners": "Noch keine Partner-Restaurants oder -Cafés in Ihrer Nähe. Wir zeigen nur bei VOYBU registrierte Geschäfte.",
-"nnPartner": "VOYBU-Partner"
+"nnPartner": "VOYBU-Partner",
+"plSearch": "Ort suchen…",
+"plOnMap": "Auf der Karte gefunden",
+"plNoMatch": "Nichts gefunden – versuchen Sie einen anderen Namen."
 }

@@ -1964,5 +1964,8 @@
 "del": "Eliminar"
 },
 "nnNoPartners": "Aún no hay restaurantes ni cafés asociados cerca. Solo mostramos negocios registrados en VOYBU.",
-"nnPartner": "Socio de VOYBU"
+"nnPartner": "Socio de VOYBU",
+"plSearch": "Buscar un lugar…",
+"plOnMap": "Encontrados en el mapa",
+"plNoMatch": "No se encontró nada: prueba otro nombre."
 }

@@ -2995,3 +2995,5 @@ a.ios-row{text-decoration:none;color:inherit}
 .pt2-seg button{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:440px){.pt2-seg button svg{display:none}}
 .nn-partner{font-weight:600;opacity:.6}
+.pl-search{position:sticky;top:-1px;z-index:2;display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ink) 7%,var(--surface,#fff))}
+.pl-search input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;color:inherit;outline:none}

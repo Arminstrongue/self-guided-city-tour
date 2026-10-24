@@ -1964,5 +1964,8 @@
 "del": "Elimina"
 },
 "nnNoPartners": "Ancora nessun ristorante o caffè partner vicino a te. Mostriamo solo attività registrate su VOYBU.",
-"nnPartner": "Partner VOYBU"
+"nnPartner": "Partner VOYBU",
+"plSearch": "Cerca un luogo…",
+"plOnMap": "Trovati sulla mappa",
+"plNoMatch": "Nessun risultato — prova un altro nome."
 }
