@@ -1962,5 +1962,7 @@
 "denied": "Nessun accesso alla posizione: attivalo nelle impostazioni del browser.",
 "places": "luoghi",
 "del": "Elimina"
-}
+},
+"nnNoPartners": "Ancora nessun ristorante o caffè partner vicino a te. Mostriamo solo attività registrate su VOYBU.",
+"nnPartner": "Partner VOYBU"
 }

@@ -2395,5 +2395,7 @@
 "denied": "Konum erişimi yok — tarayıcı ayarlarından açın.",
 "places": "yer",
 "del": "Sil"
-}
+},
+"nnNoPartners": "Yakınınızda henüz ortak restoran veya kafe yok. Yalnızca VOYBU'ya kayıtlı işletmeleri gösteriyoruz.",
+"nnPartner": "VOYBU ortağı"
 }

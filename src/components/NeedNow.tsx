@@ -17,7 +17,9 @@ const NEAR: { k: keyof Dict["nn"]["items"]; q: string; I: typeof Toilet }[] = [
   { k: "charge", q: "phone charging station", I: BatteryCharging }, { k: "atm", q: "atm", I: Landmark }, { k: "hospital", q: "urgent care hospital", I: Cross }
 ];
 
-type NearItem = { id: number; lat: number; lng: number; m: number; name: string; hours: string; fee: string; price: string; wheelchair: string; changing: boolean; indoor: boolean };
+type NearItem = { id: number | string; lat: number; lng: number; m: number; name: string; hours: string; fee?: string; price?: string; wheelchair?: string; changing?: boolean; indoor?: boolean; offer?: string; partner?: boolean };
+/** Categorias comerciais: só negócios registados na VOYBU (sem pesquisas abertas no mapa). */
+const PARTNER: Partial<Record<keyof Dict["nn"]["items"], string>> = { food: "food" };
 const API: Partial<Record<keyof Dict["nn"]["items"], string>> = { luggage: "luggage", toilet: "toilets", water: "water", pharmacy: "pharmacy", atm: "atm", wifi: "wifi", charge: "charge" };
 
 export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
@@ -25,11 +27,12 @@ export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
   const [items, setItems] = useState<NearItem[] | null>(null);
   const [err, setErr] = useState("");
   function pick(k: keyof Dict["nn"]["items"], q: string) {
-    if (!API[k]) { window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, "_blank", "noopener"); return; }
+    if (!API[k] && !PARTNER[k]) { window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, "_blank", "noopener"); return; }
     setKind(k); setItems(null); setErr("");
     navigator.geolocation?.getCurrentPosition((p) => {
-      fetch(`/api/nearby?kind=${API[k]}&lat=${p.coords.latitude}&lng=${p.coords.longitude}`).then((r) => (r.ok ? r.json() : null))
-        .then((j: { items?: NearItem[] } | null) => setItems(j?.items ?? [])).catch(() => setItems([]));
+      const url = PARTNER[k] ? `/api/partners/near?kind=${PARTNER[k]}&lat=${p.coords.latitude}&lng=${p.coords.longitude}` : `/api/nearby?kind=${API[k]}&lat=${p.coords.latitude}&lng=${p.coords.longitude}`;
+      fetch(url).then((r) => (r.ok ? r.json() : null))
+        .then((j: { items?: NearItem[] } | null) => setItems((j?.items ?? []).map((x) => ({ ...x, partner: Boolean(PARTNER[k]) })))).catch(() => setItems([]));
     }, () => { setErr(t.bpDenied); setItems([]); }, { enableHighAccuracy: true, timeout: 12000 });
   }
   const q = NEAR.find((n) => n.k === kind)?.q ?? "";
@@ -39,16 +42,18 @@ export function NearSheet({ t, onClose }: { t: Dict; onClose: () => void }) {
         <span className="as-grab" aria-hidden="true" />
         <div className="nn-sh-h"><button type="button" className="mu2-x nn-x" onClick={() => setKind(null)} aria-label={t.arv.back}><ChevronRight size={18} style={{ transform: "rotate(180deg)" }} aria-hidden="true" /></button><b>{t.nn.items[kind]}</b><button type="button" className="mu2-x nn-x" onClick={onClose} aria-label={t.close}><X size={18} aria-hidden="true" /></button></div>
         <div className="as-group nn-res">
-          {items === null ? <p className="nn-load">…</p> : items.length === 0 ? <p className="nn-load">{err || t.bpNone}</p> : items.map((x) => (
+          {items === null ? <p className="nn-load">…</p> : items.length === 0 ? <p className="nn-load">{err || (PARTNER[kind] ? t.nnNoPartners : t.bpNone)}</p> : items.map((x) => (
             <a key={x.id} className="as-row" href={`https://www.google.com/maps/dir/?api=1&destination=${x.lat},${x.lng}&travelmode=walking`} target="_blank" rel="noopener noreferrer">
-              <span className="as-tx"><span>{x.name || t.nn.items[kind]}</span>
+              <span className="as-tx"><span>{x.name || t.nn.items[kind]}{x.partner ? <small className="nn-partner"> · {t.nnPartner}</small> : null}</span>
+                {x.offer && <small>{x.offer}</small>}
                 <small>{x.m < 1000 ? `${x.m} m` : `${(x.m / 1000).toFixed(1)} km`} · ≈ {Math.max(1, Math.round(x.m / 80))} min{x.hours ? ` · ${x.hours}` : ""}{x.fee === "yes" ? ` · 💷${x.price ? ` ${x.price}` : ""}` : x.fee === "no" ? " · ✓ free" : ""}{x.wheelchair === "yes" ? " · ♿" : ""}{x.changing ? " · 🚼" : ""}</small></span>
               <ChevronRight size={18} className="as-chev" aria-hidden="true" />
             </a>
           ))}
         </div>
-        <a className="nn-more" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`} target="_blank" rel="noopener noreferrer">{t.arv.openMaps} ↗</a>
-        <p className="nn-note">{t.nn.nearNote} · © OpenStreetMap</p>
+        {/* Pesquisa aberta no mapa só para serviços públicos; comércio fica limitado aos parceiros registados. */}
+        {!PARTNER[kind] && kind !== "luggage" && <a className="nn-more" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`} target="_blank" rel="noopener noreferrer">{t.arv.openMaps} ↗</a>}
+        {!PARTNER[kind] && <p className="nn-note">{t.nn.nearNote} · © OpenStreetMap</p>}
       </div>
     </div></Portal>
   );

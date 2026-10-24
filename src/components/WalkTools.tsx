@@ -89,7 +89,6 @@ export function WalkTools({ t, locale, cityId, places, slack }: { t: Dict; local
             {sheet === "bag" && <>
               <div className="as-sec"><div className="as-group as-msg wt-msg"><b>🧳 {d.bagOn}</b><small>{d.bagHint}</small></div></div>
               <NearList t={t} kind="luggage" label={d.bagStore} />
-              <a className="nn-more" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("luggage storage")}${c ? `&center=${c.lat},${c.lng}` : ""}`} target="_blank" rel="noopener noreferrer">{t.arv.openMaps} ↗</a>
               <button type="button" className="as-cancel" onClick={() => { setBagOn(false); setSheet(null); }}>{d.off}</button>
             </>}
             {sheet === "meet" && <div className="as-sec"><MeetMaker t={t} locale={locale} places={places} onDone={() => setSheet(null)} /></div>}

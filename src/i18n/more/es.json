@@ -1962,5 +1962,7 @@
 "denied": "Sin acceso a la ubicación: actívalo en los ajustes del navegador.",
 "places": "lugares",
 "del": "Eliminar"
-}
+},
+"nnNoPartners": "Aún no hay restaurantes ni cafés asociados cerca. Solo mostramos negocios registrados en VOYBU.",
+"nnPartner": "Socio de VOYBU"
 }

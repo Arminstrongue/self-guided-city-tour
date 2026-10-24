@@ -1935,5 +1935,7 @@
 "denied": "Kein Standortzugriff – in den Browsereinstellungen aktivieren.",
 "places": "Orte",
 "del": "Löschen"
-}
+},
+"nnNoPartners": "Noch keine Partner-Restaurants oder -Cafés in Ihrer Nähe. Wir zeigen nur bei VOYBU registrierte Geschäfte.",
+"nnPartner": "VOYBU-Partner"
 }

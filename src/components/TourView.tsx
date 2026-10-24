@@ -496,7 +496,6 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                             <button type="button" className="sec" onClick={() => showOnMap({ lat: s.lat, lng: s.lng, name: s.n, walk: s.leg.m === "walk" })}>{t.directions}</button>
                             <Speak text={`${s.n}. ${bios[s.id]?.text ?? desc(s)}`} lang={bios[s.id]?.lang ?? (locale === "pt" ? "pt" : "en")}
                               fallback={`${s.n}. ${enBios[s.id] ?? s.en}`} t={t} />
-                            <ExtLink href={`https://www.google.com/maps/search/${encodeURIComponent(t.eatNear)}/@${s.lat},${s.lng},17z`}>🍽 {t.eatNear}</ExtLink>
                             <button onClick={() => toggleDone(s.id)}>{done[s.id] ? t.visited : t.arrived}</button>
                           </div>
                           <StopReport t={t} city={city.id} stop={s.id} name={s.n} />

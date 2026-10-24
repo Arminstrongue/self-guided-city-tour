@@ -1931,5 +1931,7 @@
 "denied": "Pas d'accès à la position — activez-le dans les réglages du navigateur.",
 "places": "lieux",
 "del": "Supprimer"
-}
+},
+"nnNoPartners": "Pas encore de restaurants ou cafés partenaires près de vous. Nous ne montrons que les commerces inscrits sur VOYBU.",
+"nnPartner": "Partenaire VOYBU"
 }
