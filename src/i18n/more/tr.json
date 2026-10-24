@@ -1325,7 +1325,9 @@
 "posts": "Paylaşım yaptığın her gün: {p} puan",
 "comments": "Bir yere yorum yaptığın her gün: {p} puan",
 "friends": "Davetinle katılan her arkadaş: {p} puan",
-"paid": "Geçiş satın alan her davetli arkadaş: {p} puan"
+"paid": "Geçiş satın alan her davetli arkadaş: {p} puan",
+"journeys": "Onaylanan her rota: {p} puan",
+"km": "Kaydedilen her yürüyüş km'si: {p} puan"
 },
 "ptRewards": "Ödüller",
 "ptRewardAt": "{p} puan → {c} kredi",
@@ -2368,5 +2370,30 @@
 "cashL": "Bazı tezgâhlar yalnızca nakit alır; kart da getirin.",
 "weather": "Açık hava",
 "weatherL": "Açık havada: hava durumuna bakın, ceket veya şemsiye alın."
+},
+"at": {
+"title": "Otomatik günlük",
+"sub": "Uygulama açıkken şehirleri, yerleri, km'yi ve adımları algılar. Her zaman onay ister.",
+"bgNote": "Ekran kilitliyken veya uygulama kapalıyken tarayıcı konum kaydına izin vermez.",
+"privacy": "Rotanız onaylayana kadar yalnızca telefonunuzda kalır.",
+"today": "Bugün: {km} km · ≈ {s} adım · {n} yer",
+"end": "Bugünkü rotayı bitir ve kaydet",
+"cityQ": "{c} şehrindesiniz. Ziyaret ettiğiniz şehirlere eklensin mi?",
+"visitQ": "{p} yerini ziyaret ettiniz mi?",
+"placeQ": "{p} yerinde durdunuz. Rotaya kaydedilsin mi?",
+"journeyQ": "{d} rotası onaylansın mı?",
+"journeySub": "{km} km · ≈ {s} adım · {n} yer",
+"confirm": "Onayla",
+"ignore": "Yoksay",
+"saved": "Kaydedildi",
+"signIn": "Kaydetmek için giriş yapın.",
+"tab": "Rotalar",
+"none": "Henüz rota yok. Başlamak için otomatik günlüğü açın.",
+"map": "Haritada gör",
+"steps": "adım",
+"km": "km",
+"denied": "Konum erişimi yok — tarayıcı ayarlarından açın.",
+"places": "yer",
+"del": "Sil"
 }
 }

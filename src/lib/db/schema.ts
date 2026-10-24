@@ -569,6 +569,21 @@ export const checkins = pgTable("checkins", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [uniqueIndex("checkins_uniq_idx").on(t.email, t.city, t.stop), index("checkins_city_idx").on(t.city, t.stop)]);
 
+/* ---------- Percursos registados automaticamente (confirmados pelo viajante) ---------- */
+export type JourneyPlace = { name: string; lat: number; lng: number; stop?: string };
+export const journeys = pgTable("journeys", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull(),
+  day: text("day").notNull(),
+  city: text("city"),
+  cityName: text("city_name").notNull().default(""),
+  km: doublePrecision("km").notNull().default(0),
+  steps: integer("steps").notNull().default(0),
+  places: jsonb("places").$type<JourneyPlace[]>().notNull().default([]),
+  path: jsonb("path").$type<[number, number][]>().notNull().default([]),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("journeys_email_idx").on(t.email, t.day)]);
+
 /* ---------- Comentários sobre cidades e lugares ---------- */
 export const placeComments = pgTable("place_comments", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -877,7 +877,9 @@
 "posts": "Ogni giorno in cui pubblichi: {p} pt",
 "comments": "Ogni giorno in cui commenti un luogo: {p} pt",
 "friends": "Ogni amico che entra con il tuo invito: {p} pt",
-"paid": "Ogni amico invitato che compra un pass: {p} pt"
+"paid": "Ogni amico invitato che compra un pass: {p} pt",
+"journeys": "Ogni percorso confermato: {p} pt",
+"km": "Ogni km a piedi registrato: {p} pt"
 },
 "ptRewards": "Premi",
 "ptRewardAt": "{p} punti → {c} di credito",
@@ -1935,5 +1937,30 @@
 "cashL": "Alcune bancarelle accettano solo contanti; porta anche la carta.",
 "weather": "All'aperto",
 "weatherL": "È all'aperto: controlla il meteo e porta giacca o ombrello."
+},
+"at": {
+"title": "Diario automatico",
+"sub": "Rileva città, luoghi, km e passi mentre l'app è aperta. Chiede sempre conferma.",
+"bgNote": "Con lo schermo bloccato o l'app chiusa, il browser non consente di registrare la posizione.",
+"privacy": "Il percorso resta sul tuo telefono finché non lo confermi.",
+"today": "Oggi: {km} km · ≈ {s} passi · {n} luoghi",
+"end": "Termina e salva il percorso di oggi",
+"cityQ": "Sei a {c}. Aggiungerla alle città visitate?",
+"visitQ": "Hai visitato {p}?",
+"placeQ": "Ti sei fermato a {p}. Salvarlo nel percorso?",
+"journeyQ": "Confermare il percorso del {d}?",
+"journeySub": "{km} km · ≈ {s} passi · {n} luoghi",
+"confirm": "Conferma",
+"ignore": "Ignora",
+"saved": "Salvato",
+"signIn": "Accedi per salvarlo.",
+"tab": "Percorsi",
+"none": "Ancora nessun percorso. Attiva il diario automatico per iniziare.",
+"map": "Vedi sulla mappa",
+"steps": "passi",
+"km": "km",
+"denied": "Nessun accesso alla posizione: attivalo nelle impostazioni del browser.",
+"places": "luoghi",
+"del": "Elimina"
 }
 }

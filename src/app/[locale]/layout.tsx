@@ -8,6 +8,7 @@ import { ServiceWorker } from "@/components/ServiceWorker";
 import { NativeChrome } from "@/components/NativeChrome";
 import { Toaster } from "@/components/Toaster";
 import { OfflineBar } from "@/components/OfflineBar";
+import { AutoTrackGate } from "@/components/AutoTrackGate";
 import { SkipLink } from "@/components/SkipLink";
 import { SheetManager } from "@/components/SheetManager";
 import { isLocale, RTL } from "@/i18n/core";
@@ -54,6 +55,7 @@ export default function LocaleLayout({ children, params }: { children: React.Rea
         <SheetManager />
         {children}
         <Toaster />
+        <AutoTrackGate locale={params.locale} />
         <OfflineBar text={t.ess.offline} link={t.ess.essentials} href={`/${params.locale}/wallet/essentials`} />
         <ErrorTracker />
         <footer className="foot">

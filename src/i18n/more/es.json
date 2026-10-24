@@ -877,7 +877,9 @@
 "posts": "Cada día que publicas: {p} pts",
 "comments": "Cada día que comentas un lugar: {p} pts",
 "friends": "Cada amigo que se une con tu invitación: {p} pts",
-"paid": "Cada amigo invitado que compra un pase: {p} pts"
+"paid": "Cada amigo invitado que compra un pase: {p} pts",
+"journeys": "Cada ruta confirmada: {p} pts",
+"km": "Cada km a pie registrado: {p} pts"
 },
 "ptRewards": "Premios",
 "ptRewardAt": "{p} puntos → {c} de crédito",
@@ -1935,5 +1937,30 @@
 "cashL": "Algunos puestos solo aceptan efectivo; lleva también tarjeta.",
 "weather": "Al aire libre",
 "weatherL": "Es al aire libre: mira el pronóstico y lleva chaqueta o paraguas."
+},
+"at": {
+"title": "Registro automático",
+"sub": "Detecta ciudades, lugares, km y pasos mientras la app está abierta. Siempre pide confirmación.",
+"bgNote": "Con la pantalla bloqueada o la app cerrada, el navegador no permite registrar la ubicación.",
+"privacy": "La ruta queda solo en tu móvil hasta que la confirmes.",
+"today": "Hoy: {km} km · ≈ {s} pasos · {n} lugares",
+"end": "Terminar y guardar la ruta de hoy",
+"cityQ": "Estás en {c}. ¿Añadirla a tus ciudades visitadas?",
+"visitQ": "¿Visitaste {p}?",
+"placeQ": "Estuviste en {p}. ¿Guardarlo en la ruta?",
+"journeyQ": "¿Confirmar la ruta del {d}?",
+"journeySub": "{km} km · ≈ {s} pasos · {n} lugares",
+"confirm": "Confirmar",
+"ignore": "Ignorar",
+"saved": "Guardado",
+"signIn": "Inicia sesión para guardarlo.",
+"tab": "Rutas",
+"none": "Aún no hay rutas. Activa el registro automático para empezar.",
+"map": "Ver en el mapa",
+"steps": "pasos",
+"km": "km",
+"denied": "Sin acceso a la ubicación: actívalo en los ajustes del navegador.",
+"places": "lugares",
+"del": "Eliminar"
 }
 }

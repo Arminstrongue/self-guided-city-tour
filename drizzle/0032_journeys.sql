@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS "journeys" ("id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL, "email" text NOT NULL, "day" text NOT NULL, "city" text, "city_name" text DEFAULT '' NOT NULL, "km" double precision DEFAULT 0 NOT NULL, "steps" integer DEFAULT 0 NOT NULL, "places" jsonb DEFAULT '[]'::jsonb NOT NULL, "path" jsonb DEFAULT '[]'::jsonb NOT NULL, "created_at" timestamp with time zone DEFAULT now() NOT NULL);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "journeys_email_idx" ON "journeys" ("email","day");

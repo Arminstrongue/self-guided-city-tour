@@ -843,7 +843,9 @@
 "posts": "Chaque jour où vous publiez : {p} pts",
 "comments": "Chaque jour où vous commentez un lieu : {p} pts",
 "friends": "Chaque ami inscrit avec votre invitation : {p} pts",
-"paid": "Chaque ami invité qui achète un pass : {p} pts"
+"paid": "Chaque ami invité qui achète un pass : {p} pts",
+"journeys": "Chaque parcours confirmé : {p} pts",
+"km": "Chaque km à pied enregistré : {p} pts"
 },
 "ptRewards": "Récompenses",
 "ptRewardAt": "{p} points → {c} de crédit",
@@ -1904,5 +1906,30 @@
 "cashL": "Certains stands n'acceptent que les espèces ; prenez aussi une carte.",
 "weather": "En plein air",
 "weatherL": "En plein air : regardez la météo et prenez une veste ou un parapluie."
+},
+"at": {
+"title": "Journal automatique",
+"sub": "Détecte villes, lieux, km et pas tant que l'app est ouverte. Demande toujours confirmation.",
+"bgNote": "Écran verrouillé ou app fermée : le navigateur ne permet pas d'enregistrer la position.",
+"privacy": "Votre parcours reste sur votre téléphone jusqu'à confirmation.",
+"today": "Aujourd'hui : {km} km · ≈ {s} pas · {n} lieux",
+"end": "Terminer et enregistrer le parcours du jour",
+"cityQ": "Vous êtes à {c}. L'ajouter à vos villes visitées ?",
+"visitQ": "Avez-vous visité {p} ?",
+"placeQ": "Vous vous êtes arrêté à {p}. L'ajouter au parcours ?",
+"journeyQ": "Confirmer le parcours du {d} ?",
+"journeySub": "{km} km · ≈ {s} pas · {n} lieux",
+"confirm": "Confirmer",
+"ignore": "Ignorer",
+"saved": "Enregistré",
+"signIn": "Connectez-vous pour l'enregistrer.",
+"tab": "Parcours",
+"none": "Pas encore de parcours. Activez le journal automatique pour commencer.",
+"map": "Voir sur la carte",
+"steps": "pas",
+"km": "km",
+"denied": "Pas d'accès à la position — activez-le dans les réglages du navigateur.",
+"places": "lieux",
+"del": "Supprimer"
 }
 }

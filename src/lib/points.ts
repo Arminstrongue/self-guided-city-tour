@@ -11,7 +11,7 @@ import { COUNTRY, cityName } from "@/data/cities";
 import { LOCALES } from "@/i18n/core";
 import { loadCities } from "./content";
 
-export const PTS = { city: 100, declaredCity: 25, country: 50, stop: 10, gps: 10, postDay: 5, commentDay: 3, friendJoined: 20, friendPaid: 50 } as const;
+export const PTS = { city: 100, declaredCity: 25, country: 50, stop: 10, gps: 10, postDay: 5, commentDay: 3, friendJoined: 20, friendPaid: 50, journey: 15, km: 2 } as const;
 export const DECLARED_CAP = 20;
 export const LEVEL_AT = [0, 200, 600, 1500, 3000, 6000, 12000] as const;
 /** Prémios por marcos de pontos (crédito descontado automaticamente no passe seguinte). */
@@ -24,8 +24,8 @@ export const BADGES: { id: BadgeId; icon: string }[] = [
   { id: "gps-10", icon: "📡" }, { id: "storyteller", icon: "📸" }, { id: "commenter", icon: "💬" }, { id: "connector", icon: "🤝" }, { id: "ambassador", icon: "🎁" }
 ];
 
-type Raw = { cities: Set<string>; declared: Map<string, string>; stops: number; gps: number; postDays: number; commentDays: number; joined: number; paid: number };
-const blank = (): Raw => ({ cities: new Set(), declared: new Map(), stops: 0, gps: 0, postDays: 0, commentDays: 0, joined: 0, paid: 0 });
+type Raw = { cities: Set<string>; declared: Map<string, string>; stops: number; gps: number; postDays: number; commentDays: number; joined: number; paid: number; journeys: number; km: number; steps: number };
+const blank = (): Raw => ({ cities: new Set(), declared: new Map(), stops: 0, gps: 0, postDays: 0, commentDays: 0, joined: 0, paid: 0, journeys: 0, km: 0, steps: 0 });
 
 /** Junta tudo o que conta, para um conjunto de pessoas (ou todas). `since` = só o que aconteceu desde essa data (ranking do mês). */
 async function gather(emails: string[] | null, since?: Date): Promise<Map<string, Raw>> {
@@ -35,15 +35,17 @@ async function gather(emails: string[] | null, since?: Date): Promise<Map<string
   const who = (col: PgColumn) => (emails ? inArray(col, emails.length ? emails : ["~"]) : undefined);
   const after = (col: PgColumn) => (since ? gte(col, since) : undefined);
 
-  const [chk, mem, acc, posts, coms, inv, paid] = await Promise.all([
+  const [chk, mem, acc, posts, coms, inv, paid, jr] = await Promise.all([
     d.select({ e: schema.checkins.email, city: schema.checkins.city, stop: schema.checkins.stop, v: schema.checkins.verified }).from(schema.checkins).where(and(who(schema.checkins.email), after(schema.checkins.createdAt))),
     d.selectDistinct({ e: schema.travellerMemories.email, city: schema.travellerMemories.city }).from(schema.travellerMemories).where(and(who(schema.travellerMemories.email), after(schema.travellerMemories.takenAt))),
     d.selectDistinct({ e: schema.accesses.email, city: schema.accesses.city }).from(schema.accesses).where(and(who(schema.accesses.email), isNotNull(schema.accesses.city), after(schema.accesses.createdAt))),
     d.select({ e: schema.posts.author, n: sql<number>`count(distinct date(${schema.posts.createdAt}))::int` }).from(schema.posts).where(and(who(schema.posts.author), eq(schema.posts.kind, "post"), after(schema.posts.createdAt))).groupBy(schema.posts.author),
     d.select({ e: schema.placeComments.author, n: sql<number>`count(distinct date(${schema.placeComments.createdAt}))::int` }).from(schema.placeComments).where(and(who(schema.placeComments.author), eq(schema.placeComments.hidden, false), after(schema.placeComments.createdAt))).groupBy(schema.placeComments.author),
     d.select({ e: schema.invites.inviter, n: sql<number>`count(*)::int` }).from(schema.invites).where(and(who(schema.invites.inviter), isNotNull(schema.invites.joinedAt), since ? gte(schema.invites.joinedAt, since) : undefined)).groupBy(schema.invites.inviter),
-    d.select({ e: schema.referralCredits.email, n: sql<number>`count(*)::int` }).from(schema.referralCredits).where(and(who(schema.referralCredits.email), eq(schema.referralCredits.kind, "earned"), after(schema.referralCredits.createdAt))).groupBy(schema.referralCredits.email)
+    d.select({ e: schema.referralCredits.email, n: sql<number>`count(*)::int` }).from(schema.referralCredits).where(and(who(schema.referralCredits.email), eq(schema.referralCredits.kind, "earned"), after(schema.referralCredits.createdAt))).groupBy(schema.referralCredits.email),
+    d.select({ e: schema.journeys.email, city: schema.journeys.city, km: schema.journeys.km, steps: schema.journeys.steps }).from(schema.journeys).where(and(who(schema.journeys.email), after(schema.journeys.createdAt)))
   ]);
+  for (const j of jr) { const r = get(j.e); r.journeys++; r.km += j.km; r.steps += j.steps; if (j.city) r.cities.add(j.city); }
   for (const c of chk) { const r = get(c.e); r.cities.add(c.city); if (c.stop) { r.stops++; if (c.v) r.gps++; } }
   for (const x of mem) get(x.e).cities.add(x.city);
   for (const x of acc) if (x.city) get(x.e).cities.add(x.city);
@@ -69,7 +71,8 @@ async function cityNames() {
 export type Score = {
   points: number; rewardPoints: number; level: number; nextAt: number | null; levelAt: number;
   cities: number; countries: number; stops: number; gps: number; badges: BadgeId[]; progress: Record<BadgeId, [number, number]>;
-  breakdown: { k: "cities" | "declared" | "countries" | "stops" | "gps" | "posts" | "comments" | "friends" | "paid"; n: number; pts: number }[];
+  breakdown: { k: "cities" | "declared" | "countries" | "stops" | "gps" | "posts" | "comments" | "friends" | "paid" | "journeys" | "km"; n: number; pts: number }[];
+  km: number; steps: number;
 };
 
 export async function scoreOf(r: Raw, totalCities: number): Promise<Score> {
@@ -88,7 +91,9 @@ export async function scoreOf(r: Raw, totalCities: number): Promise<Score> {
     { k: "posts", n: r.postDays, pts: r.postDays * PTS.postDay },
     { k: "comments", n: r.commentDays, pts: r.commentDays * PTS.commentDay },
     { k: "friends", n: r.joined, pts: r.joined * PTS.friendJoined },
-    { k: "paid", n: r.paid, pts: r.paid * PTS.friendPaid }
+    { k: "paid", n: r.paid, pts: r.paid * PTS.friendPaid },
+    { k: "journeys", n: r.journeys, pts: r.journeys * PTS.journey },
+    { k: "km", n: Math.floor(r.km), pts: Math.floor(r.km) * PTS.km }
   ];
   const points = breakdown.reduce((a, b) => a + b.pts, 0);
   const rewardPoints = points - breakdown[1].pts;
@@ -114,7 +119,7 @@ export async function scoreOf(r: Raw, totalCities: number): Promise<Score> {
     "countries-3": [countries.size, 3], "countries-10": [countries.size, 10], "stops-10": [r.stops, 10], "stops-50": [r.stops, 50],
     "gps-10": [r.gps, 10], storyteller: [r.postDays, 10], commenter: [r.commentDays, 10], connector: [r.joined, 3], ambassador: [r.paid, 1]
   };
-  return { points, rewardPoints, level, levelAt: LEVEL_AT[level], nextAt: LEVEL_AT[level + 1] ?? null, cities: allCities, countries: countries.size, stops: r.stops, gps: r.gps, badges: b, breakdown, progress };
+  return { points, rewardPoints, level, levelAt: LEVEL_AT[level], nextAt: LEVEL_AT[level + 1] ?? null, cities: allCities, countries: countries.size, stops: r.stops, gps: r.gps, badges: b, breakdown, progress, km: Math.round(r.km * 10) / 10, steps: r.steps };
 }
 
 const totalCities = async () => (await loadCities()).length;
@@ -209,5 +214,6 @@ export async function leaderboard(me: string, scope: "global" | "friends", perio
 export async function purgePoints(email: string) {
   const d = await db();
   await d.delete(schema.checkins).where(eq(schema.checkins.email, email));
+  await d.delete(schema.journeys).where(eq(schema.journeys.email, email));
   await d.delete(schema.placeComments).where(eq(schema.placeComments.author, email));
 }

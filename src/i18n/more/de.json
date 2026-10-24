@@ -850,7 +850,9 @@
 "posts": "Jeder Tag mit Beitrag: {p} Pkt.",
 "comments": "Jeder Tag mit Kommentar zu einem Ort: {p} Pkt.",
 "friends": "Jeder Freund, der über deine Einladung kommt: {p} Pkt.",
-"paid": "Jeder eingeladene Freund, der einen Pass kauft: {p} Pkt."
+"paid": "Jeder eingeladene Freund, der einen Pass kauft: {p} Pkt.",
+"journeys": "Jede bestätigte Route: {p} Pkt.",
+"km": "Jeder aufgezeichnete km zu Fuß: {p} Pkt."
 },
 "ptRewards": "Belohnungen",
 "ptRewardAt": "{p} Punkte → {c} Guthaben",
@@ -1908,5 +1910,30 @@
 "cashL": "Manche Stände nehmen nur Bargeld; Karte auch mitnehmen.",
 "weather": "Im Freien",
 "weatherL": "Im Freien: Wetter prüfen, Jacke oder Schirm mitnehmen."
+},
+"at": {
+"title": "Automatisches Tagebuch",
+"sub": "Erkennt Städte, Orte, km und Schritte, solange die App offen ist. Fragt immer nach Bestätigung.",
+"bgNote": "Bei gesperrtem Bildschirm oder geschlossener App erlaubt der Browser keine Standortaufzeichnung.",
+"privacy": "Ihre Route bleibt auf Ihrem Handy, bis Sie sie bestätigen.",
+"today": "Heute: {km} km · ≈ {s} Schritte · {n} Orte",
+"end": "Route von heute beenden und speichern",
+"cityQ": "Sie sind in {c}. Zu besuchten Städten hinzufügen?",
+"visitQ": "Haben Sie {p} besucht?",
+"placeQ": "Sie waren bei {p}. Zur Route hinzufügen?",
+"journeyQ": "Route vom {d} bestätigen?",
+"journeySub": "{km} km · ≈ {s} Schritte · {n} Orte",
+"confirm": "Bestätigen",
+"ignore": "Ignorieren",
+"saved": "Gespeichert",
+"signIn": "Melden Sie sich an, um zu speichern.",
+"tab": "Routen",
+"none": "Noch keine Routen. Schalten Sie das automatische Tagebuch ein.",
+"map": "Auf der Karte ansehen",
+"steps": "Schritte",
+"km": "km",
+"denied": "Kein Standortzugriff – in den Browsereinstellungen aktivieren.",
+"places": "Orte",
+"del": "Löschen"
 }
 }
