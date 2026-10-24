@@ -1,4 +1,5 @@
 {
+  "etiasSoon": "L'ETIAS (20 €) non è ancora richiesta: l'UE prevede di avviarla nel 2027. Verifica prima di partire su travel-europe.europa.eu.",
   "bwTermsL": "Termini e condizioni",
   "bwPrivL": "Informativa sulla privacy",
   "bwTitle": "Cosa stai acquistando",
@@ -1206,13 +1207,14 @@
 "bkIncl": "Incluso: percorso completo, audioguida in 12 lingue e strumenti di viaggio. Non incluso: ingressi a musei e monumenti, biglietti dei trasporti.",
 "vAuth": "Ti serve un'autorizzazione elettronica approvata prima dell'imbarco ({site}, {fee}). Senza, la compagnia non ti fa imbarcare.",
 "entryHint2": {
+    "usban": "Dal 1º gennaio 2026 gli USA hanno sospeso i nuovi visti per i cittadini di questo paese (compresi quelli turistici B-1/B-2). Si può entrare solo con un visto valido rilasciato prima di tale data. Verifica su travel.state.gov.",
 "us": "Gli Stati Uniti non hanno un'area di transito internazionale: anche solo per cambiare aereo servono ESTA o visto e si passano immigrazione e dogana. Calcola 1–2 ore all'arrivo.",
 "ca": "Anche il Canada richiede l'eTA o il visto solo per lo scalo (eccezioni con visto USA).",
 "mx": "Con visto o permesso di soggiorno validi di USA, Canada, Regno Unito, area Schengen o Giappone entri in Messico senza visto messicano.",
 "zan": "Zanzibar richiede un'assicurazione di viaggio propria (circa 44 USD, visitzanzibar.go.tz) e il certificato di febbre gialla se arrivi da un paese a rischio.",
 "ke": "Se resti nell'area di transito non serve l'eTA. Consigliato il certificato di febbre gialla.",
 "et": "Se non esci dall'area di transito dell'aeroporto non serve il visto.",
-"ao": "Esenzione dal visto turistico fino a 90 giorni per ingresso. Obbligatorio il certificato di vaccinazione contro la febbre gialla.",
+"ao": "Esenzione dal visto turistico fino a 30 giorni per ingresso (massimo 90 giorni l'anno). Il certificato di vaccinazione contro la febbre gialla può essere richiesto in base alla nazionalità e ai paesi attraversati: verifica con la compagnia aerea.",
 "br": "L'e-visa richiede alcuni giorni: chiedilo in anticipo."
 },
 "mPhotos": "Foto della tua attività",

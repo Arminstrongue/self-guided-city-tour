@@ -1,4 +1,5 @@
 {
+  "etiasSoon": "ETIAS (20 €) ist noch nicht vorgeschrieben: Die EU plant den Start für 2027. Prüfen Sie vor der Reise travel-europe.europa.eu.",
   "bwTermsL": "AGB",
   "bwPrivL": "Datenschutzerklärung",
   "bwTitle": "Was Sie kaufen",
@@ -1179,13 +1180,14 @@
 "bkIncl": "Inklusive: komplette Route, Audioguide in 12 Sprachen und Reisetools. Nicht inklusive: Eintritt in Museen und Sehenswürdigkeiten, Fahrkarten.",
 "vAuth": "Sie brauchen vor dem Abflug eine genehmigte elektronische Reisegenehmigung ({site}, {fee}). Ohne sie lässt die Airline Sie nicht einsteigen.",
 "entryHint2": {
+    "usban": "Seit dem 1. Januar 2026 stellen die USA für Staatsangehörige dieses Landes keine neuen Visa aus (auch keine Besuchervisa B-1/B-2). Einreise nur mit einem gültigen Visum, das vor diesem Datum ausgestellt wurde. Prüfen Sie travel.state.gov.",
 "us": "Die USA haben keinen internationalen Transitbereich: Auch zum Umsteigen brauchen Sie ESTA oder ein Visum und gehen durch Einreise und Zoll. Rechnen Sie bei Ankunft mit 1–2 Stunden.",
 "ca": "Kanada verlangt die eTA oder ein Visum auch nur zum Umsteigen (Ausnahmen mit US-Visum).",
 "mx": "Mit gültigem Visum oder Aufenthaltstitel der USA, Kanadas, Großbritanniens, des Schengen-Raums oder Japans reisen Sie ohne mexikanisches Visum ein.",
 "zan": "Sansibar verlangt eine eigene Reiseversicherung (ca. 44 USD, visitzanzibar.go.tz) und bei Anreise aus Risikoländern einen Gelbfieber-Nachweis.",
 "ke": "Wer im Transitbereich bleibt, braucht keine eTA. Ein Gelbfieber-Nachweis wird empfohlen.",
 "et": "Wer den Transitbereich des Flughafens nicht verlässt, braucht kein Visum.",
-"ao": "Touristen sind bis zu 90 Tage pro Einreise vom Visum befreit. Ein Gelbfieber-Impfnachweis ist Pflicht.",
+"ao": "Touristen sind bis zu 30 Tage pro Einreise vom Visum befreit (höchstens 90 Tage pro Jahr). Je nach Staatsangehörigkeit und vorherigen Reiseländern kann ein Gelbfieber-Impfnachweis verlangt werden: Fragen Sie Ihre Fluggesellschaft.",
 "br": "Das E-Visum braucht einige Tage: rechtzeitig beantragen."
 },
 "mPhotos": "Fotos Ihres Betriebs",

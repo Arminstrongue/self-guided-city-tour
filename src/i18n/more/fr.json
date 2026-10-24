@@ -1,4 +1,5 @@
 {
+  "etiasSoon": "L'ETIAS (20 €) n'est pas encore exigée : l'UE prévoit de la lancer en 2027. Vérifiez avant de partir sur travel-europe.europa.eu.",
   "bwTermsL": "Conditions générales",
   "bwPrivL": "Politique de confidentialité",
   "bwTitle": "Ce que vous achetez",
@@ -1172,13 +1173,14 @@
 "bkIncl": "Inclus : le parcours complet, l'audioguide en 12 langues et les outils de voyage. Non inclus : entrées des musées et monuments, titres de transport.",
 "vAuth": "Vous devez avoir une autorisation électronique approuvée avant d'embarquer ({site}, {fee}). Sans elle, la compagnie refuse l'embarquement.",
 "entryHint2": {
+    "usban": "Depuis le 1er janvier 2026, les États-Unis ont suspendu les nouveaux visas pour les citoyens de ce pays (y compris les visas touristiques B-1/B-2). Vous ne pouvez entrer qu'avec un visa valide délivré avant cette date. Vérifiez sur travel.state.gov.",
 "us": "Les États-Unis n'ont pas de zone de transit international : même pour changer d'avion, il faut un ESTA ou un visa et passer l'immigration et la douane. Prévoyez 1–2 h à l'arrivée.",
 "ca": "Le Canada exige aussi l'AVE (eTA) ou un visa pour une simple correspondance (exceptions avec un visa américain).",
 "mx": "Avec un visa ou un titre de séjour valide des États-Unis, du Canada, du Royaume-Uni, de l'espace Schengen ou du Japon, vous entrez au Mexique sans visa mexicain.",
 "zan": "Zanzibar exige sa propre assurance voyage (environ 44 USD, visitzanzibar.go.tz) et un certificat de fièvre jaune si vous venez d'un pays à risque.",
 "ke": "Si vous restez en zone de transit, l'eTA n'est pas nécessaire. Le certificat de fièvre jaune est recommandé.",
 "et": "Si vous ne quittez pas la zone de transit de l'aéroport, aucun visa n'est nécessaire.",
-"ao": "Exemption de visa touristique jusqu'à 90 jours par entrée. Le certificat de vaccination contre la fièvre jaune est obligatoire.",
+"ao": "Exemption de visa touristique jusqu'à 30 jours par entrée (90 jours par an au maximum). Le certificat de vaccination contre la fièvre jaune peut être exigé selon votre nationalité et les pays traversés : vérifiez auprès de la compagnie aérienne.",
 "br": "L'e-visa met quelques jours à être approuvé : faites la demande à l'avance."
 },
 "mPhotos": "Photos de votre établissement",

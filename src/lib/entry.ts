@@ -102,6 +102,9 @@ const US_VWP = ["AD", "AU", "AT", "BE", "BN", "CL", "HR", "CZ", "DK", "EE", "FI"
   "MT", "MC", "NL", "NZ", "NO", "PL", "PT", "QA", "SM", "SG", "SK", "SI", "KR", "ES", "SE", "CH", "TW", "GB"];
 const US_VISA = ["BR", "MX", "AR", "CO", "PE", "EC", "CN", "IN", "RU", "TR", "ZA", "NG", "GH", "KE", "AO", "MA", "EG", "PH", "VN", "ID", "TH", "PK", "BD",
   "UA", "RO", "BG", "CY", "MZ", "ET", "TN", "SN", "RW", "TZ", "AE", "SA", "JO", "UY", "PY", "BO", "VE", "CU"];
+/** EUA, Proclamação 10998 (desde 1 jan 2026): sem novos vistos (total) ou sem vistos de turismo B-1/B-2 (parcial). Fonte: travel.state.gov. */
+const US_BAN_FULL = ["AF", "MM", "BF", "TD", "CG", "GQ", "ER", "HT", "IR", "LA", "LY", "ML", "NE", "SL", "SO", "SS", "SD", "SY", "YE"];
+const US_BAN_B = ["AO", "AG", "BJ", "BI", "CI", "CU", "DM", "GA", "GM", "MW", "MR", "NG", "SN", "TZ", "TG", "TO", "VE", "ZM", "ZW"];
 /** Canadá: eTA para quem não precisa de visto. */
 const CA_ETA = [...EU, ...EEA_CH, ...MICRO, "GB", "AU", "NZ", "JP", "KR", "SG", "IL", "CL", "TW", "HK", "BN", "AE", "BS", "BB", "PG", "SB", "WS"];
 const CA_VISA = ["MX", "BR", "AR", "CN", "IN", "NG", "PK", "PH", "VN", "ID", "TH", "ZA", "EG", "MA", "KE", "GH", "AO", "RU", "TR", "CO", "PE", "EC",
@@ -147,8 +150,9 @@ const AO_FREE = ["DZ", "BW", "CV", "SZ", "GQ", "MU", "LS", "MG", "MW", "MA", "RW
   "AU", "FJ", "MH", "FM", "NR", "NZ", "PW", "PG", "WS", "SB", "TO", "TV", "VU",
   "AG", "BS", "BB", "BZ", "DM", "DO", "GD", "GY", "HT", "JM", "KI", "KN", "LC", "VC", "SR", "TT"];
 /** Gana: sem visto (CEDEAO e acordos bilaterais). Para a maioria dos outros é preciso visto antes de viajar. */
-const GH_FREE = [...ECOWAS, "KE", "ZA", "RW", "SG", "MY", "TT"];
-const GH_VISA = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "AR", "MX", "CN", "IN", "RU", "TR", "IL", ...GCC, "PK", "EG", "MA", "TN"];
+/** Gana: sem visto para todos os passaportes africanos desde 1 jan 2025. */
+const GH_FREE = [...AFRICA, "SG", "MY", "TT"];
+const GH_VISA = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "BR", "AR", "MX", "CN", "IN", "RU", "TR", "IL", ...GCC, "PK"];
 /** Ruanda: visto gratuito à chegada para africanos, Commonwealth e Francofonia; todos os outros têm visto à chegada pago. */
 const RW_FREE = [...AFRICA, "GB", "CA", "AU", "NZ", "IN", "PK", "BD", "LK", "MY", "SG", "JM", "TT", "BB", "BS", "CY", "MT", "FR", "BE", "CH", "LU", "MC", "RO",
   "VN", "KH", "LA", "AM", "AL", "MD"];
@@ -161,7 +165,7 @@ type ZoneRule = {
   local: string; free: string[]; auth?: string[] | "all"; evisa?: string[] | "all"; voa?: string[] | "all"; visa?: string[];
   url: string; site?: string; fee?: string; authFee?: string; hint?: EntryHint;
 };
-export type EntryHint = "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br";
+export type EntryHint = "usban" | "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br";
 const ZONES: Partial<Record<Zone, ZoneRule>> = {
   us: { local: "US", free: ["CA"], auth: US_VWP, visa: US_VISA, url: "https://esta.cbp.dhs.gov", site: "esta.cbp.dhs.gov", authFee: "40 USD", hint: "us" },
   ca: { local: "CA", free: ["US"], auth: CA_ETA, visa: CA_VISA, url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html", site: "canada.ca/eta", authFee: "7 CAD", hint: "ca" },
@@ -259,9 +263,12 @@ export function checkEntry(city: City, nationality: string, hasPermit = false): 
     else if (inList(zr.evisa)) verdict = "evisa-me";
     else if (inList(zr.voa)) verdict = "voa";
     else verdict = "unknown";
+    // EUA: nacionalidades com emissão de vistos suspensa — só entra quem já tem visto válido (aviso próprio).
+    const usBan = zone === "us" && !local && !hasPermit && (US_BAN_FULL.includes(n) || US_BAN_B.includes(n));
+    if (usBan) verdict = "visa";
     const fee = verdict === "auth" ? zr.authFee : verdict === "voa" ? zr.fee : undefined;
     return { verdict, zone, transitVisa: false, officialUrl: zr.url, exitMin: local ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check,
-      ...(fee ? { fee } : {}), ...(zr.site ? { site: zr.site } : {}), ...(zr.hint && !local ? { hint: zr.hint } : {}) };
+      ...(fee ? { fee } : {}), ...(zr.site ? { site: zr.site } : {}), ...(usBan ? { hint: "usban" as const } : zr.hint && !local ? { hint: zr.hint } : {}) };
   }
   if (zone === "tr") {
     const verdict: EntryVerdict = hasPermit || TR_FREE.includes(n) || n === "TR" ? "free" : TR_EVISA.includes(n) ? "evisa" : TR_VISA.includes(n) ? "visa" : "unknown";

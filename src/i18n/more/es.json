@@ -1,4 +1,5 @@
 {
+  "etiasSoon": "La ETIAS (20 €) aún no se exige: la UE prevé empezar en 2027. Compruébalo antes de viajar en travel-europe.europa.eu.",
   "bwTermsL": "Términos y condiciones",
   "bwPrivL": "Política de privacidad",
   "bwTitle": "Qué estás comprando",
@@ -1206,13 +1207,14 @@
 "bkIncl": "Incluido: la ruta completa, la audioguía en 12 idiomas y las herramientas de viaje. No incluido: entradas a museos y monumentos ni billetes de transporte.",
 "vAuth": "Necesitas una autorización electrónica aprobada antes de embarcar ({site}, {fee}). Sin ella, la aerolínea no te deja embarcar.",
 "entryHint2": {
+    "usban": "Desde el 1 de enero de 2026, EE. UU. suspendió la emisión de nuevos visados para ciudadanos de este país (incluidos los de turismo B-1/B-2). Solo puedes entrar con un visado válido emitido antes de esa fecha. Compruébalo en travel.state.gov.",
 "us": "EE. UU. no tiene zona de tránsito internacional: incluso para cambiar de avión necesitas ESTA o visado y pasas inmigración y aduana. Cuenta con 1–2 h a la llegada.",
 "ca": "Canadá también exige la eTA o un visado solo para hacer escala (hay excepciones con visado de EE. UU.).",
 "mx": "Con visado o residencia vigentes de EE. UU., Canadá, Reino Unido, el espacio Schengen o Japón entras en México sin visado mexicano.",
 "zan": "Zanzíbar exige su propio seguro de viaje (unos 44 USD, visitzanzibar.go.tz) y certificado de fiebre amarilla si llegas de un país de riesgo.",
 "ke": "Si te quedas en la zona de tránsito del aeropuerto no necesitas eTA. Se recomienda el certificado de fiebre amarilla.",
 "et": "Si no sales de la zona de tránsito del aeropuerto no necesitas visado.",
-"ao": "Exención de visado de turismo hasta 90 días por entrada. Es obligatorio el certificado de vacuna contra la fiebre amarilla.",
+"ao": "Exención de visado de turismo hasta 30 días por entrada (máximo 90 días al año). Puede pedirse el certificado de vacuna contra la fiebre amarilla según tu nacionalidad y los países por los que hayas pasado: consúltalo con la aerolínea.",
 "br": "El e-visa tarda unos días en aprobarse: solicítalo con antelación."
 },
 "mPhotos": "Fotos de tu negocio",

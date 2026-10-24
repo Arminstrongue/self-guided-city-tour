@@ -71,7 +71,7 @@ export const SAFETY_EN: Record<string, string> = {
   "Praias vazias": "Empty beaches",
   "Polícia: 10111 · CTICC e Waterfront têm segurança própria": "Police: 10111 · the CTICC and the Waterfront have their own security",
   "Forodhani à noite": "Forodhani at night",
-  "Praias (vendedores «beach boys»)": "Beaches ('beach boy' touts)",
+  "Praias (vendedores ambulantes sem licença)": "Beaches (unlicensed touts)",
   "Ruelas de Stone Town depois das 22h": "Stone Town alleys after 10 pm",
   "Medina depois do pôr do sol": "Medina after sunset",
   "Ruas sem iluminação": "Unlit streets",

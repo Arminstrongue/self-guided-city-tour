@@ -59,7 +59,7 @@ export function SafetyPanel({ cityId, country, cityName, center, t: tProp, local
 
       <div className="card rows" style={{ paddingBlock: 6 }}>
         {s.nums.slice(1).map((x) => (
-          <div key={x.k}><span>{t.nK[x.k]}</span><a className="num" href={tel(x.n)}><b>{x.n}</b></a></div>
+          <div key={`${x.k}-${x.n}`}><span>{t.nK[x.k]}</span><a className="num" href={tel(x.n)}><b>{x.n}</b></a></div>
         ))}
         {s.tp && <div><span>{t.touristPolice}</span><span style={{ textAlign: "end" }}>{safetyText(s.tp, locale)}</span></div>}
       </div>

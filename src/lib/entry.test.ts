@@ -145,3 +145,14 @@ test("Américas e África: ESTA, eTA, e-visa, isenções e vistos", async () => 
   assert.equal(checkEntry(city("XOF"), "US").verdict, "free-pass");
   assert.equal(checkEntry(city("ZAR"), "IN").verdict, "visa");
 });
+
+test("EUA: nacionalidades com vistos suspensos (2026) e Gana sem visto para africanos", () => {
+  const nyc = getCity("nyc")!, acc = getCity("acc")!;
+  const ao = checkEntry(nyc, "AO");
+  assert.equal(ao.verdict, "visa");
+  assert.equal(ao.hint, "usban");
+  assert.equal(checkEntry(nyc, "PT").verdict, "auth");
+  assert.notEqual(checkEntry(nyc, "BR").hint, "usban");
+  assert.equal(checkEntry(acc, "EG").verdict, "free-pass");
+  assert.equal(checkEntry(acc, "PT").verdict, "visa");
+});
