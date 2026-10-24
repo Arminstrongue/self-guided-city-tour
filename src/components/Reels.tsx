@@ -12,7 +12,7 @@ import { HOBBY_ICON, type Hobby } from "@/lib/explore";
 import { Avatar, FollowBtn, Verified, type PublicProfile, type Social } from "./Social";
 import { Composer, ago, type PostItem } from "./Feed";
 import { EmojiButton, emojiLabels } from "./Emoji";
-import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, Pause, X, Plus, Clapperboard } from "./Ico";
+import { I, Heart, MessageCircle, Send, Ellipsis, Volume2, VolumeX, Play, X, Plus, Clapperboard } from "./Ico";
 
 type Page = { posts: PostItem[]; authors: Record<string, PublicProfile>; next: string | null };
 import { Scrub, videoUrl, posterUrl, compact } from "./FeedVideo";

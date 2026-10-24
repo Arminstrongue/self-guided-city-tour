@@ -16,7 +16,6 @@ export async function generateMetadata({ params, searchParams }: { params: { loc
 /** Ponto de encontro partilhado por link (ou o formulário para marcar um). */
 export default function Meet({ params }: { params: { locale: Locale } }) {
   if (!isLocale(params.locale)) notFound();
-  const t = getDict(params.locale);
   return (
     <main className="app">
       <Header locale={params.locale} currency={requestCurrency()} />

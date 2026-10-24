@@ -21,7 +21,7 @@ export function CitySheet({ t, locale, spot, id, wallet, memories, onClose }: {
   const [wx, setWx] = useState<Weather | null>(null);
   const region = useMemo(() => { try { return new Intl.DisplayNames([INTL_LOCALE[locale]], { type: "region" }); } catch { return null; } }, [locale]);
   const df = (iso: string | number) => new Date(iso).toLocaleDateString(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" });
-  useEffect(() => { if (id) fetch(`/api/weather?city=${id}`).then((r) => (r.ok ? r.json() : null)).then(setWx).catch(() => null); }, [id]);
+  useEffect(() => { if (id) fetch(`/api/weather?city=${id}`).then((r) => (r.ok ? r.json() : null)).then((j) => setWx(j && !j.error ? j : null)).catch(() => null); }, [id]);
   const lower = spot.name.toLowerCase();
   const passes = wallet.passes.filter((p) => (id && p.city === id) || p.scope === "all");
   const cityPasses = passes.filter((p) => p.city === id);

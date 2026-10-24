@@ -6,7 +6,7 @@
 import { cookies } from "next/headers";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "./db";
-import { ACCESS_COOKIE, createAccessToken, readAccessToken, readAccessTokenFull } from "./access-token";
+import { ACCESS_COOKIE, createAccessToken, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
 import { sendEmail } from "./email";
 import { env } from "./env";

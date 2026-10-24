@@ -22,7 +22,6 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 /** "Acabei de chegar" e "Quero chegar a um lugar": orientação passo a passo (Londres primeiro). */
 export default async function Arrive({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; go?: string } }) {
   if (!isLocale(params.locale)) notFound();
-  const t = getDict(params.locale);
   const list = await loadCities();
   const cities: ArriveCity[] = list.map((c) => ({
     id: c.id, name: cityName(c, params.locale), center: cityCenterOf(c),

@@ -1,10 +1,9 @@
 "use client";
 import { useDict } from "@/i18n/client-dict";
-import { SheetX } from "@/components/WinNav";
 import { VerifyNote } from "./VerifyNote";
 import { safetyText } from "@/data/safety-en";
 /** Segurança por cidade: SOS, números, partilhar localização, frase de ajuda, burlas e zonas de atenção. */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ALERT_TEXT, safetyFor } from "@/data/safety";
 import { fmt } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";

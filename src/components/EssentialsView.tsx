@@ -112,7 +112,7 @@ export function EssentialsView({ t: tProp, locale, cities }: { t?: Dict; locale:
       </section>
 
       <section className="ess-card">
-        <span className="ess-h">💬 {fmt(e.phrases, { l: langName })}</span>
+        <span className="ess-h" suppressHydrationWarning>💬 {fmt(e.phrases, { l: langName })}</span>
         <small className="ess-muted">{e.tapShow}</small>
         <ul className="ess-ph">{PHRASE_KEYS.map((k: PhraseKey) => (
           <li key={k}><button type="button" onClick={() => setBig({ text: ph[k], mean: t.ph[k] })}><b lang={lang}>{ph[k]}</b><small>{t.ph[k]}</small></button></li>

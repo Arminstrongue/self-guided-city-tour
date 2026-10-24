@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 /** "Tenho X minutos livres" numa cidade. */
 export default async function Free({ params, searchParams }: { params: { locale: Locale }; searchParams: Record<string, string | undefined> }) {
   if (!isLocale(params.locale)) notFound();
-  const t = getDict(params.locale);
   const all = await loadCities();
   const city = all.find((c) => c.id === searchParams.city) ?? all.find((c) => c.id === PRIMARY_CITY) ?? all[0];
   if (!city) notFound();

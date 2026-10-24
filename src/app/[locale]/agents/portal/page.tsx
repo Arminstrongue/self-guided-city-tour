@@ -6,14 +6,13 @@ import { agentSummary, currentAgent } from "@/lib/agents";
 import { loadCities } from "@/lib/content";
 import { cityName } from "@/data/cities";
 import { env } from "@/lib/env";
-import { getDict, type Locale } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
 export default async function Portal({ params }: { params: { locale: Locale } }) {
   const agent = await currentAgent();
   if (!agent) redirect(`/${params.locale}/agents`);
-  const t = getDict(params.locale);
   const s = await agentSummary(agent.id);
   const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) }));
   return (

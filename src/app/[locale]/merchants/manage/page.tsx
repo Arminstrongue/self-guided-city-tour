@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: { params: { locale: Locale } 
 /** Área do comerciante: entrar com link no email e gerir o próprio anúncio. */
 export default async function Manage({ params, searchParams }: { params: { locale: Locale }; searchParams: Record<string, string | undefined> }) {
   if (!isLocale(params.locale)) notFound();
-  const t = getDict(params.locale);
   const email = currentMerchantEmail();
   let body: React.ReactNode;
   if (!email) body = <MerchantLogin locale={params.locale} expired={searchParams.expired === "1"} />;

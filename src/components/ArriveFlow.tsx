@@ -9,7 +9,7 @@ import { ArrowLeft, Check, ChevronRight, Hand, Home, LocateFixed, MapPin, Plane,
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { useArrivalTx } from "@/lib/arrival-text";
-import { arrivalsFor, fareText, optionName, type ArrivalOption, type ArrivalPoint, type Step } from "@/data/arrivals";
+import { arrivalsFor, fareText, optionName, type ArrivalPoint, type Step } from "@/data/arrivals";
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
 import type { GuideStep } from "@/lib/route-steps";

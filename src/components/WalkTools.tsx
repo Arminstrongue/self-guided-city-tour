@@ -50,7 +50,6 @@ export function WalkTools({ t, locale, cityId, places, slack }: { t: Dict; local
   const startPause = () => { const at = Date.now(); setPause(at); setNow(at); write(`sgct:pause:${cityId}`, at); setSheet("pause"); };
   const endPause = () => { setPause(null); write(`sgct:pause:${cityId}`, null); setSheet(null); };
   const setBagOn = (v: boolean) => { setBag(v); write(`sgct:bag:${cityId}`, v || null); };
-  const c = places[0];
   const freeHref = `/${locale}/free?city=${cityId}${bag ? "&bag=1" : ""}`;
 
   const tiles = [

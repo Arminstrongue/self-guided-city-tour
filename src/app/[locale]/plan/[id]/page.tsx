@@ -5,7 +5,7 @@ import { requestCurrency } from "@/lib/fx";
 import { loadCity } from "@/lib/content";
 import { currentTraveller, getPlan } from "@/lib/wallet";
 import { exploreProps } from "@/lib/explore-props";
-import { getDict, type Locale } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 

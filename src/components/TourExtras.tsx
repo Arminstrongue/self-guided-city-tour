@@ -9,7 +9,6 @@ import { FAR_KM, km, returnEstimate, walkMin, type RouteOption } from "@/lib/rou
 import { AIRPORT_BUFFER_MIN } from "@/lib/pricing";
 import type { Weather } from "@/lib/weather";
 import type { FlightStatus } from "@/lib/flight";
-import { ExitCheck, NAT_KEY } from "./ExitCheck";
 import { ExtLink } from "./ExtLink";
 import Portal from "./Portal";
 import { SheetX } from "./WinNav";
@@ -345,45 +344,6 @@ export function Speak({ text, lang, fallback, t }: { text: string; lang: string;
 }
 
 /* ---------- Guia prático ---------- */
-
-/* ---------- Comer: melhores avaliados e mais baratos (Google) ---------- */
-
-type EatItem = { id: string; name: string; rating: number; reviews: number; price: number | null; openNow: boolean | null; type: string | null; url: string };
-
-/** Nível de preço com o símbolo da moeda local (£, €, $…) ou, se o símbolo tiver várias letras, pontos neutros. */
-function priceTag(level: number, cur: string, locale: Locale): string {
-  let sym = "";
-  try { sym = new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: cur, currencyDisplay: "narrowSymbol" }).formatToParts(0).find((p) => p.type === "currency")?.value ?? ""; } catch { /* moeda desconhecida */ }
-  const n = Math.min(4, Math.max(1, level));
-  return sym.length === 1 ? sym.repeat(n) : "●".repeat(n) + "○".repeat(4 - n);
-}
-
-export function EatNearby({ cityId, stopId, locale, t, cur }: { cityId: string; stopId: string; locale: Locale; t: Dict; cur: string }) {
-  const [items, setItems] = useState<EatItem[] | null>(null);
-  useEffect(() => {
-    let live = true;
-    fetch(`/api/eat?city=${cityId}&stop=${stopId}&locale=${locale}`)
-      .then((r) => (r.ok ? r.json() : null)).then((j) => { if (live) setItems(j?.places ?? null); }).catch(() => undefined);
-    return () => { live = false; };
-  }, [cityId, stopId, locale]);
-  if (!items) return null; // sem chave da Google ou sem ligação: fica só a ligação "Comer perto daqui"
-  const nf = new Intl.NumberFormat(INTL_LOCALE[locale]);
-  return (
-    <div className="eat-best">
-      <span className="label">🍽 {t.eatBest2}</span>
-      {items.length === 0 ? <p className="hint">{t.eatNone2}</p> : items.map((e) => (
-        <ExtLink key={e.id} href={e.url} className="eat-row">
-          <span className="eat-name">{e.name}{e.type ? <small> · {e.type}</small> : null}</span>
-          <span className="eat-meta num">★ {e.rating.toFixed(1)} <small>({nf.format(e.reviews)})</small>{e.price !== null ? ` · ${priceTag(e.price, cur, locale)}` : ` · ${t.eatNoPrice}`}{e.openNow ? ` · ${t.openNow}` : ""}</span>
-        </ExtLink>
-      ))}
-      <p className="hint">{t.eatSrc2}</p>
-    </div>
-  );
-}
-
-/* ---------- "A seguir": a próxima paragem com tudo o que é preciso para lá chegar ---------- */
-
 type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
 
 export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel }: {

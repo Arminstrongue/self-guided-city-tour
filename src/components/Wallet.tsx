@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { deleteMemory, listMemories, syncLocalToAccount, type Memory } from "@/lib/diary";
-import { HOBBIES, HOBBY_ICON, type Hobby } from "@/lib/explore";
 import type { Wallet } from "@/lib/wallet";
 import { COUNTRY_CODES, flag } from "@/data/countries";
 import { loadWish, saveWish, wishKey, type Wish } from "@/lib/wishlist";
@@ -128,7 +127,6 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     else if (w && city) window.location.replace(`/${locale}/tour/${city}`);
   }, [w]); // eslint-disable-line react-hooks/exhaustive-deps
   const memories: Mem[] = useMemo(() => [...(signed?.memories ?? []), ...local.map((m) => ({ ...m, local: true }))].sort((a, b) => b.at - a.at), [signed, local]);
-  const stamps = useMemo(() => { const m = new Map<string, { name: string; n: number }>(); for (const x of memories) m.set(x.city, { name: x.cityName, n: (m.get(x.city)?.n ?? 0) + 1 }); return [...m.entries()]; }, [memories]);
   // Cidades e países: passes, memórias e as acrescentadas à mão.
   const world = useMemo(() => {
     const m = new Map<string, string>();
@@ -145,13 +143,6 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const d = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric" });
   const eur = (c: number) => new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: "EUR" }).format(c / 100);
 
-  async function setHobby(h: Hobby) {
-    if (!signed) return;
-    const next = signed.hobbies.includes(h) ? signed.hobbies.filter((x) => x !== h) : [...signed.hobbies, h];
-    setW({ ...signed, hobbies: next });
-    try { localStorage.setItem("sgct:hobbies", JSON.stringify(next)); } catch { /* ignorar */ }
-    await fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hobbies: next }) }).catch(() => null);
-  }
   async function remove(m: Mem) {
     if (m.local) await deleteMemory(m.id); else await fetch(`/api/me/memories/${m.id}`, { method: "DELETE" }).catch(() => null);
     void load();
@@ -169,8 +160,6 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
 
   const passes = signed?.passes ?? [];
   const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
-  const nextBooking = (signed?.bookings ?? []).filter((b) => (b.status === "confirmed" || b.status === "requested") && new Date(b.startAt).getTime() > now).sort((a, b) => a.startAt.localeCompare(b.startAt))[0];
-  const nextPlan = (signed?.plans ?? []).filter((p) => p.startDate && new Date(`${p.startDate}T23:59:00`).getTime() > now).sort((a, b) => (a.startDate ?? "").localeCompare(b.startDate ?? ""))[0];
   // Último roteiro escolhido em "Começar em 3 passos" (neste dispositivo): é a viagem do viajante, não a demonstração.
   const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null>(null);
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("sgct:planned") ?? "null"); if (v?.city) setPlanned(v); } catch { /* ignorar */ } }, []);

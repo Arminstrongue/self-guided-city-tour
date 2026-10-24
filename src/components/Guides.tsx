@@ -76,7 +76,7 @@ export function GuideForm({ t: tProp, locale, cities, initial, mode, declared = 
       </div>
       <div className={`field ${err("languages")}`}><label>{t.gjLangs}</label>
         <div className="g-langpick">{LANGS.map((l) => (
-          <button type="button" key={l} className={v.languages.includes(l) ? "on" : ""} aria-pressed={v.languages.includes(l)}
+          <button type="button" key={l} suppressHydrationWarning className={v.languages.includes(l) ? "on" : ""} aria-pressed={v.languages.includes(l)}
             onClick={() => setV({ ...v, languages: v.languages.includes(l) ? v.languages.filter((x) => x !== l) : [...v.languages, l] })}>{langNames?.of(l) ?? l}</button>
         ))}</div></div>
       <div className={`field ${err("bio")}`}><label htmlFor="gb">{t.gjBio}</label><textarea id="gb" rows={5} maxLength={1200} value={v.bio} onChange={set("bio")} /><span className="hint num">{v.bio.trim().length}/40+</span></div>

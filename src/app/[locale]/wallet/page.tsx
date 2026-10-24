@@ -5,12 +5,11 @@ import { loadCities } from "@/lib/content";
 import { cityName, COUNTRY } from "@/data/cities";
 import { FREE_CITIES } from "@/lib/pricing";
 import { enabledProviders } from "@/lib/auth";
-import { getDict, type Locale } from "@/i18n/dictionaries";
+import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
 export default async function WalletPage({ params }: { params: { locale: Locale } }) {
-  const t = getDict(params.locale);
   const all = await loadCities();
   const cities = Object.fromEntries(all.map((c) => [c.id, cityName(c, params.locale)]));
   const tzOf = Object.fromEntries(all.map((c) => [c.id, c.tz ?? "UTC"]));
