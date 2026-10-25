@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Foto (?k=photo) ou nota de voz (?k=audio, com pedidos parciais) de uma mensagem — só para quem está na conversa. */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
   const m = await messageMedia(me, params.id);

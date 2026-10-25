@@ -7,12 +7,13 @@ import type { Locale } from "@/i18n/dictionaries";
 export const dynamic = "force-dynamic";
 const DOCS: LegalDoc[] = ["terms", "privacy", "cookies", "guides"];
 
-export default function Legal({ params }: { params: { locale: Locale; doc: string } }) {
+export default async function Legal(props: { params: Promise<{ locale: Locale; doc: string }> }) {
+  const params = await props.params;
   if (!DOCS.includes(params.doc as LegalDoc)) notFound();
   const content = (params.locale === "pt" ? legalPT : legalEN)(params.doc as LegalDoc);
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <article className="stack legal">
         <h1 style={{ fontSize: 28 }}>{content.title}</h1>
         <p className="hint">{params.locale === "pt" ? "Última atualização" : "Last updated"}: {company().updated}</p>

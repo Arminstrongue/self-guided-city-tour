@@ -15,7 +15,11 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function GuidePage({ params, searchParams }: { params: { locale: Locale; id: string }; searchParams: { booked?: string } }) {
+export default async function GuidePage(
+  props: { params: Promise<{ locale: Locale; id: string }>; searchParams: Promise<{ booked?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   let r = await publicGuide(params.id);
   let preview = false;
   if (!r) {
@@ -30,7 +34,7 @@ export default async function GuidePage({ params, searchParams }: { params: { lo
   const bookable = g.payoutsReady && !preview;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         {preview && <div className="card" style={{ padding: 14, borderInlineStart: "4px solid var(--warn)" }}><b>👁 Pré-visualização</b><div className="hint">Este perfil ainda não está visível para os viajantes ({g.status === "pending" ? "à espera de aprovação" : g.status}). As reservas ficam ativas depois de aprovado.</div></div>}
         {searchParams.booked && <div className="card" style={{ padding: 16, borderInlineStart: "4px solid #34c759" }}><b>✓ {fmt(t.gdBooked2, { g: g.name })}</b></div>}

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 /** O diário passou a fazer parte da carteira. */
-export default function DiaryPage({ params }: { params: { locale: string } }) {
+export default async function DiaryPage(props: { params: Promise<{ locale: string }> }) {
+  const params = await props.params;
   redirect(`/${params.locale}/wallet`);
 }

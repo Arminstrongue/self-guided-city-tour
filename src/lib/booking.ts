@@ -66,7 +66,7 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const TIME = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export const BookingBody = z.object({
-  merchantId: z.string().uuid(),
+  merchantId: z.guid(),
   option: z.string().trim().max(60).optional().default(""),
   dateFrom: z.string().regex(DATE),
   dateTo: z.string().regex(DATE).optional().or(z.literal("")).default(""),

@@ -15,7 +15,7 @@ export async function GET() {
 }
 
 const Body = z.object({
-  id: z.string().uuid().optional(),
+  id: z.guid().optional(),
   kind: z.enum(RES_KINDS), title: z.string().trim().min(1).max(120), city: z.string().max(12).default(""),
   localAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/), tz: z.string().min(1).max(60),
   place: z.string().max(200).default(""), lat: z.number().min(-90).max(90).nullable().default(null), lng: z.number().min(-180).max(180).nullable().default(null),

@@ -17,8 +17,8 @@ export const MERCHANT_COOKIE = "sgct_merchant";
 export const MERCHANT_TTL_S = 30 * 24 * 3600;
 const LINK_TTL_S = 30 * 60; // o link do email vale 30 min; a sessão, 30 dias
 
-export function currentMerchantEmail(): string | null {
-  return readPurposeToken(cookies().get(MERCHANT_COOKIE)?.value, "merchant");
+export async function currentMerchantEmail(): Promise<string | null> {
+  return readPurposeToken((await cookies()).get(MERCHANT_COOKIE)?.value, "merchant");
 }
 export const sessionToken = (email: string) => createPurposeToken(email, "merchant", MERCHANT_TTL_S);
 export const readLinkToken = (t: string | null) => readPurposeToken(t, "merchant-link");
@@ -71,7 +71,7 @@ export async function bookingsOf(ids: string[]) {
 const handle = z.string().max(120).transform((s) => s.trim().replace(/^@/, "").replace(/[^\w.\-]/g, "") || null);
 /** Campos que o negócio pode mudar sozinho. Fotos: "keep:<n>" mantém a foto n atual; data URL acrescenta uma nova. */
 export const MerchantPatch = z.object({
-  id: z.string().uuid(),
+  id: z.guid(),
   offer: z.string().trim().min(3).max(140).optional(),
   hours: z.string().trim().max(160).optional(),
   phone: z.string().max(30).optional(),

@@ -9,7 +9,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Vídeo (com pedidos parciais "Range", para o telemóvel ir buscando aos bocados) ou a capa (?poster=1). */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
   const id = await videoOf(me, params.id);

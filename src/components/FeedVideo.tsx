@@ -14,7 +14,7 @@ import { claim, isMuted, onMuted, release, setMuted as setFeedMuted } from "@/li
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 
 /** Barra de progresso que se pode arrastar para avançar/recuar. */
-export function Scrub({ v, prog, label }: { v: React.RefObject<HTMLVideoElement>; prog: number; label: string }) {
+export function Scrub({ v, prog, label }: { v: React.RefObject<HTMLVideoElement | null>; prog: number; label: string }) {
   const [drag, setDrag] = useState<number | null>(null);
   const seek = (e: React.PointerEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();

@@ -14,7 +14,11 @@ const STEP: Record<string, string> = {
 };
 
 /** Painel de métricas: funil, receita, avaliações e NPS por período. */
-export default async function Metrics({ params, searchParams }: { params: { locale: Locale }; searchParams: { d?: string } }) {
+export default async function Metrics(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ d?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!(await isAdmin())) {
     redirect(`/${params.locale}/admin`);
   }

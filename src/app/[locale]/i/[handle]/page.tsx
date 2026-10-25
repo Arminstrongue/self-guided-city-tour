@@ -7,20 +7,22 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { locale: Locale; handle: string } }) {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale; handle: string }> }) {
+  const params = await props.params;
   const p = await profileByHandle(params.handle);
   const t = getDict(params.locale);
   return { title: p ? `${p.name} — ${t.ivJoinTitle}` : "VOYBU", robots: { index: false } };
 }
 
 /** Página de boas-vindas de um convite: quem convidou + entrar com email. */
-export default async function InvitePage({ params }: { params: { locale: Locale; handle: string } }) {
+export default async function InvitePage(props: { params: Promise<{ locale: Locale; handle: string }> }) {
+  const params = await props.params;
   const p = await profileByHandle(params.handle);
   const me = await currentTraveller();
   const inviter = p ? { handle: p.handle, name: p.name, photo: p.photo, bio: p.bio, isPrivate: p.isPrivate, followers: (await counts(p.email)).followers } : null;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <InviteLanding locale={params.locale} inviter={inviter} signed={Boolean(me)} />
     </main>
   );

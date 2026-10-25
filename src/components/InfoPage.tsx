@@ -20,7 +20,7 @@ export async function InfoPage({ locale, doc }: { locale: Locale; doc: InfoDoc }
   const mail = (s: string) => s.split(/(\S+@\S+\.[a-z]+)/i).map((x, i) => (i % 2 ? <a key={i} href={`mailto:${x}`}>{x}</a> : x));
   return (
     <main className="app">
-      <Header locale={locale} currency={requestCurrency()} />
+      <Header locale={locale} currency={(await requestCurrency())} />
       <article className="stack legal info-page">
         <h1 style={{ fontSize: 30, lineHeight: 1.15 }}>{c.title}</h1>
         <p className="info-lead">{mail(c.lead)}</p>

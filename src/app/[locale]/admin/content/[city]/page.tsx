@@ -14,7 +14,8 @@ const BLANK: City = {
   stops: []
 };
 
-export default async function EditCity({ params }: { params: { locale: Locale; city: string } }) {
+export default async function EditCity(props: { params: Promise<{ locale: Locale; city: string }> }) {
+  const params = await props.params;
   if (!(await isAdmin())) return <main className="app"><p style={{ paddingTop: 40 }}>Sem acesso. <Link href={`/${params.locale}/admin`}>Entrar</Link></p></main>;
   const cities = await loadCities({ includeInactive: true });
   const isNew = params.city === "new";

@@ -9,13 +9,17 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 export const dynamic = "force-dynamic";
 
 /** Candidatura de guia (fica pendente até aprovação no admin). */
-export default async function GuideJoin({ params, searchParams }: { params: { locale: Locale }; searchParams: { expired?: string; city?: string } }) {
+export default async function GuideJoin(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ expired?: string; city?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = getDict(params.locale);
   const cities = (await loadCities()).filter((c) => guideCityOk(c.id)).map((c) => ({ id: c.id, name: cityName(c, params.locale) })).sort((a, b) => a.name.localeCompare(b.name));
   const first = searchParams.city && cities.some((c) => c.id === searchParams.city) ? searchParams.city : cities[0]?.id;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         <h1 style={{ fontSize: 28 }}>{t.gjTitle}</h1>
         <p className="hint">{t.gjSub}</p>

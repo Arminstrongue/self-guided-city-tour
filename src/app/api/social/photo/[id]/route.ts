@@ -7,7 +7,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Foto de uma publicação ou história — só para quem a pode ver. */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
   const i = Math.max(0, Math.min(5, Number(new URL(req.url).searchParams.get("i") ?? 0) || 0));

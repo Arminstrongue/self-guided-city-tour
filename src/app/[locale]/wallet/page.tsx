@@ -9,13 +9,14 @@ import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function WalletPage({ params }: { params: { locale: Locale } }) {
+export default async function WalletPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   const all = await loadCities();
   const cities = Object.fromEntries(all.map((c) => [c.id, cityName(c, params.locale)]));
   const tzOf = Object.fromEntries(all.map((c) => [c.id, c.tz ?? "UTC"]));
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <WalletView locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} providers={enabledProviders()} />
     </main>
   );

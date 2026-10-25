@@ -11,14 +11,16 @@ import { requestCurrency } from "@/lib/fx";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
   return { title: `${t.ess.title} | VOYBU`, description: t.ess.sub, robots: { index: false } };
 }
 
 /** Essenciais offline (alojamento, reservas, plano, emergência, frases). */
-export default async function Essentials({ params }: { params: { locale: Locale } }) {
+export default async function Essentials(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   const cities: EssCity[] = (await loadCities()).map((c) => {
@@ -27,7 +29,7 @@ export default async function Essentials({ params }: { params: { locale: Locale 
   });
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <EssentialsView locale={params.locale} cities={cities} />
     </main>
   );

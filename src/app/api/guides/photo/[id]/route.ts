@@ -6,7 +6,8 @@ import { currentGuide } from "@/lib/guides";
 export const runtime = "nodejs";
 
 /** Foto do guia (guardada como data URL pequena), servida com cache. */
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!/^[0-9a-f-]{36}$/i.test(params.id)) return new Response(null, { status: 404 });
   const d = await db();
   const [g] = await d.select({ photo: schema.guides.photo, status: schema.guides.status }).from(schema.guides).where(eq(schema.guides.id, params.id)).limit(1);

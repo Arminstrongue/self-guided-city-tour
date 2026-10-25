@@ -7,11 +7,12 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 export const dynamic = "force-dynamic";
 export const metadata = { robots: { index: false } };
 
-export default function AccountPage({ params }: { params: { locale: Locale } }) {
+export default async function AccountPage(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   const t = getDict(params.locale);
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
       <AccountView locale={params.locale} />
     </main>

@@ -16,7 +16,8 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function GuidePortal({ params }: { params: { locale: Locale } }) {
+export default async function GuidePortal(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   let g = await currentGuide();
   if (!g) redirect(`/${params.locale}/guides/join`);
   const L = params.locale;
@@ -66,7 +67,7 @@ export default async function GuidePortal({ params }: { params: { locale: Locale
 
   return (
     <main className="app">
-      <Header locale={L} currency={requestCurrency()} />
+      <Header locale={L} currency={(await requestCurrency())} />
       <div className="stack" style={{ gap: 18 }}>
         <section className="gp-hero">
           <div className="gp-hero-top">

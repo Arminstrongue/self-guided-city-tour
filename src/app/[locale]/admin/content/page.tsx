@@ -7,7 +7,8 @@ import type { Locale } from "@/i18n/dictionaries";
 export const dynamic = "force-dynamic";
 
 /** Lista de cidades para editar conteúdos e tarifas. */
-export default async function ContentList({ params }: { params: { locale: Locale } }) {
+export default async function ContentList(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   if (!(await isAdmin())) return <main className="app"><p style={{ paddingTop: 40 }}>Sem acesso. <Link href={`/${params.locale}/admin`}>Entrar</Link></p></main>;
   const cities = await loadCities({ includeInactive: true });
   return (

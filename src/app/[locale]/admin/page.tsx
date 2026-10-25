@@ -117,7 +117,11 @@ async function setGuideStatus(form: FormData) {
   revalidatePath("/[locale]/admin", "page");
 }
 
-export default async function Admin({ params, searchParams }: { params: { locale: Locale }; searchParams: { expired?: string } }) {
+export default async function Admin(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ expired?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!(await isAdmin())) {
     return <main className="app"><AdminLogin locale={params.locale} expired={searchParams.expired === "1"} social={enabledProviders()} /></main>;
   }

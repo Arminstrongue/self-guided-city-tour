@@ -47,7 +47,7 @@ export async function PUT(req: Request) {
   await saveProfile(email, data);
   const res = NextResponse.json({ ok: true });
   // Entrou por um convite: segue quem o convidou e avisa-o.
-  const ref = cookies().get(REF_COOKIE)?.value;
+  const ref = (await cookies()).get(REF_COOKIE)?.value;
   if (isNew && ref) { await acceptInvite(email, ref).catch(() => null); res.cookies.set(REF_COOKIE, "", { maxAge: 0, path: "/" }); }
   return res;
 }

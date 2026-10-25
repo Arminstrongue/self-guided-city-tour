@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 /** Para o formulário de compra: há desconto de amigo convidado? Quanto crédito de convites tenho? (estimativa; o servidor recalcula no pagamento) */
 export async function GET() {
   const me = await currentTraveller().catch(() => null);
-  const inv = await inviterOf(me, cookies().get(REF_COOKIE)?.value ?? null);
+  const inv = await inviterOf(me, (await cookies()).get(REF_COOKIE)?.value ?? null);
   let first = true;
   if (me) {
     const d = await db();

@@ -9,7 +9,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Mensagens de uma conversa (?after= para só as novas, ?before= para as antigas). */
-export async function GET(req: Request, { params }: { params: { handle: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ handle: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const u = new URL(req.url);
@@ -28,7 +29,8 @@ const Body = z.union([
   z.object({ action: z.literal("typing") })
 ]);
 
-export async function POST(req: Request, { params }: { params: { handle: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ handle: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const v = Body.safeParse(await req.json().catch(() => null));

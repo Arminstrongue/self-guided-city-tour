@@ -8,7 +8,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Uma publicação com os comentários. */
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const [p, c] = await Promise.all([getPost(me, params.id), comments(me, params.id)]);
@@ -26,7 +27,8 @@ const Body = z.object({
 });
 
 /** Gostar, comentar, apagar e denunciar. */
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const v = Body.safeParse(await req.json().catch(() => null));

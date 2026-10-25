@@ -32,7 +32,7 @@ export function quote(hourlyCents: number, hours: number) {
 /* ---------- Sessão do guia ---------- */
 
 export async function currentGuide(): Promise<schema.Guide | null> {
-  const email = readPurposeToken(cookies().get(GUIDE_COOKIE)?.value, "guide");
+  const email = readPurposeToken((await cookies()).get(GUIDE_COOKIE)?.value, "guide");
   if (!email) return null;
   const d = await db();
   const [g] = await d.select().from(schema.guides).where(eq(schema.guides.email, email)).limit(1);

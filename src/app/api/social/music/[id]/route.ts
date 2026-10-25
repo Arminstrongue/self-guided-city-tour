@@ -9,7 +9,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Som próprio de uma publicação ou história (com pedidos parciais), só para quem a pode ver. */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return new Response("auth", { status: 401 });
   const own = await musicOf(me, params.id);

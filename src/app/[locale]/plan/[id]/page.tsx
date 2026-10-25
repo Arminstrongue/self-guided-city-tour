@@ -9,7 +9,8 @@ import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlanPage({ params }: { params: { locale: Locale; id: string } }) {
+export default async function PlanPage(props: { params: Promise<{ locale: Locale; id: string }> }) {
+  const params = await props.params;
   const email = await currentTraveller();
   if (!email) redirect(`/${params.locale}/wallet`);
   const plan = /^[0-9a-f-]{36}$/i.test(params.id) ? await getPlan(email, params.id) : null;
@@ -18,7 +19,7 @@ export default async function PlanPage({ params }: { params: { locale: Locale; i
   const ex = city ? exploreProps(city, params.locale) : null;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <PlanView locale={params.locale}
         plan={{ id: plan.id, title: plan.title, city: plan.city, cityName: plan.cityName, startDate: plan.startDate, days: plan.days, items: plan.items }}
         moments={ex?.moments ?? []} />

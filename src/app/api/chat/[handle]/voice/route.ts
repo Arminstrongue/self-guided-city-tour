@@ -10,7 +10,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /** Nota de voz: o corpo é o áudio gravado no telemóvel. */
-export async function POST(req: Request, { params }: { params: { handle: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ handle: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   if (!rateLimit(req, "chat-voice", 20)) return NextResponse.json({ error: "rate" }, { status: 429 });

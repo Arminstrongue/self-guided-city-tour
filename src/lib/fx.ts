@@ -65,10 +65,10 @@ export async function getRates(): Promise<{ rates: Rates; date: string }> {
 }
 
 /** Moeda do viajante para o pedido atual (cookie, país do IP via Cloudflare, idioma do navegador). */
-export function requestCurrency() {
-  const h = headers();
+export async function requestCurrency() {
+  const h = await headers();
   return pickCurrency({
-    cookie: cookies().get(CURRENCY_COOKIE)?.value,
+    cookie: (await cookies()).get(CURRENCY_COOKIE)?.value,
     ipCountry: h.get("cf-ipcountry") ?? h.get("x-vercel-ip-country") ?? h.get("x-country-code"),
     acceptLanguage: h.get("accept-language")
   });
@@ -76,5 +76,5 @@ export function requestCurrency() {
 
 export async function fxContext(): Promise<FxContext> {
   const { rates, date } = await getRates();
-  return { cur: requestCurrency(), rates, date };
+  return { cur: await requestCurrency(), rates, date };
 }

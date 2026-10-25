@@ -58,8 +58,9 @@ function rememberCountryLang(req: NextRequest, res: NextResponse) {
  * - "/" e caminhos sem idioma → "/{idioma}/…"
  * - QR curto "/lis?ref=ABC" → "/{idioma}/c/lis?ref=ABC"
  */
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+  if (pathname.startsWith("/api/")) return guardApi(req);
   const first = pathname.split("/")[1] ?? "";
   if (LOCALES.includes(first)) {
     const res = NextResponse.next();
@@ -78,4 +79,27 @@ export function middleware(req: NextRequest) {
   return res;
 }
 
-export const config = { matcher: ["/((?!api|_next|.*\\..*).*)"] };
+/**
+ * Pedidos que alteram dados (POST, PUT, PATCH, DELETE) só são aceites vindos do próprio site/app.
+ * Um site alheio não consegue usar a sessão do viajante para publicar, apagar ou comprar em nome dele.
+ * Pedidos sem Origin (servidor a servidor, ex.: Stripe) passam; o login da Apple (POST de appleid.apple.com) também.
+ */
+const SAFE = new Set(["GET", "HEAD", "OPTIONS"]);
+const OPEN = /^\/api\/(auth\/|stripe\/webhook)/;
+export function originAllowed(origin: string | null, host: string | null, appUrl = process.env.APP_URL ?? ""): boolean {
+  if (!origin) return true;
+  let o: URL;
+  try { o = new URL(origin); } catch { return false; }
+  const allowed = new Set([host ?? ""].filter(Boolean));
+  try { if (appUrl) allowed.add(new URL(appUrl).host); } catch { /* ignorar */ }
+  return allowed.has(o.host);
+}
+function guardApi(req: NextRequest) {
+  if (SAFE.has(req.method) || OPEN.test(req.nextUrl.pathname)) return NextResponse.next();
+  if (!originAllowed(req.headers.get("origin"), req.headers.get("x-forwarded-host") ?? req.headers.get("host"))) {
+    return NextResponse.json({ error: "origin" }, { status: 403 });
+  }
+  return NextResponse.next();
+}
+
+export const config = { matcher: ["/((?!_next|.*\\..*).*)", "/api/:path*"] };

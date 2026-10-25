@@ -10,14 +10,15 @@ import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function Portal({ params }: { params: { locale: Locale } }) {
+export default async function Portal(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   const agent = await currentAgent();
   if (!agent) redirect(`/${params.locale}/agents`);
   const s = await agentSummary(agent.id);
   const cities = (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) }));
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <AgentPortal locale={params.locale} cities={cities}
         agent={{ name: agent.name, code: agent.code, status: agent.status }}
         link={`${env.appUrl}/${params.locale}/merchants?agent=${agent.code}`}

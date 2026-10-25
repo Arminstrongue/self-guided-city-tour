@@ -11,11 +11,12 @@ import { requestCurrency } from "@/lib/fx";
 import { sharedMapUrl, sharedMinutes, sharedStops } from "@/lib/route-share";
 
 export const dynamic = "force-dynamic";
-type P = { params: { locale: Locale; city: string }; searchParams: Record<string, string | undefined> };
+type P = { params: Promise<{ locale: Locale; city: string }>; searchParams: Promise<Record<string, string | undefined>> };
 const MODE_ICON: Record<Leg["m"], string> = { walk: "🚶", metro: "🚇", tram: "🚊", bus: "🚌", train: "🚆", ferry: "⛴", car: "🚕" };
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(m % 60).padStart(2, "0")}`;
 
-async function load({ params, searchParams }: P) {
+async function load(p: P) {
+  const params = await p.params, searchParams = await p.searchParams;
   if (!isLocale(params.locale)) return null;
   const city = await loadCity(params.city);
   if (!city) return null;
@@ -27,7 +28,8 @@ export async function generateMetadata(p: P): Promise<Metadata> {
   const d = await load(p);
   if (!d || d.stops.length < 1) return {};
   const title = `${fmt(d.t.rs.lead, { n: d.stops.length, c: d.name, h: hrs(sharedMinutes(d.stops)) })} | VOYBU`;
-  const description = d.stops.map((s) => stopName(s, p.params.locale)).join(" → ");
+  const loc = (await p.params).locale;
+  const description = d.stops.map((s) => stopName(s, loc)).join(" → ");
   return { title, description, robots: { index: false }, openGraph: { title, description, type: "website" } };
 }
 
@@ -36,12 +38,12 @@ export default async function SharedRoute(p: P) {
   const d = await load(p);
   if (!d) notFound();
   const { t, city, stops, name } = d;
-  const l = p.params.locale;
-  const from = (p.searchParams.p ?? "").slice(0, 60);
+  const l = (await p.params).locale;
+  const from = ((await p.searchParams).p ?? "").slice(0, 60);
   const lead = fmt(t.rs.lead, { n: stops.length, c: name, h: hrs(sharedMinutes(stops)) });
   return (
     <main className="app">
-      <Header locale={l} currency={requestCurrency()} />
+      <Header locale={l} currency={(await requestCurrency())} />
       <div className="ess">
         <span className="ess-h">🔗 {t.rs.title}</span>
         {stops.length === 0 ? <p className="ess-card ess-muted">{t.rs.invalid}</p> : <>

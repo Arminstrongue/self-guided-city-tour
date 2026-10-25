@@ -7,7 +7,7 @@ import { rateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const Id = z.string().uuid();
+const Id = z.guid();
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("expense"), title: z.string().max(60).default(""), amount: z.number().positive().max(10_000_000), currency: z.string().length(3), payer: Id, among: z.array(Id).max(20).default([]), shares: z.record(Id, z.number().min(0)).optional() }),
   z.object({ action: z.literal("settle"), from: Id, to: Id, amount: z.number().int().positive() }),
@@ -15,7 +15,8 @@ const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("remove"), item: Id })
 ]);
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   if (!Id.safeParse(params.id).success) return NextResponse.json({ error: "not_found" }, { status: 404 });
@@ -23,7 +24,8 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
   return g ? NextResponse.json(g, { headers: { "Cache-Control": "no-store" } }) : NextResponse.json({ error: "not_found" }, { status: 404 });
 }
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!rateLimit(req, "split-item", 120)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
@@ -38,7 +40,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ ok: true, group: await getGroup(me, params.id) });
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   if (!Id.safeParse(params.id).success) return NextResponse.json({ ok: true });

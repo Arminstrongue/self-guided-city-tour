@@ -7,7 +7,8 @@ import { currentAgent, LEAD_STATUSES } from "@/lib/agents";
 export const runtime = "nodejs";
 const Patch = z.object({ status: z.enum(LEAD_STATUSES).optional(), notes: z.string().trim().max(1000).optional() });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const agent = await currentAgent();
   if (!agent) return NextResponse.json({ error: "auth" }, { status: 401 });
   const p = Patch.safeParse(await req.json().catch(() => null));

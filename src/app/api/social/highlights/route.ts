@@ -21,9 +21,9 @@ export async function GET(req: Request) {
 
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("create"), title: z.string().max(60), ids: z.array(z.string().max(40)).max(100) }),
-  z.object({ action: z.literal("update"), id: z.string().uuid(), title: z.string().max(60).optional(), ids: z.array(z.string().max(40)).max(100).optional(), cover: z.string().uuid().optional() }),
-  z.object({ action: z.literal("remove"), id: z.string().uuid(), story: z.string().uuid() }),
-  z.object({ action: z.literal("delete"), id: z.string().uuid() })
+  z.object({ action: z.literal("update"), id: z.guid(), title: z.string().max(60).optional(), ids: z.array(z.string().max(40)).max(100).optional(), cover: z.guid().optional() }),
+  z.object({ action: z.literal("remove"), id: z.guid(), story: z.guid() }),
+  z.object({ action: z.literal("delete"), id: z.guid() })
 ]);
 
 export async function POST(req: Request) {

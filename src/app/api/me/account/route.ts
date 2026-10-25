@@ -42,11 +42,11 @@ export async function GET() {
 
 const Body = z.object({
   dmPolicy: z.enum(["circle", "following", "none"]).optional(),
-  notif: z.record(z.enum(["like", "comment", "follow", "message", "story_reply", "video"]), z.boolean()).optional(),
+  notif: z.partialRecord(z.enum(["like", "comment", "follow", "message", "story_reply", "video"]), z.boolean()).optional(), // zod 4: record com enum exige todas as chaves; aqui só as alteradas
   lang: z.string().regex(/^[a-z]{2}$/).optional(),
   isPrivate: z.boolean().optional(),
   unmute: z.string().max(40).optional(),   // handle
-  unhide: z.string().uuid().optional(),    // publicação
+  unhide: z.guid().optional(),    // publicação
   hiddenWords: z.array(z.string().max(60)).max(200).optional(),
   close: z.object({ handle: z.string().max(40), on: z.boolean() }).optional()
 });

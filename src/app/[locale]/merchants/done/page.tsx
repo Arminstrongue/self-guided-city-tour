@@ -14,7 +14,11 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 
-export default async function MerchantDone({ params, searchParams }: { params: { locale: Locale }; searchParams: { id?: string; session_id?: string } }) {
+export default async function MerchantDone(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ id?: string; session_id?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = getDict(params.locale);
   if (!searchParams.id || !/^[0-9a-f-]{36}$/.test(searchParams.id)) notFound();
   const d = await db();
@@ -29,7 +33,7 @@ export default async function MerchantDone({ params, searchParams }: { params: {
   const qrUrl = `${env.appUrl}/${city.id}?ref=${m.refCode}`;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         <h1 style={{ fontSize: 28 }}>✓ {t.mDone}</h1>
         {m.status === "active"

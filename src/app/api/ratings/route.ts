@@ -8,7 +8,7 @@ import { ratingFor, saveRating, validRating } from "@/lib/metrics";
 import { rateLimit } from "@/lib/rate-limit";
 
 async function accessFor(city: string) {
-  const emails = [await validAccessEmail(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
+  const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
   return /^[a-z]{2,8}$/.test(city) ? findActiveAccess(emails, city) : null;
 }
 

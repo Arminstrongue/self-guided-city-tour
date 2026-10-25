@@ -5,7 +5,8 @@ import { db, schema } from "@/lib/db";
 export const runtime = "nodejs";
 
 /** Foto de um negócio parceiro: /api/merchants/photo/<id>?i=0 (0 a 3). */
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   if (!/^[0-9a-f-]{36}$/i.test(params.id)) return new Response(null, { status: 404 });
   const i = Math.max(0, Math.min(3, Number(new URL(req.url).searchParams.get("i")) || 0));
   const d = await db();

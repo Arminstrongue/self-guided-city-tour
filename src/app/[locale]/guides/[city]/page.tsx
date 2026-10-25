@@ -12,7 +12,8 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 export const dynamic = "force-dynamic";
 
 /** Guias de uma cidade, do melhor avaliado para o menos avaliado (média bayesiana). */
-export default async function GuidesCity({ params }: { params: { locale: Locale; city: string } }) {
+export default async function GuidesCity(props: { params: Promise<{ locale: Locale; city: string }> }) {
+  const params = await props.params;
   const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
@@ -21,7 +22,7 @@ export default async function GuidesCity({ params }: { params: { locale: Locale;
   const name = cityName(city, params.locale);
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         <h1 style={{ fontSize: 30 }}>{fmt(t.gdTitle, { city: name })}</h1>
         <p className="hint">{t.gdSub}</p>

@@ -102,7 +102,7 @@ const devAdmin = () => process.env.NODE_ENV === "development" && process.env.DEV
 export async function isAdmin(): Promise<boolean> {
   if (devAdmin()) return true;
   // Entrada por link no email (sem depender de Google/Apple): cookie assinado e email ainda na lista ADMIN_EMAILS.
-  if (isAdminEmail(readPurposeToken(cookies().get(ADMIN_COOKIE)?.value, "admin"))) return true;
+  if (isAdminEmail(readPurposeToken((await cookies()).get(ADMIN_COOKIE)?.value, "admin"))) return true;
   const email = await sessionEmail().catch(() => null);
   return isAdminEmail(email);
 }

@@ -50,7 +50,7 @@ export const GuideSignup = GuideProfile.extend({ email: z.string().email().max(2
   });
 
 export const BookBody = z.object({
-  guideId: z.string().uuid(),
+  guideId: z.guid(),
   startAt: z.string().datetime({ offset: true }),
   hours: z.coerce.number().int().min(1).max(8),
   people: z.coerce.number().int().min(1).max(20),

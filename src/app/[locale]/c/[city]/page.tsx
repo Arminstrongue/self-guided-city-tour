@@ -38,7 +38,8 @@ export const dynamic = "force-dynamic";
 
 const hrs = (m: number) => { const v = Math.max(0, Math.round(m)); return `${Math.floor(v / 60)} h ${String(v % 60).padStart(2, "0")}`; };
 
-export async function generateMetadata({ params }: { params: { locale: Locale; city: string } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale; city: string }> }): Promise<Metadata> {
+  const params = await props.params;
   const city = await loadCity(params.city);
   if (!city || !isLocale(params.locale)) return {};
   const t = getDict(params.locale);
@@ -49,13 +50,17 @@ export async function generateMetadata({ params }: { params: { locale: Locale; c
   return { title, description, alternates: alternates(params.locale, `/c/${city.id}`), openGraph: { title, description, siteName: "VOYBU", type: "website" } };
 }
 
-export default async function CityEntry({ params, searchParams }: { params: { locale: Locale; city: string }; searchParams: { ref?: string } }) {
+export default async function CityEntry(
+  props: { params: Promise<{ locale: Locale; city: string }>; searchParams: Promise<{ ref?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
   const name = cityName(city, params.locale);
   const fx = await fxContext();
-  const opts = routeOptions(city); const core = opts.find((o) => o.key === "core") ?? opts[opts.length - 1];
+  const opts = routeOptions(city);const core = opts.find((o) => o.key === "core") ?? opts[opts.length - 1];
   // Um só cálculo: paragens e duração do mesmo roteiro (o base, sem extensão), com visitas e deslocações entre paragens.
   const nExt = city.stops.filter((s) => s.x).length;
   const meta = fmt(t.cityMeta, { n: core.plan.stops.length, h: hrs(core.plan.minutesTour) }) + (nExt ? ` · ${fmt(t.tpExtVersion, { n: nExt })}` : "");

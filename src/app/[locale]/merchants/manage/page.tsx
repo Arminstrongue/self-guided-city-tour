@@ -12,16 +12,21 @@ import { bookingsOf, currentMerchantEmail, merchantsOf, statsFor } from "@/lib/m
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
   return { title: `${t.mp.title} | VOYBU`, robots: { index: false } };
 }
 
 /** Área do comerciante: entrar com link no email e gerir o próprio anúncio. */
-export default async function Manage({ params, searchParams }: { params: { locale: Locale }; searchParams: Record<string, string | undefined> }) {
+export default async function Manage(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<Record<string, string | undefined>> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!isLocale(params.locale)) notFound();
-  const email = currentMerchantEmail();
+  const email = await currentMerchantEmail();
   let body: React.ReactNode;
   if (!email) body = <MerchantLogin locale={params.locale} expired={searchParams.expired === "1"} />;
   else {
@@ -43,7 +48,7 @@ export default async function Manage({ params, searchParams }: { params: { local
   }
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       {body}
     </main>
   );

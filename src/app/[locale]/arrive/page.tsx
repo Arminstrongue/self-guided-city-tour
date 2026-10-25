@@ -13,14 +13,19 @@ import { requestCurrency } from "@/lib/fx";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
   return { title: `${t.nn.arrived} | VOYBU`, description: t.nn.arrivedSub, alternates: alternates(params.locale, "/arrive") };
 }
 
 /** "Acabei de chegar" e "Quero chegar a um lugar": orientação passo a passo (Londres primeiro). */
-export default async function Arrive({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; go?: string } }) {
+export default async function Arrive(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; go?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!isLocale(params.locale)) notFound();
   const list = await loadCities();
   const cities: ArriveCity[] = list.map((c) => ({
@@ -31,7 +36,7 @@ export default async function Arrive({ params, searchParams }: { params: { local
   const initial = cities.some((c) => c.id === searchParams.city) ? searchParams.city! : PRIMARY_CITY;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <ArriveFlow locale={params.locale} cities={cities} initial={initial} go={searchParams.go === "1"} explicit={cities.some((c) => c.id === searchParams.city)} />
     </main>
   );

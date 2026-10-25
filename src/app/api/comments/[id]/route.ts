@@ -7,7 +7,8 @@ import { rateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 const isId = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   if (!isId(params.id)) return NextResponse.json({ ok: false }, { status: 404 });
@@ -16,7 +17,8 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
 
 const Body = z.object({ reason: z.enum(["spam", "fake", "harassment", "inappropriate", "safety", "other"]).default("other") });
 /** Denunciar um comentário. */
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   if (!isId(params.id)) return NextResponse.json({ ok: false }, { status: 404 });

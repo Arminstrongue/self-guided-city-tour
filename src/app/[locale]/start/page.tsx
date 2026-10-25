@@ -24,19 +24,24 @@ import { findActiveAccess } from "@/lib/orders";
 export const dynamic = "force-dynamic";
 
 /** Primeira experiência em 3 passos: cidade → tempo disponível → começar. */
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
   return { title: `${t.qsCta} | VOYBU`, description: t.heroSub, alternates: alternates(params.locale, "/start") };
 }
 
-export default async function Start({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string } }) {
+export default async function Start(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   const L = INTL_LOCALE[params.locale];
   const list = await loadCities();
   const region = new Intl.DisplayNames([L], { type: "region" });
-  const emails = [await validAccessEmail(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
+  const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
   const owned = new Set<string>();
   if (emails.length) for (const c of list) if (await findActiveAccess(emails, c.id).catch(() => null)) owned.add(c.id);
   const fx = await fxContext();
@@ -53,7 +58,7 @@ export default async function Start({ params, searchParams }: { params: { locale
   const pre = cities.some((c) => c.id === searchParams.city) ? searchParams.city! : "";
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <QuickStart locale={params.locale} cities={cities} pre={pre} from={fmt(t.fromP, { p: p.local ?? p.main })} />
     </main>
   );

@@ -2,7 +2,8 @@
 const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
-  experimental: { serverComponentsExternalPackages: ["@electric-sql/pglite", "pg"], instrumentationHook: true },
+  // Pacotes nativos/WASM ficam fora do bundle do servidor. (instrumentation.ts é estável no Next 15+, sem opção.)
+  serverExternalPackages: ["@electric-sql/pglite", "pg"],
   async headers() {
     return [{
       source: "/(.*)",

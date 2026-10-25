@@ -16,7 +16,7 @@ import { env } from "./env";
 export { forgetSessionCache } from "./session-revoke";
 
 export async function currentTraveller(): Promise<string | null> {
-  const raw = cookies().get(ACCESS_COOKIE)?.value;
+  const raw = (await cookies()).get(ACCESS_COOKIE)?.value;
   if (raw && readAccessTokenFull(raw)) return validAccessEmail(raw);
   return await sessionEmail().catch(() => null);
 }

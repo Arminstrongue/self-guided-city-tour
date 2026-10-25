@@ -8,14 +8,18 @@ import { AGENT_COMMISSION, AGENT_MONTHS, MERCHANT_PLANS } from "@/lib/pricing";
 export const dynamic = "force-dynamic";
 
 /** Página pública do programa de comerciais independentes. */
-export default function Agents({ params, searchParams }: { params: { locale: Locale }; searchParams: { expired?: string } }) {
+export default async function Agents(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ expired?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = getDict(params.locale);
   const pct = Math.round(AGENT_COMMISSION * 100);
   const eur = (c: number) => new Intl.NumberFormat(INTL_LOCALE[params.locale], { style: "currency", currency: "EUR" }).format(c / 100);
   const feat = MERCHANT_PLANS.featured.amount;
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         <h1 style={{ fontSize: 28, lineHeight: 1.15 }}>{t.hpTitle}</h1>
         <p className="hint" style={{ fontSize: 15 }}>{t.hpSub}</p>

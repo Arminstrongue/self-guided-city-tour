@@ -71,7 +71,7 @@ export function insertAt(el: HTMLInputElement | HTMLTextAreaElement | null, valu
 
 /** Botão 😊 que abre o painel por cima do campo. */
 export function EmojiButton({ target, value, set, max, labels }: {
-  target: React.RefObject<HTMLInputElement | HTMLTextAreaElement>; value: string; set: (v: string) => void; max?: number;
+  target: React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>; value: string; set: (v: string) => void; max?: number;
   labels: { emoji: string; search: string; recent: string; cats: Record<string, string> };
 }) {
   const [open, setOpen] = useState(false);

@@ -18,7 +18,7 @@ export function newAgentCode(): string {
 
 /** Comercial com sessão iniciada (cookie assinado com finalidade "agent"). */
 export async function currentAgent(): Promise<schema.Agent | null> {
-  const email = readPurposeToken(cookies().get(AGENT_COOKIE)?.value, "agent");
+  const email = readPurposeToken((await cookies()).get(AGENT_COOKIE)?.value, "agent");
   if (!email) return null;
   const d = await db();
   const [a] = await d.select().from(schema.agents).where(eq(schema.agents.email, email)).limit(1);

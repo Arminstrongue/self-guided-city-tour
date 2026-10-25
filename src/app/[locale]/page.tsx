@@ -40,14 +40,16 @@ const FEAT_HREF = [
   "/guides/lon"            // guias locais
 ] as const;
 
-export async function generateMetadata({ params }: { params: { locale: Locale } }): Promise<Metadata> {
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const params = await props.params;
   if (!isLocale(params.locale)) return {};
   const t = getDict(params.locale);
   const title = `VOYBU — ${t.scanned}`;
   return { title, description: t.heroSub, alternates: alternates(params.locale), openGraph: { title, description: t.heroSub, siteName: "VOYBU", type: "website" } };
 }
 
-export default async function Home({ params }: { params: { locale: Locale } }) {
+export default async function Home(props: { params: Promise<{ locale: Locale }> }) {
+  const params = await props.params;
   // Pedidos de robôs a caminhos como /wp-login.php caem aqui com um "idioma" inválido: 404 sem erro no log.
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);

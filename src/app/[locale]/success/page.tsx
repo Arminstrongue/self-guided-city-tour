@@ -8,14 +8,18 @@ import { currentTraveller } from "@/lib/wallet";
 
 export const dynamic = "force-dynamic";
 
-export default async function Success({ params, searchParams }: { params: { locale: Locale }; searchParams: { city?: string; pending?: string } }) {
+export default async function Success(
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; pending?: string }> }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   const t = getDict(params.locale);
   const city = await loadCity(searchParams.city ?? "");
   // O email vem da sessão (cookie), não do endereço da página — não fica no histórico nem em registos.
   const email = (await currentTraveller().catch(() => null)) ?? "";
   return (
     <main className="app">
-      <Header locale={params.locale} currency={requestCurrency()} />
+      <Header locale={params.locale} currency={(await requestCurrency())} />
       <div className="stack">
         {searchParams.pending ? (
           <p className="note">{t.processing}</p>

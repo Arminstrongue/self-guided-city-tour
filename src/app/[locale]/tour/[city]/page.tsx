@@ -22,11 +22,12 @@ import { cityCenterOf } from "@/lib/city-center";
 
 export const dynamic = "force-dynamic";
 
-export default async function Tour({ params }: { params: { locale: Locale; city: string } }) {
+export default async function Tour(props: { params: Promise<{ locale: Locale; city: string }> }) {
+  const params = await props.params;
   const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
-  const emails = [await validAccessEmail(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
+  const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
   const free = isFreeCity(city.id);
   const found = await findActiveAccess(emails, city.id);
   // Primeira abertura: o passe começa a contar agora.
@@ -45,7 +46,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   const allCities = all.filter((c) => c.stops.length).map((c) => ({ id: c.id, name: cityName(c, params.locale), ...cityCenterOf(c) }));
   return (
     <main className="app">
-      {preview && <Header locale={params.locale} currency={requestCurrency()} />}
+      {preview && <Header locale={params.locale} currency={(await requestCurrency())} />}
       <TourView
         preview={preview ? { buy: `/${params.locale}/c/${city.id}#book`, price: fmt(t.fromP, { p: price.local ?? price.main }), signIn: `/${params.locale}/wallet?signin=1&city=${city.id}` } : undefined}
         locale={params.locale} city={shown} cityLabel={cityName(city, params.locale)}
