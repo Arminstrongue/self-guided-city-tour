@@ -5,6 +5,7 @@ import type { Media, Photo, Review } from "@/lib/media";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { ExtLink } from "./ExtLink";
+import Portal from "./Portal";
 
 export type { Media, Photo, Review };
 type CityMedia = { cover: Photo[]; stops: Record<string, Photo | null> };
@@ -104,48 +105,69 @@ export function Slides({ photos, interval = 5200 }: { photos: Photo[]; interval?
 /* ---------- Visualizador em ecrã inteiro ---------- */
 
 export function Lightbox({ title, photos, start = null, onClose, t }: { title: string; photos: Photo[]; start?: number | null; onClose: () => void; t: Dict }) {
-  const [view, setView] = useState<number | null>(start);
+  // Com uma só foto abre logo a foto; com várias abre a grelha (ou a foto pedida).
+  const [view, setView] = useState<number | null>(start ?? (photos.length === 1 ? 0 : null));
+  const [cur, setCur] = useState(start ?? 0);
   const strip = useRef<HTMLDivElement | null>(null);
+  const thumbs = useRef<HTMLDivElement | null>(null);
+  const go = (i: number) => { const el = strip.current; const k = Math.max(0, Math.min(photos.length - 1, i)); if (el) el.scrollTo({ left: k * el.clientWidth, behavior: "smooth" }); setCur(k); };
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    const key = (e: KeyboardEvent) => { if (e.key === "Escape") { if (view !== null) setView(null); else onClose(); } };
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { if (view !== null && photos.length > 1) setView(null); else onClose(); }
+      if (view !== null && e.key === "ArrowRight") go(cur + 1);
+      if (view !== null && e.key === "ArrowLeft") go(cur - 1);
+    };
     window.addEventListener("keydown", key);
     return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", key); };
-  }, [onClose, view]);
+  }); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (view === null || !strip.current) return;
     strip.current.scrollTo({ left: view * strip.current.clientWidth, behavior: "instant" as ScrollBehavior });
+    setCur(view);
   }, [view]);
-  const step = (d: number) => { const el = strip.current; if (el) el.scrollBy({ left: d * el.clientWidth, behavior: "smooth" }); };
+  // Miniatura ativa sempre visível.
+  useEffect(() => { thumbs.current?.children[cur]?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" }); }, [cur]);
+  const onScroll = () => { const el = strip.current; if (el && el.clientWidth) setCur(Math.round(el.scrollLeft / el.clientWidth)); };
+  const p = photos[cur];
   return (
-    <div className="lb" role="dialog" aria-modal="true" aria-label={title}>
-      <div className="lb-top">
-        {view !== null ? <button className="lb-x" onClick={() => setView(null)} aria-label={t.photos}>▦</button> : <span style={{ width: 40 }} />}
-        <b>{title} · <span className="num">{photos.length}</span> {t.photos.toLowerCase()}</b>
-        <button className="lb-x" onClick={onClose} aria-label={t.close}>✕</button>
-      </div>
-      {view === null ? (
-        <div className="lb-grid">
-          {photos.map((p, k) => <button key={p.url} onClick={() => setView(k)} aria-label={`${t.photos} ${k + 1}`}><Img src={p.thumb} alt="" /></button>)}
+    <Portal>
+      <div className="lb" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="lb-top">
+          {view !== null && photos.length > 1 ? <button className="lb-x" onClick={() => setView(null)} aria-label={t.photos}>▦</button> : <span style={{ width: 40 }} />}
+          <b>{title} · <span className="num">{view !== null && photos.length > 1 ? `${cur + 1} / ${photos.length}` : `${photos.length} ${t.photos.toLowerCase()}`}</span></b>
+          <button className="lb-x" onClick={onClose} aria-label={t.close}>✕</button>
         </div>
-      ) : (
-        <>
-          <div className="lb-view" ref={strip}>
-            {photos.map((p) => (
-              <figure key={p.url}>
-                <Img src={p.url} alt="" eager />
-                <figcaption>{p.page ? <a href={p.page} target="_blank" rel="noreferrer">{p.credit} · {p.license}</a> : `${p.credit} · ${p.license}`}</figcaption>
-              </figure>
-            ))}
+        {view === null ? (
+          <div className="lb-grid">
+            {photos.map((ph, k) => <button key={ph.url} onClick={() => setView(k)} aria-label={`${t.photos} ${k + 1}`}><Img src={ph.thumb} alt="" /></button>)}
           </div>
-          <div className="lb-bot">
-            <button onClick={() => step(-1)} aria-label="‹">‹</button>
-            <button onClick={() => step(1)} aria-label="›">›</button>
-          </div>
-        </>
-      )}
-    </div>
+        ) : (
+          <>
+            <div className="lb-stage">
+              <div className="lb-view" ref={strip} onScroll={onScroll}>
+                {photos.map((ph, k) => (
+                  <figure key={ph.url}>
+                    <Img src={ph.url} alt="" eager={Math.abs(k - cur) <= 1} />
+                  </figure>
+                ))}
+              </div>
+              {photos.length > 1 && <>
+                <button className="lb-arrow l" onClick={() => go(cur - 1)} disabled={cur === 0} aria-label="‹">‹</button>
+                <button className="lb-arrow r" onClick={() => go(cur + 1)} disabled={cur === photos.length - 1} aria-label="›">›</button>
+              </>}
+            </div>
+            <p className="lb-cap">{p ? (p.page ? <a href={p.page} target="_blank" rel="noreferrer">{p.credit} · {p.license}</a> : `${p.credit} · ${p.license}`) : null}</p>
+            {photos.length > 1 && (
+              <div className="lb-thumbs" ref={thumbs}>
+                {photos.map((ph, k) => <button key={ph.url} className={k === cur ? "on" : ""} onClick={() => go(k)} aria-label={`${t.photos} ${k + 1}`}><Img src={ph.thumb} alt="" /></button>)}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </Portal>
   );
 }
 

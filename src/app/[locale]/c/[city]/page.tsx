@@ -93,6 +93,8 @@ export default async function CityEntry(
       </CityHero>
 
       <div style={{ maxWidth: 760, marginInline: "auto" }}>
+        {/* "Tudo sobre a cidade" logo no topo: um toque leva a cada secção (abre o separador certo). */}
+        <CityHub t={t} locale={params.locale} city={city} name={name} />
         <CityTabs tabs={[{ key: "route", label: t.route }, { key: "today", label: t.hbToday }, { key: "safety", label: t.qsEssSafety }, { key: "know", label: t.hbTips }]}>
           <>
         <CityGallery cityId={city.id} cityName={name} stops={stops} locale={params.locale} />
@@ -143,7 +145,6 @@ export default async function CityEntry(
           <div className="sec-h reveal"><div><h2>{fmt(t.cmCity, { city: name })}</h2><p>{t.cmCitySub}</p></div></div>
           <LazyComments locale={params.locale} city={city.id} />
         </section>
-        <CityHub t={t} locale={params.locale} city={city} name={name} />
           </>
           <>
         <section className="sec" id="safety">
