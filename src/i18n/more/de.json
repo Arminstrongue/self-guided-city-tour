@@ -1720,7 +1720,7 @@
 "hospital": "Notaufnahme"
 }
 },
-"arv": {
+"arv": {"cheap": "Am günstigsten", "fast": "Am schnellsten", 
 "where": "Wo sind Sie jetzt?",
 "here": "Meinen Standort nutzen",
 "dest": "Wohin geht es?",

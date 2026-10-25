@@ -1716,7 +1716,7 @@
 "hospital": "Urgences"
 }
 },
-"arv": {
+"arv": {"cheap": "Le moins cher", "fast": "Le plus rapide", 
 "where": "Où êtes-vous ?",
 "here": "Utiliser ma position",
 "dest": "Où allez-vous ?",

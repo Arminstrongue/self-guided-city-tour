@@ -145,6 +145,33 @@ const EN_WORDS: [RegExp, string][] = [
 export function optionName(o: Pick<ArrivalOption, "name">, locale: string): string {
   return locale === "pt" ? o.name : EN_WORDS.reduce((a, [re, to]) => a.replace(re, to), o.name);
 }
+/** Valor numérico e moeda de uma tarifa ("≈ £13" → {cur:"£", v:13}; "grátis" → 0). Sem número (ou cartão) → null. */
+export function fareValue(fare: string): { cur: string; v: number } | null {
+  if (/grátis|free/i.test(fare)) return { cur: "*", v: 0 };
+  const m = /([^\d\s≈.,]*)\s*([\d][\d\s]*(?:[.,]\d+)?)\s*([A-Z]{3})?/.exec(fare.replace("≈", ""));
+  if (!m) return null;
+  const v = Number(m[2].replace(/\s/g, "").replace(",", "."));
+  if (!Number.isFinite(v)) return null;
+  return { cur: (m[1] || m[3] || "").trim(), v };
+}
+
+/** Etiquetas "mais barato" e "mais rápido" num ponto de chegada (só com 2+ opções comparáveis; empates não ganham). */
+export function optionBadges(options: { id: string; min: number; fare: string }[]): { cheap?: string; fast?: string } {
+  const out: { cheap?: string; fast?: string } = {};
+  if (options.length < 2) return out;
+  const priced = options.map((o) => ({ o, f: fareValue(o.fare) })).filter((x) => x.f) as { o: { id: string }; f: { cur: string; v: number } }[];
+  const curs = new Set(priced.filter((x) => x.f.cur !== "*").map((x) => x.f.cur));
+  if (priced.length >= 2 && curs.size <= 1) {
+    const min = Math.min(...priced.map((x) => x.f.v));
+    const best = priced.filter((x) => x.f.v === min);
+    if (best.length === 1) out.cheap = best[0].o.id;
+  }
+  const fastest = Math.min(...options.map((o) => o.min));
+  const quick = options.filter((o) => o.min === fastest);
+  if (quick.length === 1) out.fast = quick[0].id;
+  return out;
+}
+
 export const fareText = (fare: string, locale: string) => (locale === "pt" ? fare : fare.replace("grátis", "free"));
 
 export const arrivalsFor = (city: string): ArrivalPoint[] => ARRIVALS[city] ?? ARRIVALS_MORE[city] ?? ARRIVALS_WORLD[city] ?? [];

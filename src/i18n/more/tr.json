@@ -2178,7 +2178,7 @@
 "hospital": "Acil servis"
 }
 },
-"arv": {
+"arv": {"cheap": "En ucuz", "fast": "En hızlı", 
 "where": "Şu an neredesiniz?",
 "here": "Konumumu kullan",
 "dest": "Nereye gidiyorsunuz?",

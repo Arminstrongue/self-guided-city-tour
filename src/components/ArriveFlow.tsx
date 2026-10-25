@@ -10,7 +10,7 @@ import { ArrowLeft, Check, ChevronRight, Hand, Home, LocateFixed, MapPin, Plane,
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { useArrivalTx } from "@/lib/arrival-text";
-import { arrivalsFor, fareText, optionName, type ArrivalPoint, type Step } from "@/data/arrivals";
+import { arrivalsFor, fareText, optionBadges, optionName, type ArrivalPoint, type Step } from "@/data/arrivals";
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
 import { MiniRoute } from "./MiniRoute";
@@ -161,12 +161,12 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
       <BackBar t={t} onBack={() => set({ dest: null })} label={`${point.name} → ${st.dest.label}`} />
       <h1 className="arv-h">{a.how}</h1>
       <div className="arv-list">
-        {point.options.map((o) => (
+        {(() => { const bd = optionBadges(point.options); return point.options.map((o) => (
           <button key={o.id} type="button" className="arv-opt press" onClick={() => set({ opt: o.id, step: 0 })}>
-            <span className="arv-tx"><b>{optionName(o, locale)}</b>{o.note && <small>{tx(o.note)}</small>}</span>
+            <span className="arv-tx">{(bd.cheap === o.id || bd.fast === o.id) && <span className="arv-bd">{bd.cheap === o.id && <i className="cheap">{a.cheap}</i>}{bd.fast === o.id && <i className="fast">{a.fast}</i>}</span>}<b>{optionName(o, locale)}</b>{o.note && <small>{tx(o.note)}</small>}</span>
             <span className="arv-meta num"><b>{o.min} min</b>{o.fare && <small>{fareText(o.fare, locale)}</small>}</span>
           </button>
-        ))}
+        )); })()}
       </div>
       <p className="arv-note">{a.source}</p>
     </div>

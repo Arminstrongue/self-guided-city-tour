@@ -67,3 +67,19 @@ test("terminais: códigos únicos, fontes, textos pt/en e traduzidos", async () 
     assert.deepEqual(keys.filter((k) => !pack[k]), [], l);
   }
 });
+
+test("chegada: valor das tarifas e etiquetas mais barato / mais rápido", async () => {
+  const { fareValue, optionBadges } = await import("./arrivals");
+  assert.deepEqual(fareValue("≈ £13"), { cur: "£", v: 13 });
+  assert.deepEqual(fareValue("≈ AED 4"), { cur: "AED", v: 4 });
+  assert.deepEqual(fareValue("≈ 4 000 XOF"), { cur: "XOF", v: 4000 });
+  assert.deepEqual(fareValue("≈ R$ 10"), { cur: "R$", v: 10 });
+  assert.deepEqual(fareValue("grátis"), { cur: "*", v: 0 });
+  assert.equal(fareValue("Istanbulkart"), null);
+  assert.equal(fareValue(""), null);
+  const b = optionBadges([{ id: "eliz", min: 35, fare: "≈ £13" }, { id: "picc", min: 55, fare: "≈ £5.60" }, { id: "hex", min: 15, fare: "≈ £25" }, { id: "taxi", min: 50, fare: "" }]);
+  assert.deepEqual(b, { cheap: "picc", fast: "hex" });
+  assert.deepEqual(optionBadges([{ id: "a", min: 20, fare: "≈ €2" }]), {}, "uma só opção: sem etiquetas");
+  assert.equal(optionBadges([{ id: "a", min: 20, fare: "≈ €2" }, { id: "b", min: 30, fare: "≈ £2" }]).cheap, undefined, "moedas diferentes não se comparam");
+  assert.equal(optionBadges([{ id: "a", min: 20, fare: "≈ €2" }, { id: "b", min: 20, fare: "≈ €3" }]).fast, undefined, "empate não ganha");
+});

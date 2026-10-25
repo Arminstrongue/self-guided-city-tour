@@ -3312,3 +3312,10 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
 .mon-bad{color:#dc2626;font-weight:700}
 .mon-list{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
 @media (max-width:560px){.mon-t th:nth-child(4),.mon-t td:nth-child(4){display:none}}
+/* Chegada: etiquetas "mais barato" / "mais rápido" */
+.arv-bd{display:flex;gap:6px;margin-bottom:4px}
+.arv-bd i{font-style:normal;font-size:11.5px;font-weight:800;letter-spacing:.02em;padding:2px 8px;border-radius:999px}
+.arv-bd .cheap{background:#dcfce7;color:#166534}
+.arv-bd .fast{background:#dbeafe;color:#1e40af}
+:root[data-theme="dark"] .arv-bd .cheap{background:#14532d;color:#bbf7d0}
+:root[data-theme="dark"] .arv-bd .fast{background:#1e3a8a;color:#bfdbfe}
