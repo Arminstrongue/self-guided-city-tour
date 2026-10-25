@@ -47,6 +47,11 @@ export const merchants = pgTable("merchants", {
   /** Gerido pelo próprio negócio na Área do comerciante. */
   hours: text("hours"),
   paused: boolean("paused").notNull().default(false),
+  /** Promoção por tempo limitado (deixa de aparecer depois de "until", AAAA-MM-DD). */
+  promo: jsonb("promo").$type<{ text: string; until: string } | null>(),
+  /** Línguas faladas (códigos da app) e meios de pagamento aceites. */
+  languages: jsonb("languages").$type<string[]>().notNull().default([]),
+  payments: jsonb("payments").$type<string[]>().notNull().default([]),
   updatedAt: timestamp("updated_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [

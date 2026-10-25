@@ -1807,7 +1807,7 @@
 "none": "附近没有找到。",
 "locating": "正在定位…"
 },
-"mp": {
+"mp": {"promo": "促销", "promoText": "促销内容", "promoPh": "例如：11 点前第二杯咖啡免费", "promoUntil": "有效期至", "promoNote": "会以 🎁 显示在您的卡片上，并在此日期后自动消失（最长 90 天）。清空文字即可撤下。", "promoBadge": "至 {d}", "langs": "使用语言", "pays": "接受的付款方式", "pay": {"card": "银行卡", "contactless": "非接触式", "mobile": "Apple Pay / Google Pay", "cash": "现金"}, "speaks": "语言", "period": "最近 30 天，与之前 30 天相比", "rate": "{n}% 的浏览者进行了联系",
 "title": "商家专区",
 "sub": "更新优惠、营业时间、照片和预订——修改会立即显示在应用中。",
 "emailL": "注册邮箱",

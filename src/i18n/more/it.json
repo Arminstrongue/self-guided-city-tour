@@ -1862,7 +1862,7 @@
 "none": "Niente trovato nelle vicinanze.",
 "locating": "Localizzazione…"
 },
-"mp": {
+"mp": {"promo": "Promozione", "promoText": "Testo della promozione", "promoPh": "Es.: 2° caffè gratis fino alle 11", "promoUntil": "Valida fino al", "promoNote": "Appare con 🎁 sulla tua scheda e scompare da sola dopo questa data (massimo 90 giorni). Lascia il testo vuoto per toglierla.", "promoBadge": "fino al {d}", "langs": "Lingue parlate", "pays": "Pagamenti accettati", "pay": {"card": "Carta", "contactless": "Contactless", "mobile": "Apple Pay / Google Pay", "cash": "Contanti"}, "speaks": "Parla", "period": "Ultimi 30 giorni, rispetto ai 30 giorni precedenti", "rate": "Il {n}% di chi l'ha visto ha preso contatto",
 "title": "Area esercente",
 "sub": "Aggiorna offerta, orari, foto e prenotazioni: le modifiche compaiono subito nell'app.",
 "emailL": "Email di registrazione",

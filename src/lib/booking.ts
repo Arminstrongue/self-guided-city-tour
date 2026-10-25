@@ -96,3 +96,11 @@ export function checkBooking(kind: BookKind, b: BookingInput, today = new Date()
 const yesterday = (d: string) => new Date(Date.parse(`${d}T00:00:00Z`) - 864e5).toISOString().slice(0, 10);
 
 export const nights = (from: string, to: string) => Math.max(0, Math.round((Date.parse(to) - Date.parse(from)) / 864e5));
+
+/** Meios de pagamento que um negócio pode indicar. */
+export const PAYMENTS = ["card", "contactless", "mobile", "cash"] as const;
+export type Payment = (typeof PAYMENTS)[number];
+/** Promoção ainda válida (o dia "until" conta inteiro). */
+export function promoActive(p: { text: string; until: string } | null | undefined, today = new Date().toISOString().slice(0, 10)) {
+  return p && p.text && p.until >= today ? p : null;
+}

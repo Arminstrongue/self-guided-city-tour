@@ -3692,3 +3692,13 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .st-cats .st-val{max-width:34%;text-align:right}
 .st-info{cursor:default}
 .st-info .st-val{color:#34c759;font-weight:700}
+
+/* Área do comerciante: promoção, línguas e pagamentos; variação das estatísticas */
+.mp-chips{display:flex;flex-wrap:wrap;gap:8px}
+.mp-chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 12px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.mp-chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.mp-delta{font-weight:700;font-size:12px;opacity:.75}
+.mp-delta.up{color:#1f9d55;opacity:1}
+.mp-delta.down{color:#d93025;opacity:1}
+.mb-promo{margin-top:4px;font-size:13px;font-weight:700;color:#c2410c}
+.mb-promo.big{font-size:15px;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,#f97316 12%,transparent)}

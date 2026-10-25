@@ -3,6 +3,8 @@
  * o horário, as fotos, as reservas e a pausa do anúncio. Nome, categoria e morada continuam com a equipa
  * (para o anúncio continuar verificado: só negócios registados aparecem na app).
  */
+import { LOCALES } from "@/i18n/core";
+import { PAYMENTS } from "./booking";
 import { cookies } from "next/headers";
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
@@ -45,20 +47,27 @@ export async function ownMerchant(email: string, id: string) {
   return m ?? null;
 }
 
-/** Vistas, contactos e pedidos dos últimos 30 dias, por negócio. */
+export type Stat = { views: number; taps: number; bookings: number };
+/** Vistas, contactos e pedidos dos últimos 30 dias e dos 30 dias anteriores (para comparar), por negócio. */
 export async function statsFor(ids: string[]) {
-  const out: Record<string, { views: number; taps: number; bookings: number }> = {};
-  for (const id of ids) out[id] = { views: 0, taps: 0, bookings: 0 };
+  const out: Record<string, Stat & { prev: Stat }> = {};
+  for (const id of ids) out[id] = { views: 0, taps: 0, bookings: 0, prev: { views: 0, taps: 0, bookings: 0 } };
   if (!ids.length) return out;
   const d = await db();
-  const since = new Date(Date.now() - 30 * 86400_000);
-  const ev = await d.select({ stop: schema.events.stop, name: schema.events.name, n: sql<number>`count(*)::int` }).from(schema.events)
-    .where(and(inArray(schema.events.stop, ids), inArray(schema.events.name, ["offer_view", "offer_tap"]), gte(schema.events.createdAt, since)))
-    .groupBy(schema.events.stop, schema.events.name);
-  for (const r of ev) if (r.stop && out[r.stop]) out[r.stop][r.name === "offer_view" ? "views" : "taps"] = Number(r.n);
-  const bk = await d.select({ id: schema.bookingRequests.merchantId, n: sql<number>`count(*)::int` }).from(schema.bookingRequests)
-    .where(and(inArray(schema.bookingRequests.merchantId, ids), gte(schema.bookingRequests.createdAt, since))).groupBy(schema.bookingRequests.merchantId);
-  for (const r of bk) if (out[r.id]) out[r.id].bookings = Number(r.n);
+  const now = Date.now(), since = new Date(now - 30 * 86400_000), from = new Date(now - 60 * 86400_000);
+  const recent = sql<boolean>`${schema.events.createdAt} >= ${since}`;
+  const ev = await d.select({ stop: schema.events.stop, name: schema.events.name, cur: recent, n: sql<number>`count(*)::int` }).from(schema.events)
+    .where(and(inArray(schema.events.stop, ids), inArray(schema.events.name, ["offer_view", "offer_tap"]), gte(schema.events.createdAt, from)))
+    .groupBy(sql.raw("1, 2, 3"));
+  for (const r of ev) {
+    if (!r.stop || !out[r.stop]) continue;
+    const box = r.cur ? out[r.stop] : out[r.stop].prev;
+    box[r.name === "offer_view" ? "views" : "taps"] = Number(r.n);
+  }
+  const recentB = sql<boolean>`${schema.bookingRequests.createdAt} >= ${since}`;
+  const bk = await d.select({ id: schema.bookingRequests.merchantId, cur: recentB, n: sql<number>`count(*)::int` }).from(schema.bookingRequests)
+    .where(and(inArray(schema.bookingRequests.merchantId, ids), gte(schema.bookingRequests.createdAt, from))).groupBy(sql.raw("1, 2"));
+  for (const r of bk) if (out[r.id]) (r.cur ? out[r.id] : out[r.id].prev).bookings = Number(r.n);
   return out;
 }
 
@@ -80,6 +89,9 @@ export const MerchantPatch = z.object({
   bookMode: z.enum(["none", "request"]).optional(),
   bookOptions: z.array(BookOption).max(MAX_OPTIONS).optional(),
   paused: z.boolean().optional(),
+  promo: z.object({ text: z.string().trim().max(80), until: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }).nullable().optional(),
+  languages: z.array(z.enum(LOCALES)).max(12).optional(),
+  payments: z.array(z.enum(PAYMENTS)).max(PAYMENTS.length).optional(),
   photos: z.array(z.string()).min(1).max(MAX_PHOTOS).optional()
 });
 export type MerchantPatchInput = z.infer<typeof MerchantPatch>;
@@ -107,6 +119,18 @@ export async function applyPatch(email: string, p: MerchantPatchInput): Promise<
     set.bookOptions = bookable ? p.bookOptions.filter((o) => o.name) : [];
   }
   if (p.paused !== undefined) set.paused = p.paused;
+  if (p.promo !== undefined) {
+    if (!p.promo || !p.promo.text) set.promo = null;
+    else {
+      const r = moderate(p.promo.text);
+      if (!r.ok) return "offensive";
+      // No máximo 90 dias: uma promoção tem de acabar (e não pode estar no passado).
+      const max = new Date(Date.now() + 90 * 86400_000).toISOString().slice(0, 10), today = new Date().toISOString().slice(0, 10);
+      set.promo = { text: r.text, until: p.promo.until < today ? today : p.promo.until > max ? max : p.promo.until };
+    }
+  }
+  if (p.languages !== undefined) set.languages = [...new Set(p.languages)];
+  if (p.payments !== undefined) set.payments = [...new Set(p.payments)];
   const d = await db();
   if (p.photos) {
     const cur = await d.select().from(schema.merchantPhotos).where(eq(schema.merchantPhotos.merchantId, m.id));

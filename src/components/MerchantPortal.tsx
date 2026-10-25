@@ -2,10 +2,12 @@
 import { useDict } from "@/i18n/client-dict";
 /** Área do comerciante (iOS): entrar por link no email, ver estatísticas, editar o anúncio e responder a pedidos. */
 import { useState } from "react";
-import { Camera, Eye, ExternalLink, Hand, Inbox, LogOut, Mail, Pause, Play, Plus, Trash2, X } from "lucide-react";
+import { Camera, CreditCard, Eye, ExternalLink, Gift, Hand, Inbox, Languages, LogOut, Mail, Pause, Play, Plus, Trash2, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
-import { MAX_OPTIONS, MAX_PHOTOS, bookKind } from "@/lib/booking";
+import { MAX_OPTIONS, MAX_PHOTOS, PAYMENTS, bookKind, promoActive } from "@/lib/booking";
+import { LOCALES } from "@/i18n/core";
+import { langLabel } from "@/lib/lang-label";
 import { shrink } from "@/lib/photo-shrink";
 import { toast } from "@/lib/toast";
 
@@ -13,7 +15,8 @@ export type PortalMerchant = {
   id: string; name: string; category: string; city: string; cityName: string; stopName: string; address: string | null;
   offer: string; hours: string | null; phone: string | null; bookingUrl: string | null; instagram: string | null; tiktok: string | null; facebook: string | null;
   bookMode: string; bookOptions: { name: string; price: string }[]; plan: "basic" | "featured" | "partner"; status: "pending" | "active" | "past_due" | "cancelled";
-  paused: boolean; photoCount: number; rev: number; billing: boolean; stats: { views: number; taps: number; bookings: number };
+  paused: boolean; promo: { text: string; until: string } | null; languages: string[]; payments: string[]; photoCount: number; rev: number; billing: boolean;
+  stats: { views: number; taps: number; bookings: number; prev: { views: number; taps: number; bookings: number } };
 };
 export type PortalBooking = { id: string; merchantId: string; option: string; dateFrom: string; dateTo: string; time: string; people: number; units: number; name: string; email: string; phone: string; note: string; status: string; createdAt: string };
 
@@ -80,7 +83,8 @@ export function MerchantPortal({ t: tProp, locale, email, merchants, bookings: i
 
 function Editor({ t, locale, x }: { t: Dict; locale: Locale; x: PortalMerchant }) {
   const m = t.mp;
-  const [f, setF] = useState({ offer: x.offer, hours: x.hours ?? "", phone: x.phone ?? "", bookingUrl: x.bookingUrl ?? "", instagram: x.instagram ?? "", tiktok: x.tiktok ?? "", facebook: x.facebook ?? "", bookMode: x.bookMode, bookOptions: x.bookOptions });
+  const [f, setF] = useState({ offer: x.offer, hours: x.hours ?? "", phone: x.phone ?? "", bookingUrl: x.bookingUrl ?? "", instagram: x.instagram ?? "", tiktok: x.tiktok ?? "", facebook: x.facebook ?? "", bookMode: x.bookMode, bookOptions: x.bookOptions,
+    promoText: promoActive(x.promo)?.text ?? "", promoUntil: promoActive(x.promo)?.until ?? new Date(Date.now() + 14 * 86400_000).toISOString().slice(0, 10), languages: x.languages, payments: x.payments });
   const [photos, setPhotos] = useState<string[]>(Array.from({ length: x.photoCount }, (_, i) => `keep:${i}`));
   const [paused, setPaused] = useState(x.paused);
   const [busy, setBusy] = useState(false);
@@ -100,7 +104,8 @@ function Editor({ t, locale, x }: { t: Dict; locale: Locale; x: PortalMerchant }
     return true;
   }
   async function save() {
-    const ok = await patch({ ...f, bookOptions: f.bookOptions.filter((o) => o.name.trim()), photos });
+    const { promoText, promoUntil, ...rest } = f;
+    const ok = await patch({ ...rest, bookOptions: f.bookOptions.filter((o) => o.name.trim()), ...(photos.length ? { photos } : {}), promo: promoText.trim() ? { text: promoText.trim(), until: promoUntil } : null });
     if (ok) { toast(m.saved); setDirty(false); }
   }
   async function togglePause() {
@@ -133,10 +138,14 @@ function Editor({ t, locale, x }: { t: Dict; locale: Locale; x: PortalMerchant }
       <section className="ess-card">
         <span className="ess-h">{m.stats}</span>
         <div className="mp-stats">
-          <div><Eye size={18} aria-hidden="true" /><b className="num">{nf.format(x.stats.views)}</b><small>{m.views}</small></div>
-          <div><Hand size={18} aria-hidden="true" /><b className="num">{nf.format(x.stats.taps)}</b><small>{m.taps}</small></div>
-          <div><Inbox size={18} aria-hidden="true" /><b className="num">{nf.format(x.stats.bookings)}</b><small>{m.bookings}</small></div>
+          {([["views", Eye, m.views], ["taps", Hand, m.taps], ["bookings", Inbox, m.bookings]] as const).map(([k, Ic, label]) => {
+            const cur = x.stats[k], prev = x.stats.prev[k];
+            const delta = prev ? Math.round(((cur - prev) / prev) * 100) : null;
+            return <div key={k}><Ic size={18} aria-hidden="true" /><b className="num">{nf.format(cur)}</b><small>{label}</small>
+              {delta !== null && <small className={`mp-delta ${delta > 0 ? "up" : delta < 0 ? "down" : ""}`}>{delta > 0 ? "▲" : delta < 0 ? "▼" : "="} {Math.abs(delta)}%</small>}</div>;
+          })}
         </div>
+        {(() => { const hasPrev = x.stats.prev.views + x.stats.prev.taps + x.stats.prev.bookings > 0; const parts = [hasPrev ? m.period : "", x.stats.views > 0 ? fmt(m.rate, { n: Math.round((x.stats.taps / x.stats.views) * 100) }) : ""].filter(Boolean); return parts.length ? <small className="ess-muted">{parts.join(" · ")}</small> : null; })()}
       </section>
 
       <section className="ess-card mp-form">
@@ -155,6 +164,28 @@ function Editor({ t, locale, x }: { t: Dict; locale: Locale; x: PortalMerchant }
               <input maxLength={120} value={f[k]} placeholder="@" onChange={(e) => set(k, e.target.value)} /></label>
           ))}
         </div>
+      </section>
+
+      <section className="ess-card mp-form">
+        <span className="ess-h"><Gift size={18} aria-hidden="true" /> {m.promo}</span>
+        <label className="mt-field"><span className="as-h mp-h">{m.promoText}</span>
+          <input maxLength={80} value={f.promoText} placeholder={m.promoPh} onChange={(e) => set("promoText", e.target.value)} /></label>
+        <label className="mt-field"><span className="as-h mp-h">{m.promoUntil}</span>
+          <input type="date" value={f.promoUntil} min={new Date().toISOString().slice(0, 10)} max={new Date(Date.now() + 90 * 86400_000).toISOString().slice(0, 10)} onChange={(e) => set("promoUntil", e.target.value)} /></label>
+        <small className="ess-muted">{m.promoNote}</small>
+      </section>
+
+      <section className="ess-card mp-form">
+        <span className="ess-h"><Languages size={18} aria-hidden="true" /> {m.langs}</span>
+        <div className="mp-chips">{LOCALES.map((l) => {
+          const on = f.languages.includes(l);
+          return <button key={l} type="button" aria-pressed={on} className={`mp-chip ${on ? "on" : ""}`} onClick={() => set("languages", on ? f.languages.filter((y) => y !== l) : [...f.languages, l])}>{langLabel(l, locale)}</button>;
+        })}</div>
+        <span className="ess-h" style={{ marginTop: 6 }}><CreditCard size={18} aria-hidden="true" /> {m.pays}</span>
+        <div className="mp-chips">{PAYMENTS.map((k) => {
+          const on = f.payments.includes(k);
+          return <button key={k} type="button" aria-pressed={on} className={`mp-chip ${on ? "on" : ""}`} onClick={() => set("payments", on ? f.payments.filter((y) => y !== k) : [...f.payments, k])}>{m.pay[k]}</button>;
+        })}</div>
       </section>
 
       {kind && (

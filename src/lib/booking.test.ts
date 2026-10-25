@@ -64,3 +64,11 @@ test("emails: o negócio recebe os detalhes e o texto do viajante é escapado", 
   assert.match(trav.subject, /Casa <Azul>/);
   assert.ok(trav.html.includes("Casa &lt;Azul&gt;"));
 });
+
+test("promoção: só aparece até ao fim do dia indicado", async () => {
+  const { promoActive } = await import("./booking");
+  assert.equal(promoActive({ text: "2.º café grátis", until: "2026-10-25" }, "2026-10-25")?.text, "2.º café grátis");
+  assert.equal(promoActive({ text: "2.º café grátis", until: "2026-10-24" }, "2026-10-25"), null);
+  assert.equal(promoActive({ text: "", until: "2026-12-31" }, "2026-10-25"), null);
+  assert.equal(promoActive(null), null);
+});

@@ -1835,7 +1835,7 @@
 "none": "In der Nähe nichts gefunden.",
 "locating": "Standort wird gesucht…"
 },
-"mp": {
+"mp": {"promo": "Aktion", "promoText": "Aktionstext", "promoPh": "z. B. 2. Kaffee gratis bis 11 Uhr", "promoUntil": "Gültig bis", "promoNote": "Erscheint mit 🎁 auf Ihrer Karte und verschwindet nach diesem Datum von selbst (max. 90 Tage). Text leer lassen, um sie zu entfernen.", "promoBadge": "bis {d}", "langs": "Gesprochene Sprachen", "pays": "Akzeptierte Zahlungen", "pay": {"card": "Karte", "contactless": "Kontaktlos", "mobile": "Apple Pay / Google Pay", "cash": "Bargeld"}, "speaks": "Spricht", "period": "Letzte 30 Tage im Vergleich zu den 30 Tagen davor", "rate": "{n} % der Besucher haben Kontakt aufgenommen",
 "title": "Händlerbereich",
 "sub": "Aktualisieren Sie Angebot, Öffnungszeiten, Fotos und Buchungen – Änderungen erscheinen sofort in der App.",
 "emailL": "E-Mail der Registrierung",

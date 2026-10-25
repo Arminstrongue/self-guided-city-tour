@@ -2293,7 +2293,7 @@
 "none": "근처에서 찾지 못했어요.",
 "locating": "위치 확인 중…"
 },
-"mp": {
+"mp": {"promo": "프로모션", "promoText": "프로모션 내용", "promoPh": "예: 오전 11시까지 두 번째 커피 무료", "promoUntil": "유효 기간", "promoNote": "카드에 🎁와 함께 표시되고 이 날짜가 지나면 자동으로 사라져요(최대 90일). 내용을 비우면 삭제돼요.", "promoBadge": "{d}까지", "langs": "사용 언어", "pays": "결제 수단", "pay": {"card": "카드", "contactless": "비접촉", "mobile": "Apple Pay / Google Pay", "cash": "현금"}, "speaks": "사용 언어", "period": "최근 30일, 이전 30일과 비교", "rate": "본 사람의 {n}%가 연락",
 "title": "매장 관리",
 "sub": "혜택, 영업시간, 사진, 예약을 수정하세요. 변경 사항은 앱에 바로 반영됩니다.",
 "emailL": "등록 이메일",

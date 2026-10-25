@@ -39,7 +39,7 @@ export default async function Manage(
       return {
         id: r.id, name: r.name, category: r.category, city: r.city, cityName: c ? cityName(c, params.locale) : r.city, stopName: s ? stopName(s, params.locale) : r.stopId,
         address: r.address, offer: r.offer, hours: r.hours, phone: r.phone, bookingUrl: r.bookingUrl, instagram: r.instagram, tiktok: r.tiktok, facebook: r.facebook,
-        bookMode: r.bookMode, bookOptions: r.bookOptions, plan: r.plan, status: r.status, paused: r.paused, photoCount: r.photoCount, rev: r.updatedAt ? r.updatedAt.getTime() : 0,
+        bookMode: r.bookMode, bookOptions: r.bookOptions, plan: r.plan, status: r.status, paused: r.paused, promo: r.promo ?? null, languages: r.languages, payments: r.payments, photoCount: r.photoCount, rev: r.updatedAt ? r.updatedAt.getTime() : 0,
         billing: Boolean(r.stripeCustomerId) && r.plan !== "basic", stats: stats[r.id]
       };
     });

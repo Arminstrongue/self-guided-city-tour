@@ -260,6 +260,13 @@
       "when": 1795400000000,
       "tag": "0036_travel_prefs",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1795500000000,
+      "tag": "0037_merchant_extras",
+      "breakpoints": true
     }
   ]
 }

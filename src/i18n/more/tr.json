@@ -2293,7 +2293,7 @@
 "none": "Yakında bir şey bulunamadı.",
 "locating": "Konum bulunuyor…"
 },
-"mp": {
+"mp": {"promo": "Kampanya", "promoText": "Kampanya metni", "promoPh": "Örn.: 11'e kadar ikinci kahve bedava", "promoUntil": "Geçerlilik", "promoNote": "Kartınızda 🎁 ile görünür ve bu tarihten sonra kendiliğinden kaybolur (en fazla 90 gün). Kaldırmak için metni boş bırakın.", "promoBadge": "{d} tarihine kadar", "langs": "Konuşulan diller", "pays": "Kabul edilen ödemeler", "pay": {"card": "Kart", "contactless": "Temassız", "mobile": "Apple Pay / Google Pay", "cash": "Nakit"}, "speaks": "Diller", "period": "Son 30 gün, önceki 30 günle karşılaştırmalı", "rate": "Görenlerin %{n}'i iletişime geçti",
 "title": "İşletme alanı",
 "sub": "Teklifi, çalışma saatlerini, fotoğrafları ve rezervasyonları güncelleyin — değişiklikler uygulamada hemen görünür.",
 "emailL": "Kayıt e-postası",

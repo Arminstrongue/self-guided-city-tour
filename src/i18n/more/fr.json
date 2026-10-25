@@ -1831,7 +1831,7 @@
 "none": "Rien trouvé à proximité.",
 "locating": "Localisation…"
 },
-"mp": {
+"mp": {"promo": "Promotion", "promoText": "Texte de la promotion", "promoPh": "Ex. : 2e café offert jusqu'à 11 h", "promoUntil": "Valable jusqu'au", "promoNote": "S'affiche avec 🎁 sur votre fiche et disparaît d'elle-même après cette date (90 jours max.). Laissez le texte vide pour la retirer.", "promoBadge": "jusqu'au {d}", "langs": "Langues parlées", "pays": "Paiements acceptés", "pay": {"card": "Carte", "contactless": "Sans contact", "mobile": "Apple Pay / Google Pay", "cash": "Espèces"}, "speaks": "Parle", "period": "30 derniers jours, comparés aux 30 jours précédents", "rate": "{n} % des visiteurs ont pris contact",
 "title": "Espace commerçant",
 "sub": "Mettez à jour votre offre, vos horaires, vos photos et vos réservations — les changements apparaissent tout de suite dans l'app.",
 "emailL": "E-mail d'inscription",
