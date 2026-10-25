@@ -13,7 +13,7 @@ import { useLive, type LiveEvent } from "@/lib/live-client";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { PostSheet } from "./PostExtras";
 import { I, Plus, Mic, SendHorizontal } from "./Ico";
-import { Ban, ChevronRight, Flag, MoreHorizontal, Trash2, UserRound, Search, X as XIcon, Lock, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { Ban, ChevronRight, Flag, MoreHorizontal, Trash2, UserRound, Search, X as XIcon, Lock, ArrowLeft, Image as ImageIcon, Palette, Check } from "lucide-react";
 import Portal from "./Portal";
 
 type Ref = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
@@ -226,6 +226,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const [info, setInfo] = useState(false);
   const [q, setQ] = useState<string | null>(null);
   const [wp, setWp] = useState("default");
+  const [wpOpen, setWpOpen] = useState(false);
   useEffect(() => { try { setWp(localStorage.getItem(`sgct:chat-wp:${handle}`) || "default"); } catch { /* ignorar */ } }, [handle]);
   const pickWp = (k: string) => { setWp(k); try { localStorage.setItem(`sgct:chat-wp:${handle}`, k); } catch { /* ignorar */ } };
   const stage = (f: File | null | undefined) => {
@@ -333,42 +334,55 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
           <button type="button" className="ch-ic" onClick={() => setQ(null)} aria-label={t.close}><XIcon size={18} aria-hidden="true" /></button>
         </div>
       )}
-      {info && p && th && th !== "none" && (
+      {info && p && th && th !== "none" && (() => {
+        const photos = th.messages.filter((m) => m.photo);
+        return (
         <Portal><div className="ci" role="dialog" aria-modal="true" aria-label={t.ci.title}>
           <header className="ci-head"><button className="ch-ic" onClick={() => setInfo(false)} aria-label={t.navBack}><ArrowLeft size={22} aria-hidden="true" /></button><b>{t.ci.title}</b><span style={{ width: 40 }} /></header>
           <div className="ci-body">
-            <div className="ci-who"><Avatar p={p} size={104} /><b>{p.name}</b><small>@{p.handle}</small></div>
-            <div className="ci-acts">
-              <a href={`/${locale}/u/${p.handle}`}><UserRound size={22} aria-hidden="true" /><span>{t.ci.profile}</span></a>
-              <button type="button" onClick={() => { setInfo(false); setQ(""); }}><Search size={22} aria-hidden="true" /><span>{t.ci.search}</span></button>
+            <div className="ci-hero">
+              <div className="ci-av"><Avatar p={p} size={96} /></div>
+              <b>{p.name}</b>
+              <small>@{p.handle}</small>
+              <div className="ci-acts">
+                <a href={`/${locale}/u/${p.handle}`}><span className="ci-ic"><UserRound size={20} aria-hidden="true" /></span>{t.ci.profile}</a>
+                <button type="button" onClick={() => { setInfo(false); setQ(""); }}><span className="ci-ic"><Search size={20} aria-hidden="true" /></span>{t.ci.search}</button>
+                <button type="button" onClick={() => setWpOpen((x) => !x)}><span className="ci-ic"><Palette size={20} aria-hidden="true" /></span>{t.ci.wallpaper}</button>
+              </div>
             </div>
-            <section className="ci-card">
-              <div className="ci-h"><b>{t.ci.media}</b><small>{th.messages.filter((m) => m.photo).length}</small></div>
-              {th.messages.some((m) => m.photo)
-                ? <div className="ci-media">{th.messages.filter((m) => m.photo).slice(-12).reverse().map((m) => (
+
+            <div className="ci-group">
+              <div className="ci-row static"><span className="ci-tile c-blue"><ImageIcon size={17} aria-hidden="true" /></span><span className="ci-lbl">{t.ci.media}</span><span className="ci-val">{photos.length}</span></div>
+              {photos.length
+                ? <div className="ci-strip">{photos.slice(-15).reverse().map((m) => (
                     // eslint-disable-next-line @next/next/no-img-element
                     <button key={m.id} type="button" onClick={() => setViewer(media(m.id, "photo"))}><img src={media(m.id, "photo")} alt="" loading="lazy" /></button>
                   ))}</div>
-                : <p className="hint">{t.ci.mediaNone}</p>}
-            </section>
-            <section className="ci-card">
-              <div className="ci-h"><b>{t.ci.wallpaper}</b></div>
-              <div className="ci-wp" role="radiogroup" aria-label={t.ci.wallpaper}>
+                : <p className="ci-empty">{t.ci.mediaNone}</p>}
+            </div>
+
+            <div className="ci-group">
+              <button type="button" className="ci-row" onClick={() => setWpOpen((x) => !x)} aria-expanded={wpOpen}>
+                <span className="ci-tile c-teal"><Palette size={17} aria-hidden="true" /></span><span className="ci-lbl">{t.ci.wallpaper}</span>
+                <span className="ci-val"><i className={`ci-dot wp-${wp}`} />{t.ci.wp[wp as keyof typeof t.ci.wp] ?? ""}</span><ChevronRight size={18} className={`ci-chev ${wpOpen ? "open" : ""}`} aria-hidden="true" />
+              </button>
+              {wpOpen && <div className="ci-swatches" role="radiogroup" aria-label={t.ci.wallpaper}>
                 {(Object.keys(t.ci.wp) as (keyof typeof t.ci.wp)[]).map((k) => (
-                  <button key={k} type="button" role="radio" aria-checked={wp === k} className={`wp-${k} ${wp === k ? "on" : ""}`} onClick={() => pickWp(k)}><span />{t.ci.wp[k]}</button>
+                  <button key={k} type="button" role="radio" aria-checked={wp === k} className={`ci-sw wp-${k} ${wp === k ? "on" : ""}`} onClick={() => pickWp(k)}><span>{wp === k && <Check size={16} aria-hidden="true" />}</span><small>{t.ci.wp[k]}</small></button>
                 ))}
-              </div>
-            </section>
-            <section className="ci-card ci-priv"><Lock size={18} aria-hidden="true" /><span><b>{t.ci.privacyT}</b><small>{t.chPrivacy}</small></span></section>
-            <section className="ci-card ci-danger">
-              <div className="ci-h"><b>{t.ci.danger}</b></div>
-              <button type="button" onClick={() => { setMenu(true); setSheet("clear"); }}><Trash2 size={20} aria-hidden="true" />{t.chClear}</button>
-              <button type="button" onClick={() => { setMenu(true); setSheet("block"); }}><Ban size={20} aria-hidden="true" />{t.scBlock}</button>
-              <button type="button" disabled={reported} onClick={() => { setMenu(true); setSheet("report"); }}><Flag size={20} aria-hidden="true" />{reported ? `✓ ${t.scReportDone}` : t.scReport}</button>
-            </section>
+              </div>}
+              <div className="ci-row static ci-top"><span className="ci-tile c-green"><Lock size={17} aria-hidden="true" /></span><span className="ci-lbl">{t.ci.privacyT}<small>{t.chPrivacy}</small></span></div>
+            </div>
+
+            <div className="ci-group">
+              <button type="button" className="ci-row red" onClick={() => { setMenu(true); setSheet("clear"); }}><span className="ci-tile c-red"><Trash2 size={17} aria-hidden="true" /></span><span className="ci-lbl">{t.chClear}</span></button>
+              <button type="button" className="ci-row red" onClick={() => { setMenu(true); setSheet("block"); }}><span className="ci-tile c-red"><Ban size={17} aria-hidden="true" /></span><span className="ci-lbl">{t.scBlock}</span></button>
+              <button type="button" className="ci-row red" disabled={reported} onClick={() => { setMenu(true); setSheet("report"); }}><span className="ci-tile c-red"><Flag size={17} aria-hidden="true" /></span><span className="ci-lbl">{reported ? `✓ ${t.scReportDone}` : t.scReport}</span></button>
+            </div>
           </div>
         </div></Portal>
-      )}
+        );
+      })()}
       {menu && p && (
         <Portal><div className="as-bg" onClick={() => { setMenu(false); setSheet("main"); }}>
           <div className="as" role="dialog" aria-modal="true" aria-label={p.name} onClick={(e) => e.stopPropagation()}>
