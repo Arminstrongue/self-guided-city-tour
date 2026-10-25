@@ -26,20 +26,33 @@ async function round() {
     const n = await refreshAllKnowledge(cities, fetch, log).catch((e) => { log(`wiki: ${e}`); return 0; });
     log(`história/resumos renovados: ${n}`);
     lastKnowledge = Date.now();
-    const gone = await purgeExpired().catch(() => 0);
+    const gone = await purgeExpired().catch((e) => { log(`histórias: ${e}`); return 0; });
     if (gone) log(`histórias expiradas apagadas: ${gone}`);
     const kept = await (await import("../src/lib/retention")).purgeOld().catch((e) => { log(`conservação: ${e}`); return null; });
     if (kept) log(`conservação: ${JSON.stringify(kept)}`);
   }
+  // Pedidos a guias sem resposta no prazo: expiram e libertam o cartão mesmo que ninguém abra o portal.
+  const exp = await (await import("../src/lib/guides")).expireStale().catch((e) => { log(`guias: ${e}`); return 0; });
+  if (exp) log(`pedidos a guias expirados: ${exp}`);
   const ach = await sweepAchievements().catch((e) => { log(`conquistas: ${e}`); return null; });
   if (ach) log(`conquistas: ${ach.users} viajantes, ${ach.announced} avisos`);
   log("volta concluída");
 }
 
+/** Uma volta de cada vez: se a anterior ainda estiver a correr (muitas cidades, APIs lentas), esta salta. */
+let running = false;
+async function safeRound() {
+  if (running) { log("volta anterior ainda a correr — salta"); return; }
+  running = true;
+  try { await round(); } catch (e) { log(`erro: ${e}`); } finally { running = false; }
+}
+
 async function main() {
   const once = process.argv.includes("--once");
-  await round();
+  await safeRound();
   if (once) process.exit(0);
-  setInterval(() => { void round().catch((e) => log(`erro: ${e}`)); }, PULSE_EVERY);
+  setInterval(() => { void safeRound(); }, PULSE_EVERY);
+  // Pedidos a guias têm prazos curtos: verificar de 15 em 15 minutos (leve).
+  setInterval(() => { void import("../src/lib/guides").then((g) => g.expireStale()).catch((e) => log(`guias: ${e}`)); }, 15 * 60_000);
 }
 void main();

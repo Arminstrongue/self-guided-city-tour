@@ -29,7 +29,13 @@ test("pontos: check-ins, GPS, cidades declaradas, ranking, prémios e comentári
   const by = Object.fromEntries(me.breakdown.map((b) => [b.k, b.n]));
   assert.deepEqual([by.cities, by.declared, by.countries, by.stops, by.gps], [2, 1, 2, 3, 1]);
   assert.equal(me.points, 2 * 100 + 25 + 2 * 50 + 3 * 10 + 10);
-  assert.equal(me.rewardPoints, me.points - 25);
+  // Sem nenhum passe comprado, nada conta para prémios em dinheiro (contas descartáveis não acumulam crédito).
+  assert.equal(me.rewardPoints, 0);
+  // Com um passe de Lisboa: contam Lisboa (passe e GPS), Portugal e a paragem com GPS; o Porto (sem GPS) e a Sé não.
+  const { db: dbf, schema: sch } = await import("./db");
+  await (await dbf()).insert(sch.accesses).values({ email: "ana@x.com", scope: "city", city: "lis", expiresAt: new Date(Date.now() + 86400_000), amountCents: 499, stripeSessionId: "cs_pts" });
+  const paid = await p.myScore("ana@x.com");
+  assert.equal(paid.rewardPoints, 100 + 50 + 20);
   assert.ok(me.badges.includes("first-city"));
 
   // Prémios: só uma vez por marco, e só com pontos "confirmados".

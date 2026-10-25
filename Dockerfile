@@ -7,6 +7,9 @@ RUN npm ci --no-audit --no-fund
 FROM node:22-alpine AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
+# Variáveis NEXT_PUBLIC_* ficam gravadas no código do navegador na construção: têm de entrar aqui (vêm do .env via compose).
+ARG NEXT_PUBLIC_ETIAS_LIVE=0
+ENV NEXT_PUBLIC_ETIAS_LIVE=$NEXT_PUBLIC_ETIAS_LIVE
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build

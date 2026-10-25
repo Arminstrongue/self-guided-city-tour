@@ -1,14 +1,16 @@
 "use client";
 /**
- * Comportamento comum de todas as folhas (.sheet dentro de .sheet-bg), sem mexer em cada uma:
+ * Comportamento comum de todas as folhas (.sheet dentro de .sheet-bg, e as folhas de ação .as dentro de .as-bg), sem mexer em cada uma:
  * - acessibilidade: role="dialog", foco vai para a folha ao abrir e volta ao botão ao fechar, Tab fica dentro, Esc fecha;
  * - gesto: arrastar para baixo (no topo da folha) fecha, como nas apps nativas.
  */
 import { useEffect } from "react";
 
 const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
-const topBg = () => { const all = document.querySelectorAll<HTMLElement>(".sheet-bg"); return all[all.length - 1] ?? null; };
-const sheetOf = (bg: HTMLElement | null) => (bg ? (Array.from(bg.children).find((c) => c.classList.contains("sheet")) as HTMLElement | undefined) ?? null : null);
+const BG = ".sheet-bg,.as-bg";
+const isBg = (n: HTMLElement) => n.classList.contains("sheet-bg") || n.classList.contains("as-bg");
+const topBg = () => { const all = document.querySelectorAll<HTMLElement>(BG); return all[all.length - 1] ?? null; };
+const sheetOf = (bg: HTMLElement | null) => (bg ? (Array.from(bg.children).find((c) => c.classList.contains("sheet") || c.classList.contains("as")) as HTMLElement | undefined) ?? null : null);
 
 export function SheetManager() {
   useEffect(() => {
@@ -33,11 +35,11 @@ export function SheetManager() {
       const back = opener.get(bg) as HTMLElement | null | undefined;
       if (back && document.contains(back) && typeof back.focus === "function") back.focus({ preventScroll: true });
     }
-    document.querySelectorAll<HTMLElement>(".sheet-bg").forEach(setup);
+    document.querySelectorAll<HTMLElement>(BG).forEach(setup);
     const mo = new MutationObserver((muts) => {
       for (const m of muts) {
-        m.addedNodes.forEach((n) => { if (!(n instanceof HTMLElement)) return; if (n.classList.contains("sheet-bg")) setup(n); n.querySelectorAll?.<HTMLElement>(".sheet-bg").forEach(setup); });
-        m.removedNodes.forEach((n) => { if (!(n instanceof HTMLElement)) return; const bgs = n.classList.contains("sheet-bg") ? [n] : Array.from(n.querySelectorAll?.<HTMLElement>(".sheet-bg") ?? []); bgs.forEach((b) => seen.has(b) && teardown(b)); });
+        m.addedNodes.forEach((n) => { if (!(n instanceof HTMLElement)) return; if (isBg(n)) setup(n); n.querySelectorAll?.<HTMLElement>(BG).forEach(setup); });
+        m.removedNodes.forEach((n) => { if (!(n instanceof HTMLElement)) return; const bgs = isBg(n) ? [n] : Array.from(n.querySelectorAll?.<HTMLElement>(BG) ?? []); bgs.forEach((b) => seen.has(b) && teardown(b)); });
       }
     });
     mo.observe(document.body, { childList: true, subtree: true });

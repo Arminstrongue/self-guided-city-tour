@@ -1,9 +1,34 @@
+# IP real do visitante: só se confia no cabeçalho da Cloudflare quando o pedido vem mesmo da Cloudflare.
+# Quem tentar falar diretamente com o servidor e inventar um IP fica com o seu IP verdadeiro (limites de pedidos não se contornam).
+{
+	servers {
+		trusted_proxies static 173.245.48.0/20 103.21.244.0/22 103.22.200.0/22 103.31.4.0/22 141.101.64.0/18 108.162.192.0/18 190.93.240.0/20 188.114.96.0/20 197.234.240.0/22 198.41.128.0/17 162.158.0.0/15 104.16.0.0/13 104.24.0.0/14 172.64.0.0/13 131.0.72.0/22 2400:cb00::/32 2606:4700::/32 2803:f800::/32 2405:b500::/32 2405:8100::/32 2a06:98c0::/29 2c0f:f248::/32
+		client_ip_headers Cf-Connecting-Ip
+	}
+}
+
 {$DOMAIN} {
 	# Sem compressão no tempo real (SSE), para os eventos saírem logo.
 	@compress not path /api/live
 	encode @compress zstd gzip
 	# Várias réplicas da app: o Caddy descobre-as por DNS e distribui os pedidos.
+	# Pedidos grandes demais são recusados antes de chegarem à app (o maior envio permitido é um vídeo de 80 MB).
+	request_body {
+		max_size 90MB
+	}
+	# Cabeçalhos de segurança em todas as respostas (incluindo a página de manutenção).
+	header {
+		Permissions-Policy "camera=(self), microphone=(self), geolocation=(self), payment=(self), interest-cohort=()"
+		Cross-Origin-Opener-Policy "same-origin-allow-popups"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
 	reverse_proxy {
+		# A app só recebe o IP verificado acima; cabeçalhos de IP enviados pelo visitante são substituídos.
+		header_up X-Real-IP {client_ip}
+		header_up Cf-Connecting-Ip {client_ip}
+		header_up X-Forwarded-For {client_ip}
 		dynamic a app 3000
 		lb_policy least_conn
 		# Durante uma atualização (a app a reiniciar), espera até 20 s por ela em vez de falhar logo.

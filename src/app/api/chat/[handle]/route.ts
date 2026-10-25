@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { imageDataUrl } from "@/lib/strip-meta";
 import { currentTraveller } from "@/lib/wallet";
 import { clearThread, MAX_TEXT, react, send, sharePost, thread, typing, unsend } from "@/lib/chat";
 import { rateLimit } from "@/lib/rate-limit";
@@ -18,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { handle: string }
 
 const Body = z.union([
   z.object({ action: z.literal("send"), text: z.string().max(MAX_TEXT), replyTo: z.string().max(40).optional(),
-    photo: z.string().max(480_000).regex(/^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/).optional() }),
+    photo: imageDataUrl(480_000).optional() }),
   z.object({ action: z.literal("share"), post: z.string().max(40), text: z.string().max(MAX_TEXT).optional() }),
   z.object({ action: z.literal("location"), lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) }),
   z.object({ action: z.literal("react"), id: z.string().max(40), emoji: z.string().max(16).nullable() }),

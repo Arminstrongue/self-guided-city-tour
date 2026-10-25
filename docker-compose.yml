@@ -22,7 +22,7 @@ services:
 
   migrate:
     logging: *logging
-    build: { context: ., target: builder }
+    build: &build_builder { context: ., target: builder, args: { NEXT_PUBLIC_ETIAS_LIVE: "${NEXT_PUBLIC_ETIAS_LIVE:-0}" } }
     env_file: .env
     environment:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct
@@ -32,8 +32,9 @@ services:
   # Recolhe dados novos para cada cidade (eventos, notícias, tempo, história, tendências) de 6 em 6 horas.
   worker:
     logging: *logging
-    build: { context: ., target: builder }
+    build: *build_builder
     restart: unless-stopped
+    mem_limit: ${WORKER_MEM:-768m}
     env_file: .env
     environment:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct
@@ -43,8 +44,10 @@ services:
 
   app:
     logging: *logging
-    build: { context: ., target: runner }
+    build: { context: ., target: runner, args: { NEXT_PUBLIC_ETIAS_LIVE: "${NEXT_PUBLIC_ETIAS_LIVE:-0}" } }
     restart: unless-stopped
+    # Limite por réplica (a conversão de vídeos com ffmpeg não pode deixar o Postgres sem memória). Ajuste no .env.
+    mem_limit: ${APP_MEM:-1536m}
     env_file: .env
     environment:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct

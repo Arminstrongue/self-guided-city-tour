@@ -3,12 +3,24 @@
 const appUrl = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "").replace(/^http:\/\/(?!localhost|127\.0\.0\.1)/, "https://");
 const host = new URL(appUrl).host;
 const contact = process.env.COMPANY_EMAIL ?? `hello@${host.replace(/:\d+$/, "")}`;
+/**
+ * Chave que assina todas as sessões (viajante, admin, guias, parceiros). Em produção é obrigatória e longa:
+ * sem ela, qualquer pessoa conseguiria forjar uma sessão de administrador. A app recusa arrancar.
+ */
+function secretOf(): string {
+  const s = process.env.NEXTAUTH_SECRET ?? "";
+  const building = process.env.NEXT_PHASE === "phase-production-build";
+  if (process.env.NODE_ENV === "production" && !building && s.length < 32) {
+    throw new Error("NEXTAUTH_SECRET em falta ou curta (mínimo 32 caracteres). Gere com: openssl rand -base64 48");
+  }
+  return s || "dev-secret-change-me";
+}
 export const BRAND = process.env.BRAND_NAME ?? "VOYBU";
 export const env = {
   appUrl, host, contact,
   /** User-Agent educado para Wikipedia/Wikimedia/Overpass (pedem contacto). */
   ua: `${BRAND.replace(/\s+/g, "")}/1.0 (${appUrl}; ${contact})`,
-  secret: process.env.NEXTAUTH_SECRET ?? "dev-secret-change-me",
+  secret: secretOf(),
   stripeKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
   resendKey: process.env.RESEND_API_KEY ?? "",

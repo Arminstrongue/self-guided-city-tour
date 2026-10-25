@@ -20,7 +20,7 @@ import type { GuideStep } from "@/lib/route-steps";
 export type ArriveCity = { id: string; name: string; center: { lat: number; lng: number }; ap: { name: string; iata: string; lat: number; lng: number } | null; air: { min: number; line: string } };
 /** g = veio da Google (não se desenha em mapas que não são da Google, por exigência dos termos da Google). */
 type Place = { label: string; lat: number; lng: number; g?: boolean };
-type State = { city: string; point: string | null; dest: Place | null; opt: string | null; step: number; at: number };
+type State = { city: string; point: string | null; dest: Place | null; opt: string | null; step: number; at: number; done?: boolean };
 type TOpt = { dep: string; min: number; fare: string; walkMin: number; lines: { name: string; vehicle: string; from: string; headsign: string; stops: number }[] };
 const KEY = "sgct:arrive";
 const homeKey = (c: string) => `sgct:home:${c}`;
@@ -56,7 +56,7 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
     setReady(true);
   }, [initial, go]);
   useEffect(() => { if (ready) try { localStorage.setItem(KEY, JSON.stringify({ ...st, at: Date.now() })); } catch { /* ignorar */ } }, [st, ready]);
-  const set = (p: Partial<State>) => setSt((x) => ({ ...x, ...p }));
+  const set = (p: Partial<State>) => setSt((x) => ({ ...x, done: p.done ?? (p.step !== undefined ? false : x.done), ...p }));
   // Sem cidade no endereço: se a localização já estiver autorizada, abre na cidade onde o viajante está.
   useEffect(() => {
     if (explicit || !navigator.permissions?.query) return;
@@ -77,7 +77,7 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
     if (!city.ap) return [];
     return [{ id: "ap", kind: "airport", name: city.ap.name, code: city.ap.iata, lat: city.ap.lat, lng: city.ap.lng, options: [{
       id: "ap-usual", name: city.air.line || t.bpTransit, min: city.air.min, fare: "", to: { name: t.arv.centre, lat: city.center.lat, lng: city.center.lng },
-      steps: [{ pt: city.air.line ? `Siga as placas para: ${city.air.line}.` : "Siga as placas de transportes públicos para o centro.", en: city.air.line ? `Follow the signs for: ${city.air.line}.` : "Follow the public transport signs into the centre.", sign: city.air.line || undefined }]
+      steps: (() => { const say = city.air.line ? fmt(t.arvSignsLine, { l: city.air.line }) : t.arvSignsCentre; return [{ pt: say, en: say, sign: city.air.line || undefined }]; })()
     }] }];
   }, [city, t]);
   const curated = arrivalsFor(city.id).length > 0;
@@ -115,8 +115,10 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
     if (!hubP || !st.dest) return;
     if (km(hubP, st.dest) < 0.05) { setFin([]); return; }
     const walk = km(hubP, st.dest) < 1.2 ? "&mode=walk" : "";
+    let live = true; // resposta de um destino anterior não substitui a do atual
     fetch(`/api/route-steps?from=${hubP.lat},${hubP.lng}&to=${st.dest.lat},${st.dest.lng}&lang=${locale}${walk}`).then((r) => (r.ok ? r.json() : null))
-      .then((j: { steps?: GuideStep[] } | null) => setFin(j?.steps ?? [])).catch(() => setFin([]));
+      .then((j: { steps?: GuideStep[] } | null) => { if (live) setFin(j?.steps ?? []); }).catch(() => { if (live) setFin([]); });
+    return () => { live = false; };
   }, [hubP?.lat, hubP?.lng, st.dest?.lat, st.dest?.lng, locale]); // eslint-disable-line react-hooks/exhaustive-deps
   const [lost, setLost] = useState<Step | null>(null);
 
@@ -173,11 +175,13 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
   const steps: Step[] = opt ? opt.steps : [];
   const finSteps = fin ?? [];
   const total = steps.length + Math.max(1, finSteps.length); // + o troço final até ao destino
-  const i = Math.min(st.step, total);
+  // Só "chegou" depois de confirmar (GPS ou pergunta). Sem isto, um passo guardado ou um troço final que
+  // não carregou (sem dados) mostrava logo o ecrã de chegada.
+  const i = Math.min(st.step, total - 1);
   const hub: Place | null = opt ? { label: opt.to.name, lat: opt.to.lat, lng: opt.to.lng } : here;
-  const doneAll = i >= total;
+  const doneAll = st.done === true;
   const goHome = () => { if (st.dest?.label === a.centre) return; try { localStorage.setItem(homeKey(city.id), JSON.stringify(st.dest)); } catch { /* ignorar */ } };
-  const finish = () => { setArrive(null); goHome(); set({ step: total }); };
+  const finish = () => { setArrive(null); goHome(); set({ step: total, done: true }); };
   function checkArrival() {
     if (!navigator.geolocation || !st.dest) { setArrive({ kind: "ask" }); return; }
     setArrive({ kind: "checking" });
@@ -209,7 +213,7 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
         <section className="arv-step" aria-live="polite">
           <p className="arv-say">{tx(step)}</p>
           {step.sign && <div className="arv-sign" aria-label={step.sign}>{step.sign}</div>}
-          {step.min && <small className="arv-time">≈ {step.min} min</small>}
+          {step.min ? <small className="arv-time">≈ {step.min} min</small> : null}
         </section>
       ) : g ? (
         <section className="arv-step" aria-live="polite">
@@ -278,7 +282,7 @@ function CityBar({ t, cities, city, onChange }: { t: Dict; cities: ArriveCity[];
   return (
     <div className="arv-city">
       <span>{t.arv.city}</span>
-      <CitySwitch className="cs-inline" current={city.id} cities={cities.map((c) => ({ id: c.id, name: c.name }))} label={t.arv.city} placeholder={t.spCity} none={t.gsNone} onPick={onChange} />
+      <CitySwitch className="cs-inline" current={city.id} cities={cities.map((c) => ({ id: c.id, name: c.name }))} label={t.arv.city} placeholder={t.spCity} none={t.gsNone} closeLabel={t.close} onPick={onChange} />
     </div>
   );
 }
@@ -300,10 +304,11 @@ function DestSearch({ t, locale, city, onPick }: { t: Dict; locale: Locale; city
   useEffect(() => { try { setHome(JSON.parse(localStorage.getItem(homeKey(city)) ?? "null")); } catch { /* ignorar */ } }, [city]);
   useEffect(() => {
     const v = q.trim(); if (v.length < 4) { setHits(null); return; }
+    let live = true;
     const id = setTimeout(() => {
-      fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).then((j) => { setHits(j?.hits ?? []); setOther(j?.elsewhere ?? null); }).catch(() => setHits([]));
+      fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).then((j) => { if (!live) return; setHits(j?.hits ?? []); setOther(j?.elsewhere ?? null); }).catch(() => { if (live) setHits([]); });
     }, 800); // espera que acabe de escrever (menos pedidos ao serviço de moradas)
-    return () => clearTimeout(id);
+    return () => { live = false; clearTimeout(id); };
   }, [q, city, locale]);
   return (
     <div className="stack" style={{ gap: 8 }}>
@@ -324,7 +329,9 @@ function FinalLeg({ t, locale, from, to }: { t: Dict; locale: Locale; from: Plac
   const d = km(from, to);
   useEffect(() => {
     if (d < 1) { setOpts([]); return; }
-    fetch(`/api/transit?from=${from.lat},${from.lng}&to=${to.lat},${to.lng}&lang=${locale}`).then((r) => (r.ok ? r.json() : null)).then((j) => setOpts(j?.options ?? [])).catch(() => setOpts([]));
+    let live = true;
+    fetch(`/api/transit?from=${from.lat},${from.lng}&to=${to.lat},${to.lng}&lang=${locale}`).then((r) => (r.ok ? r.json() : null)).then((j) => { if (live) setOpts(j?.options ?? []); }).catch(() => { if (live) setOpts([]); });
+    return () => { live = false; };
   }, [from.lat, from.lng, to.lat, to.lng, locale, d]);
   const mode = d < 1.2 ? "walking" : "transit";
   const o = opts?.[0];

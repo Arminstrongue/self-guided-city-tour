@@ -6,7 +6,8 @@ import { TourView } from "@/components/TourView";
 import { cityName } from "@/data/cities";
 import { loadCity, loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
-import { ACCESS_COOKIE, readAccessToken } from "@/lib/access-token";
+import { ACCESS_COOKIE } from "@/lib/access-token";
+import { validAccessEmail } from "@/lib/session-revoke";
 import { sessionEmail } from "@/lib/auth";
 import { activateAccess, findActiveAccess } from "@/lib/orders";
 import { activeOffers } from "@/lib/merchants";
@@ -25,7 +26,7 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   const city = await loadCity(params.city);
   if (!city) notFound();
   const t = getDict(params.locale);
-  const emails = [readAccessToken(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
+  const emails = [await validAccessEmail(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
   const free = isFreeCity(city.id);
   const found = await findActiveAccess(emails, city.id);
   // Primeira abertura: o passe começa a contar agora.

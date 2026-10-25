@@ -2,7 +2,7 @@
  * Gestão da conta do viajante: exportar os dados (RGPD, art. 20.º) e apagar a conta.
  * Compras (passes) e reservas de guias ficam guardadas, sem perfil, porque a lei obriga a manter registos fiscais.
  */
-import { eq, inArray, or } from "drizzle-orm";
+import { and, eq, inArray, lt, or } from "drizzle-orm";
 import { db, schema } from "./db";
 import { deleteProfile } from "./social";
 import { settingsOf } from "./notify";
@@ -55,6 +55,11 @@ export async function exportData(email: string) {
 /** Apaga a conta: perfil, publicações, conversas, notificações, memórias, planos, reservas e preferências. */
 export async function deleteAccount(email: string) {
   const d = await db();
+  // Primeiro, as sessões deixam de valer: mesmo que algum passo abaixo falhe, a conta já não fica acessível
+  // (e apagar de novo termina o que faltar — todos os passos podem repetir-se).
+  await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })
+    .onConflictDoUpdate({ target: schema.accountSettings.email, set: { sessionsAfter: new Date() } });
+  (await import("./session-revoke")).forgetSessionCache(email);
   await deleteProfile(email); // perfil + publicações + conversas + notificações + push
   await d.delete(schema.blocks).where(or(eq(schema.blocks.blocker, email), eq(schema.blocks.blocked, email)));
   await d.delete(schema.travellerMemories).where(eq(schema.travellerMemories.email, email));
@@ -79,10 +84,13 @@ export async function deleteAccount(email: string) {
   // Avaliações de guias: ficam as estrelas e o comentário, sem o nome.
   const myBookings = (await d.select({ id: schema.guideBookings.id }).from(schema.guideBookings).where(eq(schema.guideBookings.email, email))).map((r) => r.id);
   if (myBookings.length) await d.update(schema.guideReviews).set({ author: null }).where(inArray(schema.guideReviews.bookingId, myBookings));
+  // Reservas de guias já passadas: sem nome, telefone nem nota (fica o pagamento). As futuras mantêm o contacto até ao passeio.
+  await d.update(schema.guideBookings).set({ name: "", phone: null, note: null }).where(and(eq(schema.guideBookings.email, email), lt(schema.guideBookings.startAt, new Date())));
   // Compras: só ficam os dados que a lei fiscal obriga a guardar (sem voo nem plano de viagem).
   await d.update(schema.accesses).set({ flightNo: null, flightAt: null, trip: null, userId: null }).where(eq(schema.accesses.email, email));
   await d.delete(schema.users).where(eq(schema.users.email, email));
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })
     .onConflictDoUpdate({ target: schema.accountSettings.email, set: { sessionsAfter: new Date(), notif: {}, dmPolicy: "circle", updatedAt: new Date() } });
+  (await import("./session-revoke")).forgetSessionCache(email);
 }

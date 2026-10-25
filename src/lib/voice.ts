@@ -25,7 +25,7 @@ export async function saveVoice(id: string, body: ReadableStream<Uint8Array>) {
     await pipeline(Readable.fromWeb(body.pipeThrough(limit) as never), createWriteStream(raw));
     if (n < 500) throw new Error("empty");
     const code = await new Promise<number>((res) => {
-      const p = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-i", raw, "-t", "120", "-vn", "-c:a", "aac", "-b:a", "64k", "-ac", "1", "-map_metadata", "-1", "-movflags", "+faststart", out], { stdio: "ignore" });
+      const p = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "file", "-format_whitelist", "mov,mp4,m4a,3gp,3g2,mj2,matroska,webm,ogg,wav,mp3,aac,flac,caf", "-i", raw, "-t", "120", "-vn", "-c:a", "aac", "-b:a", "64k", "-ac", "1", "-map_metadata", "-1", "-movflags", "+faststart", out], { stdio: "ignore" });
       const t = setTimeout(() => p.kill("SIGKILL"), 60_000);
       p.on("error", () => { clearTimeout(t); res(-1); });
       p.on("close", (c) => { clearTimeout(t); res(c ?? -1); });

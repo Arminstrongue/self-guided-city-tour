@@ -54,6 +54,6 @@ export async function GET(req: Request) {
       out = { steps: mergeWalks(steps).filter((s) => s.k === "transit" || s.m > 15), min: mins(rt?.duration), fare: rt?.localizedValues?.transitFare?.text ?? "" };
     } else console.warn("[route-steps]", r.status, (await r.text()).slice(0, 200));
   } catch { /* sem dados */ }
-  cache.set(key, { at: Date.now(), out });
+  cache.set(key, { at: Date.now(), out }); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
   return NextResponse.json(out);
 }

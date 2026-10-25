@@ -8,6 +8,7 @@ import { db, schema } from "./db";
 const DAY = 86_400_000;
 export const RETENTION = {
   bookingRequestsDays: 365,   // pedidos a negócios: anónimos ao fim de 12 meses
+  guideContactDays: 365,      // telefone e nota das reservas de guias, 12 meses depois do passeio (fica o registo do pagamento)
   notificationsDays: 365,     // avisos na app
   stopReporterDays: 365,      // quem reportou um problema numa paragem
   moderationDays: 730,        // denúncias de perfis/publicações
@@ -23,6 +24,8 @@ export async function purgeOld(now = Date.now()) {
   const n = (r: unknown) => (Array.isArray(r) ? r.length : 0);
   out.bookingRequests = n(await d.update(schema.bookingRequests).set({ name: "", email: "", phone: "", note: "" })
     .where(and(lt(schema.bookingRequests.createdAt, ago(RETENTION.bookingRequestsDays)), ne(schema.bookingRequests.email, ""))).returning({ id: schema.bookingRequests.id }));
+  out.guideContacts = n(await d.update(schema.guideBookings).set({ phone: null, note: null })
+    .where(and(lt(schema.guideBookings.startAt, ago(RETENTION.guideContactDays)), or(isNotNull(schema.guideBookings.phone), isNotNull(schema.guideBookings.note)))).returning({ id: schema.guideBookings.id }));
   out.notifications = n(await d.delete(schema.notifications).where(lt(schema.notifications.createdAt, ago(RETENTION.notificationsDays))).returning({ id: schema.notifications.id }));
   out.stopReporters = n(await d.update(schema.stopReports).set({ reporter: "" })
     .where(and(lt(schema.stopReports.createdAt, ago(RETENTION.stopReporterDays)), ne(schema.stopReports.reporter, ""))).returning({ id: schema.stopReports.id }));

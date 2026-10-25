@@ -6,7 +6,7 @@ import { sendGuideLink } from "@/lib/guides";
 import { GUIDE_TERMS_VERSION, GuideSignup } from "@/lib/guide-input";
 import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 const Relink = z.object({ email: z.string().email().max(200), locale: z.enum(LOCALES) });
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const r = Relink.safeParse(body);
     if (!r.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
     const [g] = await d.select().from(schema.guides).where(eq(schema.guides.email, r.data.email.toLowerCase())).limit(1);
-    const link = g ? await sendGuideLink(g.email, r.data.locale) : null;
+    const link = g && rateLimitKey(`guide-mail:${g.email}`, 3, 3600_000) ? await sendGuideLink(g.email, r.data.locale) : null;
     return NextResponse.json({ ok: true, devLink: !isProd ? link : null }); // não revela se o email existe
   }
   const p = GuideSignup.safeParse(body);
@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       independentAt: new Date(), termsVersion: GUIDE_TERMS_VERSION
     });
   }
+  if (!rateLimitKey(`guide-mail:${email}`, 3, 3600_000)) return NextResponse.json({ ok: true, devLink: null });
   const link = await sendGuideLink(email, b.locale);
   return NextResponse.json({ ok: true, devLink: !isProd ? link : null });
 }

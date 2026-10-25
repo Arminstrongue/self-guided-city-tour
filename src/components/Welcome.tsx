@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { BrandMark } from "./BrandMark";
@@ -37,6 +37,7 @@ export function rememberReturn() {
 export function Welcome({ locale }: { locale: string }) {
   const path = usePathname() ?? "";
   const [open, setOpen] = useState(false);
+  const primary = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
     const w = window as unknown as { __sgctWelcome?: boolean };
     let seen = false; try { seen = Boolean(sessionStorage.getItem(SEEN)); } catch { seen = true; }
@@ -52,9 +53,20 @@ export function Welcome({ locale }: { locale: string }) {
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow; document.body.style.overflow = "hidden";
-    const k = (e: KeyboardEvent) => { if (e.key === "Escape") finish(true); };
+    const opener = document.activeElement as HTMLElement | null;
+    requestAnimationFrame(() => primary.current?.focus({ preventScroll: true })); // leitores de ecrã e teclado começam no ecrã de boas-vindas
+    const k = (e: KeyboardEvent) => {
+      if (e.key === "Escape") finish(true);
+      if (e.key === "Tab") { // o foco não sai para a página por trás
+        const f = Array.from(document.querySelectorAll<HTMLElement>(".wc a[href], .wc button"));
+        if (!f.length) return;
+        const first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
     window.addEventListener("keydown", k);
-    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", k); };
+    return () => { document.body.style.overflow = prev; window.removeEventListener("keydown", k); opener?.focus?.({ preventScroll: true }); };
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function finish(mark: boolean) {
@@ -75,7 +87,7 @@ export function Welcome({ locale }: { locale: string }) {
           <span className="wc-word">VOYBU</span>
         </div>
         <h1 id="wc-h" className="wc-h">{parts.map((p, i) => (i % 2 ? <em key={i} className={i === 1 ? "g1" : "g2"}>{p}</em> : <span key={i}>{p}</span>))}</h1>
-        <a className="wc-btn press" href={`/${locale}/wallet?signin=1`} onClick={() => { rememberReturn(); try { sessionStorage.setItem(SEEN, "1"); } catch { /* ignorar */ } }}>{signIn}</a>
+        <a ref={primary} className="wc-btn press" href={`/${locale}/wallet?signin=1`} onClick={() => { rememberReturn(); try { sessionStorage.setItem(SEEN, "1"); } catch { /* ignorar */ } }}>{signIn}</a>
         <button type="button" className="wc-skip press" onClick={() => finish(true)}>{skip}</button>
       </div>
     </div>

@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+import { env } from "@/lib/env";
 
 export const dynamic = "force-dynamic";
 
 /** Verificação de saúde para o balanceador e a monitorização (Uptime Kuma, etc.). */
 export async function GET() {
   try {
+    void env.secret; // sem chave de sessões a réplica não está saudável
     const d = await db();
     await d.execute(sql`select 1`);
     return NextResponse.json({ ok: true, at: new Date().toISOString() });

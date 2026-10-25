@@ -186,7 +186,7 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange,
         </>
       )}
       {cities && cities.length > 0 && value.mode !== "stay" && value.mode !== "walk" && (
-        <NextCityPick t={t} from={{ id: city, name: cityName, ...center }} cities={cities} value={value.next} onChange={(next) => set({ next })} />
+        <NextCityPick t={t} locale={locale} from={{ id: city, name: cityName, ...center }} cities={cities} value={value.next} onChange={(next) => set({ next })} />
       )}
     </div>
   );

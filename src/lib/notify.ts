@@ -42,9 +42,10 @@ export async function saveSub(email: string, s: { endpoint: string; keys: { p256
   await d.insert(schema.pushSubs).values({ email, endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth })
     .onConflictDoUpdate({ target: schema.pushSubs.endpoint, set: { email, p256dh: s.keys.p256dh, auth: s.keys.auth } });
 }
-export async function removeSub(endpoint: string) {
+export async function removeSub(endpoint: string, email?: string) {
   const d = await db();
-  await d.delete(schema.pushSubs).where(eq(schema.pushSubs.endpoint, endpoint));
+  // Pedido de um viajante: só apaga a subscrição dele. Sem email: limpeza de subscrições expiradas.
+  await d.delete(schema.pushSubs).where(email ? and(eq(schema.pushSubs.endpoint, endpoint), eq(schema.pushSubs.email, email)) : eq(schema.pushSubs.endpoint, endpoint));
 }
 export async function sendPush(email: string, p: { title: string; body: string; url: string; tag?: string }) {
   if (!pushEnabled()) return 0;

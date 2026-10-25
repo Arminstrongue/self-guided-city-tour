@@ -1,15 +1,16 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v11";
+const VERSION = "sgct-v12";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
+const OFFLINE_ASSETS = "sgct-offline-assets"; // scripts, estilos e dicionário das cidades descarregadas (também sobrevive)
 const TILES = "sgct-tiles";       // mosaicos do mapa já vistos
 const MAX_TILES = 1500;
 
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) => {
   e.waitUntil((async () => {
-    for (const k of await caches.keys()) if (!k.startsWith(VERSION) && k !== OFFLINE && k !== TILES) await caches.delete(k);
+    for (const k of await caches.keys()) if (!k.startsWith(VERSION) && k !== OFFLINE && k !== OFFLINE_ASSETS && k !== TILES) await caches.delete(k);
     await self.clients.claim();
   })());
 });
@@ -66,6 +67,14 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then(async (r) => { if (r.ok) (await caches.open(STATIC)).put(req, r.clone()); return r; })));
     return;
   }
+  // Sessão terminada (ou outra pessoa neste aparelho): apaga as cópias de dados pessoais guardadas para usar sem rede.
+  if (url.pathname === "/api/me/status") {
+    e.respondWith(fetch(req).then((r) => {
+      r.clone().json().then((j) => { if (j && j.signed === false) forgetPersonal(); }).catch(() => {});
+      return r;
+    }));
+    return;
+  }
   if (url.pathname.startsWith("/api/")) {
     if (OFFLINE_API.test(url.pathname + url.search)) e.respondWith(networkFirst(req, PAGES));
     return;
@@ -78,6 +87,15 @@ self.addEventListener("fetch", (e) => {
   // Páginas: roteiro, plano, carteira e cidade — rede primeiro, cópia sem rede.
   if (req.mode === "navigate" && /^\/[a-z]{2}\/(tour|plan|wallet|c|arrive|free|meet|r)(\/|$)/.test(url.pathname)) e.respondWith(networkFirst(req, PAGES));
 });
+
+/** Planos, despesas partilhadas e carteira guardados para uso offline: saem quando já não há sessão. */
+async function forgetPersonal() {
+  const c = await caches.open(PAGES);
+  for (const k of await c.keys()) {
+    const p = new URL(k.url).pathname;
+    if (/^\/api\/me\//.test(p) || /^\/[a-z]{2}\/(wallet|plan)(\/|$)/.test(p)) await c.delete(k);
+  }
+}
 
 let trimming = false;
 async function trimTiles(c) {
@@ -92,7 +110,7 @@ self.addEventListener("message", (e) => {
   if (d.type === "offline-save" && Array.isArray(d.urls)) {
     e.waitUntil((async () => {
       const c = await caches.open(OFFLINE);
-      const st = await caches.open(STATIC);
+      const st = await caches.open(OFFLINE_ASSETS); // não se perde quando a app atualiza (o STATIC muda de nome)
       let done = 0, failed = 0, bytes = 0;
       const urls = [...new Set(d.urls)].slice(0, 1400);
       const one = async (u) => {

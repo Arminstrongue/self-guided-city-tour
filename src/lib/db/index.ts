@@ -20,6 +20,8 @@ async function connect(): Promise<DB> {
   const { drizzle } = await import("drizzle-orm/node-postgres");
   // Ligações por instância: com várias réplicas, total = réplicas × DB_POOL_MAX (ver SCALING.md).
   const pool = new Pool({ connectionString: url, max: Number(process.env.DB_POOL_MAX ?? 10), idleTimeoutMillis: 30_000, connectionTimeoutMillis: 5_000 });
+  // Ligação inativa cortada (ex.: Postgres a reiniciar): regista e segue; sem isto o processo inteiro caía.
+  pool.on("error", (e) => console.error("[db] ligação perdida:", e.message));
   return drizzle(pool, { schema }) as unknown as DB;
 }
 

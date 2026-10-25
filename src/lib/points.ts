@@ -24,8 +24,10 @@ export const BADGES: { id: BadgeId; icon: string }[] = [
   { id: "gps-10", icon: "📡" }, { id: "storyteller", icon: "📸" }, { id: "commenter", icon: "💬" }, { id: "connector", icon: "🤝" }, { id: "ambassador", icon: "🎁" }
 ];
 
-type Raw = { cities: Set<string>; declared: Map<string, string>; stops: number; gps: number; postDays: number; commentDays: number; joined: number; paid: number; journeys: number; km: number; steps: number };
-const blank = (): Raw => ({ cities: new Set(), declared: new Map(), stops: 0, gps: 0, postDays: 0, commentDays: 0, joined: 0, paid: 0, journeys: 0, km: 0, steps: 0 });
+type Raw = { cities: Set<string>; declared: Map<string, string>; stops: number; gps: number; postDays: number; commentDays: number; joined: number; paid: number; journeys: number; km: number; steps: number;
+  /** Para prémios (crédito em dinheiro): só o que não se consegue inventar sem comprar — cidades com passe ou check-in por GPS. */
+  sure: Set<string>; bought: boolean };
+const blank = (): Raw => ({ cities: new Set(), declared: new Map(), stops: 0, gps: 0, postDays: 0, commentDays: 0, joined: 0, paid: 0, journeys: 0, km: 0, steps: 0, sure: new Set(), bought: false });
 
 /** Junta tudo o que conta, para um conjunto de pessoas (ou todas). `since` = só o que aconteceu desde essa data (ranking do mês). */
 async function gather(emails: string[] | null, since?: Date): Promise<Map<string, Raw>> {
@@ -38,7 +40,7 @@ async function gather(emails: string[] | null, since?: Date): Promise<Map<string
   const [chk, mem, acc, posts, coms, inv, paid, jr] = await Promise.all([
     d.select({ e: schema.checkins.email, city: schema.checkins.city, stop: schema.checkins.stop, v: schema.checkins.verified }).from(schema.checkins).where(and(who(schema.checkins.email), after(schema.checkins.createdAt))),
     d.selectDistinct({ e: schema.travellerMemories.email, city: schema.travellerMemories.city }).from(schema.travellerMemories).where(and(who(schema.travellerMemories.email), after(schema.travellerMemories.takenAt))),
-    d.selectDistinct({ e: schema.accesses.email, city: schema.accesses.city }).from(schema.accesses).where(and(who(schema.accesses.email), isNotNull(schema.accesses.city), after(schema.accesses.createdAt))),
+    d.selectDistinct({ e: schema.accesses.email, city: schema.accesses.city }).from(schema.accesses).where(and(who(schema.accesses.email), after(schema.accesses.createdAt))),
     d.select({ e: schema.posts.author, n: sql<number>`count(distinct date(${schema.posts.createdAt}))::int` }).from(schema.posts).where(and(who(schema.posts.author), eq(schema.posts.kind, "post"), after(schema.posts.createdAt))).groupBy(schema.posts.author),
     d.select({ e: schema.placeComments.author, n: sql<number>`count(distinct date(${schema.placeComments.createdAt}))::int` }).from(schema.placeComments).where(and(who(schema.placeComments.author), eq(schema.placeComments.hidden, false), after(schema.placeComments.createdAt))).groupBy(schema.placeComments.author),
     d.select({ e: schema.invites.inviter, n: sql<number>`count(*)::int` }).from(schema.invites).where(and(who(schema.invites.inviter), isNotNull(schema.invites.joinedAt), since ? gte(schema.invites.joinedAt, since) : undefined)).groupBy(schema.invites.inviter),
@@ -46,9 +48,9 @@ async function gather(emails: string[] | null, since?: Date): Promise<Map<string
     d.select({ e: schema.journeys.email, city: schema.journeys.city, km: schema.journeys.km, steps: schema.journeys.steps }).from(schema.journeys).where(and(who(schema.journeys.email), after(schema.journeys.createdAt)))
   ]);
   for (const j of jr) { const r = get(j.e); r.journeys++; r.km += j.km; r.steps += j.steps; if (j.city) r.cities.add(j.city); }
-  for (const c of chk) { const r = get(c.e); r.cities.add(c.city); if (c.stop) { r.stops++; if (c.v) r.gps++; } }
+  for (const c of chk) { const r = get(c.e); r.cities.add(c.city); if (c.v) r.sure.add(c.city); if (c.stop) { r.stops++; if (c.v) r.gps++; } }
   for (const x of mem) get(x.e).cities.add(x.city);
-  for (const x of acc) if (x.city) get(x.e).cities.add(x.city);
+  for (const x of acc) { const r = get(x.e); r.bought = true; if (x.city) { r.cities.add(x.city); r.sure.add(x.city); } }
   for (const x of posts) get(x.e).postDays = x.n;
   for (const x of coms) get(x.e).commentDays = x.n;
   for (const x of inv) get(x.e).joined = x.n;
@@ -96,7 +98,10 @@ export async function scoreOf(r: Raw, totalCities: number): Promise<Score> {
     { k: "km", n: Math.floor(r.km), pts: Math.floor(r.km) * PTS.km }
   ];
   const points = breakdown.reduce((a, b) => a + b.pts, 0);
-  const rewardPoints = points - breakdown[1].pts;
+  // Prémios valem dinheiro: contam só cidades confirmadas (passe ou GPS), paragens com GPS e amigos que compraram,
+  // e só para quem já comprou pelo menos um passe. Percursos, km, publicações e cidades declaradas não dão crédito.
+  const sureCountries = new Set([...r.sure].map((c) => COUNTRY[c] ?? "").filter(Boolean));
+  const rewardPoints = !r.bought ? 0 : r.sure.size * PTS.city + sureCountries.size * PTS.country + r.gps * (PTS.stop + PTS.gps) + r.paid * PTS.friendPaid;
   const level = LEVEL_AT.filter((n) => points >= n).length - 1;
   const allCities = r.cities.size + decl;
   const b: BadgeId[] = [];

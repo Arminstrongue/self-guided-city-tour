@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { imageDataUrl } from "./strip-meta";
 import { LOCALES } from "@/i18n/core";
 import { CITIES, COUNTRY } from "@/data/cities";
 import { GUIDE_LANGS } from "./guides";
@@ -8,7 +9,7 @@ import { GUIDE_MAX_HOURLY, GUIDE_MIN_HOURLY } from "./pricing";
 export const GUIDE_PAYOUT_COUNTRIES = ["PT", "ES", "FR", "IT", "NL", "GB", "AE", "DE", "AT", "CZ", "SG", "US", "CA", "MX", "BR"];
 export const guideCityOk = (id: string) => GUIDE_PAYOUT_COUNTRIES.includes(COUNTRY[id] ?? "");
 
-const photo = z.string().max(110_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).optional().nullable();
+const photo = imageDataUrl(110_000).optional().nullable();
 
 export const GuideProfile = z.object({
   name: z.string().trim().min(2).max(80),

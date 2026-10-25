@@ -16,7 +16,8 @@ import { accessCount } from "@/data/access";
 import { dualMoney, formatMoney } from "@/lib/currency";
 import { fxContext, requestCurrency } from "@/lib/fx";
 import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
-import { ACCESS_COOKIE, readAccessToken } from "@/lib/access-token";
+import { ACCESS_COOKIE } from "@/lib/access-token";
+import { validAccessEmail } from "@/lib/session-revoke";
 import { sessionEmail } from "@/lib/auth";
 import { findActiveAccess } from "@/lib/orders";
 
@@ -35,7 +36,7 @@ export default async function Start({ params, searchParams }: { params: { locale
   const L = INTL_LOCALE[params.locale];
   const list = await loadCities();
   const region = new Intl.DisplayNames([L], { type: "region" });
-  const emails = [readAccessToken(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
+  const emails = [await validAccessEmail(cookies().get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
   const owned = new Set<string>();
   if (emails.length) for (const c of list) if (await findActiveAccess(emails, c.id).catch(() => null)) owned.add(c.id);
   const fx = await fxContext();

@@ -8,6 +8,10 @@
 # No .env (opcional, mas recomendado — sem isto fica só a cópia local no próprio servidor):
 #   BACKUP_TARGET=u123456@u123456.your-storagebox.de   (utilizador e endereço da Storage Box)
 #   BACKUP_KEEP_DAYS=30                                 (dias de cópias da base de dados a guardar)
+#   BACKUP_PING_URL=https://hc-ping.com/<uuid>          (aviso se a cópia falhar ou não correr — ex.: healthchecks.io, grátis)
+#
+# Recomendado na consola Hetzner: ativar "Snapshots automáticos" da Storage Box. Assim, mesmo que este servidor
+# seja comprometido e apague as cópias remotas, os snapshots continuam lá.
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$DIR"
@@ -17,6 +21,8 @@ val() { grep -E "^$1=" .env 2>/dev/null | tail -1 | cut -d= -f2- | tr -d '"' || 
 TARGET="$(val BACKUP_TARGET)"
 KEEP="$(val BACKUP_KEEP_DAYS)"; KEEP="${KEEP:-30}"
 SSH="ssh -p 23 -i $KEY -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+PING="$(val BACKUP_PING_URL)"
+ping_() { [[ -n "$PING" ]] && curl -fsS -m 10 --retry 3 "$PING$1" >/dev/null 2>&1 || true; }
 
 if [[ "${1:-}" == "--install" ]]; then
   command -v rsync >/dev/null || apt-get install -y rsync >/dev/null
@@ -41,11 +47,13 @@ if [[ "${1:-}" == "--status" ]]; then
 fi
 
 echo "== $(date -Is) início"
+# Qualquer falha a partir daqui avisa (BACKUP_PING_URL) em vez de passar despercebida.
+trap 'echo "✗ falhou na linha $LINENO"; ping_ /fail' ERR
 mkdir -p backups/db
 STAMP="$(date +%F_%H%M)"
 # 1) Base de dados (formato custom: comprimido e restaurável tabela a tabela)
 docker compose exec -T db pg_dump -U sgct -Fc sgct > "backups/db/sgct-$STAMP.dump.part"
-[[ -s "backups/db/sgct-$STAMP.dump.part" ]] || { echo "✗ pg_dump vazio"; exit 1; }
+[[ -s "backups/db/sgct-$STAMP.dump.part" ]] || { echo "✗ pg_dump vazio"; ping_ /fail; exit 1; }
 mv "backups/db/sgct-$STAMP.dump.part" "backups/db/sgct-$STAMP.dump"
 find backups/db -name 'sgct-*.dump' -mtime +"$KEEP" -delete
 echo "✓ base de dados: $(du -h "backups/db/sgct-$STAMP.dump" | cut -f1)"
@@ -57,10 +65,19 @@ MEDIA="$(docker volume inspect -f '{{ .Mountpoint }}' "$(basename "$DIR")_media"
 if [[ -n "$TARGET" ]]; then
   for d in hellotravell hellotravell/db hellotravell/media; do $SSH "$TARGET" mkdir "$d" >/dev/null 2>&1 || true; done
   rsync -a --delete -e "$SSH" backups/db/ "$TARGET:hellotravell/db/"
-  [[ -n "$MEDIA" && -d "$MEDIA" ]] && rsync -a -e "$SSH" "$MEDIA/" "$TARGET:hellotravell/media/"
+  # Media: ficheiros apagados na app (ex.: conta apagada) saem da cópia principal e ficam só KEEP dias em media-deleted/.
+  if [[ -n "$MEDIA" && -d "$MEDIA" ]]; then
+    $SSH "$TARGET" mkdir hellotravell/media-deleted >/dev/null 2>&1 || true
+    rsync -a --delete --backup --backup-dir="../media-deleted/$STAMP" -e "$SSH" "$MEDIA/" "$TARGET:hellotravell/media/"
+    CUT="$(date -d "-$KEEP days" +%F)"
+    for old in $($SSH "$TARGET" ls hellotravell/media-deleted 2>/dev/null || true); do
+      [[ "${old:0:10}" < "$CUT" ]] && $SSH "$TARGET" rm -r "hellotravell/media-deleted/$old" >/dev/null 2>&1 || true
+    done
+  fi
   echo "✓ enviado para a Storage Box"
 else
   echo "ℹ sem BACKUP_TARGET: cópia só local"
 fi
 date -Is > backups/LAST_OK
+ping_ ""
 echo "== $(date -Is) fim"

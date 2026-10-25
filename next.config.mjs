@@ -2,7 +2,7 @@
 const nextConfig = {
   output: "standalone",
   poweredByHeader: false,
-  experimental: { serverComponentsExternalPackages: ["@electric-sql/pglite", "pg"] },
+  experimental: { serverComponentsExternalPackages: ["@electric-sql/pglite", "pg"], instrumentationHook: true },
   async headers() {
     return [{
       source: "/(.*)",
@@ -11,7 +11,11 @@ const nextConfig = {
         { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         { key: "X-Frame-Options", value: "DENY" }
       ]
-    }];
+    },
+    // Dados pessoais nunca ficam em caches partilhadas (Cloudflare, proxies) nem no disco do navegador.
+    ...["/api/me/:path*", "/api/chat/:path*", "/api/social/feed", "/api/social/stories", "/api/social/saved", "/api/social/act"].map((source) => ({
+      source, headers: [{ key: "Cache-Control", value: "private, no-store" }]
+    }))];
   }
 };
 export default nextConfig;

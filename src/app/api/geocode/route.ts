@@ -61,6 +61,6 @@ export async function GET(req: Request) {
     const best = all.map((x) => ({ x, d: km(hits[0], cityCenter(x)) })).sort((a, b) => a.d - b.d)[0];
     if (best && best.d < 60 && best.x.id !== city.id) elsewhere = { city: best.x.id, name: best.x.n[lang as keyof typeof best.x.n] ?? best.x.n.en };
   }
-  cache.set(key, { at: Date.now(), hits: inside, elsewhere });
+  cache.set(key, { at: Date.now(), hits: inside, elsewhere }); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
   return NextResponse.json({ hits: inside, elsewhere });
 }

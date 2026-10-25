@@ -7,8 +7,8 @@ import Portal from "./Portal";
 const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 export type CityOpt = { id: string; name: string; sub?: string };
 
-export function CitySwitch({ current, cities, onPick, label, placeholder, className = "cs-title", none }: {
-  current: string; cities: CityOpt[]; onPick: (id: string) => void; label: string; placeholder: string; className?: string; none: string;
+export function CitySwitch({ current, cities, onPick, label, placeholder, className = "cs-title", none, closeLabel = "Close" }: {
+  current: string; cities: CityOpt[]; onPick: (id: string) => void; label: string; placeholder: string; className?: string; none: string; closeLabel?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
@@ -34,14 +34,14 @@ export function CitySwitch({ current, cities, onPick, label, placeholder, classN
       {open && (
         <Portal><div className="sheet-bg" onClick={() => setOpen(false)}>
           <div className="sheet cs-sheet" role="dialog" aria-label={label} onClick={(e) => e.stopPropagation()}>
-            <div className="cs-head"><b>{label}</b><button type="button" className="pk-x press" onClick={() => setOpen(false)} aria-label="✕"><X size={18} aria-hidden="true" /></button></div>
+            <div className="cs-head"><b>{label}</b><button type="button" className="pk-x press" onClick={() => setOpen(false)} aria-label={closeLabel}><X size={18} aria-hidden="true" /></button></div>
             <label className="pk-q"><Search size={16} aria-hidden="true" />
               <input ref={inp} value={q} onChange={(e) => setQ(e.target.value)} placeholder={placeholder} aria-label={placeholder} autoComplete="off" spellCheck={false}
                 onKeyDown={(e) => { if (e.key === "Enter" && list[0]) { setOpen(false); onPick(list[0].id); } }} />
             </label>
             <ul className="cs-list" role="listbox">
               {list.map((c) => (
-                <li key={c.id}><button type="button" role="option" aria-selected={c.id === current} className={`cs-row press${c.id === current ? " on" : ""}`} onClick={() => { setOpen(false); if (c.id !== current) onPick(c.id); }}>
+                <li key={c.id}><button type="button" role="option" aria-selected={c.id === current} className={`csw-row press${c.id === current ? " on" : ""}`} onClick={() => { setOpen(false); if (c.id !== current) onPick(c.id); }}>
                   <b>{c.name}</b>{c.sub && <small>{c.sub}</small>}
                 </button></li>
               ))}

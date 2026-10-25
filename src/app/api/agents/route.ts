@@ -5,7 +5,7 @@ import { db, schema } from "@/lib/db";
 import { newAgentCode, sendAgentLink } from "@/lib/agents";
 import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -29,6 +29,8 @@ export async function POST(req: Request) {
     if (!b.name) return NextResponse.json({ error: "name_required" }, { status: 400 });
     await d.insert(schema.agents).values({ name: b.name, email, phone: b.phone || null, country: b.country?.toUpperCase() || null, code: newAgentCode() });
   }
+  // No máximo 3 links por hora para o mesmo endereço (sem inundar caixas de correio alheias).
+  if (!rateLimitKey(`agent-mail:${email}`, 3, 3600_000)) return NextResponse.json({ ok: true, devLink: null });
   const link = await sendAgentLink(email, b.locale);
   // Sem serviço de email (só no computador de desenvolvimento) devolvemos o link para testar.
   return NextResponse.json({ ok: true, devLink: !isProd ? link : null });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { releaseHold } from "@/lib/referrals";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
 import { fulfilTourSession } from "@/lib/orders";
@@ -28,6 +29,10 @@ export async function POST(req: Request) {
         if (s.mode === "subscription") { const m = await activateFromSession(s); if (m) await markLeadWon(m); }
         break;
       }
+      // Pagamento abandonado: o crédito reservado volta ao saldo (sem este aviso, volta sozinho ao fim de 25 h).
+      case "checkout.session.expired":
+        await releaseHold(event.data.object.metadata?.creditHold);
+        break;
       case "invoice.paid":
         await commissionForInvoice(event.data.object);
         break;

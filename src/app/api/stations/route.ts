@@ -50,6 +50,6 @@ export async function GET(req: Request) {
   } catch { /* sem resultados */ }
   const seen = new Set<string>();
   hits = hits.filter((h) => h.label && km(h, c) < 40 && !seen.has(h.label) && seen.add(h.label)).sort((a, b) => km(a, c) - km(b, c));
-  if (hits.length) cache.set(key, { at: Date.now(), hits });
+  if (hits.length) cache.set(key, { at: Date.now(), hits }); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
   return NextResponse.json({ hits });
 }

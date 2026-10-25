@@ -7,6 +7,7 @@ import { db, schema } from "./db";
 import { cookies } from "next/headers";
 import { env } from "./env";
 import { readPurposeToken } from "./access-token";
+import { sessionsAfter } from "./session-revoke";
 import { createPrivateKey, sign } from "node:crypto";
 
 /**
@@ -66,6 +67,13 @@ export const authOptions: NextAuthOptions = {
       await d.insert(schema.users).values({ email: user.email.toLowerCase(), name: user.name ?? null, provider: account?.provider ?? null })
         .onConflictDoUpdate({ target: schema.users.email, set: { name: user.name ?? undefined, provider: account?.provider ?? undefined } });
       return true;
+    },
+    // Sessões Google/Apple/Facebook também obedecem a "terminar sessão em todos os dispositivos" e a apagar a conta.
+    async session({ session, token }) {
+      const email = session.user?.email?.toLowerCase();
+      const iat = typeof token.iat === "number" ? token.iat : 0;
+      if (email && iat < (await sessionsAfter(email))) return { expires: session.expires } as typeof session;
+      return session;
     }
   }
 };

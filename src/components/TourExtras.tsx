@@ -54,7 +54,8 @@ export function RouteFit({ options, value, onChange, availMin, t, extName, local
             <button key={o.key} type="button" role="radio" aria-checked={o.key === value} className={`rf-p${o.key === value ? " on" : ""}${f === false ? " no" : ""}`} onClick={() => onChange(o.key)}>
               <b className="num">{hrs(o.plan.minutesTour)}</b>
               <small>{fmt(t.fitOpt, { n: o.plan.stops.length, h: "" }).replace(/\s*·\s*$/, "")}</small>
-              {f === true && <i className="rf-dot" aria-label={t.fitsTag} />}
+              {f === true && <i className="rf-dot" role="img" aria-label={t.fitsTag} />}
+              {f === false && <span className="sr-only">{t.tooLong}</span>}
             </button>
           );
         })}
@@ -167,9 +168,11 @@ export function useGeo() {
   const watch = useRef<number | null>(null);
   function start() {
     if (!("geolocation" in navigator)) return setState("denied");
+    if (watch.current !== null) return; // já está a seguir: tocar outra vez não abre um segundo GPS (bateria)
     watch.current = navigator.geolocation.watchPosition(
       (p) => { setPos({ lat: p.coords.latitude, lng: p.coords.longitude }); setState("on"); },
-      () => setState("denied"),
+      // Só "recusado" quando a pessoa recusou; sem sinal ou demora não é recusa (o GPS continua a tentar).
+      (e) => { if (e.code === 1) setState("denied"); },
       { enableHighAccuracy: true, maximumAge: 30_000, timeout: 20_000 }
     );
     try { localStorage.setItem("sgct:geo", "1"); } catch { /* ignorar */ }

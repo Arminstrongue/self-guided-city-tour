@@ -15,13 +15,18 @@ export async function GET(req: Request) {
   const locale = isLocale(l) ? l : "en";
   if (!id.startsWith("cs_")) return NextResponse.redirect(`${env.appUrl}/${locale}`);
 
-  const session = await stripe().checkout.sessions.retrieve(id);
-  const access = await fulfilTourSession(session);
+  let session: Awaited<ReturnType<ReturnType<typeof stripe>["checkout"]["sessions"]["retrieve"]>> | null = null;
+  try { session = await stripe().checkout.sessions.retrieve(id); } catch { session = null; }
   const dest = new URL(`${env.appUrl}/${locale}/success`);
+  if (!session) { dest.searchParams.set("pending", "1"); return NextResponse.redirect(dest); }
+  const access = await fulfilTourSession(session);
   if (!access) { dest.searchParams.set("pending", "1"); return NextResponse.redirect(dest); }
   if (access.city) dest.searchParams.set("city", access.city);
-  dest.searchParams.set("email", access.email);
+  // O id da sessão Stripe fica no histórico do navegador: só abre sessão logo a seguir ao pagamento (2 h).
+  // Depois disso, entra-se pelo link enviado por email.
+  const fresh = Date.now() / 1000 - session.created < 2 * 3600;
   const res = NextResponse.redirect(dest);
+  if (!fresh) return res;
   res.cookies.set(ACCESS_COOKIE, createAccessToken(access.email), { httpOnly: true, sameSite: "lax", secure: isProd, maxAge: ACCESS_TTL_S, path: "/" });
   return res;
 }

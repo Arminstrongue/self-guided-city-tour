@@ -476,7 +476,7 @@ export const notifications = pgTable("notifications", {
   text: text("text").notNull().default(""),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   readAt: timestamp("read_at", { withTimezone: true })
-}, (t) => [index("notifications_email_idx").on(t.email, t.createdAt)]);
+}, (t) => [index("notifications_email_idx").on(t.email, t.createdAt), index("notifications_post_idx").on(t.postId)]);
 
 export const pushSubs = pgTable("push_subs", {
   endpoint: text("endpoint").primaryKey(),
@@ -508,7 +508,7 @@ export const referralCredits = pgTable("referral_credits", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull(),
   amountCents: integer("amount_cents").notNull(),        // + ganho, − gasto
-  kind: text("kind").$type<"earned" | "spent" | "reward">().notNull(),
+  kind: text("kind").$type<"earned" | "spent" | "reward" | "hold">().notNull(), // hold: reservado por um pagamento em curso
   accessId: uuid("access_id").notNull(),
   friend: text("friend"),                                 // quem comprou (no caso de "earned")
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
@@ -519,7 +519,7 @@ export const postSaves = pgTable("post_saves", {
   postId: uuid("post_id").notNull(),
   email: text("email").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
-}, (t) => [uniqueIndex("post_saves_pair_idx").on(t.email, t.postId)]);
+}, (t) => [uniqueIndex("post_saves_pair_idx").on(t.email, t.postId), index("post_saves_post_idx").on(t.postId)]);
 
 export const messageReactions = pgTable("message_reactions", {
   messageId: uuid("message_id").notNull(),

@@ -171,6 +171,8 @@ export const reviewUrl = (b: schema.GuideBooking) => `${env.appUrl}/${b.locale ?
 
 /** O guia aceita (cobra o cartão) ou recusa (liberta a autorização). */
 export async function respond(g: schema.Guide, bookingId: string, accept: boolean) {
+  // Guia suspenso ou recusado já não aceita reservas (não cobra cartões); recusar continua possível para libertar o cartão.
+  if (accept && g.status !== "active") return { error: "state" as const };
   const d = await db();
   const [b] = await d.select().from(schema.guideBookings).where(and(eq(schema.guideBookings.id, bookingId), eq(schema.guideBookings.guideId, g.id))).limit(1);
   if (!b || b.status !== "requested" || !b.paymentIntentId) return { error: "state" as const };

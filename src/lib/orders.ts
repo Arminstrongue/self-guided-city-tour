@@ -47,7 +47,7 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
     return again[0] ?? null;
   }
 
-  await (await import("./referrals")).settleReferral(access, { refInviter: m.refInviter, creditUsed: m.creditUsed });
+  await (await import("./referrals")).settleReferral(access, { refInviter: m.refInviter, creditUsed: m.creditUsed, creditHold: m.creditHold });
   // Nova cidade (e, para quem convidou, um amigo que pagou): pode trazer nível, medalha ou prémio.
   void import("./achievements").then((a) => Promise.all([a.checkAchievements(email), m.refInviter ? a.checkAchievements(m.refInviter) : null])).catch(() => {});
 

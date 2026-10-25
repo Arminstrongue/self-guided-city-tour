@@ -30,7 +30,7 @@ export async function saveOwnMusic(me: string, body: ReadableStream<Uint8Array>,
     if (n < 1000) throw new Error("empty");
     const ss = Math.max(0, Math.min(3600, Number.isFinite(start) ? start : 0));
     const code = await new Promise<number>((res) => {
-      const p = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-ss", String(ss), "-i", raw, "-t", String(CLIP_SECS), "-vn",
+      const p = spawn("ffmpeg", ["-y", "-hide_banner", "-loglevel", "error", "-ss", String(ss), "-protocol_whitelist", "file", "-format_whitelist", "mov,mp4,m4a,3gp,3g2,mj2,matroska,webm,ogg,wav,mp3,aac,flac,caf", "-i", raw, "-t", String(CLIP_SECS), "-vn",
         "-af", `afade=t=in:d=0.3,afade=t=out:st=${CLIP_SECS - 1.5}:d=1.5,loudnorm=I=-15:TP=-1.5`, "-c:a", "aac", "-b:a", "128k", "-ac", "2", "-movflags", "+faststart", out], { stdio: "ignore" });
       const t = setTimeout(() => p.kill("SIGKILL"), 90_000);
       p.on("error", () => { clearTimeout(t); res(-1); });

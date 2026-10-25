@@ -24,6 +24,6 @@ export async function DELETE(req: Request) {
   const me = await currentTraveller();
   if (!me) return NextResponse.json({ error: "auth" }, { status: 401 });
   const v = z.object({ endpoint: z.string().max(1000) }).safeParse(await req.json().catch(() => null));
-  if (v.success) await removeSub(v.data.endpoint);
+  if (v.success) await removeSub(v.data.endpoint, me);
   return NextResponse.json({ ok: true });
 }

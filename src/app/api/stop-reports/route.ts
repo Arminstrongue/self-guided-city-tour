@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
+import { env } from "@/lib/env";
 import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
 import { addStopReport, REPORT_KINDS, stopWarnings } from "@/lib/stop-reports";
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
   if (!city?.stops.some((s) => s.id === v.data.stop)) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const me = await currentTraveller();
   const ip = (req.headers.get("cf-connecting-ip") ?? req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim();
-  const who = me ?? `anon:${createHash("sha256").update(`${ip}|${process.env.AUTH_SECRET ?? ""}`).digest("hex").slice(0, 16)}`;
+  const who = me ?? `anon:${createHmac("sha256", env.secret).update(ip).digest("hex").slice(0, 16)}`;
   await addStopReport(v.data.city, v.data.stop, v.data.kind, v.data.note, who);
   return NextResponse.json({ ok: true });
 }

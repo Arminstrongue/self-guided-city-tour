@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, schema } from "@/lib/db";
-import { rateLimit } from "@/lib/rate-limit";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { BookingBody, bookKind, checkBooking } from "@/lib/booking";
 import { businessMail, travellerMail } from "@/lib/booking-emails";
 import { sendEmail } from "@/lib/email";
@@ -14,6 +14,8 @@ export async function POST(req: Request) {
   const parsed = BookingBody.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const b = parsed.data;
+  // Cada endereço recebe no máximo 3 pedidos por dia (evita usar o formulário para enviar emails a terceiros).
+  if (!rateLimitKey(`merchant-book:${b.email.toLowerCase()}`, 3, 24 * 3600_000)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const d = await db();
   const [m] = await d.select().from(schema.merchants).where(eq(schema.merchants.id, b.merchantId)).limit(1);
   const kind = m ? bookKind(m.category) : null;

@@ -12,7 +12,7 @@ import { normaliseFlightNo, validFlightNo } from "@/lib/flight";
 import { rateLimit } from "@/lib/rate-limit";
 import { cookies } from "next/headers";
 import { REF_COOKIE } from "@/lib/invites";
-import { quote } from "@/lib/referrals";
+import { holdCredit, quote, releaseHold } from "@/lib/referrals";
 import { currentTraveller } from "@/lib/wallet";
 import { parseTrip } from "@/lib/trip";
 import { company } from "@/legal/content";
@@ -51,6 +51,9 @@ export async function POST(req: Request) {
   const plan = TOUR_PLANS[b.plan];
   // Convites: desconto de amigo na primeira compra e crédito de quem convidou.
   const q = await quote({ amount: plan.amount, buyerEmail: b.email, refHandle: cookies().get(REF_COOKIE)?.value ?? null, signedEmail: await currentTraveller().catch(() => null) });
+  // Reserva o crédito agora; se outro pagamento aberto já o usou, este segue sem crédito (preço recalculado).
+  const creditHold = q.creditUsed > 0 ? await holdCredit(b.email, q.creditUsed) : null;
+  if (q.creditUsed > 0 && !creditHold) { q.amount += q.creditUsed; q.creditUsed = 0; }
   const ref = await merchantByRef(b.ref);
   const label = b.plan === "all" ? "All-Cities Pass — 30 days" : b.plan === "trip" ? `${cityName(city, b.locale)} — 3 days` : `${cityName(city, b.locale)} — 48 h`;
   try {
@@ -59,13 +62,14 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "ar" ? "auto" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: q.amount, product_data: { name: `VOYBU · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), termsAccepted: new Date().toISOString(), termsVersion: company().updated, plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), trip: tripMeta },
+      metadata: { consentImmediate: new Date().toISOString(), termsAccepted: new Date().toISOString(), termsVersion: company().updated, plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: requestCurrency(), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), creditHold: creditHold ?? "", trip: tripMeta },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });
     return NextResponse.json({ url: session.url });
   } catch (e) {
     console.error("checkout", e);
+    await releaseHold(creditHold);
     return NextResponse.json({ error: "stripe" }, { status: 502 });
   }
 }

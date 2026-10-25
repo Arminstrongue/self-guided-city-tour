@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     const j = r.ok ? await r.json() as { name?: string; address?: Record<string, string> } : null;
     const a = j?.address ?? {};
     const name = (j?.name || a.amenity || a.tourism || a.leisure || a.shop || a.building || [a.road, a.suburb].filter(Boolean).join(", ") || "").slice(0, 80);
-    cache.set(key, name);
+    cache.set(key, name); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
     return NextResponse.json({ name });
   } catch { return NextResponse.json({ name: "" }); }
 }

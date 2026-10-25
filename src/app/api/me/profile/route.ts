@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { imageDataUrl } from "@/lib/strip-meta";
 import { currentTraveller } from "@/lib/wallet";
 import { ACCENTS, THEMES, counts, deleteProfile, handleTaken, lists, myProfile, saveProfile, savePrefsOnly, validHandle } from "@/lib/social";
 import { CITIES } from "@/data/cities";
@@ -10,7 +11,7 @@ import { REF_COOKIE, acceptInvite } from "@/lib/invites";
 import { isHateful } from "@/lib/moderation";
 
 export const runtime = "nodejs";
-const photo = z.string().max(140_000).regex(/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/).nullable();
+const photo = imageDataUrl(140_000).nullable();
 const Full = z.object({
   handle: z.string().trim().toLowerCase(), name: z.string().trim().min(1).max(60), bio: z.string().trim().max(160).default(""),
   photo, isPrivate: z.boolean(), adult: z.literal(true)

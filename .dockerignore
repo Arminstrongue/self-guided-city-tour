@@ -3,3 +3,12 @@ node_modules
 .data
 .env
 .git
+# Nunca dentro da imagem: cópias da base de dados, segredos, chaves de assinatura da app, projetos nativos.
+backups
+.env*
+!.env.example
+*.jks
+*.keystore
+android
+ios
+deploy/*.log

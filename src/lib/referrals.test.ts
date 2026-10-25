@@ -47,4 +47,17 @@ test("convites: 20% ao amigo no 1.º passe, 2 € de crédito a quem convidou, c
   const { db: dbf, schema } = await import("./db");
   await (await dbf()).insert(schema.referralCredits).values({ email: "ana@x.com", amountCents: 5000, kind: "earned", accessId: "00000000-0000-0000-0000-000000000001" });
   assert.equal((await r.quote({ amount: 499, buyerEmail: "ana@x.com", signedEmail: "ana@x.com" })).amount, 50);
+
+  // Crédito reservado: dois pagamentos abertos não usam o mesmo crédito; expirar devolve-o.
+  const bal = await r.creditBalance("ana@x.com");
+  const h1 = await r.holdCredit("ana@x.com", bal);
+  assert.ok(h1);
+  assert.equal(await r.creditBalance("ana@x.com"), 0);
+  assert.equal(await r.holdCredit("ana@x.com", 100), null, "segundo pagamento já não tem crédito");
+  await r.releaseHold(h1);
+  assert.equal(await r.creditBalance("ana@x.com"), bal);
+  // Pago: a reserva vira gasto definitivo (não conta a dobrar).
+  const h2 = await r.holdCredit("ana@x.com", 300);
+  await r.settleReferral({ id: "00000000-0000-0000-0000-0000000000aa", email: "ana@x.com" }, { creditUsed: "300", creditHold: h2! });
+  assert.equal(await r.creditBalance("ana@x.com"), bal - 300);
 });

@@ -64,7 +64,7 @@ async function transcode(id: string) {
   const info = await probe(raw);
   if (!info?.video) throw new Error("not_video");
   const scale = "scale='if(gt(iw,ih),-2,min(720,iw))':'if(gt(iw,ih),min(720,ih),-2)'";
-  const args = ["-y", "-hide_banner", "-loglevel", "error", "-i", raw, "-t", String(MAX_SECONDS), "-vf", `${scale},fps=30`,
+  const args = ["-y", "-hide_banner", "-loglevel", "error", "-protocol_whitelist", "file", "-format_whitelist", "mov,mp4,m4a,3gp,3g2,mj2,matroska,webm", "-i", raw, "-t", String(MAX_SECONDS), "-vf", `${scale},fps=30`,
     "-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-profile:v", "main", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
     "-map_metadata", "-1", "-map_chapters", "-1", // sem metadados (localização GPS, aparelho, data)
     ...(info.audio ? ["-c:a", "aac", "-b:a", "96k", "-ac", "2"] : ["-an"]), tmp];

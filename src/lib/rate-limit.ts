@@ -6,7 +6,8 @@ const buckets = new Map<string, { n: number; reset: number }>();
 
 export function clientIp(req: Request): string {
   const h = req.headers;
-  return h.get("cf-connecting-ip") ?? h.get("x-real-ip") ?? h.get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
+  // x-real-ip é posto pelo Caddy só com o IP verificado (Cloudflare); o resto é recurso para desenvolvimento.
+  return h.get("x-real-ip") ?? h.get("cf-connecting-ip") ?? h.get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
 }
 
 export function rateLimit(req: Request, scope: string, perMinute: number): boolean {

@@ -6,7 +6,7 @@
  *  - bloqueios escondem tudo nos dois sentidos;
  *  - só comenta quem segue o autor ou é seguido por ele (e o próprio autor).
  */
-import { and, desc, eq, gt, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, desc, eq, gt, inArray, isNull, notInArray, lt, lte, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { myProfile, type PublicProfile } from "./social";
 import { dropPostNotifs, notify } from "./notify";
@@ -116,10 +116,10 @@ export async function purgeExpired() {
   const d = await db();
   // As histórias ficam no arquivo do autor durante 1 ano (e para sempre se estiverem num destaque).
   const cut = new Date(Date.now() - STORY_ARCHIVE_DAYS * 86_400_000);
-  const cand = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts).where(lte(schema.posts.expiresAt, cut)).limit(500);
-  if (!cand.length) return 0;
-  const kept = new Set((await d.select({ items: schema.highlights.items }).from(schema.highlights)).flatMap((h) => h.items));
-  const old = cand.filter((o) => !kept.has(o.id));
+  // Os destaques ficam de fora já na consulta: senão, 500 histórias em destaque bloqueavam a limpeza para sempre.
+  const kept = [...new Set((await d.select({ items: schema.highlights.items }).from(schema.highlights)).flatMap((h) => h.items))].filter((x) => /^[0-9a-f-]{36}$/i.test(x));
+  const old = await d.select({ id: schema.posts.id, music: schema.posts.music }).from(schema.posts)
+    .where(and(lte(schema.posts.expiresAt, cut), kept.length ? notInArray(schema.posts.id, kept) : undefined)).limit(500);
   if (!old.length) return 0;
   const ids = old.map((o) => o.id);
   await (await import("./music")).deleteOwnMusic(old.map((o) => o.music?.own));
@@ -127,6 +127,8 @@ export async function purgeExpired() {
   await d.delete(schema.postLikes).where(inArray(schema.postLikes.postId, ids));
   await d.delete(schema.postComments).where(inArray(schema.postComments.postId, ids));
   await d.delete(schema.storyViews).where(inArray(schema.storyViews.postId, ids));
+  await d.delete(schema.postSaves).where(inArray(schema.postSaves.postId, ids));
+  await d.delete(schema.notifications).where(inArray(schema.notifications.postId, ids));
   await d.delete(schema.posts).where(inArray(schema.posts.id, ids));
   return ids.length;
 }

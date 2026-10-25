@@ -55,6 +55,6 @@ export async function GET(req: Request) {
       }).filter((o) => o.lines.length).sort((a, b) => a.dep.localeCompare(b.dep)).slice(0, 4);
     } else console.warn("[transit]", r.status, (await r.text()).slice(0, 200));
   } catch { /* sem dados */ }
-  cache.set(key, { at: Date.now(), out });
+  cache.set(key, { at: Date.now(), out }); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
   return NextResponse.json({ options: out });
 }

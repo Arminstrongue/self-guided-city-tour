@@ -2,6 +2,7 @@
  * Rede social da carteira (fase 1): perfil público por @nome, seguir (com pedido quando o perfil é privado),
  * pesquisa de viajantes, bloqueios e denúncias. O email nunca é mostrado a outros viajantes.
  */
+import { cleanImageDataUrl } from "./strip-meta";
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { notify } from "./notify";
@@ -14,7 +15,18 @@ export const ACCENTS = ["blue", "purple", "green", "orange", "pink", "teal"] as 
 
 export type PublicProfile = { handle: string; name: string; bio: string; photo: string | null; isPrivate: boolean };
 export type Relation = "self" | "none" | "requested" | "following" | "blocked";
-const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: p.photo, isPrivate: p.isPrivate });
+// Fotos de perfil antigas (guardadas antes da limpeza no servidor) saem também sem metadados; cache por processo.
+const cleanCache = new Map<string, string | null>();
+function cleanPhoto(url: string | null): string | null {
+  if (!url) return null;
+  const k = url.length + ":" + url.slice(-64);
+  if (cleanCache.has(k)) return cleanCache.get(k)!;
+  const c = cleanImageDataUrl(url);
+  if (cleanCache.size > 2000) cleanCache.clear();
+  cleanCache.set(k, c);
+  return c;
+}
+const pub = (p: schema.TravellerProfile): PublicProfile => ({ handle: p.handle, name: p.name, bio: p.bio, photo: cleanPhoto(p.photo), isPrivate: p.isPrivate });
 
 export async function myProfile(email: string) {
   const d = await db();

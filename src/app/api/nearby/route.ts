@@ -60,6 +60,6 @@ export async function GET(req: Request) {
     };
   }).filter((x) => Number.isFinite(x.lat) && x.access !== "private" && x.access !== "customers").sort((a, b) => a.m - b.m).slice(0, 8);
   const out = { items };
-  cache.set(key, { at: Date.now(), out });
+  cache.set(key, { at: Date.now(), out }); if (cache.size > 3000) cache.delete(cache.keys().next().value as string); // memória limitada
   return NextResponse.json(out);
 }

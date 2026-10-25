@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
-import { fmt } from "@/i18n/core";
+import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { NextCity } from "@/lib/trip";
 import { citiesByDistance, groundLink, hoursLabel, kmBetween, nearbyCities, travelEstimate, type CityPoint } from "@/lib/nearby";
 import { SearchPick } from "./SearchPick";
@@ -11,8 +11,8 @@ import { useDict } from "@/i18n/client-dict";
 
 type From = { id: string; name: string; lat: number; lng: number };
 
-export function NextCityPick({ t, from, cities, value, onChange }: { t: Dict; from: From; cities: CityPoint[]; value?: NextCity; onChange: (n: NextCity | undefined) => void }) {
-  const opts = useMemo(() => citiesByDistance(cities, from).map((c) => ({ value: c.id, label: c.name, icon: "📍", sub: `${c.km.toLocaleString()} km` })), [cities, from]);
+export function NextCityPick({ t, locale, from, cities, value, onChange }: { t: Dict; locale: Locale; from: From; cities: CityPoint[]; value?: NextCity; onChange: (n: NextCity | undefined) => void }) {
+  const opts = useMemo(() => citiesByDistance(cities, from).map((c) => ({ value: c.id, label: c.name, icon: "📍", sub: `${new Intl.NumberFormat(INTL_LOCALE[locale]).format(c.km)} km` })), [cities, from, locale]);
   return (
     <div className="nxc">
       <SearchPick options={opts} value={value ? value.city ?? value.name : null} free max={40}
@@ -37,7 +37,7 @@ export function OnwardLink({ t, locale, from, cities, next }: { t: Dict; locale:
   const k = Math.round(kmBetween(from, c)); const e = travelEstimate(k, groundLink(from.id, c.id));
   return (
     <a className="nxc-go press" href={`/${locale}/c/${c.id}`}>
-      <span><b>{fmt(t.nxcGo, { c: c.name })}</b><small>{fmt(t.nxcGoSub, { k: k.toLocaleString(), h: hoursLabel(e.min), how: howTxt(t, e.how) })}</small></span>
+      <span><b>{fmt(t.nxcGo, { c: c.name })}</b><small>{fmt(t.nxcGoSub, { k: new Intl.NumberFormat(INTL_LOCALE[locale]).format(k), h: hoursLabel(e.min), how: howTxt(t, e.how) })}</small></span>
       <ArrowRight size={18} aria-hidden="true" />
     </a>
   );
@@ -56,7 +56,7 @@ export function NearbyCities({ t: tProp, locale, from, cities, max = 6 }: { t?: 
         {list.map((n) => (
           <li key={n.id}><a className="nb-row press" href={`/${locale}/c/${n.id}`}>
             <MapPin size={16} aria-hidden="true" />
-            <span><b>{n.name}</b><small>{n.km.toLocaleString()} km · {hoursLabel(n.min)} {howTxt(t, n.how)}</small></span>
+            <span><b>{n.name}</b><small>{new Intl.NumberFormat(INTL_LOCALE[locale]).format(n.km)} km · {hoursLabel(n.min)} {howTxt(t, n.how)}</small></span>
             {n.dayTrip && <em className="nb-day">{t.nbDay}</em>}
           </a></li>
         ))}
