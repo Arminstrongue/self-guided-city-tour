@@ -1,4 +1,7 @@
 {
+  "fxInfo": "참고용",
+  "hiAdapted": "발췌·편집",
+  "revTr": "Google 번역",
   "sgTitle": "지금 추천",
   "sgNear": "도보 {m}분 거리",
   "sgClosing": "{t}에 문을 닫아요: 지금 가는 게 좋아요",
@@ -41,7 +44,7 @@
 "writeReview": "Google에 리뷰 쓰기",
 "allReviews": "리뷰 모두 보기",
 "seeOnMaps": "Google 지도에서 보기",
-"reviewsSrc": "평점과 리뷰는 Google 제공.",
+"reviewsSrc": "최근 31일간의 Google 지도 리뷰, Google 관련성 순.",
 "photoSrc": "사진: Wikimedia Commons(작가 표기) 및 Google.",
 "highlights": "하이라이트",
 "topDest": "여행지",

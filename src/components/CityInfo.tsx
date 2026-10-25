@@ -44,7 +44,7 @@ export function CityToday({ t, locale, city, name, pulse }: { t: Dict; locale: L
     <section className="sec today" id="today">
       <div className="sec-h"><div><h2>{fmt(t.tdTitle, { city: name })}</h2><p>{df.format(new Date(`${pulse.day}T12:00:00Z`))} · {t.tdAuto}</p></div></div>
       <div className="td-grid">
-        {d.weather && <div className="card td-wx"><span className="td-ic" aria-hidden="true">{WX(d.weather.code)}</span><b className="num">{d.weather.min}° – {d.weather.max}°</b><small className="hint">{d.weather.rain >= 50 ? `🌂 ${t.tdRain}` : t.tdDry}</small></div>}
+        {d.weather && <div className="card td-wx"><span className="td-ic" aria-hidden="true">{WX(d.weather.code)}</span><b className="num">{d.weather.min}° – {d.weather.max}°</b><small className="hint">{d.weather.rain >= 50 ? `🌂 ${t.tdRain}` : t.tdDry}</small><small className="hint wx-src"><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo.com</a></small></div>}
         {tr && (tr.visitors >= 3 || tr.comments > 0 || tr.posts > 0) && <div className="card td-wx"><span className="td-ic" aria-hidden="true">🔥</span>{tr.visitors > 0 && <b className="num">{fmt(t.tdVisitors, { n: tr.visitors })}</b>}{tr.comments + tr.posts > 0 && <small className="hint">{fmt(t.tdActivity, { c: tr.comments, p: tr.posts })}</small>}</div>}
       </div>
       {d.events && d.events.length > 0 && <div className="card stack td-list">
@@ -77,7 +77,7 @@ export function CityHistory({ t, name, k }: { t: Dict; name: string; k: { summar
           <summary>{t.hiMore}</summary>
           {paras(k.history.text).map((p, i) => <p key={`h${i}`} lang={k.history!.lang}>{p}</p>)}
         </details>}
-        <small className="hint hist-src">{t.hiSource} <a href={(k.history ?? k.summary)!.url} target="_blank" rel="noopener noreferrer">Wikipedia</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></small>
+        <small className="hint hist-src">{t.hiSource} {k.summary && <a href={k.summary.url} target="_blank" rel="noopener noreferrer">Wikipedia</a>}{k.history && k.history.url !== k.summary?.url && <>{k.summary ? ", " : ""}<a href={k.history.url} target="_blank" rel="noopener noreferrer">Wikipedia</a></>} · {t.hiAdapted} · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></small>
       </article>
     </section>
   );

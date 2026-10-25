@@ -61,7 +61,8 @@ function wikiSrcSet(src: string): string | undefined {
 /** Autor e licença de uma foto (obrigatório nas licenças Creative Commons), discreto no canto da imagem. */
 export function Credit({ p }: { p?: Photo | null }) {
   if (!p) return null;
-  return <span className="ph-credit" title={`${p.credit} · ${p.license}`}>© {p.credit}{p.license ? ` · ${p.license}` : ""}</span>;
+  const pd = /public domain|^pd\b|cc0/i.test(p.license);
+  return <span className="ph-credit" title={`${p.credit} · ${p.license}`}>{pd ? "" : "© "}{p.credit}{p.license ? ` · ${p.license}` : ""}</span>;
 }
 
 export function Img({ src, alt = "", className = "", eager = false }: { src?: string | null; alt?: string; className?: string; eager?: boolean }) {
@@ -200,7 +201,7 @@ export function GoogleReviews({ m, t, locale }: { m: Media; t: Dict; locale: Loc
             <Stars v={m.rating} />
             <small className="num">{fmt(t.gReviews, { n: nf.format(m.ratings ?? 0) })}</small>
           </div>
-          <span className="g-logo" style={{ marginInlineStart: "auto" }}><i>G</i> Google</span>
+          <span className="g-logo" style={{ marginInlineStart: "auto" }} aria-label="Google Maps">Google Maps</span>
         </div>
       )}
       {m.reviews.length > 0 && (
@@ -213,6 +214,7 @@ export function GoogleReviews({ m, t, locale }: { m: Media; t: Dict; locale: Loc
               </span>
               <Stars v={r.rating} />
               <p>{r.text}</p>
+              {r.translated && <small className="rev-tr">{t.revTr}</small>}
             </ExtLink>
           ))}
         </div>

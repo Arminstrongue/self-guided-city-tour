@@ -31,12 +31,12 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
   // Escrever pesquisa sozinho (sem ter de tocar na lupa) quando a lista da cidade não tem o que procura.
   useEffect(() => {
     const v = q.trim();
-    if (v.length < 3 || (shown && shown.length > 0)) return;
+    if (v.length < 4 || (shown && shown.length > 0)) return;
     const id = setTimeout(() => {
       setBusy(true);
       fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
         .then((j: { hits?: Hit[] } | null) => { setHits(j?.hits ?? []); setBusy(false); });
-    }, 450);
+    }, 800);
     return () => clearTimeout(id);
   }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
   async function search(e: React.FormEvent) {

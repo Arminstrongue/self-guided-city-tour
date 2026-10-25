@@ -297,6 +297,7 @@ export function WeatherCard({ cityId, t, locale }: { cityId: string; t: Dict; lo
       <span className="num"><b>{iconFor(w.now.code)} {fmt(t.wNow, { t: w.now.temp })}</b>{Math.min(...temps) !== Math.max(...temps) ? <> · {fmt(t.wRange, { min: Math.min(...temps), max: Math.max(...temps) })}</> : null}</span>
       <span className="hint">{wet ? fmt(t.wRain, { h: wet.t.slice(11, 16) }) : t.wDry}</span>
       {w.at && Date.now() - w.at > 45 * 60_000 && <span className="hint stale">{fmt(t.lvUpdated, { t: new Date(w.at).toLocaleTimeString(locale ? INTL_LOCALE[locale] : undefined, { hour: "2-digit", minute: "2-digit" }) })}</span>}
+      <span className="hint wx-src"><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather data by Open-Meteo.com</a></span>
     </div>
   );
 }

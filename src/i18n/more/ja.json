@@ -1,4 +1,8 @@
 {
+  "fxInfo": "参考値",
+  "hiAdapted": "抜粋・一部改変",
+  "revTr": "Google による翻訳",
+  "reviewsSrc": "過去31日間の Google マップのクチコミ（Google の関連度順）。",
   "sgTitle": "今のおすすめ",
   "sgNear": "あなたから徒歩{m}分",
   "sgClosing": "{t}に閉まります：今行くのがおすすめ",

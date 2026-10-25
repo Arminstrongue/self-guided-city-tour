@@ -64,6 +64,7 @@ export function FxConverter({ t, locale, from: from0 }: { t: Dict; locale: Local
         </label>
       </div>
       <small className="hint num">{one !== null && fmt(t.fxRate, { a: s.from, b: nf(one, s.to) })}{fx && <> · {fx.offline ? `📴 ${t.fxOfflineRates}` : fmt(t.fxUpdated, { d: fx.date })}</>}</small>
+      <small className="hint" style={{ fontSize: 11 }}>BCE/ECB · <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">Rates By Exchange Rate API</a> · {t.fxInfo}</small>
       <b className="ex-day">{t.fxCommon}</b>
       <div className="tt-fx-table">
         {fx && common.map((v) => (

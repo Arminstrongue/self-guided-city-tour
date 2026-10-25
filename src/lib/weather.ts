@@ -15,7 +15,9 @@ export async function weatherFor(lat: number, lng: number, tz: string): Promise<
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < 30 * 60e3) return hit.w;
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,precipitation_probability,weather_code&forecast_days=2&timezone=${encodeURIComponent(tz)}`;
+    // Uso comercial: plano pago da Open-Meteo (OPEN_METEO_KEY no .env); sem chave, a API gratuita (só uso não comercial).
+    const omKey = process.env.OPEN_METEO_KEY?.trim();
+    const url = `https://${omKey ? "customer-api" : "api"}.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=temperature_2m,precipitation_probability,weather_code&forecast_days=2&timezone=${encodeURIComponent(tz)}${omKey ? `&apikey=${encodeURIComponent(omKey)}` : ""}`;
     const res = await fetch(url, { signal: AbortSignal.timeout(4000), cache: "no-store" });
     if (!res.ok) throw new Error(String(res.status));
     const j = await res.json() as { hourly: { time: string[]; temperature_2m: number[]; precipitation_probability: number[]; weather_code: number[] } };

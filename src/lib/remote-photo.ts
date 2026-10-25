@@ -7,7 +7,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { env } from "./env";
 
-const ALLOWED = /^https:\/\/(upload\.wikimedia\.org|[a-z0-9-]+\.googleusercontent\.com|places\.googleapis\.com)\//;
+// Só Wikimedia: fotos da Google não podem ser guardadas (termos da Google).
+const ALLOWED = /^https:\/\/upload\.wikimedia\.org\//;
 const MAX = 6 * 1024 * 1024;
 export const isRemotePhoto = (u: string | null | undefined): boolean => Boolean(u && ALLOWED.test(u));
 

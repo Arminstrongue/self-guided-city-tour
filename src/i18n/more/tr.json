@@ -1,4 +1,7 @@
 {
+  "fxInfo": "yalnızca bilgi amaçlı",
+  "hiAdapted": "alıntı, uyarlanmış",
+  "revTr": "Google tarafından çevrildi",
   "sgTitle": "Şimdi için öneri",
   "sgNear": "Size {m} dk yürüme mesafesinde",
   "sgClosing": "{t}'de kapanıyor: hemen gitmek en iyisi",
@@ -41,7 +44,7 @@
 "writeReview": "Google'da yorum yaz",
 "allReviews": "Tüm yorumları gör",
 "seeOnMaps": "Google Haritalar'da gör",
-"reviewsSrc": "Puanlar ve yorumlar Google'dan.",
+"reviewsSrc": "Son 31 günün Google Haritalar yorumları, Google'ın alaka sırasına göre.",
 "photoSrc": "Fotoğraflar: Wikimedia Commons (her yazar belirtilmiştir) ve Google.",
 "highlights": "Öne çıkanlar",
 "topDest": "Destinasyonlar",

@@ -17,7 +17,8 @@ import { openLink } from "./ExtLink";
 import type { GuideStep } from "@/lib/route-steps";
 
 export type ArriveCity = { id: string; name: string; center: { lat: number; lng: number }; ap: { name: string; iata: string; lat: number; lng: number } | null; air: { min: number; line: string } };
-type Place = { label: string; lat: number; lng: number };
+/** g = veio da Google (não se desenha em mapas que não são da Google, por exigência dos termos da Google). */
+type Place = { label: string; lat: number; lng: number; g?: boolean };
 type State = { city: string; point: string | null; dest: Place | null; opt: string | null; step: number; at: number };
 type TOpt = { dep: string; min: number; fare: string; walkMin: number; lines: { name: string; vehicle: string; from: string; headsign: string; stops: number }[] };
 const KEY = "sgct:arrive";
@@ -216,7 +217,7 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
           {g.k === "transit" ? <div className="arv-sign" style={g.color ? { boxShadow: `inset 6px 0 0 ${g.color}` } : undefined}>{g.line || g.vehicle}{g.headsign ? ` → ${g.headsign}` : ""}</div>
             : <div className="arv-sign sm">{fmt(a.walkM, { m: g.m })}</div>}
           <small className="arv-time">≈ {g.min} min</small>
-          <MiniRoute from={{ ...hub!, label: hub!.label }} to={st.dest} />
+          {!st.dest.g && <MiniRoute from={{ ...hub!, label: hub!.label }} to={st.dest} />}
           <button type="button" className="link-btn" onClick={() => void openLink(`https://www.google.com/maps/dir/?api=1&origin=${hub!.lat},${hub!.lng}&destination=${st.dest!.lat},${st.dest!.lng}&travelmode=${g.k === "walk" && finSteps.length === 1 ? "walking" : "transit"}`)}>{t.arvMapAlt} ↗</button>
         </section>
       ) : hub && (
@@ -292,15 +293,15 @@ function BackBar({ t, onBack, label, onClose }: { t: Dict; onBack: () => void; l
 
 function DestSearch({ t, locale, city, onPick }: { t: Dict; locale: Locale; city: string; onPick: (p: Place) => void }) {
   const [q, setQ] = useState("");
-  const [hits, setHits] = useState<{ label: string; sub: string; lat: number; lng: number }[] | null>(null);
+  const [hits, setHits] = useState<{ label: string; sub: string; lat: number; lng: number; g?: boolean }[] | null>(null);
   const [other, setOther] = useState<{ city: string; name: string } | null>(null);
   const [home, setHome] = useState<Place | null>(null);
   useEffect(() => { try { setHome(JSON.parse(localStorage.getItem(homeKey(city)) ?? "null")); } catch { /* ignorar */ } }, [city]);
   useEffect(() => {
-    const v = q.trim(); if (v.length < 3) { setHits(null); return; }
+    const v = q.trim(); if (v.length < 4) { setHits(null); return; }
     const id = setTimeout(() => {
       fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).then((j) => { setHits(j?.hits ?? []); setOther(j?.elsewhere ?? null); }).catch(() => setHits([]));
-    }, 400);
+    }, 800); // espera que acabe de escrever (menos pedidos ao serviço de moradas)
     return () => clearTimeout(id);
   }, [q, city, locale]);
   return (
@@ -308,7 +309,7 @@ function DestSearch({ t, locale, city, onPick }: { t: Dict; locale: Locale; city
       {home && <button type="button" className="arv-card press" onClick={() => onPick(home)}><span className="arv-ic"><Home size={22} aria-hidden="true" /></span><span className="arv-tx"><b>{t.arv.home}</b><small>{home.label}</small></span><ChevronRight size={18} className="arv-chev" aria-hidden="true" /></button>}
       <label className="arv-search"><Search size={18} aria-hidden="true" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.arv.destPh} aria-label={t.arv.destPh} autoComplete="off" /></label>
       {hits && (hits.length ? hits.map((h, k) => (
-        <button key={k} type="button" className="arv-card press" onClick={() => onPick({ label: h.label, lat: h.lat, lng: h.lng })}><span className="arv-ic"><MapPin size={20} aria-hidden="true" /></span><span className="arv-tx"><b>{h.label}</b>{h.sub && <small>{h.sub}</small>}</span></button>
+        <button key={k} type="button" className="arv-card press" onClick={() => onPick({ label: h.label, lat: h.lat, lng: h.lng, g: h.g })}><span className="arv-ic"><MapPin size={20} aria-hidden="true" /></span><span className="arv-tx"><b>{h.label}</b>{h.sub && <small>{h.sub}</small>}</span></button>
       )) : other ? (
         <div className="card note-card"><p>{fmt(t.arvElsewhere, { c: other.name })}</p><a className="btn tram press" href={`/${locale}/arrive?city=${other.city}`}>{fmt(t.arvSwitchBtn, { c: other.name })}</a></div>
       ) : <p className="hint">{t.bpNone}</p>)}
@@ -334,7 +335,7 @@ function FinalLeg({ t, locale, from, to }: { t: Dict; locale: Locale; from: Plac
         : opts === null ? <p className="hint">…</p>
           : o ? <div className="arv-lines">{o.lines.map((l, k) => <div key={k} className="arv-sign sm">{l.name || l.vehicle}{l.headsign ? ` → ${l.headsign}` : ""}{l.from ? ` · ${l.from}` : ""}</div>)}<small className="arv-time">≈ {o.min} min{o.fare ? ` · ${o.fare}` : ""}</small></div>
             : null}
-      {d > NEAR_KM ? <p className="note">{fmt(t.arvFar, { d: fmtKm(d) })}</p> : d >= 0.1 && <MiniRoute from={from} to={to} />}
+      {d > NEAR_KM ? <p className="note">{fmt(t.arvFar, { d: fmtKm(d) })}</p> : d >= 0.1 && !to.g && <MiniRoute from={from} to={to} />}
       <button type="button" className="link-btn" onClick={() => void openLink(`https://www.google.com/maps/dir/?api=1&origin=${from.lat},${from.lng}&destination=${to.lat},${to.lng}&travelmode=${mode}`)}>{t.arvMapAlt} ↗</button>
     </section>
   );

@@ -1,4 +1,8 @@
 {
+  "fxInfo": "solo informativo",
+  "hiAdapted": "extracto adaptado",
+  "revTr": "Traducido por Google",
+  "reviewsSrc": "Reseñas de Google Maps de los últimos 31 días, por orden de relevancia de Google.",
   "sgTitle": "Sugerencia para ahora",
   "sgNear": "A {m} min a pie de ti",
   "sgClosing": "Cierra a las {t}: mejor ir ya",

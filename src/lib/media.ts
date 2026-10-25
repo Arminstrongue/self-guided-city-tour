@@ -4,7 +4,7 @@
  * - Sempre: galeria de fotos livres da Wikimedia Commons (com autor e licença, como a licença exige),
  *   encontradas pelo artigo da Wikipédia de cada ponto.
  * - Com GOOGLE_PLACES_API_KEY: nota média, número de avaliações, as avaliações mais úteis e fotos do Google
- *   (com a atribuição que a Google exige). Os dados da Google ficam só em memória durante 24 h.
+ *   (com a atribuição que a Google exige). Os dados da Google ficam só em memória, 30 minutos no máximo.
  *
  * Tudo corre no servidor (a chave da Google nunca chega ao navegador) e fica em cache em memória.
  */
@@ -13,7 +13,7 @@ import { placesEnabled } from "./places";
 import { env } from "./env";
 
 export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google"; page?: string };
-export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null; at?: number };
+export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null; at?: number; translated?: boolean };
 /** Só mostramos avaliações da Google com menos de um mês. */
 export const REVIEW_MAX_AGE_MS = 31 * 86400_000;
 export const recentReviews = (list: Review[], now = Date.now()) => list.filter((r) => r.at && now - r.at <= REVIEW_MAX_AGE_MS);
@@ -28,7 +28,7 @@ export type Media = {
 const UA = env.ua;
 const WIKI_TTL = 7 * 24 * 3600e3;
 const EMPTY_TTL = 15 * 60e3;          // resultados vazios (falha ou limite da Wikimedia): voltar a tentar em 15 min
-const GOOGLE_TTL = 7 * 24 * 3600e3; // 7 dias: controla o custo do Google (pesquisa com avaliações + fotos)
+const GOOGLE_TTL = 30 * 60e3; // 30 min: os termos da Google não permitem guardar conteúdo dos Places (só o place_id); cache curta só para desempenho
 const cache = new Map<string, { at: number; ttl: number; v: unknown }>();
 
 async function cached<T>(key: string, ttl: number, fn: () => Promise<T>, isEmpty: (v: T) => boolean = () => false): Promise<T> {
@@ -148,12 +148,15 @@ async function fileInfo(titles: string[]): Promise<Photo[]> {
     const r = ii.width / ii.height;
     if (r < 0.6 || r > 2.4) return;                           // panorâmicas extremas
     const m = ii.extmetadata ?? {};
+    // Só licenças livres que permitem uso comercial: domínio público, CC0, CC BY e CC BY-SA (nunca NC/ND nem "fair use").
+    const lic = plain(m.LicenseShortName?.value);
+    if (!/^(public domain|pd\b|cc0|cc[ -]by(-sa)?[ -]?\d|cc[ -]by(-sa)?$)/i.test(lic) || /nc|nd/i.test(lic.replace(/^public domain/i, ""))) return;
     const score = photoScore(m, ii.width, ii.height);
     if (score === null) return;
     out.push({
       url: ii.thumburl, thumb: ii.thumburl.replace(/\/1280px-/, "/500px-"),
       w: ii.thumbwidth ?? 1280, h: ii.thumbheight ?? Math.round(1280 / r),
-      credit: plain(m.Artist?.value).slice(0, 80) || "Wikimedia Commons", license: plain(m.LicenseShortName?.value) || "CC",
+      credit: (plain(m.Attribution?.value) || plain(m.Artist?.value)).slice(0, 80) || "Wikimedia Commons", license: lic,
       source: "wikimedia", page: ii.descriptionshorturl, score, i
     });
   });
@@ -233,7 +236,7 @@ async function googlePlace(query: string, lat: number, lng: number, lang: string
     const reviews: Review[] = (p.reviews ?? []).filter((r) => (r.text?.text ?? r.originalText?.text ?? "").trim()).slice(0, 5).map((r) => ({
       at: r.publishTime ? Date.parse(r.publishTime) || undefined : undefined,
       author: r.authorAttribution?.displayName ?? "Google", avatar: r.authorAttribution?.photoUri ?? null,
-      rating: r.rating ?? 0, text: (r.text?.text ?? r.originalText?.text ?? "").trim(), when: r.relativePublishTimeDescription ?? "",
+      translated: Boolean(r.text?.text && r.originalText?.text && r.text.text.trim() !== r.originalText.text.trim()), rating: r.rating ?? 0, text: (r.text?.text ?? r.originalText?.text ?? "").trim(), when: r.relativePublishTimeDescription ?? "",
       url: r.authorAttribution?.uri ?? r.googleMapsUri ?? null
     }));
     return { id: p.id, rating: p.rating ?? null, ratings: p.userRatingCount ?? null, maps: p.googleMapsUri ?? null, photos, reviews };

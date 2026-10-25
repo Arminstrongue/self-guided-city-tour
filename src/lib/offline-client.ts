@@ -39,7 +39,7 @@ async function urlsFor(city: string, locale: Locale) {
   const urls = [
     `/${locale}/tour/${city}`,
     `/api/media?city=${city}`, `/api/media?city=${city}&cover=1`,
-    `/api/weather?city=${city}`, `/api/explore?city=${city}&locale=${locale}`, "/api/fx"
+    `/api/weather?city=${city}`, "/api/fx"
   ];
   // Fotografias das paragens e da capa.
   const m = await fetch(`/api/media?city=${city}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { cover?: { thumb: string; url: string }[]; stops?: Record<string, { thumb: string } | null> } | null;

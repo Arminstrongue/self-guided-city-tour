@@ -47,7 +47,7 @@ export function CitySheet({ t, locale, spot, id, wallet, memories, onClose }: {
         {id && (
           <section className="stack" style={{ gap: 8 }}>
             <b className="cs-h">{t.csNow}</b>
-            {wx && wx.max !== null && <p className="cs-wx">{wx.rainy ? "🌧" : "⛅️"} {Math.round(wx.min ?? wx.max)}° – {Math.round(wx.max)}°{wx.rainy && wx.firstRain ? ` · ${fmt(t.csRain, { h: wx.firstRain.slice(11, 16) })}` : ""}</p>}
+            {wx && wx.max !== null && <p className="cs-wx">{wx.rainy ? "🌧" : "⛅️"} {Math.round(wx.min ?? wx.max)}° – {Math.round(wx.max)}°{wx.rainy && wx.firstRain ? ` · ${fmt(t.csRain, { h: wx.firstRain.slice(11, 16) })}` : ""} <a className="wx-src" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo.com</a></p>}
             <div className="cs-acts">
               {active ? <a className="cs-act prime" href={`/${locale}/tour/${id}`}><span>🧭</span>{t.csOpenRoute}</a>
                 : <a className="cs-act prime" href={`/${locale}/c/${id}`}><span>🧭</span>{t.csSeeRoute}</a>}

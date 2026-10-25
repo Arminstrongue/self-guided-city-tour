@@ -46,7 +46,7 @@ export function mapGoogle(list: GPlace[], cat: PlaceCat, center: { lat: number; 
 }
 
 const cache = new Map<string, { at: number; places: Place[] }>();
-const TTL = 7 * 24 * 3600_000; // 7 dias: parques e museus não mudam; mantém o uso dentro da quota gratuita do Google
+const TTL = 30 * 60_000; // 30 min: os termos da Google não permitem guardar conteúdo dos Places; cache curta só para desempenho (o limite diário de chamadas protege o custo)
 
 async function search(cat: PlaceCat, cityName: string, center: { lat: number; lng: number }, lang: string): Promise<Place[]> {
   const { q, far } = Q[cat];

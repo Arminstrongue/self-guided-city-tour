@@ -3,7 +3,7 @@ type Cfg = { t: string; a: string; p: boolean };
 const cfg = (): Cfg | undefined => (typeof window !== "undefined" ? (window as unknown as { __SGCT_MAP?: Cfg }).__SGCT_MAP : undefined);
 export const OSM = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 export const tilesUrl = () => cfg()?.t || process.env.NEXT_PUBLIC_MAP_TILES || OSM;
-export const tilesAttr = () => cfg()?.a || process.env.NEXT_PUBLIC_MAP_ATTRIBUTION || "© OpenStreetMap";
+export const tilesAttr = () => cfg()?.a || process.env.NEXT_PUBLIC_MAP_ATTRIBUTION || '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors';
 /** Só fornecedores que o permitem (nunca o OpenStreetMap público) podem ser descarregados para usar sem internet. */
 export const canPrefetchTiles = () => Boolean(cfg()?.p) && tilesUrl() !== OSM && !/openstreetmap\.org/.test(tilesUrl());
 

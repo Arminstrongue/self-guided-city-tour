@@ -1,4 +1,7 @@
 {
+  "fxInfo": "только для справки",
+  "hiAdapted": "отрывок, адаптирован",
+  "revTr": "Переведено Google",
   "sgTitle": "Совет на сейчас",
   "sgNear": "В {m} мин пешком от вас",
   "sgClosing": "Закрывается в {t}: лучше идти сейчас",
@@ -41,7 +44,7 @@
 "writeReview": "Оставить отзыв в Google",
 "allReviews": "Все отзывы",
 "seeOnMaps": "Открыть в Google Картах",
-"reviewsSrc": "Оценки и отзывы из Google.",
+"reviewsSrc": "Отзывы Google Карт за последние 31 день в порядке релевантности Google.",
 "photoSrc": "Фото: Wikimedia Commons (с указанием авторов) и Google.",
 "highlights": "Главное",
 "topDest": "Направления",

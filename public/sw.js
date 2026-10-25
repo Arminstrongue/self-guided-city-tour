@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v10";
+const VERSION = "sgct-v11";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -34,7 +34,8 @@ async function networkFirst(req, cacheName) {
 }
 
 /** APIs de leitura que fazem sentido sem rede (o resto continua a ir sempre à rede). */
-const OFFLINE_API = /^\/api\/(weather|explore|eat|media|fx|events|me\/split|me\/plans)(\/|$|\?)/;
+// Sem /api/explore (lugares da Google): os termos da Google não permitem guardar esse conteúdo no aparelho.
+const OFFLINE_API = /^\/api\/(weather|eat|media|fx|events|me\/split|me\/plans)(\/|$|\?)/;
 
 self.addEventListener("fetch", (e) => {
   const req = e.request;

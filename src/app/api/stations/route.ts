@@ -1,3 +1,4 @@
+import { nominatimFetch } from "@/lib/nominatim";
 import { NextResponse } from "next/server";
 import { loadCity } from "@/lib/content";
 import { cityCenter } from "@/lib/explore";
@@ -40,7 +41,7 @@ export async function GET(req: Request) {
       }
     }
     if (!hits.length) {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=10&accept-language=${lang}&q=${encodeURIComponent(`${Q[kind].osm}, ${city.n.en}`)}`, { headers: { "User-Agent": env.ua }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+      const r = await nominatimFetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=10&accept-language=${lang}&q=${encodeURIComponent(`${Q[kind].osm}, ${city.n.en}`)}`, { headers: { "User-Agent": env.ua }, signal: AbortSignal.timeout(8000), cache: "no-store" });
       if (r.ok) {
         const j = (await r.json()) as { name?: string; display_name: string; lat: string; lon: string }[];
         hits = j.map((p) => ({ label: p.name || p.display_name.split(",")[0], sub: p.display_name.split(",").slice(1, 4).join(",").trim(), lat: +p.lat, lng: +p.lon }));

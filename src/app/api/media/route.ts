@@ -26,7 +26,9 @@ export async function GET(req: Request) {
       const s = city.stops.find((x) => x.id === sid);
       if (!s) return NextResponse.json({ error: "invalid" }, { status: 400 });
       const m = await stopMedia({ names: searchNames(stopName(s, "en")), city: cityEn, lat: s.lat, lng: s.lng, lang });
-      return NextResponse.json(m, { headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" } });
+      // Com dados da Google (avaliações, fotos): sem cache partilhada nem cópia no aparelho (termos da Google).
+      const google = m.reviews.length > 0 || m.photos.some((x) => x.source === "google");
+      return NextResponse.json(m, { headers: { "Cache-Control": google ? "private, no-store" : "public, max-age=3600, stale-while-revalidate=86400" } });
     }
     // ?cover=1 (página inicial): só a fotografia do monumento emblemático da cidade.
     const coverPhotos = await cityCover(city.id, cityEn);

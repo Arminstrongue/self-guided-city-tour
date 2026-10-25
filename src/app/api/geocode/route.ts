@@ -1,3 +1,4 @@
+import { nominatimFetch } from "@/lib/nominatim";
 import { NextResponse } from "next/server";
 import { loadCities, loadCity } from "@/lib/content";
 import { cityCenter } from "@/lib/explore";
@@ -9,7 +10,7 @@ import { env } from "@/lib/env";
 export const dynamic = "force-dynamic";
 
 /** Hotel ou morada → coordenadas, para começar o percurso a partir dali. Google Places (se houver chave) ou OpenStreetMap. */
-type Hit = { label: string; sub: string; lat: number; lng: number };
+type Hit = { label: string; sub: string; lat: number; lng: number; g?: boolean };
 const cache = new Map<string, { at: number; hits: Hit[]; elsewhere?: { city: string; name: string } | null }>();
 
 export async function GET(req: Request) {
@@ -39,11 +40,11 @@ export async function GET(req: Request) {
       });
       if (r.ok) {
         const j = (await r.json()) as { places?: { displayName?: { text: string }; formattedAddress?: string; location?: { latitude: number; longitude: number } }[] };
-        hits = (j.places ?? []).filter((p) => p.location).map((p) => ({ label: p.displayName?.text ?? q, sub: p.formattedAddress ?? "", lat: p.location!.latitude, lng: p.location!.longitude }));
+        hits = (j.places ?? []).filter((p) => p.location).map((p) => ({ label: p.displayName?.text ?? q, sub: p.formattedAddress ?? "", lat: p.location!.latitude, lng: p.location!.longitude, g: true }));
       }
     }
     if (!hits.length) {
-      const r = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=${lang}&q=${encodeURIComponent(full)}`, {
+      const r = await nominatimFetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=${lang}&q=${encodeURIComponent(full)}`, {
         headers: { "User-Agent": env.ua }, signal: AbortSignal.timeout(8000), cache: "no-store"
       });
       if (r.ok) {

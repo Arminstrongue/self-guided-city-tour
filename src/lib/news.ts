@@ -124,7 +124,14 @@ export function parseRss(xml: string, locale: string, now = Date.now()): NewsIte
     .sort((a, b) => Number(Boolean(b.trusted)) - Number(Boolean(a.trusted)) || b.at - a.at).slice(0, 8);
 }
 
+/**
+ * Google News RSS: desligado por defeito — os termos não deixam claro o uso comercial destes feeds.
+ * Liga-se com NEWS_GOOGLE_RSS=1 no .env (só depois de confirmar a licença ou trocar por uma API de notícias licenciada).
+ */
+export const googleNewsEnabled = () => process.env.NEWS_GOOGLE_RSS === "1";
+
 export async function googleNews(q: string, locale: string): Promise<NewsItem[]> {
+  if (!googleNewsEnabled()) return [];
   const r = await fetch(`https://news.google.com/rss/search?q=${encodeURIComponent(`${q} when:3d`)}&${EDITION[locale] ?? EDITION.en}`, { signal: AbortSignal.timeout(8000), cache: "no-store", headers: { "User-Agent": "Mozilla/5.0 VOYBU/1.0" } });
   if (!r.ok) throw new Error(String(r.status));
   return parseRss(await r.text(), locale);
@@ -137,7 +144,7 @@ async function fcdo(cc: string): Promise<NewsItem | null> {
   const j = (await r.json()) as { title?: string; public_updated_at?: string; details?: { change_description?: string } };
   const at = Date.parse(j.public_updated_at ?? "");
   if (!Number.isFinite(at) || Date.now() - at > 14 * 24 * 3600_000) return null; // só avisos recentes
-  return { title: `${j.title ?? slug}: ${(j.details?.change_description ?? "").slice(0, 160)}`, url: `https://www.gov.uk/foreign-travel-advice/${slug}`, source: "GOV.UK (FCDO)", site: "gov.uk", at, official: true, trusted: true };
+  return { title: `${j.title ?? slug}: ${(j.details?.change_description ?? "").slice(0, 160)}`, url: `https://www.gov.uk/foreign-travel-advice/${slug}`, source: "GOV.UK (FCDO) · Open Government Licence v3.0", site: "gov.uk", at, official: true, trusted: true };
 }
 
 const cache = new Map<string, { at: number; items: NewsItem[] }>();

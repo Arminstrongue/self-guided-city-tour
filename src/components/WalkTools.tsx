@@ -33,6 +33,7 @@ function NearList({ t, kind, label }: { t: Dict; kind: string; label: string }) 
             <span className="as-tx"><span>{x.name || label}</span>{x.hours && <small>{x.hours}</small>}</span><small className="num">{x.m < 1000 ? `${x.m} m` : `${(x.m / 1000).toFixed(1)} km`}</small>
           </a>
         ))}
+        {items && items.length > 0 && <small className="hint" style={{ padding: "6px 14px", fontSize: 11 }}>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors</small>}
       </div>
     </div>
   );

@@ -20,5 +20,5 @@ export async function GET(req: Request) {
   const google = googleExploreEnabled();
   const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city), 30)]);
   const places = ((gp ?? (await placesFor(city, lang))) ?? []).filter((p) => !COMMERCIAL_CATS.has(p.cat));
-  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=3600" } });
+  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": gp ? "private, no-store" : "public, max-age=600, s-maxage=3600" } });
 }

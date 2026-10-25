@@ -1,4 +1,5 @@
 "use client";
+import { tilesAttr, tilesUrl } from "@/lib/map-config";
 import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
 import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
@@ -20,7 +21,6 @@ import type { Museum } from "@/data/museums";
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string; days?: number[] | null };
 type Pos = { lat: number; lng: number };
-const TILES = process.env.NEXT_PUBLIC_MAP_TILES || "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const KEY = "sgct:hobbies";
 
 function loadHobbies(): Hobby[] { try { const v = JSON.parse(localStorage.getItem(KEY) ?? "[]"); return Array.isArray(v) ? v.filter((h) => (HOBBIES as readonly string[]).includes(h)) : []; } catch { return []; } }
@@ -201,7 +201,8 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
               <button className={cat === "all" ? "on" : ""} onClick={() => setCat("all")}>{t.exAll}</button>
               {cats.map((c) => <button key={c} className={cat === c ? "on" : ""} onClick={() => setCat(c)}>{CAT_ICON[c]} {t.cat[c]}</button>)}
             </div>
-            <div ref={mapRef}>{gmapsKey && data.source === "google" ? <GoogleMap apiKey={gmapsKey} places={places} pos={pos} center={center} focus={focus} /> : <ExploreMap places={places} pos={pos} center={center} focus={focus} />}</div>
+            {/* Lugares da Google só num mapa da Google (termos da Google); sem chave de mapa, só a lista. */}
+            <div ref={mapRef}>{data.source === "google" ? (gmapsKey ? <GoogleMap apiKey={gmapsKey} places={places} pos={pos} center={center} focus={focus} /> : null) : <ExploreMap places={places} pos={pos} center={center} focus={focus} />}</div>
             <div className="ex-list">
               {places.map((p, i) => (
                 <div key={p.id} className="ex-row" onClick={(e) => { if ((e.target as HTMLElement).closest("a,button")) return; show({ lat: p.lat, lng: p.lng, name: p.name }); }} style={{ cursor: "pointer" }}>
@@ -230,7 +231,7 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
                 </div>
               ))}
             </div>
-            <p className="hint" style={{ fontSize: 12 }}>{data.source === "google" ? "Google Maps" : "© OpenStreetMap"}</p>
+            <p className="hint" style={{ fontSize: 12 }}>{data.source === "google" ? <span aria-label="Google Maps">Google Maps</span> : <>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors</>}</p>
           </>}
         </div>
       )}
@@ -322,7 +323,7 @@ function ExploreMap({ places, pos, center, focus }: { places: (Place & { d: numb
     void import("leaflet").then((L) => {
       if (off || !el.current || map.current) return;
       const m = L.map(el.current, { zoomControl: true }).setView([center.lat, center.lng], 13);
-      L.tileLayer(TILES, { maxZoom: 19, attribution: "© OpenStreetMap" }).addTo(m);
+      L.tileLayer(tilesUrl(), { maxZoom: 19, attribution: tilesAttr() }).addTo(m);
       layer.current = L.layerGroup().addTo(m); map.current = m; draw(L);
     });
     return () => { off = true; map.current?.remove(); map.current = null; };
