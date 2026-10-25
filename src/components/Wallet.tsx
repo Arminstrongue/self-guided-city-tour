@@ -1,4 +1,5 @@
 "use client";
+import { EmailSignIn } from "./EmailSignIn";
 import { useDict } from "@/i18n/client-dict";
 /** Carteira do viajante: passes, reservas de guias, memórias, carimbos e interesses — na conta, em qualquer dispositivo. */
 import { useEffect, useMemo, useState } from "react";
@@ -81,7 +82,6 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const [w, setW] = useState<Wallet | null | "anon">(null);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
-  const [email, setEmail] = useState(""); const [sent, setSent] = useState(false); const [dev, setDev] = useState<string | null>(null);
   const [tab, setTabState] = useState<Tab>("home");
   const [wish, setWish] = useState<Wish[] | null>(null);
   const [now, setNow] = useState(() => Date.now());
@@ -310,16 +310,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
                 <span aria-hidden="true">{p.id === "google" ? "G" : p.id === "apple" ? "" : "f"}</span>{fmt(t.nvContinue, { p: p.name })}
               </button>
             ))}<span className="wl-or">{t.nvOr}</span></div>}
-            {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
-              <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
-                e.preventDefault();
-                const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale, ...(retCity ? { city: retCity } : {}) }) }).catch(() => null);
-                const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
-              }}>
-                <div className="field" style={{ flex: 1, margin: 0 }}><input id="wl-email" type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
-                <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }}>{t.wSignBtn}</button>
-              </form>
-            )}
+            <EmailSignIn t={t} locale={locale} city={retCity} />
           </section>
         )}
 

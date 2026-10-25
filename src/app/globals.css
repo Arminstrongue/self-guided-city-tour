@@ -3668,3 +3668,9 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .tst-next em,.tst-style em{font-style:normal;font-size:13px;font-weight:700;color:var(--cobalt,#0a66c2)}
 .tst-next svg{flex:none;color:var(--muted)}
 .st-ok{color:#1e7a3a!important}
+
+/* Entrar por email: código de 6 dígitos e erros visíveis */
+.esi-code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:22px;font-weight:700;letter-spacing:.35em;text-align:center}
+.esi-err{margin:0;color:#d93025;font-size:14px;font-weight:600}
+.esi .linkish{background:none;border:0;padding:0;color:var(--accent,#0a84ff);font-weight:600;font-size:14px;cursor:pointer}
+.esi .linkish:disabled{opacity:.5}

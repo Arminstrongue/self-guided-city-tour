@@ -15,6 +15,8 @@ export async function POST(req: Request) {
   if (!p.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   // No máximo 3 links por email a cada 10 minutos (evita encher a caixa de alguém).
   if (!rateLimitKey(`me-link:${p.data.email.toLowerCase()}`, 3, 10 * 60_000)) return NextResponse.json({ error: "rate" }, { status: 429 });
-  const link = await sendWalletLink(p.data.email.toLowerCase(), p.data.locale, p.data.city);
-  return NextResponse.json({ ok: true, devLink: isProd ? null : link });
+  const r = await sendWalletLink(p.data.email.toLowerCase(), p.data.locale, p.data.city);
+  // Em produção, se o email não saiu, diz-se ao viajante (antes parecia que nada acontecia).
+  if (isProd && !r.sent) return NextResponse.json({ error: "email" }, { status: 502 });
+  return NextResponse.json({ ok: true, challenge: r.challenge, devLink: isProd ? null : r.link, devCode: isProd ? null : r.code });
 }

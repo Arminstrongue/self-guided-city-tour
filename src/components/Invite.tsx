@@ -8,6 +8,7 @@ import { SheetX } from "@/components/WinNav";
 import { REFERRAL_FRIEND_PCT } from "@/lib/pricing";
 import { Avatar, FollowBtn, type PublicProfile } from "./Social";
 import Portal from "@/components/Portal";
+import { EmailSignIn } from "./EmailSignIn";
 
 type Info = { handle: string; link: string; sent: number; joined: number; friends: PublicProfile[]; rewards?: { paidFriends: number; earned: number; credit: number; friendPct: number; reward: number } };
 const eur = (c: number, l: string) => new Intl.NumberFormat(l, { style: "currency", currency: "EUR" }).format(c / 100);
@@ -114,9 +115,6 @@ export function InviteSheet({ t, locale, onClose }: { t: Dict; locale: Locale; o
 /** Página de boas-vindas de quem recebeu um convite. */
 export function InviteLanding({ t: tProp, locale, inviter, signed }: { t?: Dict; locale: Locale; inviter: (PublicProfile & { followers: number }) | null; signed: boolean }) {
   const t = useDict(tProp);
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [dev, setDev] = useState<string | null>(null);
   return (
     <div className="stack iv-land" style={{ gap: 16, marginTop: 12 }}>
       <section className="card stack iv-hero" style={{ gap: 12, alignItems: "center", textAlign: "center" }}>
@@ -137,16 +135,7 @@ export function InviteLanding({ t: tProp, locale, inviter, signed }: { t?: Dict;
       ) : (
         <section className="card stack wl-sign">
           <b style={{ fontSize: 18 }}>🔐 {t.ivLandCta}</b>
-          {sent ? <p>✓ {fmt(t.wSent, { email })} {dev && <a href={dev}>dev</a>}</p> : (
-            <form className="row" style={{ gap: 8, flexWrap: "nowrap" }} onSubmit={async (e) => {
-              e.preventDefault();
-              const r = await fetch("/api/me/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, locale }) }).catch(() => null);
-              const j = r?.ok ? await r.json() : null; if (j) { setSent(true); setDev(j.devLink ?? null); }
-            }}>
-              <div className="field" style={{ flex: 1, margin: 0 }}><input type="email" required placeholder="email@example.com" aria-label="Email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></div>
-              <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }}>{t.wSignBtn}</button>
-            </form>
-          )}
+          <EmailSignIn t={t} locale={locale} />
           <small className="hint">{inviter ? fmt(t.ivLandNote, { n: inviter.name }) : ""}</small>
         </section>
       )}

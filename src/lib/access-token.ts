@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomInt, timingSafeEqual } from "node:crypto";
 import { env } from "./env";
 
 /** Token assinado (HMAC-SHA256) com o email do viajante. Usado no cookie e no link do email. */
@@ -47,4 +47,28 @@ export function readAccessToken(token: string | undefined | null): string | null
 export function readAccessTokenFull(token: string | undefined | null): { email: string; iat: number } | null {
   const r = verify(token);
   return r && !r.p ? { email: r.e, iat: r.i } : null;
+}
+
+/**
+ * Código de 6 dígitos para entrar no mesmo navegador onde se pediu (o link do email abre muitas vezes noutro navegador,
+ * por exemplo no navegador interno do Gmail). Sem estado: o pedido devolve um "desafio" assinado com o email e um HMAC do código.
+ */
+export const CODE_TTL_S = 30 * 60;
+const codeTag = (email: string, code: string) => `otp:${createHmac("sha256", env.secret).update(`otp|${email.toLowerCase()}|${code}`).digest("base64url").slice(0, 22)}`;
+export function createSignInCode(email: string): { code: string; challenge: string } {
+  const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  return { code, challenge: createPurposeToken(email, codeTag(email, code), CODE_TTL_S) };
+}
+/** Email do desafio se o código estiver certo e dentro do prazo; senão null. */
+export function checkSignInCode(challenge: string, code: string): string | null {
+  const clean = code.replace(/\D/g, "");
+  if (clean.length !== 6) return null;
+  const [body] = challenge.split(".");
+  let email = "";
+  try { email = String((JSON.parse(Buffer.from(body ?? "", "base64url").toString()) as { e?: string }).e ?? ""); } catch { return null; }
+  return email ? readPurposeToken(challenge, codeTag(email, clean)) : null;
+}
+/** Email do desafio (sem validar o código) — só para limitar tentativas por email. */
+export function challengeEmail(challenge: string): string | null {
+  try { const e = (JSON.parse(Buffer.from(challenge.split(".")[0] ?? "", "base64url").toString()) as { e?: string }).e; return typeof e === "string" ? e : null; } catch { return null; }
 }

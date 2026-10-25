@@ -6,7 +6,7 @@
 import { cookies } from "next/headers";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db, schema } from "./db";
-import { ACCESS_COOKIE, createAccessToken, readAccessTokenFull } from "./access-token";
+import { ACCESS_COOKIE, createAccessToken, createSignInCode, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
 import { validAccessEmail } from "./session-revoke";
 import { sendEmail } from "./email";
@@ -78,13 +78,14 @@ export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: W
 }
 
 
-/** Link de entrada: vale 30 minutos; ao abri-lo, o servidor cria uma sessão nova (o link nunca é a sessão). */
+/** Link de entrada + código de 6 dígitos: valem 30 minutos; ao abrir o link, o servidor cria uma sessão nova (o link nunca é a sessão). */
 export async function sendWalletLink(email: string, locale: string, city?: string) {
   // Com cidade: depois de entrar, abre logo o roteiro dessa cidade (se tiver acesso) em vez da carteira.
   const link = `${env.appUrl}/api/access/link?token=${encodeURIComponent(createAccessToken(email, 30 * 60))}&locale=${locale}${city ? `&city=${city}` : "&to=wallet"}`;
-  const m = signinEmail({ locale, email, link });
-  await sendEmail(email, m.subject, m.html, m.text);
-  return link;
+  const { code, challenge } = createSignInCode(email);
+  const m = signinEmail({ locale, email, link, code });
+  const sent = await sendEmail(email, m.subject, m.html, m.text);
+  return { link, code, challenge, sent };
 }
 
 /* ---------- Planos de viagem ---------- */
