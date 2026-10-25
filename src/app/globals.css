@@ -3099,8 +3099,9 @@ a.ios-row{text-decoration:none;color:inherit}
 /* Transições suaves: entre páginas (navegadores que o suportam) e ao trocar de ecrã dentro da app */
 @view-transition { navigation: auto; }
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
-@keyframes pageIn{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
-main.page-in{animation:pageIn .24s cubic-bezier(.2,.8,.2,1) both}
+/* Só opacidade: um transform no <main> prende as barras fixas ao main em vez do ecrã (no iPhone a barra de baixo saltava para o meio da página). */
+@keyframes pageIn{from{opacity:.001}to{opacity:1}}
+main.page-in{animation:pageIn .2s ease-out backwards}
 .sheet,.as,.pk{animation-timing-function:cubic-bezier(.2,.8,.2,1)}
 .btn,.press{transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .2s,box-shadow .2s}
 .tabs button{transition:background-color .2s,color .2s,box-shadow .2s}
@@ -3543,3 +3544,7 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
 .ly-exit{padding-bottom:24px}
 .ly-tl li.ly-extra{color:#1e7a3a;font-size:13.5px}
 .ly-tl li.ly-extra svg{color:#1e7a3a}
+/* Barras do topo totalmente opacas (no modo escuro o conteúdo ainda se via por trás) e rodapé acima da barra de baixo. */
+.bar:not(.over),.wl-bar,.wl-seg,.wl-tabs,.win-nav{background:var(--bg)}
+body:has(nav.nv) footer{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+@media (min-width:1024px) and (pointer:fine){body:has(nav.nv.appnav) footer{padding-bottom:0}}

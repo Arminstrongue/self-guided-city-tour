@@ -16,6 +16,7 @@ import type { ToolTab } from "./TravelTools";
 import { I, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
 import { CloudOff, Copy, Trash2 } from "lucide-react";
 import { toast, withUndo } from "@/lib/toast";
+import Portal from "./Portal";
 import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
@@ -449,7 +450,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
       </>}
 
       {/* ---------- Barra de baixo ---------- */}
-      <nav className="nv" aria-label={t.wallet}>
+      <Portal><nav className="nv" aria-label={t.wallet}>
         <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
         <button className={near ? "on" : ""} onClick={() => { buzz(); setNear(true); }} aria-label={t.nn.near}><span><I icon={MapPin} on={near} /></span><small>{t.nvNear}</small></button>
         <button className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
@@ -457,7 +458,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
         <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
           <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={Users} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>
-      </nav>
+      </nav></Portal>
 
       {near && <NearSheet t={t} onClose={() => setNear(false)} />}
       {tools && <ToolsSheet t={t} locale={locale} cities={cities} mine={myCities} localCur={myCities[0] ? currencyForCountry(countryOf[myCities[0]]) : null} tab={tools.tab} split={tools.split ?? null} signed={Boolean(signed)}
