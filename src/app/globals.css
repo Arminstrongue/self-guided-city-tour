@@ -3548,3 +3548,23 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
 .bar:not(.over),.wl-bar,.wl-seg,.wl-tabs,.win-nav{background:var(--bg)}
 body:has(nav.nv) footer{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
 @media (min-width:1024px) and (pointer:fine){body:has(nav.nv.appnav) footer{padding-bottom:0}}
+/* Rodapé recolhido */
+.foot-min{padding-top:14px}
+.foot-min summary{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 12px;cursor:pointer;font-size:13px;color:var(--muted)}
+.foot-min summary::-webkit-details-marker{display:none}
+.foot-more{text-decoration:underline;text-underline-offset:3px}
+.foot-min details[open] .foot-more{display:none}
+.foot-links{padding-top:8px}
+.foot-links p{margin:4px 0}
+/* Atrações de topo por país: um país de cada vez */
+.tbc{display:grid;gap:12px}
+.tbc-bar{display:grid;gap:10px}
+.tbc-quick{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:2px 16px}
+.tbc-quick::-webkit-scrollbar{display:none}
+.tbc-quick button{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.tbc-quick button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tbc-sel select{width:100%;min-height:46px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:15px}
+.tbc-list{padding:0}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (min-width:960px){.tbc-bar{grid-template-columns:1fr 280px;align-items:center}}
+.tbc-more{justify-self:start}

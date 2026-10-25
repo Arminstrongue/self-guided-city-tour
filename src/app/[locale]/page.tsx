@@ -16,6 +16,8 @@ import { dualMoney, formatMoney } from "@/lib/currency";
 import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
 import PageQR from "@/components/PageQR";
 import { HeroSearch } from "@/components/HeroSearch";
+import { TopByCountry } from "@/components/TopByCountry";
+import { popularity } from "@/lib/popularity";
 import { flag } from "@/data/countries";
 import { Building2, MapPinned, Languages, Compass, Sparkles, Baby, Store, ChevronRight, ShieldCheck, Globe, Heart, Smartphone, Check, X } from "lucide-react";
 import { stopName } from "@/data/stop-names";
@@ -73,16 +75,19 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const from = fmt(t.fromP, { p: p.local ?? p.main });
-  // Atrações de topo por país: um país por bloco, numeradas, cada uma leva à página da cidade.
-  const byCountry = new Map<string, { name: string; items: { city: string; cityName: string; id: string; name: string }[] }>();
+  // Atrações de topo por país, ordenadas pelo que os viajantes mais abrem na VOYBU (90 dias) e pela fama (paragens "top").
+  const pop = await popularity();
+  const byCountry = new Map<string, { name: string; score: number; items: { city: string; cityName: string; id: string; name: string; score: number }[] }>();
   for (const c of list) {
     const cc = COUNTRY[c.id]; if (!cc) continue;
-    const g = byCountry.get(cc) ?? { name: region.of(cc) ?? cc, items: [] };
-    for (const s of c.stops) if (s.top && !s.x) g.items.push({ city: c.id, cityName: cityName(c, params.locale), id: s.id, name: stopName(s, params.locale) });
+    const g = byCountry.get(cc) ?? { name: region.of(cc) ?? cc, score: 0, items: [] };
+    g.score += pop.city.get(c.id) ?? 0;
+    for (const s of c.stops) if (s.top && !s.x) g.items.push({ city: c.id, cityName: cityName(c, params.locale), id: s.id, name: stopName(s, params.locale), score: (pop.stop.get(`${c.id}:${s.id}`) ?? 0) * 3 + (pop.city.get(c.id) ?? 0) });
     byCountry.set(cc, g);
   }
-  const countries = [...byCountry.entries()].filter(([, g]) => g.items.length).sort((a, b) => b[1].items.length - a[1].items.length || a[1].name.localeCompare(b[1].name));
-  const flagOf = (cc: string) => String.fromCodePoint(...[...cc.toUpperCase()].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
+  const countries = [...byCountry.entries()].filter(([, g]) => g.items.length)
+    .sort((a, b) => b[1].score - a[1].score || b[1].items.length - a[1].items.length || a[1].name.localeCompare(b[1].name))
+    .map(([cc, g]) => ({ cc, name: g.name, flag: flag(cc), items: [...g.items].sort((x, y) => y.score - x.score).map(({ score: _s, ...i }) => i) }));
   const searchCities = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", flag: flag(COUNTRY[c.id] ?? "") })).sort((a, b) => a.name.localeCompare(b.name, INTL_LOCALE[params.locale]));
   const featured = ["lon", "lis", "nyc", "par", "rak", "dxb", "rio", "rom", "cpt", "sin", "ist", "mex", "prg", "cai", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
   return (
@@ -207,18 +212,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
 
       {countries.length > 0 && <section className="sec" aria-labelledby="tc-h">
         <div className="sec-h reveal"><div><h2 id="tc-h">{t.tcTitle}</h2><p>{t.tcSub}</p></div></div>
-        <div className="tc-list">
-          {countries.map(([cc, g], i) => (
-            <details key={cc} className="tc reveal" open={i < 2}>
-              <summary className="press"><span aria-hidden="true">{flagOf(cc)}</span><b>{g.name}</b><small>{fmt(t.tcN, { n: String(g.items.length) })}</small></summary>
-              <ol className="tc-ol">
-                {g.items.slice(0, 12).map((s, k) => (
-                  <li key={s.city + s.id}><Link href={`/${params.locale}/c/${s.city}`} className="press"><i>{k + 1}</i><span><b>{s.name}</b><small>{s.cityName}</small></span></Link></li>
-                ))}
-              </ol>
-            </details>
-          ))}
-        </div>
+        <TopByCountry locale={params.locale} countries={countries} label={t.tcTitle} countTpl={t.tcN} moreLabel={t.cmMore} />
       </section>}
 
       <section className="sec">

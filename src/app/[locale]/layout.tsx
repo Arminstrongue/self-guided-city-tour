@@ -5,6 +5,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/manrope";
 import "../globals.css";
 import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import { ServiceWorker } from "@/components/ServiceWorker";
 import { NativeChrome } from "@/components/NativeChrome";
 import { Toaster } from "@/components/Toaster";
@@ -75,11 +76,10 @@ export default async function LocaleLayout(props: { children: React.ReactNode; p
         <LangSuggest locale={params.locale} />
         <OfflineBar text={t.ess.offline} link={t.ess.essentials} href={`/${params.locale}/wallet/essentials`} />
         <ErrorTracker />
-        <footer className="foot">
-          <p>{t.footer}</p>
+        <SiteFooter line={t.footer} label={`${t.lAbout} · ${t.lTerms} · ${t.lPrivacy}`}>
           <p className="legal-links"><Link href={`/${params.locale}/about`}>{t.lAbout}</Link> · <Link href={`/${params.locale}/support`}>{t.lSupport}</Link> · <Link href={`/${params.locale}/eco`}>{t.lEco}</Link> · <Link href={`/${params.locale}/contact`}>{t.lContact}</Link></p>
           <p className="legal-links"><Link href={`/${params.locale}/legal/terms`}>{t.lTerms}</Link> · <Link href={`/${params.locale}/legal/privacy`}>{t.lPrivacy}</Link> · <Link href={`/${params.locale}/legal/cookies`}>{t.lCookies}</Link> · <Link href={`/${params.locale}/merchants`}>{t.lMerchants}</Link> · <Link href={`/${params.locale}/agents`}>{t.lAgents}</Link> · <Link href={`/${params.locale}/guides/join`}>{t.lGuides}</Link> · <Link href={`/${params.locale}/wallet`}>{t.wallet}</Link></p>
-        </footer>
+        </SiteFooter>
         </DictProvider>
       </body>
     </html>
