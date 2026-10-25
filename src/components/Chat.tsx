@@ -13,7 +13,7 @@ import { useLive, type LiveEvent } from "@/lib/live-client";
 import { EmojiButton, emojiLabels } from "./Emoji";
 import { PostSheet } from "./PostExtras";
 import { I, Plus, Mic, SendHorizontal } from "./Ico";
-import { Ban, ChevronRight, Flag, MoreHorizontal, Trash2, UserRound } from "lucide-react";
+import { Ban, ChevronRight, Flag, MoreHorizontal, Trash2, UserRound, Search, X as XIcon, Lock, ArrowLeft, Image as ImageIcon } from "lucide-react";
 import Portal from "./Portal";
 
 type Ref = { kind: "story" | "post"; id: string; text: string } | { kind: "loc"; lat: number; lng: number };
@@ -219,6 +219,21 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const [viewer, setViewer] = useState<string | null>(null);
   const [postOpen, setPostOpen] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  // Foto à espera de confirmação (escolhida, colada ou largada), com legenda opcional — como no WhatsApp.
+  const [pending, setPending] = useState<{ file: File; url: string } | null>(null);
+  const [caption, setCaption] = useState("");
+  const [dragging, setDragging] = useState(false);
+  const [info, setInfo] = useState(false);
+  const [q, setQ] = useState<string | null>(null);
+  const [wp, setWp] = useState("default");
+  useEffect(() => { try { setWp(localStorage.getItem(`sgct:chat-wp:${handle}`) || "default"); } catch { /* ignorar */ } }, [handle]);
+  const pickWp = (k: string) => { setWp(k); try { localStorage.setItem(`sgct:chat-wp:${handle}`, k); } catch { /* ignorar */ } };
+  const stage = (f: File | null | undefined) => {
+    if (!f || !f.type.startsWith("image/")) return false;
+    setAttach(false); setCaption(txt); setPending((cur) => { if (cur) URL.revokeObjectURL(cur.url); return { file: f, url: URL.createObjectURL(f) }; });
+    return true;
+  };
+  const closePending = () => { setPending((cur) => { if (cur) URL.revokeObjectURL(cur.url); return null; }); setCaption(""); };
   useEffect(() => { if (!rec) return; const id = setInterval(() => recTick((x) => x + 1), 500); return () => clearInterval(id); }, [rec]);
   const added = (m: Msg) => {
     setTh((cur) => (cur && cur !== "none" && !cur.messages.some((x) => x.id === m.id) ? { ...cur, messages: [...cur.messages, m] } : cur));
@@ -233,9 +248,9 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
     else if (r.j?.error === "offensive") { setWarn(t.mdOffensive); setTimeout(() => setWarn(""), 4000); }
     return r.ok;
   }
-  async function sendPhoto(f: File) {
+  async function sendPhoto(f: File, text = txt) {
     setAttach(false);
-    try { await sendBody({ action: "send", text: txt.trim(), photo: await chatPhoto(f), ...(reply ? { replyTo: reply.id } : {}) }); setTxt(""); } catch { setWarn(t.pfErr); }
+    try { const ok = await sendBody({ action: "send", text: text.trim(), photo: await chatPhoto(f), ...(reply ? { replyTo: reply.id } : {}) }); if (ok) { setTxt(""); setReply(null); } } catch { setWarn(t.pfErr); }
   }
   function sendLocation() {
     setAttach(false);
@@ -297,13 +312,63 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
   const p = th && th !== "none" ? th.peer : null;
   const lastMine = th && th !== "none" ? [...th.messages].reverse().find((m) => m.mine) : undefined;
   return (
-    <div className="ch-view" role="dialog" aria-modal="true" aria-label={p?.name ?? handle}>
+    <div className={`ch-view ${dragging ? "drag" : ""}`} role="dialog" aria-modal="true" aria-label={p?.name ?? handle}
+      onDragOver={(e) => { if (th && th !== "none" && th.canSend && [...e.dataTransfer.items].some((x) => x.type.startsWith("image/"))) { e.preventDefault(); setDragging(true); } }}
+      onDragLeave={(e) => { if (e.currentTarget === e.target) setDragging(false); }}
+      onDrop={(e) => { e.preventDefault(); setDragging(false); stage([...e.dataTransfer.files].find((x) => x.type.startsWith("image/"))); }}
+      onPaste={(e) => { if ((e.target as HTMLElement).tagName === "TEXTAREA" || !th || th === "none" || !th.canSend) return; const f = [...e.clipboardData.files].find((x) => x.type.startsWith("image/")); if (f && stage(f)) e.preventDefault(); }}>
+      {dragging && <div className="ch-drop"><ImageIcon size={34} aria-hidden="true" /><b>{t.ci.drop}</b></div>}
       <header className="ch-head">
         <button className="ch-ic" onClick={onClose} aria-label={t.navBack} title={t.navBack}>←</button>
-        {p ? <a className="ch-who" href={`/${locale}/u/${p.handle}`}><Avatar p={p} size={36} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}</b><small className="hint">@{p.handle}</small></span></a> : <span style={{ flex: 1 }} />}
-        {p && <button className="ch-ic" onClick={() => { setMenu(true); setSheet("main"); }} aria-label="⋯" aria-haspopup="dialog"><MoreHorizontal size={22} aria-hidden="true" /></button>}
+        {p ? <button type="button" className="ch-who" onClick={() => setInfo(true)} aria-label={t.ci.title}><Avatar p={p} size={36} /><span className="stack" style={{ gap: 0, minWidth: 0 }}><b className="ad-ellip">{p.name}</b><small className="hint">{isTyping ? t.chTyping : `@${p.handle}`}</small></span></button> : <span style={{ flex: 1 }} />}
+        {p && <button className="ch-ic" onClick={() => setQ(q === null ? "" : null)} aria-label={t.ci.search} title={t.ci.search}><Search size={20} aria-hidden="true" /></button>}
+        {p && <button className="ch-ic" onClick={() => setInfo(true)} aria-label={t.ci.title} aria-haspopup="dialog"><MoreHorizontal size={22} aria-hidden="true" /></button>}
         <button className="ch-ic" onClick={onClose} aria-label={t.close} title={t.close}>✕</button>
       </header>
+      {q !== null && (
+        <div className="ch-search">
+          <Search size={16} aria-hidden="true" />
+          <input autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.ci.searchPh} aria-label={t.ci.searchPh} />
+          {q.trim() && th && th !== "none" && <small className="hint">{(() => { const n = th.messages.filter((m) => m.text.toLowerCase().includes(q.trim().toLowerCase())).length; return n ? fmt(t.ci.results, { n: String(n) }) : t.ci.none; })()}</small>}
+          <button type="button" className="ch-ic" onClick={() => setQ(null)} aria-label={t.close}><XIcon size={18} aria-hidden="true" /></button>
+        </div>
+      )}
+      {info && p && th && th !== "none" && (
+        <Portal><div className="ci" role="dialog" aria-modal="true" aria-label={t.ci.title}>
+          <header className="ci-head"><button className="ch-ic" onClick={() => setInfo(false)} aria-label={t.navBack}><ArrowLeft size={22} aria-hidden="true" /></button><b>{t.ci.title}</b><span style={{ width: 40 }} /></header>
+          <div className="ci-body">
+            <div className="ci-who"><Avatar p={p} size={104} /><b>{p.name}</b><small>@{p.handle}</small></div>
+            <div className="ci-acts">
+              <a href={`/${locale}/u/${p.handle}`}><UserRound size={22} aria-hidden="true" /><span>{t.ci.profile}</span></a>
+              <button type="button" onClick={() => { setInfo(false); setQ(""); }}><Search size={22} aria-hidden="true" /><span>{t.ci.search}</span></button>
+            </div>
+            <section className="ci-card">
+              <div className="ci-h"><b>{t.ci.media}</b><small>{th.messages.filter((m) => m.photo).length}</small></div>
+              {th.messages.some((m) => m.photo)
+                ? <div className="ci-media">{th.messages.filter((m) => m.photo).slice(-12).reverse().map((m) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <button key={m.id} type="button" onClick={() => setViewer(media(m.id, "photo"))}><img src={media(m.id, "photo")} alt="" loading="lazy" /></button>
+                  ))}</div>
+                : <p className="hint">{t.ci.mediaNone}</p>}
+            </section>
+            <section className="ci-card">
+              <div className="ci-h"><b>{t.ci.wallpaper}</b></div>
+              <div className="ci-wp" role="radiogroup" aria-label={t.ci.wallpaper}>
+                {(Object.keys(t.ci.wp) as (keyof typeof t.ci.wp)[]).map((k) => (
+                  <button key={k} type="button" role="radio" aria-checked={wp === k} className={`wp-${k} ${wp === k ? "on" : ""}`} onClick={() => pickWp(k)}><span />{t.ci.wp[k]}</button>
+                ))}
+              </div>
+            </section>
+            <section className="ci-card ci-priv"><Lock size={18} aria-hidden="true" /><span><b>{t.ci.privacyT}</b><small>{t.chPrivacy}</small></span></section>
+            <section className="ci-card ci-danger">
+              <div className="ci-h"><b>{t.ci.danger}</b></div>
+              <button type="button" onClick={() => { setMenu(true); setSheet("clear"); }}><Trash2 size={20} aria-hidden="true" />{t.chClear}</button>
+              <button type="button" onClick={() => { setMenu(true); setSheet("block"); }}><Ban size={20} aria-hidden="true" />{t.scBlock}</button>
+              <button type="button" disabled={reported} onClick={() => { setMenu(true); setSheet("report"); }}><Flag size={20} aria-hidden="true" />{reported ? `✓ ${t.scReportDone}` : t.scReport}</button>
+            </section>
+          </div>
+        </div></Portal>
+      )}
       {menu && p && (
         <Portal><div className="as-bg" onClick={() => { setMenu(false); setSheet("main"); }}>
           <div className="as" role="dialog" aria-modal="true" aria-label={p.name} onClick={(e) => e.stopPropagation()}>
@@ -342,7 +407,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
           </div>
         </div></Portal>
       )}
-      <div className="ch-msgs" ref={box} onScroll={(e) => { const b = e.currentTarget; stick.current = b.scrollHeight - b.scrollTop - b.clientHeight < 80; }}>
+      <div className={`ch-msgs wp-${wp}`} ref={box} onScroll={(e) => { const b = e.currentTarget; stick.current = b.scrollHeight - b.scrollTop - b.clientHeight < 80; }}>
         {th === null && <p className="hint" style={{ textAlign: "center" }}>{t.exLoading}</p>}
         {th === "none" && <p className="hint" style={{ textAlign: "center" }}>{t.scNotFound}</p>}
         {th && th !== "none" && <>
@@ -351,6 +416,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
             <div className="ch-hello"><Avatar p={p} size={84} /><b>{p.name}</b><small className="hint">@{p.handle}</small><small className="hint">🔒 {t.chPrivacy}</small></div>
           )}
           {th.messages.map((m, i) => {
+            if (q && q.trim() && !m.text.toLowerCase().includes(q.trim().toLowerCase())) return null;
             const prev = th.messages[i - 1];
             const newDay = !prev || dayKey(prev.at) !== dayKey(m.at);
             const tail = !th.messages[i + 1] || th.messages[i + 1].mine !== m.mine || dayKey(th.messages[i + 1].at) !== dayKey(m.at);
@@ -392,8 +458,9 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
         {attach && <div className="ch-attach">
           <button onClick={() => fileRef.current?.click()}><span>📷</span>{t.chPhoto}</button>
           <button onClick={sendLocation}><span>📍</span>{t.chLocation}</button>
+          <small className="hint ch-paste">{t.ci.pasteHint}</small>
         </div>}
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void sendPhoto(f); }} />
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; stage(f); }} />
         {rec ? (
           <div className="ch-say ch-rec">
             <button type="button" className="ch-ic" aria-label={t.close} onClick={() => stopRec(false)}>✕</button>
@@ -406,6 +473,7 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
           <button type="button" className={`ch-plus ${attach ? "on" : ""}`} aria-label={t.chAttach} aria-expanded={attach} onClick={() => setAttach(!attach)}><I icon={Plus} size={22} /></button>
           <EmojiButton target={taRef} value={txt} set={setTxt} max={1000} labels={emojiLabels(t)} />
           <textarea ref={taRef} rows={1} value={txt} maxLength={1000} placeholder={t.chPh} aria-label={t.chPh}
+            onPaste={(e) => { const f = [...e.clipboardData.files].find((x) => x.type.startsWith("image/")); if (f && stage(f)) e.preventDefault(); }}
             onChange={(e) => { setTxt(e.target.value); if (e.target.value) typed(); e.target.style.height = "auto"; e.target.style.height = `${Math.min(120, e.target.scrollHeight)}px`; }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !("ontouchstart" in window)) { e.preventDefault(); void send(e as unknown as React.FormEvent); } }} />
           {txt.trim() || typeof MediaRecorder === "undefined"
@@ -416,6 +484,17 @@ export function ChatThread({ t, locale, handle, onClose }: { t: Dict; locale: Lo
         </>
       ) : <p className="hint ch-cant">{t.chCant}</p>)}
       {postOpen && <PostSheet t={t} locale={locale} id={postOpen} cities={{}} onClose={() => setPostOpen(null)} />}
+      {pending && (
+        <Portal><div className="ch-pv" role="dialog" aria-modal="true" aria-label={t.ci.photoT}>
+          <header className="ci-head dark"><button className="ch-ic" onClick={closePending} aria-label={t.close}><XIcon size={22} aria-hidden="true" /></button><b>{t.ci.photoT}</b><span style={{ width: 40 }} /></header>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <div className="ch-pv-img"><img src={pending.url} alt="" /></div>
+          <form className="ch-pv-bar" onSubmit={async (e) => { e.preventDefault(); const f = pending.file; const c = caption; closePending(); await sendPhoto(f, c); }}>
+            <input value={caption} onChange={(e) => setCaption(e.target.value)} maxLength={1000} placeholder={t.ci.caption} aria-label={t.ci.caption} autoFocus />
+            <button className="ch-send" disabled={sending} aria-label={t.ci.send}><I icon={SendHorizontal} size={20} /></button>
+          </form>
+        </div></Portal>
+      )}
       {viewer && <div className="ch-viewer" onClick={() => setViewer(null)}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={viewer} alt="" /></div>}
     </div>
   );
