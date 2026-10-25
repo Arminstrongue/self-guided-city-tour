@@ -27,7 +27,7 @@ function initialGroups(): DayGroup[] {
   return ["sights", "food", "art"];
 }
 
-export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDays }: { t?: Dict; locale: Locale; cities: { id: string; name: string }[]; city: CityIn | null; moments: MomentView[]; initialDays: number }) {
+export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDays, presetGroups = [] }: { t?: Dict; locale: Locale; cities: { id: string; name: string }[]; city: CityIn | null; moments: MomentView[]; initialDays: number; presetGroups?: DayGroup[] }) {
   const t = useDict(tProp);
   const d = t.dp;
   const [days, setDays] = useState(initialDays);
@@ -37,7 +37,7 @@ export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDa
   const [day, setDay] = useState(1);
   const [busy, setBusy] = useState(false);
   const [needSign, setNeedSign] = useState(false);
-  useEffect(() => { setGroups(initialGroups()); }, []);
+  useEffect(() => { setGroups(presetGroups.length ? presetGroups : initialGroups()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggle = (g: DayGroup) => setGroups((x) => (x.includes(g) ? x.filter((y) => y !== g) : [...x, g]));
   async function build() {
@@ -81,7 +81,7 @@ export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDa
 
       <div className="card dp-card stack">
         <label className="field"><span className="bp-h">{t.plCity}</span>
-          <select value={city?.id ?? ""} onChange={(e) => { window.location.href = `/${locale}/plan/new?city=${e.target.value}&days=${days}`; }}>
+          <select value={city?.id ?? ""} onChange={(e) => { window.location.href = `/${locale}/plan/new?city=${e.target.value}&days=${days}&g=${groups.join(",")}`; }}>
             {!city && <option value="">{t.qsSearch}</option>}
             {cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>

@@ -15,6 +15,9 @@ import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
 import PageQR from "@/components/PageQR";
+import { HeroSearch } from "@/components/HeroSearch";
+import { flag } from "@/data/countries";
+import { Building2, MapPinned, Languages, Compass, Sparkles, Baby, Store, ChevronRight, ShieldCheck, Globe, Heart, Smartphone } from "lucide-react";
 import { stopName } from "@/data/stop-names";
 
 export const dynamic = "force-dynamic";
@@ -80,24 +83,66 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
   }
   const countries = [...byCountry.entries()].filter(([, g]) => g.items.length).sort((a, b) => b[1].items.length - a[1].items.length || a[1].name.localeCompare(b[1].name));
   const flagOf = (cc: string) => String.fromCodePoint(...[...cc.toUpperCase()].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
+  const searchCities = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", flag: flag(COUNTRY[c.id] ?? "") })).sort((a, b) => a.name.localeCompare(b.name, INTL_LOCALE[params.locale]));
   const featured = ["lon", "lis", "nyc", "par", "rak", "dxb", "rio", "rom", "cpt", "sin", "ist", "mex", "prg", "cai", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
   return (
     <main className="app xl">
       <HomeHero cities={featured}>
         <Header locale={params.locale} currency={fx.cur} over />
-        <div className="in rise">
-          <span className="eyebrow">✦ {t.scanned}</span>
-          <h1>{t.heroA} <em>{t.europe}</em> {t.heroB}</h1>
-          <p>{t.heroSub}</p>
-          <div className="stats" tabIndex={0}>
-            <span><b>{list.length}</b> {t.statCities}</span><span><b>{stops}</b> {t.stops}</span>
-            <span><b>{LOCALES.length}</b> {t.statLangs}</span><span>{t.f2t}</span>
+        <div className="hx-grid rise">
+          <div className="in hx-l">
+            <span className="eyebrow">✦ {t.hx.eyebrow}</span>
+            <h1>{t.hx.h1a} <em>{t.hx.h1b}</em></h1>
+            <p>{t.hx.sub}</p>
+            <div className="stats hx-stats" tabIndex={0}>
+              <span><Building2 size={15} aria-hidden="true" />{fmt(t.hx.stats.cities, { n: String(list.length) })}</span>
+              <span><MapPinned size={15} aria-hidden="true" />{fmt(t.hx.stats.stops, { n: String(stops) })}</span>
+              <span><Languages size={15} aria-hidden="true" />{fmt(t.hx.stats.langs, { n: String(LOCALES.length) })}</span>
+              <span><Headphones size={15} aria-hidden="true" />{t.hx.stats.audio}</span>
+            </div>
+            <p className="hm-free">{t.hmFree}</p>
+            <div className="hx-qr"><PageQR label={t.qrScan} mobileLabel={t.qrShare} /></div>
           </div>
-          <div className="ctas"><a className="btn tram press" href={`/${params.locale}/start`}>{t.hmBuild}</a><a className="btn ghost press" href="#cities">{t.explore}</a></div>
-          <p className="hm-free">{t.hmFree}</p>
-          <PageQR label={t.qrScan} mobileLabel={t.qrShare} />
+          <HeroSearch locale={params.locale} cities={searchCities} />
         </div>
       </HomeHero>
+
+      {/* Experiências: entradas diretas para cada forma de viajar. */}
+      <section className="sec hx-exp" aria-labelledby="hx-exp-h">
+        <div className="hx-exp-in">
+          <div className="hx-exp-h reveal">
+            <h2 id="hx-exp-h">{t.hx.expTitle}</h2>
+            <p>{t.hx.expSub}</p>
+            <a href="#features">{t.hx.expAll} →</a>
+          </div>
+          <div className="hx-cards">
+            {([
+              ["layover", "VOYBU Layover", Plane, `/${params.locale}/start`, t.hx.cards.tagMain],
+              ["explore", "VOYBU Explore", Compass, `/${params.locale}/plan/new?days=1&g=sights,food`, ""],
+              ["experiences", "VOYBU Experiences", Sparkles, `/${params.locale}/plan/new?days=3&g=food,art`, t.hx.cards.tagFree],
+              ["family", "VOYBU Family", Baby, `/${params.locale}/plan/new?days=2&g=family,sights`, ""],
+              ["business", "VOYBU Business", Store, `/${params.locale}/merchants`, t.hx.cards.tagBiz]
+            ] as const).map(([k, name, Ic, href, tag]) => (
+              <a key={k} href={href} className={`hx-card hx-${k} press reveal`}>
+                <span className="hx-card-art" aria-hidden="true"><Ic size={34} strokeWidth={1.8} /></span>
+                <span className="hx-card-tx">
+                  {tag && <span className="hx-tag">{tag}</span>}
+                  <b>{name}</b>
+                  <span className="hx-card-sub">{t.hx.cards[k][0]}</span>
+                  <small>{t.hx.cards[k][1]}</small>
+                  <em>{t.hx.cards[k][2]}</em>
+                </span>
+                <span className="hx-card-go" aria-hidden="true"><ChevronRight size={16} /></span>
+              </a>
+            ))}
+          </div>
+        </div>
+        <ul className="hx-trust">
+          {([["info", ShieldCheck], ["langs", Globe], ["community", Heart], ["offline", Smartphone]] as const).map(([k, Ic]) => (
+            <li key={k}><Ic size={22} aria-hidden="true" /><span><b>{t.hx.trust[k][0]}</b><small>{t.hx.trust[k][1]}</small></span></li>
+          ))}
+        </ul>
+      </section>
 
       {/* Para quem acabou de chegar ou precisa de algo já: quatro entradas diretas (Londres primeiro). */}
       <div className="sec nn-sec"><NeedNow locale={params.locale} city="lon" /></div>
@@ -149,7 +194,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
         </ol>
       </section>
 
-      <section className="sec">
+      <section className="sec" id="features" style={{ scrollMarginTop: 70 }}>
         <div className="sec-h reveal"><h2>{t.featTitle}</h2></div>
         {(() => {
           const all = ([[t.f1t, t.f1s], [t.f2t, t.f2s], [t.f3t, t.f3s], [t.f4t, t.f4s], [t.f5t, t.f5s], [t.f6t, t.f6s], [t.f7t, t.f7s], [t.f8t, t.f8s], [t.f9t, t.f9s], [t.f10t, t.f10s], [t.f11t, t.f11s], [t.f12t, t.f12s]] as const);

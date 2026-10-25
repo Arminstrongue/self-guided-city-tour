@@ -3379,3 +3379,99 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
   .as.wt-sheet{border-radius:24px;max-height:min(85vh,760px);padding-bottom:16px;box-shadow:0 24px 80px rgba(0,0,0,.28);animation:shIn .22s var(--ease)}
   .as.wt-sheet .as-grab,.as.wt-sheet>.wt-grab{display:none}
 }
+
+/* ===== Página inicial: herói com pesquisa, experiências VOYBU e confiança ===== */
+.hx-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:22px;padding:92px 20px 28px;width:100%;max-width:1200px;margin-inline:auto}
+.hx-grid .in.hx-l{padding:0;max-width:640px}
+.hx-grid h1{font-size:clamp(34px,8.4vw,64px)}
+.hx-stats span{display:inline-flex;align-items:center;gap:6px}
+@media (min-width:960px){
+  .hero-x:has(.hx-grid){justify-content:center;min-height:min(84svh,700px)}
+  .hx-grid{grid-template-columns:minmax(0,1.15fr) minmax(360px,.85fr);align-items:center;gap:48px;padding:110px 32px 56px}
+}
+/* Cartão de pesquisa */
+.hs{position:relative;display:grid;gap:10px;padding:14px;border-radius:24px;background:#fff;color:#102A43;box-shadow:0 24px 60px rgba(0,0,0,.28);width:100%;max-width:520px}
+.hs-tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:#f1f4f8;overflow-x:auto;scrollbar-width:none}
+.hs-tabs button{flex:1 0 auto;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:8px 12px;border:0;border-radius:10px;background:none;color:#486581;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.hs-tabs button.on{background:#102A43;color:#fff;box-shadow:0 2px 8px rgba(16,42,67,.25)}
+.hs-field{position:relative;display:flex;align-items:center;gap:10px;min-height:52px;padding:0 14px;border-radius:14px;border:1px solid #d9e2ec;background:#fff;color:#627d98}
+.hs-field:focus-within{border-color:#102A43;box-shadow:0 0 0 3px rgba(16,42,67,.12)}
+.hs-field input,.hs-field select{flex:1;min-width:0;height:50px;border:0;outline:0;background:none;color:#102A43;font:inherit;font-size:15px;appearance:none;-webkit-appearance:none;cursor:pointer}
+.hs-field input{cursor:text}
+.hs-field select{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23627d98' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 2px center no-repeat;padding-right:18px}
+.hs-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.hs-row:empty{display:none}
+.hs-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:20;margin:0;padding:6px;list-style:none;border-radius:14px;background:#fff;box-shadow:0 16px 40px rgba(16,42,67,.22);max-height:320px;overflow:auto}
+.hs-list button{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;padding:8px 10px;border:0;border-radius:10px;background:none;color:#102A43;font:inherit;text-align:left;cursor:pointer}
+.hs-list button:hover,.hs-list li[aria-selected="true"] button{background:#f1f4f8}
+.hs-list small{margin-left:auto;color:#829ab1;font-size:12.5px}
+.hs-err{margin:0;color:#c0392b;font-size:13.5px;font-weight:600}
+.hs-go{display:flex;align-items:center;justify-content:center;gap:10px;min-height:54px;border:0;border-radius:14px;background:#102A43;color:#fff;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:background .2s}
+.hs-go:hover{background:#1c3a5c}
+.hs-all{justify-self:center;color:#486581;font-size:14px;font-weight:600;text-decoration:none;padding:4px}
+.hs-all:hover{text-decoration:underline}
+/* Experiências VOYBU */
+.hx-exp{display:grid;gap:22px}
+.hx-exp-in{display:grid;gap:16px}
+.hx-exp-h h2{margin:0 0 6px;font-size:clamp(24px,3.4vw,32px);letter-spacing:-.02em;line-height:1.15}
+.hx-exp-h p{margin:0 0 8px;color:var(--muted);font-size:15px;line-height:1.45;max-width:44ch}
+.hx-exp-h a{font-weight:700;font-size:14px;color:var(--ink);text-decoration:none}
+.hx-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.hx-card{position:relative;display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--line);color:var(--ink);text-decoration:none;min-height:100%;transition:transform .2s,box-shadow .2s}
+.hx-card:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,0,0,.1)}
+.hx-card-art{display:grid;place-items:center;height:96px;color:#fff;background:linear-gradient(135deg,var(--a),var(--b))}
+.hx-layover{--a:#102A43;--b:#3b6fa0}
+.hx-explore{--a:#ff6b4a;--b:#ffb36b}
+.hx-experiences{--a:#2a9d8f;--b:#56d8c3}
+.hx-family{--a:#7b5cd6;--b:#b89cff}
+.hx-business{--a:#b5651d;--b:#e9a24a}
+.hx-card-tx{display:grid;gap:4px;padding:14px 16px 16px;align-content:start}
+.hx-card-tx b{font-size:17px;letter-spacing:-.01em}
+.hx-card-sub{font-size:14px;font-weight:600}
+.hx-card-tx small{font-size:13.5px;line-height:1.45;color:var(--muted)}
+.hx-card-tx em{font-style:normal;font-size:12.5px;color:var(--muted);opacity:.85;margin-top:4px}
+.hx-tag{justify-self:start;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;background:#e6f4ea;color:#1e7a3a}
+.hx-card-go{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.22);color:#fff}
+@media (min-width:960px){
+  .hx-exp-in{grid-template-columns:260px 1fr;align-items:start;gap:28px}
+  .hx-cards{grid-template-columns:repeat(3,1fr)}
+  .hx-layover{grid-column:span 2;flex-direction:row}
+  .hx-layover .hx-card-art{height:auto;width:42%;flex:none}
+  .hx-layover .hx-card-tx{padding:20px 22px}
+  .hx-layover .hx-card-tx b{font-size:20px}
+}
+/* Faixa de confiança */
+.hx-trust{list-style:none;margin:0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.hx-trust li{display:flex;align-items:flex-start;gap:12px;color:var(--ink)}
+.hx-trust li>svg{flex:none;color:var(--cobalt,#0a66c2);margin-top:2px}
+.hx-trust span{display:grid;gap:2px}
+.hx-trust b{font-size:14.5px}
+.hx-trust small{font-size:13px;color:var(--muted);line-height:1.4}
+
+.hx-grid>*{min-width:0}
+.hx-qr .pqr{position:static;flex-direction:row;align-self:flex-start;gap:10px;padding:6px 12px 6px 6px;animation:none}
+.hx-qr .pqr-img{width:64px;height:64px}
+.hx-qr .pqr figcaption{font-size:12px;white-space:normal;max-width:12ch}
+.hx-qr .pqr-d{display:inline}.hx-qr .pqr-m{display:none}
+@media (max-width:959px){.hx-qr{display:none}}
+@media (max-width:959px){
+  .hx-card{flex-direction:row;align-items:stretch}
+  .hx-card-art{width:76px;height:auto;flex:none}
+  .hx-card-art svg{width:26px;height:26px}
+  .hx-card-tx{padding:12px 40px 12px 14px}
+  .hx-card-go{background:var(--surface-2);color:var(--muted);top:50%;transform:translateY(-50%)}
+  .hx-card-tx small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .hx-cards{gap:10px}
+}
+.hx-qr .pqr{display:inline-flex;width:auto}
+.hs-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.hs-tabs button{min-width:0;white-space:normal;line-height:1.15;text-align:center;padding:8px 6px}
+@media (max-width:959px){
+  .hx-grid{padding-top:84px;gap:18px}
+  .hx-grid h1{font-size:clamp(32px,9vw,44px)}
+  .hx-grid .hm-free{display:none}
+  .hero-x:has(.hx-grid){min-height:0}
+}
+@media (max-width:420px){.hs-tabs button svg{display:none}.hs{padding:12px;border-radius:20px}}
+
+@media (min-width:960px){.hx-qr{display:flex}.hs-tabs{grid-template-columns:auto auto auto}.hs-tabs button{white-space:nowrap;padding:8px 12px}}
