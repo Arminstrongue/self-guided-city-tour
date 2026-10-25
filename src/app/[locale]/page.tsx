@@ -117,7 +117,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
           </div>
           <div className="hx-cards">
             {([
-              ["layover", "VOYBU Layover", Plane, `/${params.locale}/start`, t.hx.cards.tagMain],
+              ["layover", "VOYBU Layover", Plane, `/${params.locale}/layover`, t.hx.cards.tagMain],
               ["explore", "VOYBU Explore", Compass, `/${params.locale}/plan/new?days=1&g=sights,food`, ""],
               ["experiences", "VOYBU Experiences", Sparkles, `/${params.locale}/plan/new?days=3&g=food,art`, t.hx.cards.tagFree],
               ["family", "VOYBU Family", Baby, `/${params.locale}/plan/new?days=2&g=family,sights`, ""],

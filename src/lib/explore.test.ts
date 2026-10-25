@@ -110,3 +110,18 @@ test("roteiro de vários dias: reparte os lugares por todos os dias e usa os int
   assert.ok(items.every((i) => i.kind === "stop"));
   assert.deepEqual(groupsToHobbies(["food", "leisure"]).sort(), ["budget", "cafe", "food", "wellness", "wine"]);
 });
+
+test("modo escala: escolhe o maior roteiro que cabe e aconselha ficar quando não há margem", async () => {
+  const { layoverPlan, EXIT_MIN } = await import("./layover");
+  const opts = [{ key: "n3", n: 3, tour: 80, ret: 30 }, { key: "n4", n: 4, tour: 110, ret: 30 }, { key: "core", n: 6, tour: 190, ret: 35 }, { key: "ext", n: 8, tour: 300, ret: 40 }];
+  assert.equal(layoverPlan(3, 30, opts).verdict, "stay");
+  const six = layoverPlan(6, 30, opts); // 360 − 45 − 30 − 150 = 135 → n4 (110+30) não cabe? 135 < 140 → n3
+  assert.equal(six.option?.key, "n3"); assert.equal(six.verdict, "short");
+  assert.equal(six.exit, EXIT_MIN);
+  assert.equal(layoverPlan(9, 30, opts).option?.key, "core"); // 540−225=315 ≥ 190+35
+  assert.equal(layoverPlan(9, 30, opts).verdict, "explore");
+  assert.equal(layoverPlan(12, 30, opts).option?.key, "ext");
+  assert.equal(layoverPlan(12, 30, opts).verdict, "long");
+  const p = layoverPlan(9, 30, opts);
+  assert.equal(p.exit + p.to + p.tour + p.back + p.buffer <= 9 * 60, true, "nunca ultrapassa a escala");
+});

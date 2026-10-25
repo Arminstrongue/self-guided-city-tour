@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState } from "react";
 import { useDict } from "@/i18n/client-dict";
 import type { Dict, Locale } from "@/i18n/dictionaries";
+import { fmt } from "@/i18n/core";
 import { ArrowRight, Clock, Compass, Map as MapIcon, MapPin, Plane, Sparkles, Users } from "lucide-react";
 
 type C = { id: string; name: string; country: string; flag: string };
@@ -21,6 +22,7 @@ export function HeroSearch({ t: tProp, locale, cities }: { t?: Dict; locale: Loc
   const [time, setTime] = useState("");
   const [who, setWho] = useState("");
   const [exp, setExp] = useState("");
+  const [lay, setLay] = useState("");
   const [err, setErr] = useState(false);
   const box = useRef<HTMLInputElement>(null);
   const hits = useMemo(() => {
@@ -35,6 +37,7 @@ export function HeroSearch({ t: tProp, locale, cities }: { t?: Dict; locale: Loc
     if (!c) { setErr(true); box.current?.focus(); setOpen(true); return; }
     const days = Number(time) || 0;
     let url = `/${locale}/start?city=${c.id}`;
+    if (tab === "layover") url = `/${locale}/layover?city=${c.id}${lay ? `&h=${lay}` : ""}`;
     if (tab === "routes" && days > 1) url = `/${locale}/plan/new?city=${c.id}&days=${days}&g=${WHO_GROUPS[who] ?? WHO_GROUPS.solo}`;
     if (tab === "exp") url = `/${locale}/plan/new?city=${c.id}&days=${Math.max(1, days)}&g=${exp || "sights"}${who === "family" ? ",family" : ""}`;
     try { localStorage.setItem("sgct:city", c.id); } catch { /* ignorar */ }
@@ -88,7 +91,14 @@ export function HeroSearch({ t: tProp, locale, cities }: { t?: Dict; locale: Loc
               {(["solo", "couple", "family", "friends"] as const).map((k) => <option key={k} value={k}>{h.who[k]}</option>)}
             </select>
           </label>
-        ) : null}
+        ) : (
+          <label className="hs-field"><Clock size={18} aria-hidden="true" />
+            <select value={lay} onChange={(e) => setLay(e.target.value)} aria-label={t.ly.hours}>
+              <option value="">{t.ly.hours}</option>
+              {[3, 6, 9, 12].map((h) => <option key={h} value={h}>{fmt(t.ly.hoursN, { n: String(h) })}{h === 12 ? "+" : ""} · {t.ly.bucket[String(h) as "3"]}</option>)}
+            </select>
+          </label>
+        )}
       </div>
       {err && <p className="hs-err" role="alert">{h.needCity}</p>}
       <button className="hs-go press" type="submit"><Compass size={18} aria-hidden="true" />{tab === "layover" ? h.ctaLayover : tab === "exp" ? h.ctaExp : h.cta}<ArrowRight size={18} aria-hidden="true" /></button>
