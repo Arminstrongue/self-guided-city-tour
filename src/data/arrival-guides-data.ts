@@ -965,8 +965,8 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
   ],
   "checked": "2026-10",
   "fromBaggage": {
-   "pt": "Chega-se à estação pelo Skylink, passadiço coberto com tapetes rolantes (cerca de 400 m a partir do T2). Do T3, siga as placas Trains / The Station. O Terminal 1 fechou em 2026.",
-   "en": "The station is reached by the covered Skylink walkway with moving walkways (about 400 m from T2). From T3, follow the Trains / The Station signs. Terminal 1 closed in 2026."
+   "pt": "Chega-se à estação pelo Skylink, passadiço coberto com tapetes rolantes: cerca de 190 m do elevador de chegadas do T1 e 400 m do T2. Do T3, um passadiço coberto leva ao T1 e depois ao Skylink.",
+   "en": "The station is reached by the covered Skylink walkway with moving walkways: about 190 m from the T1 arrivals lift, about 400 m from T2. From T3, a covered walkway leads to T1, then the Skylink."
   },
   "lift": {
    "pt": "Sem degraus: há elevadores de cada lado da rampa para as plataformas; outro elevador junto à entrada da estação liga o piso térreo ao superior.",
@@ -1737,6 +1737,99 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
   "fromBaggage": {
    "pt": "A praça de táxis principal fica logo à saída do aeroporto. Os motoristas de apps não podem entrar no aeroporto e esperam na via pública, do lado de fora.",
    "en": "The main taxi rank is right at the airport exit. App drivers are not allowed inside the airport and wait on the public road outside."
+  }
+ },
+ "ist-saw-m4": {
+  "sources": [
+   "https://www.sabihagokcen.aero/passengers-and-visitors/transport-and-parking/transportation/metro-en",
+   "https://www.sabihagokcen.aero/passengers-and-visitors/transport-and-parking/transportation/easy-access-to-sultanahmet"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "A estação de metro do aeroporto tem três entradas: n.º 3 Terminal, n.º 2 Hotel do Aeroporto e n.º 1 CIP Doméstico e parque. Vindo das chegadas, use a entrada do Terminal.",
+   "en": "The airport metro station has three entrances: No. 3 Terminal, No. 2 Sabiha Gökçen Airport Hotel and No. 1 Domestic CIP Hall & car park. From arrivals, use the Terminal entrance."
+  },
+  "tickets": {
+   "pt": "O Istanbulkart é obrigatório nos autocarros IETT e nos ferries. No aeroporto vende-se nos quiosques IETT junto à zona de espera dos autocarros, à frente do terminal, no piso das chegadas.",
+   "en": "Istanbulkart is required on IETT buses and ferries. The airport sells it at IETT kiosks by the bus waiting area, in front of the terminal on the arrivals level."
+  },
+  "platforms": {
+   "pt": "O aeroporto é o fim da linha M4: todos os comboios vão para Kadıköy. Mude em Ayrılık Çeşmesi para o Marmaray; em Kadıköy apanhe o ferry para Eminönü (cerca de 25 min).",
+   "en": "The airport is the end of line M4, so every train goes to Kadıköy. Change at Ayrılık Çeşmesi for Marmaray; at Kadıköy take the ferry to Eminönü (about 25 min)."
+  }
+ },
+ "ruh-taxi": {
+  "sources": [
+   "https://www.kkia.sa/en/parking-and-transport/take-a-taxi",
+   "https://www.kkia.sa/en/parking-and-transport/take-a-taxi/airport-taxi"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "As recolhas são no piso das Chegadas, 24h. T1: apps (Uber, Careem, Bolt, Jeeny) na coluna 11, Airport Taxi na coluna 18. T3/T4: apps nas colunas 33-34, táxis nas 38-41. T5: coluna 6.",
+   "en": "Pick-ups are on the Arrival Floor, 24/7. T1: apps (Uber, Careem, Bolt, Jeeny) at column 11, Airport Taxi at column 18. T3/T4: apps at columns 33-34, taxis at 38-41. T5: column 6."
+  },
+  "luggage": {
+   "pt": "Espere na coluna com a bagagem antes de o motorista chegar: os carros só têm 5 minutos grátis na zona de recolha; depois há multa.",
+   "en": "Wait at the column with your bags before the driver arrives: cars get only 5 free minutes in the pick-up zone, then a fine applies."
+  }
+ },
+ "amm-taxi": {
+  "sources": [
+   "https://international.visitjordan.com/page/23/airports/"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Os táxis esperam à saída do terminal: saia do átrio das chegadas e procure a fila de táxis em frente ao edifício.",
+   "en": "Taxis wait outside the terminal: exit the arrivals hall and look for the taxi line in front of the building."
+  }
+ },
+ "acc-taxi": {
+  "sources": [
+   "https://www.gacl.com.gh/transportation/"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Os táxis oficiais com taxímetro (Labour Enterprise Trust) e os táxis 'pool' estão no Parque 5. Os carros de aluguer com motorista e os balcões de táxi ficam fora das chegadas, no Parque 2.",
+   "en": "Official metered airport taxis (Labour Enterprise Trust) and pool taxis wait at Car Park 5. Hire cars and taxi booths are outside the arrivals hall, at Car Park 2."
+  },
+  "tickets": {
+   "pt": "Os táxis do aeroporto usam taxímetro. Os táxis 'pool' não têm preço fixo: combine o valor antes de carregar as malas. Os preços dos carros de aluguer estão afixados nas chegadas.",
+   "en": "Airport taxis use a meter. Pool taxis have no set fare: agree the price before loading bags. Hire-car fares for some routes are shown in the arrivals hall."
+  }
+ },
+ "dkr-aibd": {
+  "sources": [
+   "https://aibd.sn/ufaq/comment-rejoindre-aibd-depuis-dakar/",
+   "https://demdikk.sn/offres-de-transport/",
+   "https://dakaraeroport.com/en/airport-guides/acces-to-airport/how-to-come-airport"
+  ],
+  "checked": "2026-10",
+  "luggage": {
+   "pt": "Há carrinhos de bagagem gratuitos na zona das chegadas.",
+   "en": "Free baggage trolleys are available in the arrivals area."
+  },
+  "tickets": {
+   "pt": "Pode reservar com a Dakar Dem Dikk na app, em booking.demdikk.sn ou por telefone. Os autocarros partem cerca de uma hora depois da aterragem dos voos.",
+   "en": "You can book with Dakar Dem Dikk on its mobile app, at booking.demdikk.sn or by phone. Buses leave about one hour after flights land."
+  },
+  "platforms": {
+   "pt": "O AIBD Express da Dakar Dem Dikk vai até ao terminal HLM Grand-Yoff (em frente ao estádio Léopold Sédar Senghor), não ao Plateau. Outro vai à estação TER de Diamniadio. Ambos 24h.",
+   "en": "Dakar Dem Dikk's AIBD Express goes to the HLM Grand-Yoff terminus (opposite Léopold Sédar Senghor stadium), not Plateau. Another runs to Diamniadio TER station. Both run 24/7."
+  }
+ },
+ "dkr-taxi": {
+  "sources": [
+   "https://dakaraeroport.com/en/transport-parking/arrival-by-taxi-bus",
+   "https://dakaraeroport.com/en/airport-guides/acces-to-airport/how-to-come-airport"
+  ],
+  "checked": "2026-10",
+  "luggage": {
+   "pt": "Há carrinhos de bagagem gratuitos na zona das chegadas.",
+   "en": "Free baggage trolleys are available in the arrivals area."
+  },
+  "tickets": {
+   "pt": "O aeroporto publica tarifas de táxi por destino (Dakar, Thiès, Mbour, Saly...), mais altas à noite. A autoestrada é opcional e a portagem é paga por si. Confirme o preço antes de partir.",
+   "en": "The airport publishes set taxi fares by destination (Dakar, Thiès, Mbour, Saly...), higher at night. The motorway is optional and you pay the toll. Confirm the fare before you leave."
   }
  }
 };

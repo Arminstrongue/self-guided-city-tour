@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "Fino a tre bagagli in stiva più un bagaglio a mano per biglietto. Non si accettano bagagli oltre 50 lb o oltre 62 in (lunghezza + larghezza + altezza).",
 "lax-flyaway.tickets": "Paghi a bordo con carta contactless Visa/Mastercard, Apple Pay o Google Pay, oppure acquisti online. Sul bus non si accettano contanti né carte non contactless.",
 "lax-flyaway.platforms": "Il viaggio fino a Union Station (Patsaouras Bus Plaza) dura circa 30-60 min. L'imbarco chiude 2 min prima della partenza; sia alla fermata 10 min prima.",
-"tun-taxi.fromBaggage": "Il posteggio taxi principale è proprio all'uscita dell'aeroporto. Gli autisti delle app non possono entrare in aeroporto e attendono sulla strada pubblica all'esterno."
+"tun-taxi.fromBaggage": "Il posteggio taxi principale è proprio all'uscita dell'aeroporto. Gli autisti delle app non possono entrare in aeroporto e attendono sulla strada pubblica all'esterno.",
+"ist-saw-m4.fromBaggage": "La stazione della metro dell'aeroporto ha tre ingressi: n. 3 Terminal, n. 2 Sabiha Gökçen Airport Hotel e n. 1 Sala CIP nazionale e parcheggio. Dagli arrivi, usa l'ingresso Terminal.",
+"ist-saw-m4.tickets": "Sui bus e traghetti IETT serve l'Istanbulkart. In aeroporto si compra ai chioschi IETT vicino all'area d'attesa dei bus, davanti al terminal al piano arrivi.",
+"ist-saw-m4.platforms": "L'aeroporto è il capolinea della M4, quindi ogni treno va a Kadıköy. Cambia ad Ayrılık Çeşmesi per il Marmaray; a Kadıköy prendi il traghetto per Eminönü (circa 25 min).",
+"ruh-taxi.fromBaggage": "Il ritiro passeggeri è al piano Arrivi, 24/7. T1: app (Uber, Careem, Bolt, Jeeny) alla colonna 11, Airport Taxi alla colonna 18. T3/T4: app alle colonne 33-34, taxi alle 38-41. T5: colonna 6.",
+"ruh-taxi.luggage": "Aspetta alla colonna con i bagagli prima che arrivi l'autista: le auto hanno solo 5 minuti gratuiti nella zona di ritiro, poi scatta la multa.",
+"amm-taxi.fromBaggage": "I taxi aspettano fuori dal terminal: esci dalla sala arrivi e cerca la fila dei taxi davanti all'edificio.",
+"acc-taxi.fromBaggage": "I taxi ufficiali con tassametro dell'aeroporto (Labour Enterprise Trust) e i pool taxi aspettano al Parcheggio 5. Le auto a noleggio con autista e i banchi taxi sono fuori dalla sala arrivi, al Parcheggio 2.",
+"acc-taxi.tickets": "I taxi dell'aeroporto usano il tassametro. I pool taxi non hanno tariffa fissa: concorda il prezzo prima di caricare i bagagli. Le tariffe delle auto a noleggio per alcune tratte sono esposte nella sala arrivi.",
+"dkr-aibd.luggage": "Nella zona arrivi ci sono carrelli portabagagli gratuiti.",
+"dkr-aibd.tickets": "Puoi prenotare Dakar Dem Dikk con la sua app, su booking.demdikk.sn o per telefono. I bus partono circa un'ora dopo l'atterraggio dei voli.",
+"dkr-aibd.platforms": "L'AIBD Express di Dakar Dem Dikk va al capolinea HLM Grand-Yoff (di fronte allo stadio Léopold Sédar Senghor), non a Plateau. Un altro va alla stazione TER di Diamniadio. Entrambi attivi 24/7.",
+"dkr-taxi.luggage": "Nella zona arrivi ci sono carrelli portabagagli gratuiti.",
+"dkr-taxi.tickets": "L'aeroporto pubblica tariffe taxi fisse per destinazione (Dakar, Thiès, Mbour, Saly...), più alte di notte. L'autostrada è facoltativa e il pedaggio lo paghi tu. Conferma la tariffa prima di partire."
 }

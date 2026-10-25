@@ -230,5 +230,19 @@
 "LAX.8.transit": "FlyAway otobüsü (Union Station, Van Nuys) ve ücretsiz LAX Shuttle her terminalde durur; Metro C & K Lines'a ücretsiz Metro Connector Shuttle ile LAX/Metro Transit Center üzerinden ulaşılır.",
 "LAX.B.serves": "Dış hat uçuşları, West Gates (201–225) dahil. Terminalinizi biniş kartınızdan/havayolu uygulamasından teyit edin.",
 "LAX.B.transit": "FlyAway otobüsü (Union Station, Van Nuys) ve ücretsiz LAX Shuttle her terminalde durur; Metro C & K Lines'a ücretsiz Metro Connector Shuttle ile LAX/Metro Transit Center üzerinden ulaşılır.",
-"LAX.between": "Güvenlik sonrası hava tarafı yürüyüş yolları tüm terminalleri bağlar (T1'den T8'e yaklaşık 2 mil); terminaller arasında sık aralıklarla ücretsiz servisler de çalışır."
+"LAX.between": "Güvenlik sonrası hava tarafı yürüyüş yolları tüm terminalleri bağlar (T1'den T8'e yaklaşık 2 mil); terminaller arasında sık aralıklarla ücretsiz servisler de çalışır.",
+"SFO.1.transit": "Burada BART durağı yok: SFO BART istasyonundan (Dış Hatlar Terminali) ücretsiz AirTrain'e binin, 1–3 dk.",
+"SFO.2.transit": "Burada BART durağı yok: SFO BART istasyonundan (Dış Hatlar Terminali) ücretsiz AirTrain'e binin, 1–3 dk.",
+"SFO.3.transit": "SFO BART istasyonundan (Dış Hatlar Terminali): kısa bir yürüyüş ya da ücretsiz AirTrain (1–3 dk).",
+"SFO.I.transit": "BART: SFO istasyonu Dış Hatlar Terminali'nin 3. katında (San Francisco şehir merkezine yaklaşık 30 dk).",
+"SFO.between": "Ücretsiz AirTrain: Red Line tüm terminal ve otoparkları dolaşır; Blue Line ayrıca Rental Car Center'a gider. Dış Hatlar Terminali'nden Terminal 1–3'e 1–3 dk.",
+"YYZ.1.transit": "UP Express: Pearson istasyonu Terminal 1'de, Terminal Link treninin yanında ('Train to City' tabelalarını izleyin). Union Station'a yaklaşık 25 dk, 15 dakikada bir.",
+"YYZ.3.transit": "UP Express durağı yok: Pearson istasyonundan (Terminal 1) ücretsiz Terminal Link treniyle Terminal 3'e gidin.",
+"YYZ.between": "Terminal 1, Terminal 3 ve Viscount (Value Park) arasında ücretsiz Terminal Link treni, günde 24 saat; yolculuk 2–8 dk, bekleme en fazla 4–8 dk.",
+"YYZ.arrive": "Genel kural: iç hat uçuşlarından 90 dk, dış hatlardan 3–4 sa önce; havayolunuzun önerilerine bakın.",
+"GIG.1.transit": "BRT 42 (Madureira) ve 915, 922, 328, 925, 760D ve 1760D (Charitas) otobüsleri Terminal 1'de durur.",
+"GIG.2.transit": "Gelen yolcu katı: BRT 42, 915, 922, 328, 925 otobüsleri ve Terminal Gentileza, Búzios ve Macaé'ye özel otobüsler.",
+"ACC.2.serves": "İç hat uçuşları (Terminal 2 iç ve dış hat kullanımı için yeniden düzenleniyor). Biniş kartınızdan/havayolu uygulamasından teyit edin.",
+"ACC.3.serves": "Dış hat uçuşları. Terminali biniş kartınızdan/havayolu uygulamasından teyit edin.",
+"ACC.arrive": "Kalkıştan en az 2 sa önce check-in yapın; kontuarlar havayoluna göre genellikle 2–3 sa önce açılır."
 }

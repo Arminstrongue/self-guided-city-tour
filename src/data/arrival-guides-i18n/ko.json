@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "승차권 1장당 짐칸 수하물 최대 3개와 기내용 가방 1개까지 가능해요. 50 lb 또는 62 in(길이 + 너비 + 높이)를 넘는 가방은 받지 않아요.",
 "lax-flyaway.tickets": "차내에서 Visa/Mastercard 비접촉식 카드, Apple Pay 또는 Google Pay로 결제하거나 온라인에서 구매하세요. 버스에서는 현금과 비접촉 기능이 없는 카드를 받지 않아요.",
 "lax-flyaway.platforms": "Union Station(Patsaouras Bus Plaza)까지 약 30-60분 걸려요. 탑승은 출발 2분 전에 마감되니 10분 일찍 정류장에 가세요.",
-"tun-taxi.fromBaggage": "주요 택시 승차장은 공항 출구 바로 앞에 있어요. 앱 기사는 공항 안에 들어올 수 없어 바깥 공공 도로에서 기다려요."
+"tun-taxi.fromBaggage": "주요 택시 승차장은 공항 출구 바로 앞에 있어요. 앱 기사는 공항 안에 들어올 수 없어 바깥 공공 도로에서 기다려요.",
+"ist-saw-m4.fromBaggage": "공항 지하철역에는 입구가 세 곳 있습니다: 3번 터미널, 2번 Sabiha Gökçen 공항 호텔, 1번 국내선 CIP 홀 및 주차장. 도착장에서는 터미널 입구를 이용하세요.",
+"ist-saw-m4.tickets": "IETT 버스와 페리를 타려면 Istanbulkart가 필요합니다. 공항 도착층 터미널 앞, 버스 대기 구역 옆 IETT 키오스크에서 판매합니다.",
+"ist-saw-m4.platforms": "공항은 M4선 종점이라 모든 열차가 Kadıköy로 갑니다. Marmaray는 Ayrılık Çeşmesi에서 환승하고, Kadıköy에서는 Eminönü행 페리를 타세요(약 25분).",
+"ruh-taxi.fromBaggage": "탑승 장소는 도착층, 24시간 운영. T1: 앱(Uber, Careem, Bolt, Jeeny)은 11번 기둥, Airport Taxi는 18번 기둥. T3/T4: 앱은 33-34번 기둥, 택시는 38-41번. T5: 6번 기둥.",
+"ruh-taxi.luggage": "기사가 도착하기 전에 짐을 들고 기둥 앞에서 기다리세요. 픽업 구역 무료 정차는 5분뿐이고, 이후에는 벌금이 부과됩니다.",
+"amm-taxi.fromBaggage": "택시는 터미널 밖에서 대기합니다. 도착 홀을 나와 건물 앞 택시 승차장을 찾으세요.",
+"acc-taxi.fromBaggage": "공항 공식 미터 택시(Labour Enterprise Trust)와 풀 택시는 5번 주차장에서 대기합니다. 대절 차량과 택시 부스는 도착 홀 밖 2번 주차장에 있습니다.",
+"acc-taxi.tickets": "공항 택시는 미터기를 사용합니다. 풀 택시는 정해진 요금이 없으니 짐을 싣기 전에 가격을 정하세요. 일부 노선의 대절 차량 요금은 도착 홀에 게시되어 있습니다.",
+"dkr-aibd.luggage": "도착 구역에 무료 수하물 카트가 있습니다.",
+"dkr-aibd.tickets": "Dakar Dem Dikk는 모바일 앱, booking.demdikk.sn 또는 전화로 예약할 수 있습니다. 버스는 항공편 착륙 약 1시간 후 출발합니다.",
+"dkr-aibd.platforms": "Dakar Dem Dikk의 AIBD Express는 Plateau가 아닌 HLM Grand-Yoff 종점(Léopold Sédar Senghor 경기장 맞은편)으로 갑니다. 다른 노선은 Diamniadio TER역으로 갑니다. 둘 다 24시간 운행합니다.",
+"dkr-taxi.luggage": "도착 구역에 무료 수하물 카트가 있습니다.",
+"dkr-taxi.tickets": "공항은 목적지별 택시 정액 요금(Dakar, Thiès, Mbour, Saly...)을 공개하며, 야간에는 더 비쌉니다. 고속도로 이용은 선택이며 통행료는 본인 부담입니다. 출발 전 요금을 확인하세요."
 }

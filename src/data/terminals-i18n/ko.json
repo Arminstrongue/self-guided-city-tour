@@ -230,5 +230,19 @@
 "LAX.8.transit": "FlyAway 버스(Union Station, Van Nuys)와 무료 LAX Shuttle이 모든 터미널에 정차해요. Metro C & K Lines는 무료 Metro Connector Shuttle로 LAX/Metro Transit Center에서 연결돼요.",
 "LAX.B.serves": "국제선, West Gates(201–225) 포함. 탑승권/항공사 앱에서 터미널을 확인하세요.",
 "LAX.B.transit": "FlyAway 버스(Union Station, Van Nuys)와 무료 LAX Shuttle이 모든 터미널에 정차해요. Metro C & K Lines는 무료 Metro Connector Shuttle로 LAX/Metro Transit Center에서 연결돼요.",
-"LAX.between": "보안검색 후 구역의 통로로 모든 터미널이 연결돼요(T1에서 T8까지 약 2마일). 터미널 간 무료 셔틀도 자주 운행해요."
+"LAX.between": "보안검색 후 구역의 통로로 모든 터미널이 연결돼요(T1에서 T8까지 약 2마일). 터미널 간 무료 셔틀도 자주 운행해요.",
+"SFO.1.transit": "이곳에는 BART역이 없습니다. SFO BART역(국제선 터미널)에서 무료 AirTrain을 타세요(1–3분).",
+"SFO.2.transit": "이곳에는 BART역이 없습니다. SFO BART역(국제선 터미널)에서 무료 AirTrain을 타세요(1–3분).",
+"SFO.3.transit": "SFO BART역(국제선 터미널)에서: 짧게 걷거나 무료 AirTrain(1–3분).",
+"SFO.I.transit": "BART: SFO역은 국제선 터미널 3층에 있습니다(샌프란시스코 시내에서 약 30분).",
+"SFO.between": "무료 AirTrain: Red Line은 모든 터미널과 주차장을 순환하고, Blue Line은 Rental Car Center에도 정차합니다. 국제선 터미널에서 터미널 1–3까지 1–3분.",
+"YYZ.1.transit": "UP Express: Pearson역은 터미널 1의 Terminal Link 열차 옆에 있습니다('Train to City' 표지를 따라가세요). Union Station까지 약 25분, 15분 간격.",
+"YYZ.3.transit": "UP Express가 서지 않습니다. Pearson역(터미널 1)에서 무료 Terminal Link 열차로 터미널 3까지 가세요.",
+"YYZ.between": "터미널 1, 터미널 3, Viscount(Value Park)를 잇는 무료 Terminal Link 열차, 24시간 운행. 소요 2–8분, 대기 최대 4–8분.",
+"YYZ.arrive": "일반적인 기준: 국내선은 90분 전, 국제선은 3–4시간 전. 항공사 안내도 확인하세요.",
+"GIG.1.transit": "BRT 42(Madureira)와 915, 922, 328, 925, 760D, 1760D번 버스(Charitas)가 터미널 1에 정차합니다.",
+"GIG.2.transit": "도착층: BRT 42, 915, 922, 328, 925번 버스, 그리고 Terminal Gentileza, Búzios, Macaé행 특별 버스.",
+"ACC.2.serves": "국내선(터미널 2는 국내선·국제선 겸용으로 전환 중). 탑승권이나 항공사 앱에서 확인하세요.",
+"ACC.3.serves": "국제선. 탑승권이나 항공사 앱에서 터미널을 확인하세요.",
+"ACC.arrive": "출발 최소 2시간 전에 체크인하세요. 카운터는 항공사에 따라 보통 2–3시간 전에 엽니다."
 }

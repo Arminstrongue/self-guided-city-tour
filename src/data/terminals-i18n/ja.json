@@ -230,5 +230,19 @@
 "LAX.8.transit": "FlyAwayバス（Union Station、Van Nuys）と無料のLAX Shuttleが全ターミナルに停車します。Metro C & K Linesへは無料のMetro Connector ShuttleでLAX/Metro Transit Centerを経由します。",
 "LAX.B.serves": "国際線です（West Gates（201–225）を含む）。搭乗券/航空会社アプリでターミナルをご確認ください。",
 "LAX.B.transit": "FlyAwayバス（Union Station、Van Nuys）と無料のLAX Shuttleが全ターミナルに停車します。Metro C & K Linesへは無料のMetro Connector ShuttleでLAX/Metro Transit Centerを経由します。",
-"LAX.between": "保安検査後の通路で全ターミナルがつながっています（T1からT8まで約2マイル）。ターミナル間には無料シャトルも頻繁に運行しています。"
+"LAX.between": "保安検査後の通路で全ターミナルがつながっています（T1からT8まで約2マイル）。ターミナル間には無料シャトルも頻繁に運行しています。",
+"SFO.1.transit": "ここにBART駅はありません。SFO BART駅（国際線ターミナル）から無料のAirTrainで1〜3分。",
+"SFO.2.transit": "ここにBART駅はありません。SFO BART駅（国際線ターミナル）から無料のAirTrainで1〜3分。",
+"SFO.3.transit": "SFO BART駅（国際線ターミナル）から：徒歩すぐ、または無料AirTrain（1〜3分）。",
+"SFO.I.transit": "BART：SFO駅は国際線ターミナルのレベル3にあります（サンフランシスコ中心部から約30分）。",
+"SFO.between": "無料AirTrain：Red Lineは全ターミナルと駐車場を周回、Blue LineはRental Car Centerにも停車。国際線ターミナルからターミナル1〜3まで1〜3分。",
+"YYZ.1.transit": "UP Express：Pearson駅はターミナル1、Terminal Link列車の隣にあります（'Train to City'の案内に従ってください）。Union Stationまで約25分、15分間隔。",
+"YYZ.3.transit": "UP Expressは停車しません。Pearson駅（ターミナル1）から無料のTerminal Link列車でターミナル3へ。",
+"YYZ.between": "無料のTerminal Link列車がターミナル1、ターミナル3、Viscount（Value Park）間を24時間運行。乗車2〜8分、待ち時間は最大4〜8分。",
+"YYZ.arrive": "目安：国内線は出発90分前、国際線は3〜4時間前。航空会社の案内も確認してください。",
+"GIG.1.transit": "BRT 42（Madureira）とバス915、922、328、925、760D、1760D（Charitas）がターミナル1に停車します。",
+"GIG.2.transit": "到着階：BRT 42、バス915、922、328、925、およびTerminal Gentileza、Búzios、Macaé行きの特別バス。",
+"ACC.2.serves": "国内線（ターミナル2は国内線・国際線兼用に改修中）。搭乗券または航空会社アプリで確認してください。",
+"ACC.3.serves": "国際線。搭乗券または航空会社アプリでターミナルを確認してください。",
+"ACC.arrive": "出発の2時間前までにチェックインを。カウンターは航空会社により、通常2〜3時間前に開きます。"
 }

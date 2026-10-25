@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "每张票可托运最多三件行李，外加一件随身行李。超过 50 lb 或超过 62 in（长 + 宽 + 高）的行李不予接收。",
 "lax-flyaway.tickets": "上车时用 Visa/Mastercard 非接触式银行卡、Apple Pay 或 Google Pay 支付，或网上购票。车上不收现金和非接触式以外的银行卡。",
 "lax-flyaway.platforms": "到 Union Station（Patsaouras Bus Plaza）约需 30-60 分钟。发车前 2 分钟停止上车，请提前 10 分钟到站。",
-"tun-taxi.fromBaggage": "主要出租车候车点就在机场出口处。网约车司机不得进入机场，会在外面的公共道路上等候。"
+"tun-taxi.fromBaggage": "主要出租车候车点就在机场出口处。网约车司机不得进入机场，会在外面的公共道路上等候。",
+"ist-saw-m4.fromBaggage": "机场地铁站有三个入口：3号 航站楼、2号 Sabiha Gökçen 机场酒店、1号 国内CIP厅及停车场。从到达区请走航站楼入口。",
+"ist-saw-m4.tickets": "乘坐IETT公交和渡轮需要Istanbulkart。机场到达层航站楼前、公交候车区旁的IETT售卡亭有售。",
+"ist-saw-m4.platforms": "机场是M4线终点站，所有列车都开往Kadıköy。在Ayrılık Çeşmesi换乘Marmaray；在Kadıköy乘渡轮前往Eminönü（约25分钟）。",
+"ruh-taxi.fromBaggage": "上车点在到达层，24小时服务。T1：打车应用（Uber、Careem、Bolt、Jeeny）在11号柱，Airport Taxi在18号柱。T3/T4：应用在33-34号柱，出租车在38-41号。T5：6号柱。",
+"ruh-taxi.luggage": "司机到达前，请带着行李在柱子旁等候：车辆在上车区只有5分钟免费时间，超时将被罚款。",
+"amm-taxi.fromBaggage": "出租车在航站楼外等候：走出到达大厅，在楼前找出租车排队处。",
+"acc-taxi.fromBaggage": "机场官方计价出租车（Labour Enterprise Trust）和Pool出租车在5号停车场等候。包车和出租车服务亭在到达大厅外的2号停车场。",
+"acc-taxi.tickets": "机场出租车打表计费。Pool出租车没有固定价格：装行李前先谈好价钱。到达大厅公示了部分路线的包车价格。",
+"dkr-aibd.luggage": "到达区有免费行李推车。",
+"dkr-aibd.tickets": "可通过Dakar Dem Dikk手机应用、booking.demdikk.sn或电话预订。巴士约在航班落地一小时后发车。",
+"dkr-aibd.platforms": "Dakar Dem Dikk的AIBD Express开往HLM Grand-Yoff总站（Léopold Sédar Senghor体育场对面），不去Plateau。另一条线开往Diamniadio TER站。两条线均24小时运营。",
+"dkr-taxi.luggage": "到达区有免费行李推车。",
+"dkr-taxi.tickets": "机场公布了按目的地划分的固定出租车价格（Dakar、Thiès、Mbour、Saly……），夜间更高。走高速可选，过路费由你支付。出发前请确认价格。"
 }

@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "Bilet başına bagaj bölmesinde en fazla üç çanta ve bir kabin çantası. 50 lb'nin veya 62 in'in (uzunluk + genişlik + yükseklik) üzerindeki çantalar kabul edilmez.",
 "lax-flyaway.tickets": "Araçta temassız Visa/Mastercard, Apple Pay veya Google Pay ile ödeyin ya da internetten alın. Otobüste nakit ve temassız olmayan kartlar kabul edilmez.",
 "lax-flyaway.platforms": "Union Station'a (Patsaouras Bus Plaza) yolculuk yaklaşık 30-60 dk sürer. Biniş kalkıştan 2 dk önce kapanır; durakta 10 dk erken olun.",
-"tun-taxi.fromBaggage": "Ana taksi durağı havalimanı çıkışının hemen önündedir. Uygulama sürücülerinin havalimanına girmesine izin verilmez; dışarıdaki ana yolda beklerler."
+"tun-taxi.fromBaggage": "Ana taksi durağı havalimanı çıkışının hemen önündedir. Uygulama sürücülerinin havalimanına girmesine izin verilmez; dışarıdaki ana yolda beklerler.",
+"ist-saw-m4.fromBaggage": "Havalimanı metro istasyonunun üç girişi var: No. 3 Terminal, No. 2 Sabiha Gökçen Havalimanı Oteli ve No. 1 İç Hatlar CIP Salonu ve otopark. Gelen yolcu katından Terminal girişini kullanın.",
+"ist-saw-m4.tickets": "IETT otobüs ve vapurlarında Istanbulkart gerekir. Havalimanında gelen yolcu katında, terminal önündeki otobüs bekleme alanının yanındaki IETT büfelerinde satılır.",
+"ist-saw-m4.platforms": "Havalimanı M4 hattının son durağıdır, bu yüzden her tren Kadıköy'e gider. Marmaray için Ayrılık Çeşmesi'nde aktarma yapın; Kadıköy'den Eminönü vapuruna binin (yaklaşık 25 dk).",
+"ruh-taxi.fromBaggage": "Araca biniş Gelen Yolcu Katında, 7/24. T1: uygulamalar (Uber, Careem, Bolt, Jeeny) 11 numaralı sütunda, Airport Taxi 18 numaralı sütunda. T3/T4: uygulamalar 33-34, taksiler 38-41 numaralı sütunlarda. T5: 6 numaralı sütun.",
+"ruh-taxi.luggage": "Sürücü gelmeden önce bavullarınızla sütunun yanında bekleyin: araçlara biniş alanında yalnızca 5 dakika ücretsiz süre var, sonra ceza uygulanır.",
+"amm-taxi.fromBaggage": "Taksiler terminalin dışında bekler: gelen yolcu salonundan çıkın ve binanın önündeki taksi sırasını bulun.",
+"acc-taxi.fromBaggage": "Resmi taksimetreli havalimanı taksileri (Labour Enterprise Trust) ve pool taksiler 5 numaralı otoparkta bekler. Şoförlü kiralık araçlar ve taksi büfeleri gelen yolcu salonunun dışında, 2 numaralı otoparktadır.",
+"acc-taxi.tickets": "Havalimanı taksileri taksimetre kullanır. Pool taksilerin sabit ücreti yoktur: bavulları yüklemeden önce fiyatta anlaşın. Bazı güzergâhlar için kiralık araç ücretleri gelen yolcu salonunda yazılıdır.",
+"dkr-aibd.luggage": "Gelen yolcu alanında ücretsiz bagaj arabaları var.",
+"dkr-aibd.tickets": "Dakar Dem Dikk'i mobil uygulamasından, booking.demdikk.sn adresinden ya da telefonla rezerve edebilirsiniz. Otobüsler uçuşların inişinden yaklaşık bir saat sonra kalkar.",
+"dkr-aibd.platforms": "Dakar Dem Dikk'in AIBD Express hattı Plateau'ya değil, HLM Grand-Yoff son durağına (Léopold Sédar Senghor stadının karşısı) gider. Diğeri Diamniadio TER istasyonuna gider. İkisi de 7/24 çalışır.",
+"dkr-taxi.luggage": "Gelen yolcu alanında ücretsiz bagaj arabaları var.",
+"dkr-taxi.tickets": "Havalimanı varış noktasına göre sabit taksi ücretleri yayımlar (Dakar, Thiès, Mbour, Saly...), geceleri daha yüksek. Otoyol isteğe bağlıdır ve geçiş ücretini siz ödersiniz. Yola çıkmadan ücreti teyit edin."
 }

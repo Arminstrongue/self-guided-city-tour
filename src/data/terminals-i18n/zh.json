@@ -230,5 +230,19 @@
 "LAX.8.transit": "FlyAway 巴士（Union Station、Van Nuys）及免费 LAX Shuttle 停靠每座航站楼；Metro C & K Lines 可经免费 Metro Connector Shuttle 前往 LAX/Metro Transit Center。",
 "LAX.B.serves": "国际航班，含 West Gates（201–225）。请以登机牌/航空公司App上的航站楼为准。",
 "LAX.B.transit": "FlyAway 巴士（Union Station、Van Nuys）及免费 LAX Shuttle 停靠每座航站楼；Metro C & K Lines 可经免费 Metro Connector Shuttle 前往 LAX/Metro Transit Center。",
-"LAX.between": "安检后的空侧步道连接所有航站楼（T1 至 T8 约 2 英里）；航站楼间也有频繁的免费接驳车。"
+"LAX.between": "安检后的空侧步道连接所有航站楼（T1 至 T8 约 2 英里）；航站楼间也有频繁的免费接驳车。",
+"SFO.1.transit": "此处没有BART站：从SFO BART站（国际航站楼）乘免费AirTrain，1–3分钟。",
+"SFO.2.transit": "此处没有BART站：从SFO BART站（国际航站楼）乘免费AirTrain，1–3分钟。",
+"SFO.3.transit": "从SFO BART站（国际航站楼）：步行很近，或乘免费AirTrain（1–3分钟）。",
+"SFO.I.transit": "BART：SFO站位于国际航站楼3层（距旧金山市中心约30分钟）。",
+"SFO.between": "免费AirTrain：Red Line环行所有航站楼和停车楼；Blue Line还停靠Rental Car Center。从国际航站楼到1–3号航站楼1–3分钟。",
+"YYZ.1.transit": "UP Express：Pearson站在1号航站楼，紧邻Terminal Link列车（跟随'Train to City'指示）。约25分钟到Union Station，每15分钟一班。",
+"YYZ.3.transit": "UP Express不停靠此处：从Pearson站（1号航站楼）乘免费Terminal Link列车前往3号航站楼。",
+"YYZ.between": "免费Terminal Link列车往返1号航站楼、3号航站楼和Viscount（Value Park），24小时运行；车程2–8分钟，候车最长4–8分钟。",
+"YYZ.arrive": "经验法则：国内航班提前90分钟，国际航班提前3–4小时；请查看航空公司的建议。",
+"GIG.1.transit": "BRT 42（Madureira）及915、922、328、925、760D和1760D路公交（Charitas）停靠1号航站楼。",
+"GIG.2.transit": "到达层：BRT 42，915、922、328、925路公交，以及前往Terminal Gentileza、Búzios和Macaé的专线巴士。",
+"ACC.2.serves": "国内航班（2号航站楼正改造为国内国际兼用）。请在登机牌或航空公司App上确认。",
+"ACC.3.serves": "国际航班。请在登机牌或航空公司App上确认航站楼。",
+"ACC.arrive": "至少在起飞前2小时办理值机；柜台通常提前2–3小时开放，视航空公司而定。"
 }

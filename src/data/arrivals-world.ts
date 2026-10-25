@@ -278,10 +278,15 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     taxi("kgl-taxi", "táxi do aeroporto · Move", 25, "", { name: "Kigali CBD", lat: -1.9441, lng: 30.0619 })
   ])],
   dkr: [ap("dkr-ap", "Blaise Diagne (Dakar)", "DSS", 14.67, -17.0733, [
-    { id: "dkr-aibd", name: "Navette AIBD (autocarro)", min: 60, fare: "≈ 4 000 XOF", to: { name: "Plateau", lat: 14.668, lng: -17.4321 }, steps: [
-      s("Siga as placas «Navette / Bus» à saída das chegadas.", "Follow the “Navette / Bus” signs outside arrivals.", "Navette AIBD", 4),
-      s("Pague ao balcão ou ao motorista.", "Pay at the counter or the driver.", "XOF"),
-      s("Até ao Plateau (centro de Dacar); conte com trânsito.", "To the Plateau (central Dakar); expect traffic.", "Plateau", 60)
+    { id: "dkr-ter", name: "TER (comboio)", min: 55, fare: "", note: { pt: "Novo desde 28 set 2026: comboio do aeroporto até Dakar, sem trânsito.", en: "New since 28 Sep 2026: airport-to-Dakar train, no traffic." }, to: { name: "Gare de Dakar", lat: 14.672, lng: -17.4301 }, steps: [
+      s("Siga as placas para a estação do TER, no aeroporto.", "Follow the signs to the airport's TER train station.", "TER", 5),
+      s("Apanhe o TER para Dakar; se o comboio terminar em Diamniadio, mude aí para um TER para Dakar (passa a cada 8 min).", "Take the TER towards Dakar; if your train ends at Diamniadio, change there to a Dakar TER (every 8 min).", "TER · Dakar"),
+      s("Saia na estação de Dakar (o terminal, junto ao Plateau).", "Get off at Dakar station (the terminus, next to the Plateau).", "Gare de Dakar", 55)
+    ] },
+    { id: "dkr-aibd", name: "AIBD Express (autocarro Dakar Dem Dikk)", min: 60, fare: "", to: { name: "HLM Grand-Yoff", lat: 14.7468, lng: -17.452 }, steps: [
+      s("À saída das chegadas, procure o autocarro AIBD Express da Dakar Dem Dikk (reserva na app ou em booking.demdikk.sn).", "Outside arrivals, look for the Dakar Dem Dikk AIBD Express bus (book in the app or at booking.demdikk.sn).", "AIBD Express", 4),
+      s("Os autocarros partem cerca de uma hora depois da aterragem dos voos.", "Buses leave about one hour after flights land."),
+      s("Saia no terminal HLM Grand-Yoff, em frente ao estádio Léopold Sédar Senghor; para o Plateau, apanhe um táxi ou Yango.", "Get off at the HLM Grand-Yoff terminus, opposite Léopold Sédar Senghor stadium; for the Plateau, take a taxi or Yango.", "HLM Grand-Yoff", 60)
     ] },
     taxi("dkr-taxi", "táxi oficial · Yango · Heetch", 50, "", { name: "Plateau", lat: 14.668, lng: -17.4321 })
   ])]

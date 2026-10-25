@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "Bis zu drei verstaute Gepäckstücke plus ein Handgepäckstück pro Ticket. Gepäck über 50 lb oder über 62 in (Länge + Breite + Höhe) wird nicht angenommen.",
 "lax-flyaway.tickets": "Bezahlen Sie an Bord mit kontaktloser Visa/Mastercard, Apple Pay oder Google Pay oder kaufen Sie online. Bargeld und nicht kontaktlose Karten werden im Bus nicht akzeptiert.",
 "lax-flyaway.platforms": "Die Fahrt nach Union Station (Patsaouras Bus Plaza) dauert etwa 30-60 Min. Der Einstieg schließt 2 Min. vor Abfahrt; seien Sie 10 Min. früher an der Haltestelle.",
-"tun-taxi.fromBaggage": "Der Haupttaxistand liegt direkt am Flughafenausgang. App-Fahrer dürfen nicht auf das Flughafengelände und warten an der öffentlichen Straße davor."
+"tun-taxi.fromBaggage": "Der Haupttaxistand liegt direkt am Flughafenausgang. App-Fahrer dürfen nicht auf das Flughafengelände und warten an der öffentlichen Straße davor.",
+"ist-saw-m4.fromBaggage": "Die Metrostation am Flughafen hat drei Eingänge: Nr. 3 Terminal, Nr. 2 Sabiha Gökçen Airport Hotel und Nr. 1 Inlands-CIP-Halle & Parkplatz. Von der Ankunft aus nimm den Eingang Terminal.",
+"ist-saw-m4.tickets": "In IETT-Bussen und -Fähren brauchst du eine Istanbulkart. Am Flughafen gibt es sie an IETT-Kiosken beim Bus-Wartebereich, vor dem Terminal auf der Ankunftsebene.",
+"ist-saw-m4.platforms": "Der Flughafen ist Endstation der Linie M4, daher fährt jeder Zug nach Kadıköy. In Ayrılık Çeşmesi in den Marmaray umsteigen; in Kadıköy die Fähre nach Eminönü nehmen (ca. 25 Min.).",
+"ruh-taxi.fromBaggage": "Abholung auf der Ankunftsebene, rund um die Uhr. T1: Apps (Uber, Careem, Bolt, Jeeny) an Säule 11, Airport Taxi an Säule 18. T3/T4: Apps an Säulen 33-34, Taxis an 38-41. T5: Säule 6.",
+"ruh-taxi.luggage": "Warte mit deinem Gepäck an der Säule, bevor der Fahrer kommt: Autos haben in der Abholzone nur 5 Gratisminuten, danach wird ein Bußgeld fällig.",
+"amm-taxi.fromBaggage": "Taxis warten vor dem Terminal: Verlasse die Ankunftshalle und suche die Taxischlange vor dem Gebäude.",
+"acc-taxi.fromBaggage": "Offizielle Flughafentaxis mit Taxameter (Labour Enterprise Trust) und Pool-Taxis warten am Parkplatz 5. Mietwagen mit Fahrer und Taxischalter sind vor der Ankunftshalle, am Parkplatz 2.",
+"acc-taxi.tickets": "Flughafentaxis fahren mit Taxameter. Pool-Taxis haben keinen festen Tarif: Vereinbare den Preis, bevor du das Gepäck einlädst. Mietwagenpreise für einige Strecken hängen in der Ankunftshalle aus.",
+"dkr-aibd.luggage": "Kostenlose Gepäckwagen gibt es im Ankunftsbereich.",
+"dkr-aibd.tickets": "Du kannst Dakar Dem Dikk über die App, auf booking.demdikk.sn oder telefonisch buchen. Die Busse fahren etwa eine Stunde nach der Landung der Flüge ab.",
+"dkr-aibd.platforms": "Der AIBD Express von Dakar Dem Dikk fährt zur Endstation HLM Grand-Yoff (gegenüber dem Stadion Léopold Sédar Senghor), nicht nach Plateau. Ein weiterer fährt zum TER-Bahnhof Diamniadio. Beide fahren rund um die Uhr.",
+"dkr-taxi.luggage": "Kostenlose Gepäckwagen gibt es im Ankunftsbereich.",
+"dkr-taxi.tickets": "Der Flughafen veröffentlicht feste Taxipreise nach Ziel (Dakar, Thiès, Mbour, Saly...), nachts höher. Die Autobahn ist optional, die Maut zahlst du. Bestätige den Preis vor der Abfahrt."
 }

@@ -1935,5 +1935,139 @@ export const TERMINALS_DATA: Record<string, AirportTerminals> = {
    "pt": "Corredores após o controlo de segurança ligam todos os terminais (T1 a T8 cerca de 3 km); há também shuttles gratuitos frequentes entre terminais.",
    "en": "Airside walkways link all terminals after security (T1 to T8 about 2 miles); frequent free courtesy shuttles also run between terminals."
   }
+ },
+ "SFO": {
+  "terminals": [
+   {
+    "code": "1",
+    "name": "Terminal 1",
+    "transit": {
+     "pt": "Sem paragem do BART: da estação SFO do BART (Terminal Internacional) apanhe o AirTrain gratuito, 1–3 min.",
+     "en": "No BART stop here: from SFO BART station (International Terminal) take the free AirTrain, 1–3 min."
+    }
+   },
+   {
+    "code": "2",
+    "name": "Terminal 2",
+    "transit": {
+     "pt": "Sem paragem do BART: da estação SFO do BART (Terminal Internacional) apanhe o AirTrain gratuito, 1–3 min.",
+     "en": "No BART stop here: from SFO BART station (International Terminal) take the free AirTrain, 1–3 min."
+    }
+   },
+   {
+    "code": "3",
+    "name": "Terminal 3",
+    "transit": {
+     "pt": "Da estação SFO do BART (Terminal Internacional): curta caminhada, ou AirTrain gratuito (1–3 min).",
+     "en": "From SFO BART station (International Terminal): short walk, or free AirTrain (1–3 min)."
+    }
+   },
+   {
+    "code": "I",
+    "name": "International Terminal",
+    "transit": {
+     "pt": "BART: a estação SFO fica no Piso 3 do Terminal Internacional (cerca de 30 min do centro de São Francisco).",
+     "en": "BART: SFO station is on Level 3 of the International Terminal (about 30 min from downtown San Francisco)."
+    }
+   }
+  ],
+  "sources": [
+   "https://www.bart.gov/stations/sfia",
+   "https://www.bart.gov/sites/default/files/2025-09/SFOguide_rev092325_web.pdf",
+   "https://511.org/travel/transit/agencies/san-francisco-international-airport-sfo"
+  ],
+  "checked": "2026-10",
+  "between": {
+   "pt": "AirTrain gratuito: a Linha Vermelha circula por todos os terminais e parques; a Linha Azul serve também o Rental Car Center. 1–3 min do Terminal Internacional aos Terminais 1–3.",
+   "en": "Free AirTrain: Red Line loops all terminals and garages; Blue Line also serves the Rental Car Center. 1–3 min from the International Terminal to Terminals 1–3."
+  }
+ },
+ "YYZ": {
+  "terminals": [
+   {
+    "code": "1",
+    "name": "Terminal 1",
+    "transit": {
+     "pt": "UP Express: a estação Pearson fica no Terminal 1, junto ao comboio Terminal Link (siga 'Train to City'). Union Station em cerca de 25 min, a cada 15 min.",
+     "en": "UP Express: Pearson station is in Terminal 1, next to the Terminal Link train (follow 'Train to City'). Union Station in about 25 min, every 15 min."
+    }
+   },
+   {
+    "code": "3",
+    "name": "Terminal 3",
+    "transit": {
+     "pt": "Sem paragem do UP Express: da estação Pearson (Terminal 1) apanhe o comboio gratuito Terminal Link até ao Terminal 3.",
+     "en": "No UP Express stop: from Pearson station (Terminal 1) take the free Terminal Link train to Terminal 3."
+    }
+   }
+  ],
+  "sources": [
+   "https://www.torontopearson.com/en/transportation-and-parking/up-express",
+   "https://www.torontopearson.com/en/transportation-and-parking/terminal-link-train",
+   "https://www.torontopearson.com/en/departures/ready-to-depart",
+   "https://www.upexpress.com/en/up-express-stations/pearson-station"
+  ],
+  "checked": "2026-10",
+  "between": {
+   "pt": "Comboio gratuito Terminal Link entre o Terminal 1, o Terminal 3 e Viscount (Value Park), 24 h por dia; 2–8 min de viagem, esperas até 4–8 min.",
+   "en": "Free Terminal Link train between Terminal 1, Terminal 3 and Viscount (Value Park), 24 h a day; 2–8 min ride, waits of up to 4–8 min."
+  },
+  "arrive": {
+   "pt": "Regra geral do aeroporto: 90 min antes de voos domésticos, 3–4 h antes de internacionais; confirme as indicações da sua companhia aérea.",
+   "en": "Airport rule of thumb: 90 min before domestic flights, 3–4 h before international; check your airline's guidance."
+  }
+ },
+ "GIG": {
+  "terminals": [
+   {
+    "code": "1",
+    "name": "Terminal 1",
+    "transit": {
+     "pt": "O BRT 42 (Madureira) e os autocarros 915, 922, 328, 925, 760D e 1760D (Charitas) param no Terminal 1.",
+     "en": "BRT 42 (Madureira) and buses 915, 922, 328, 925, 760D and 1760D (Charitas) stop at Terminal 1."
+    }
+   },
+   {
+    "code": "2",
+    "name": "Terminal 2",
+    "transit": {
+     "pt": "Piso das chegadas: BRT 42, autocarros 915, 922, 328, 925 e autocarros especiais para o Terminal Gentileza, Búzios e Macaé.",
+     "en": "Arrivals level: BRT 42, buses 915, 922, 328, 925, and special buses to Terminal Gentileza, Búzios and Macaé."
+    }
+   }
+  ],
+  "sources": [
+   "https://www.riogaleao.com/passageiros/page/onibus"
+  ],
+  "checked": "2026-10"
+ },
+ "ACC": {
+  "terminals": [
+   {
+    "code": "2",
+    "name": "Terminal 2",
+    "serves": {
+     "pt": "Voos domésticos (o Terminal 2 está a ser adaptado para uso doméstico e internacional). Confirme no cartão de embarque/app da companhia.",
+     "en": "Domestic flights (Terminal 2 is being repurposed for domestic and international use). Confirm on your boarding pass/airline app."
+    }
+   },
+   {
+    "code": "3",
+    "name": "Terminal 3",
+    "serves": {
+     "pt": "Voos internacionais. Confirme o terminal no cartão de embarque/app da companhia aérea.",
+     "en": "International flights. Confirm the terminal on your boarding pass/airline app."
+    }
+   }
+  ],
+  "sources": [
+   "https://www.gacl.com.gh/passengers-guide/",
+   "https://www.gacl.com.gh/publications/repurposing-of-terminal-2-for-domestic-and-international-flights-underway/"
+  ],
+  "checked": "2026-10",
+  "arrive": {
+   "pt": "Faça o check-in pelo menos 2 h antes da partida; os balcões abrem normalmente 2–3 h antes, conforme a companhia.",
+   "en": "Check in at least 2 h before departure; counters usually open 2–3 h before, depending on the airline."
+  }
  }
 };

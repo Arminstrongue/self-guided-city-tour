@@ -270,5 +270,18 @@
 "lax-flyaway.luggage": "チケット1枚につき、預け荷物3個までと機内持ち込み1個です。50 lb を超える荷物、または 62 in（縦 + 横 + 高さ）を超える荷物は受け付けていません。",
 "lax-flyaway.tickets": "車内で Visa/Mastercard のコンタクトレス決済カード、Apple Pay、Google Pay で支払うか、オンラインで購入してください。車内では現金とコンタクトレス非対応のカードは使えません。",
 "lax-flyaway.platforms": "Union Station（Patsaouras Bus Plaza）までの所要時間は約30-60分です。乗車受付は発車の2分前に締め切るため、10分前には乗り場にお越しください。",
-"tun-taxi.fromBaggage": "メインのタクシー乗り場は空港の出口のすぐそばにあります。配車アプリの運転手は空港内に入れないため、外の公道で待っています。"
+"tun-taxi.fromBaggage": "メインのタクシー乗り場は空港の出口のすぐそばにあります。配車アプリの運転手は空港内に入れないため、外の公道で待っています。",
+"ist-saw-m4.fromBaggage": "空港のメトロ駅には入口が3つあります：No. 3 ターミナル、No. 2 Sabiha Gökçen空港ホテル、No. 1 国内線CIPホール＆駐車場。到着ロビーからはターミナル入口を使ってください。",
+"ist-saw-m4.tickets": "IETTのバスとフェリーにはIstanbulkartが必要です。空港では到着階のターミナル前、バス待合所そばのIETTキオスクで購入できます。",
+"ist-saw-m4.platforms": "空港はM4線の終点なので、どの電車もKadıköy行きです。MarmarayへはAyrılık Çeşmesiで乗り換え。KadıköyからはEminönü行きフェリーへ（約25分）。",
+"ruh-taxi.fromBaggage": "乗車場所は到着階、24時間対応。T1：配車アプリ（Uber、Careem、Bolt、Jeeny）は柱11、Airport Taxiは柱18。T3/T4：アプリは柱33-34、タクシーは38-41。T5：柱6。",
+"ruh-taxi.luggage": "ドライバーが着く前に、荷物を持って柱の前で待ちましょう。乗車エリアの無料停車は5分だけで、超えると罰金がかかります。",
+"amm-taxi.fromBaggage": "タクシーはターミナルの外で待機しています。到着ホールを出て、建物前のタクシー乗り場を探してください。",
+"acc-taxi.fromBaggage": "空港公式のメーター制タクシー（Labour Enterprise Trust）とプールタクシーは第5駐車場で待機。ハイヤーとタクシーブースは到着ホールの外、第2駐車場にあります。",
+"acc-taxi.tickets": "空港タクシーはメーター制です。プールタクシーは料金が決まっていないので、荷物を積む前に料金を決めましょう。一部ルートのハイヤー料金は到着ホールに掲示されています。",
+"dkr-aibd.luggage": "到着エリアに無料の荷物カートがあります。",
+"dkr-aibd.tickets": "Dakar Dem Dikkはアプリ、booking.demdikk.sn、または電話で予約できます。バスはフライト着陸の約1時間後に出発します。",
+"dkr-aibd.platforms": "Dakar Dem DikkのAIBD ExpressはPlateauではなく、HLM Grand-Yoff終点（Léopold Sédar Senghorスタジアム向かい）へ行きます。もう1本はDiamniadioのTER駅行き。どちらも24時間運行。",
+"dkr-taxi.luggage": "到着エリアに無料の荷物カートがあります。",
+"dkr-taxi.tickets": "空港は行き先別のタクシー定額料金（Dakar、Thiès、Mbour、Saly…）を公表しており、夜間は高くなります。高速道路は任意で、通行料はあなたの負担。出発前に料金を確認しましょう。"
 }
