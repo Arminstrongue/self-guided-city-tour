@@ -15,7 +15,9 @@ export type Mode = "plane" | "train" | "bus" | "ship" | "stay" | "walk";
 export type PlaceKind = "station" | "bus" | "port" | "hotel" | "address" | "here";
 export type Endpoint = { kind: "airport" } | { kind: PlaceKind; lat: number; lng: number; label: string };
 /** buffer: margem antes da partida escolhida pelo viajante, em minutos (vazio = a recomendada para a modalidade). */
-export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string; buffer?: number };
+/** next: a cidade para onde segue depois (avião, comboio, autocarro ou navio); `city` é o id quando é uma cidade VOYBU. */
+export type NextCity = { city?: string; name: string };
+export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string; buffer?: number; next?: NextCity };
 
 /** Margem antes da partida (chegar com tempo ao aeroporto, à estação ou ao navio). */
 export const BUFFER_MIN: Record<Mode, number> = { plane: 150, train: 45, bus: 20, ship: 60, stay: 0, walk: 0 };
@@ -126,7 +128,16 @@ export function parseTrip(v: unknown): Trip | null {
   const dt = (x: unknown) => (typeof x === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(x) ? x : "");
   if (!start || !end || !mode) return null;
   return { v: 2, start, end, mode, startAt: dt(o.startAt), deadline: dt(o.deadline), ...(typeof o.key === "string" ? { key: o.key.slice(0, 8) } : {}),
-    ...(typeof o.buffer === "number" && Number.isFinite(o.buffer) && BUFFER_RANGE[mode].max > 0 ? { buffer: bufferOf({ mode, buffer: o.buffer }) } : {}) };
+    ...(typeof o.buffer === "number" && Number.isFinite(o.buffer) && BUFFER_RANGE[mode].max > 0 ? { buffer: bufferOf({ mode, buffer: o.buffer }) } : {}),
+    ...(nextOf(o.next, mode) ?? {}) };
+}
+function nextOf(x: unknown, mode: Mode): { next: NextCity } | null {
+  if (!x || typeof x !== "object" || mode === "stay" || mode === "walk") return null;
+  const n = x as Record<string, unknown>;
+  const name = String(n.name ?? "").replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 60);
+  if (!name) return null;
+  const city = typeof n.city === "string" && /^[a-z0-9-]{2,40}$/.test(n.city) ? n.city : undefined;
+  return { next: city ? { city, name } : { name } };
 }
 
 /** Plano completo: início e fim com posição, e o fim de acordo com a modalidade. */

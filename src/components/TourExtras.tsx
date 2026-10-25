@@ -348,11 +348,11 @@ export function Speak({ text, lang, fallback, t }: { text: string; lang: string;
 /* ---------- Guia prático ---------- */
 type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
 
-export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel, pos }: {
+export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel, pos, onward }: {
   city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number; pos?: { lat: number; lng: number } | null;
   startHop?: { m: "walk" | "metro"; min: number } | null; backLabel?: string;
   money: (v: number) => string; onDone: (id: string) => void; onOpen: (id: string) => void; t: Dict; locale: Locale;
-}) {
+ onward?: React.ReactNode;}) {
   const idx = stops.findIndex((s) => !done[s.id]);
   // Tempo nas próximas horas (chuva ou calor), para a sugestão "para agora".
   const [wx, setWx] = useState<{ rain: boolean; hot: boolean } | null>(null);
@@ -377,6 +377,7 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
       <div className="card nx nx-done">
         <b>{t.nxDoneT}</b>
         <p className="hint">{backLabel ?? fmt(t.nxDoneS, { l: lineText(city.ret.core.line, locale) })}</p>
+        {onward}
       </div>
     );
   }

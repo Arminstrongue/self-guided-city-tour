@@ -6,5 +6,5 @@ import { COMPILED, verifiedOnSite } from "@/data/verify";
 export function VerifyNote({ t, locale, city }: { t: Dict; locale: Locale; city: string }) {
   const m = (ym: string) => new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${ym}-15`));
   const on = verifiedOnSite(city);
-  return <p className={`hint vf ${on ? "ok" : ""}`}>{on ? `✓ ${fmt(t.vfOnSite, { d: m(on) })}` : `ⓘ ${fmt(t.vfCompiled, { d: m(COMPILED) })}`}</p>;
+  return <p className={`hint vfn${on ? " ok" : ""}`}>{on ? `✓ ${fmt(t.vfOnSite, { d: m(on) })}` : `ⓘ ${fmt(t.vfCompiled, { d: m(COMPILED) })}`}</p>;
 }

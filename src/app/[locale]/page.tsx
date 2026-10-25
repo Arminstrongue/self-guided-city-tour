@@ -124,7 +124,7 @@ export default async function Home({ params }: { params: { locale: Locale } }) {
         <div className="sec-h reveal"><h2>{t.featTitle}</h2></div>
         {(() => {
           const all = ([[t.f1t, t.f1s], [t.f2t, t.f2s], [t.f3t, t.f3s], [t.f4t, t.f4s], [t.f5t, t.f5s], [t.f6t, t.f6s], [t.f7t, t.f7s], [t.f8t, t.f8s], [t.f9t, t.f9s], [t.f10t, t.f10s], [t.f11t, t.f11s], [t.f12t, t.f12s]] as const);
-          const card = (i: number) => { const [a, b] = all[i]; const [Ic, q] = FEATS[i]; return <Link key={a} href={`/${params.locale}${FEAT_HREF[i]}`} className="feat2 feat2-link press reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={20} strokeWidth={2.1} /></span><b>{a} <span aria-hidden="true" className="feat2-go">→</span></b><small>{b}</small></Link>; };
+          const card = (i: number) => { const [a, b] = all[i]; const [Ic, q] = FEATS[i]; return <Link key={a} href={`/${params.locale}${FEAT_HREF[i]}`} className="feat2 feat2-link press reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={18} strokeWidth={2.2} /></span><span className="f2-tx"><b>{a}</b><small>{b}</small></span></Link>; };
           // O essencial primeiro (transporte, áudio, hora de voltar, offline); o resto fica a um toque.
           const CORE = [0, 1, 2, 4], MORE = [3, 5, 6, 7, 8, 9, 10, 11];
           return <>

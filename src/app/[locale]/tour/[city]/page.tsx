@@ -17,6 +17,7 @@ import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { exploreProps } from "@/lib/explore-props";
+import { cityCenterOf } from "@/lib/city-center";
 
 export const dynamic = "force-dynamic";
 
@@ -38,14 +39,16 @@ export default async function Tour({ params }: { params: { locale: Locale; city:
   const fx = await fxContext();
   const price = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
 
-  const otherCities = access?.scope === "all" ? (await loadCities()).map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
+  const all = await loadCities();
+  const otherCities = access?.scope === "all" ? all.map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
+  const allCities = all.filter((c) => c.stops.length).map((c) => ({ id: c.id, name: cityName(c, params.locale), ...cityCenterOf(c) }));
   return (
     <main className="app">
       {preview && <Header locale={params.locale} currency={requestCurrency()} />}
       <TourView
         preview={preview ? { buy: `/${params.locale}/c/${city.id}#book`, price: fmt(t.fromP, { p: price.local ?? price.main }), signIn: `/${params.locale}/wallet?signin=1&city=${city.id}` } : undefined}
         locale={params.locale} city={shown} cityLabel={cityName(city, params.locale)}
-        flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} fx={fx}
+        flightAt={access?.flightAt?.toISOString() ?? null} offers={await activeOffers(city.id)} otherCities={otherCities} allCities={allCities} fx={fx}
         flightNo={access?.flightNo ?? null} flightApi={flightApiEnabled()} tripIn={access?.trip ?? null}
         museums={MUSEUMS[city.id] ?? []} plan={access ? access.plan ?? access.scope : preview ? "preview" : "free"}
         explore={exploreProps(city, params.locale)}

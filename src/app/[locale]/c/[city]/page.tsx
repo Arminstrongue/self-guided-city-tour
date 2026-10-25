@@ -16,7 +16,9 @@ import { Track } from "@/components/Track";
 import { GuideCard } from "@/components/GuideCard";
 import { listGuides } from "@/lib/guides";
 import { stopName } from "@/data/stop-names";
-import { loadCity } from "@/lib/content";
+import { loadCity, loadCities } from "@/lib/content";
+import { cityCenterOf } from "@/lib/city-center";
+import { NearbyCities } from "@/components/Onward";
 import { fmt, INTL_LOCALE, LOCALES, isLocale } from "@/i18n/core";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { enabledProviders, sessionEmail } from "@/lib/auth";
@@ -114,6 +116,10 @@ export default async function CityEntry({ params, searchParams }: { params: { lo
           </div>
         </section>
         )}
+        <section className="sec" id="nearby">
+          <NearbyCities locale={params.locale} from={{ id: city.id, name, ...cityCenterOf(city) }}
+            cities={(await loadCities()).filter((c) => c.stops.length).map((c) => ({ id: c.id, name: cityName(c, params.locale), ...cityCenterOf(c) }))} />
+        </section>
           </>
           <>
         <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} />

@@ -1,5 +1,6 @@
 "use client";
 import { useDict } from "@/i18n/client-dict";
+import { CitySwitch } from "./CitySwitch";
 /**
  * "Acabei de chegar" / "Quero chegar a um lugar": onde está → para onde vai → como quer ir → um passo de cada vez,
  * com o texto das placas, "Não encontro", "Mostrar a alguém" e "Ouvir". O passo atual fica guardado (volta onde estava).
@@ -275,10 +276,10 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
 
 function CityBar({ t, cities, city, onChange }: { t: Dict; cities: ArriveCity[]; city: ArriveCity; onChange: (id: string) => void }) {
   return (
-    <label className="arv-city">
+    <div className="arv-city">
       <span>{t.arv.city}</span>
-      <select value={city.id} onChange={(e) => onChange(e.target.value)}>{cities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
-    </label>
+      <CitySwitch className="cs-inline" current={city.id} cities={cities.map((c) => ({ id: c.id, name: c.name }))} label={t.arv.city} placeholder={t.spCity} none={t.gsNone} onPick={onChange} />
+    </div>
   );
 }
 function BackBar({ t, onBack, label, onClose }: { t: Dict; onBack: () => void; label: string; onClose?: () => void }) {

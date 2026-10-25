@@ -1,4 +1,4 @@
-{
+{"nxcT":"Wohin geht es als Nächstes?","nxcHint":"Optional. Stadt eingeben – VOYBU-Städte zuerst, die nächstgelegenen oben.","nxcPh":"Nächste Stadt","nxcGo":"Weiter nach {c}","nxcGoSub":"{k} km · {h} {how} (Schätzung)","nxcNoGuide":"Gute Reise nach {c}! Für diese Stadt haben wir noch keine Route.","nxcStation":"Hier suchen Sie den Bahnhof oder das Terminal, von dem Sie {c} verlassen. Das Ziel wählen Sie weiter unten.","nbT":"Städte in der Nähe von {c}","nbSub":"Für einen Tagesausflug oder die nächste Etappe. Zeiten nach Entfernung geschätzt – Fahrpläne und Tickets beim Anbieter prüfen.","nbDay":"Tagesausflug","nbGround":"mit Zug oder Fernbus","nbPlane":"mit dem Flugzeug, inkl. Flughafen",
   "fxInfo": "nur zur Information",
   "hiAdapted": "Auszug, bearbeitet",
   "revTr": "Von Google übersetzt",

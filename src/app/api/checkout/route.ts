@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   // Passe de 48 h: precisa da hora de partida, exceto quando o viajante fica na cidade.
   if (b.plan === "city" && !b.flightAt && trip?.mode !== "stay") return NextResponse.json({ error: "flight_required" }, { status: 400 });
   // Metadados da Stripe: no máximo 500 caracteres por valor (nomes encurtados).
-  const short = trip ? { ...trip, start: trip.start.kind === "airport" ? trip.start : { ...trip.start, label: trip.start.label.slice(0, 60) }, end: trip.end.kind === "airport" ? trip.end : { ...trip.end, label: trip.end.label.slice(0, 60) } } : null;
+  const short = trip ? { ...trip, next: undefined, start: trip.start.kind === "airport" ? trip.start : { ...trip.start, label: trip.start.label.slice(0, 60) }, end: trip.end.kind === "airport" ? trip.end : { ...trip.end, label: trip.end.label.slice(0, 60) } } : null;
   const tripMeta = short ? JSON.stringify(short).slice(0, 500) : "";
   const city = await loadCity(b.city);
   if (!city) return NextResponse.json({ error: "unknown_city" }, { status: 400 });

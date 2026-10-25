@@ -4,6 +4,8 @@ import { BedDouble, LocateFixed, Plane, Search, Ship, TrainFront, Home, Footprin
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { FAR_KM, km } from "@/lib/route-cost";
+import { NextCityPick } from "./Onward";
+import type { CityPoint } from "@/lib/nearby";
 import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type Endpoint, type Mode, type PlaceKind, type Trip } from "@/lib/trip";
 
 type Hit = { label: string; sub: string; lat: number; lng: number };
@@ -122,8 +124,9 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
  * Onde começa, como sai da cidade e onde tem de terminar. Comboio → o fim é uma estação; navio → um terminal;
  * avião → o aeroporto; "fico na cidade" → o fim é o mesmo ponto do início (ou outro, se quiser).
  */
-export function TripPicker({ t, locale, city, cityName, center, value, onChange }: {
+export function TripPicker({ t, locale, city, cityName, center, value, onChange, cities }: {
   t: Dict; locale: Locale; city: string; cityName: string; center: { lat: number; lng: number }; value: Trip; onChange: (v: Trip) => void;
+  /** Cidades VOYBU para "Para onde vai a seguir?" (sem lista, o campo não aparece). */ cities?: CityPoint[];
 }) {
   const [other, setOther] = useState(value.mode === "stay" && !sameEnd(value.start, value.end));
   const set = (p: Partial<Trip>) => onChange({ ...value, ...p });
@@ -139,7 +142,7 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
       end = value.end.kind !== "airport" && endpointReady(value.end) && !sameEnd(value.end, value.start) ? value.end : { kind: "hotel", lat: NaN, lng: NaN, label: "" };
     }
     else end = other ? value.end : value.start;
-    set({ mode, end });
+    set({ mode, end, ...(mode === "stay" || mode === "walk" ? { next: undefined } : {}) });
   }
   const needKind = END_FOR_MODE[value.mode];
   const endMissing = value.end.kind !== "airport" && !Number.isFinite(value.end.lat);
@@ -163,6 +166,7 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
       {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
       {(needKind === "station" || needKind === "port" || needKind === "bus") && (
         <>
+          <p className="hint">{fmt(t.nxcStation, { c: cityName })}</p>
           <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
             kinds={needKind === "station" ? ["station", "airport"] : needKind === "bus" ? ["bus", "hotel", "station"] : [needKind]} onChange={(e) => set({ end: e })} />
           {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
@@ -180,6 +184,9 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange 
           {other ? <EndpointChooser t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["airport", "station", "port", "hotel"]} onChange={(e) => set({ end: e })} />
             : endpointReady(value.start) ? <p className="bp-ok">✓ {endIcon(value.start)} {endLabel(value.start, t)}</p> : <p className="hint">{t.tpNeedEnd}</p>}
         </>
+      )}
+      {cities && cities.length > 0 && value.mode !== "stay" && value.mode !== "walk" && (
+        <NextCityPick t={t} from={{ id: city, name: cityName, ...center }} cities={cities} value={value.next} onChange={(next) => set({ next })} />
       )}
     </div>
   );

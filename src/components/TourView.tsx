@@ -28,6 +28,9 @@ import dynamic from "next/dynamic";
 import { ArrowLeftRight, ChevronRight } from "lucide-react";
 import { toast } from "@/lib/toast";
 import Portal from "@/components/Portal";
+import { CitySwitch } from "./CitySwitch";
+import { NearbyCities, OnwardLink } from "./Onward";
+import type { CityPoint } from "@/lib/nearby";
 import { achievementText } from "@/lib/achievement-text";
 // Separadores carregados só quando abertos.
 // Partes que só aparecem depois de uma ação (começar, abrir uma paragem, sem rede…): carregadas quando são precisas.
@@ -51,6 +54,7 @@ const FxConverter = dynamic(() => import("./TravelTools").then((m) => m.FxConver
 type Props = {
   locale: Locale; t?: Dict; city: City; cityLabel: string; flightAt: string | null;
   offers: Offer[]; otherCities: { id: string; name: string }[]; fx: FxContext;
+  /** Todas as cidades VOYBU com coordenadas (próxima cidade e cidades perto). */ allCities?: CityPoint[];
   flightNo: string | null; flightApi: boolean; museums: Museum[]; plan: string;
   explore?: Omit<React.ComponentProps<typeof Explore>, "cityId" | "cityName" | "locale" | "t">;
   bios: Record<string, { text: string; lang: string }>; enBios: Record<string, string>;
@@ -69,7 +73,7 @@ function useLocalState<T>(key: string, initial: T) {
   return [v, set] as const;
 }
 
-export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, offers, otherCities, fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview, tripIn }: Props) {
+export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, offers, otherCities, allCities = [], fx, flightNo, flightApi, museums, plan: accessPlan, bios, enBios, explore, preview, tripIn }: Props) {
   const t = useDict(tProp);
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
@@ -262,6 +266,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   }
 
   // Só diz "visitei" quando o passeio terminou; antes é um plano ou progresso parcial.
+  const here = useMemo(() => ({ id: city.id, name: cityLabel, ...cityCenterOf(city) }), [city, cityLabel]);
   const shareVars = { city: cityLabel, n: plan.stops.length, k: doneN, c: money(plan.transport) };
   const shareText = fmt(doneN >= plan.stops.length ? t.shareText : doneN > 0 ? t.shareSome : t.sharePlan, shareVars);
 
@@ -272,10 +277,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           <div style={{ minWidth: 0 }}>
             <span className="label">{t.yourRoute}</span>
             {otherCities.length > 0 ? (
-              <select aria-label={cityLabel} value={city.id} onChange={(e) => { window.location.href = `/${locale}/tour/${e.target.value}`; }}
-                style={{ display: "block", fontFamily: "var(--display)", fontWeight: 700, fontSize: 24, letterSpacing: "-.03em", border: 0, background: "none", padding: 0 }}>
-                {otherCities.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
+              <CitySwitch current={city.id} cities={otherCities} label={t.qs1} placeholder={t.spCity} none={t.gsNone} onPick={(id) => { window.location.href = `/${locale}/tour/${id}`; }} />
             ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
           </div>
           {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{when(leave)}</b></div>
@@ -302,6 +304,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           {/* A caminhar: o próximo passo é a primeira coisa no ecrã; o plano fica recolhido. */}
         {(
           <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
+            onward={<><OnwardLink t={t} locale={locale} from={here} cities={allCities} next={trip.next} />{!trip.next && <NearbyCities t={t} locale={locale} from={here} cities={allCities} max={4} />}</>}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
@@ -318,7 +321,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
-          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
             locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
@@ -357,7 +360,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
-          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} />}
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
             locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
@@ -395,6 +398,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           )}
         {tab === "route" && !preview && (
           <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
+            onward={<><OnwardLink t={t} locale={locale} from={here} cities={allCities} next={trip.next} />{!trip.next && <NearbyCities t={t} locale={locale} from={here} cities={allCities} max={4} />}</>}
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}

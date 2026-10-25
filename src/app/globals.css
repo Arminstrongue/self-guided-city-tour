@@ -2307,7 +2307,7 @@ main:focus{outline:none}
 .feat2-go{color:var(--cobalt);font-weight:600;margin-inline-start:2px}
 [dir="rtl"] .feat2-go{display:inline-block;transform:scaleX(-1)}
 .tk-kind{color:var(--warn,#ff9f0a);font-weight:600;margin-inline-start:6px}
-.vf{margin-top:8px}.vf.ok{color:var(--good)}
+.vfn{margin-top:8px;font-size:12.5px}.vfn.ok{color:var(--good)}
 
 /* Demonstração do produto na página inicial */
 .dm-rail{list-style:none;margin:0;padding:0 0 4px;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(220px,1fr);gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
@@ -3103,3 +3103,66 @@ main.page-in{animation:pageIn .24s cubic-bezier(.2,.8,.2,1) both}
 @media (prefers-reduced-motion: reduce){.ct-panel{animation:none}}
 .rev-tr{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
 .wx-src{font-size:10.5px;opacity:.8}.wx-src a{color:inherit}
+/* Trocar de cidade escrevendo */
+.cs-title{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:0;border:0;background:none;color:inherit;font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-.03em;cursor:pointer}
+.cs-title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs-title svg{flex:none;opacity:.55}
+.cs-inline{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.cs-sheet{display:flex;flex-direction:column;gap:10px;max-height:82dvh}
+.cs-head{display:flex;align-items:center;justify-content:space-between}
+.cs-head b{font-size:17px}
+.cs-list{list-style:none;margin:0;padding:0;overflow:auto;display:grid;gap:2px}
+.cs-row{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:11px 12px;border:0;border-radius:12px;background:none;color:var(--ink);font:inherit;text-align:start;cursor:pointer}
+.cs-row b{font-size:16px;font-weight:600}.cs-row small{color:var(--muted);font-size:12.5px}
+.cs-row.on{background:var(--cobalt-soft);color:var(--cobalt-ink)}
+/* Seguir viagem e cidades perto */
+.nxc{display:grid;gap:4px;margin-top:6px}
+.nxc-go{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:12px 14px;border-radius:14px;background:var(--cobalt-soft);color:var(--cobalt-ink);text-decoration:none}
+.nxc-go span{display:grid;gap:2px}.nxc-go small{opacity:.8;font-size:12.5px}
+.nxc-bye{margin-top:8px}
+.nb h3{margin:0 0 2px;font-size:17px}
+.nb ul{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:2px}
+.nb-row{display:flex;align-items:center;gap:10px;padding:10px 6px;border-radius:12px;color:var(--ink);text-decoration:none}
+.nb-row span{display:grid;gap:1px;flex:1;min-width:0}.nb-row small{color:var(--muted);font-size:12.5px}
+.nb-row svg{flex:none;color:var(--cobalt-ink)}
+.nb-day{flex:none;font-style:normal;font-size:11.5px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink)}
+/* Premium compacto: funcionalidades em linhas (ícone · texto · ›), sem órfãos, menos espaço */
+.feats2{grid-template-columns:1fr;gap:8px}
+@media (min-width:640px){.feats2{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:1100px){.feats2{grid-template-columns:repeat(4,1fr)}}
+.feat2{flex-direction:row;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.feat2 .qi{flex:none;width:34px;height:34px;border-radius:10px;margin:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.f2-tx{display:grid;gap:2px;flex:1;min-width:0}
+.feat2 b{font-size:14.5px}
+.feat2 small{font-size:12.5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.feat2-link::after{content:"";flex:none;width:7px;height:7px;border-right:2px solid var(--muted);border-top:2px solid var(--muted);transform:rotate(45deg);opacity:.5;margin-inline-end:2px}
+[dir="rtl"] .feat2-link::after{transform:rotate(-135deg)}
+.feat2-link:hover{transform:none;border-color:color-mix(in srgb,var(--cobalt) 35%,var(--line))}
+.feats-more>summary{display:flex;width:max-content;margin:12px auto 0;min-height:36px;padding:0 16px;border-radius:999px;font-size:13.5px;font-weight:650;border:0;background:color-mix(in srgb,var(--cobalt) 9%,transparent)}
+.feats-more[open]>summary{margin-bottom:10px}
+/* História compacta */
+.hist-card{padding:16px 18px;gap:8px;line-height:1.55;font-size:15px}
+.hist-lead{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.hist-more>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;margin:2px 0 0;font-size:14px;font-weight:650;color:var(--cobalt-ink);cursor:pointer}
+.hist-more>summary::-webkit-details-marker{display:none}
+.hist-more>summary::after{content:"";width:6px;height:6px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+.hist-more[open]>summary::after{transform:rotate(-135deg)}
+.hist-body{display:grid;gap:10px;margin-top:10px;max-height:60vh;overflow:auto;padding-inline-end:4px;font-size:14.5px;color:color-mix(in srgb,var(--ink) 88%,var(--muted))}
+.hist-src{font-size:11.5px}
+/* Separadores: fundo opaco (o texto não aparece por trás) e espaço para a barra de compra */
+.ct-bar{background:color-mix(in srgb,var(--surface) 96%,transparent)}
+body:has(.sticky-cta.on) main{padding-bottom:104px}
+/* Bom saber: uma só lista compacta (rótulo · dica) em vez de muitos cartões */
+.gk-list{margin:10px 0 0;padding:4px 16px}
+.gk-list>div{display:grid;grid-template-columns:112px 1fr;gap:12px;padding:10px 0;border-top:.5px solid var(--line)}
+.gk-list>div:first-child{border-top:0}
+.gk-list dt{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.gk-list dd{margin:0;font-size:14.5px;line-height:1.45}
+@media (max-width:480px){.gk-list>div{grid-template-columns:1fr;gap:2px}}
+.nb ul{gap:0}
+@media (min-width:640px){.nb ul{grid-template-columns:1fr 1fr;column-gap:16px}}
+.nb-row{padding:8px 4px;gap:10px}
+.nb-row b{font-size:15px}
+.cs-sheet .pk-q{margin:0;height:46px;padding:0 14px;border-radius:14px}
+.cs-sheet .pk-q input{font-size:16px}
+.cs-sheet{min-height:min(72dvh,560px)}

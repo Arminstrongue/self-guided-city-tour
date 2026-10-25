@@ -72,11 +72,19 @@ export function CityHistory({ t, name, k }: { t: Dict; name: string; k: { summar
     <section className="sec hist" id="history">
       <div className="sec-h"><div><h2>{fmt(t.hiTitle, { city: name })}</h2><p>{t.hiSub}</p></div></div>
       <article className="card hist-card">
-        {k.summary && paras(k.summary.text).map((p, i) => <p key={`s${i}`} lang={k.summary!.lang}>{p}</p>)}
-        {k.history && <details>
-          <summary>{t.hiMore}</summary>
-          {paras(k.history.text).map((p, i) => <p key={`h${i}`} lang={k.history!.lang}>{p}</p>)}
-        </details>}
+        {/* Compacto: só o essencial à vista; o resto (resumo e história completa) a um toque. */}
+        {(() => {
+          const sum = k.summary ? paras(k.summary.text).map((p) => ({ p, lang: k.summary!.lang })) : [];
+          const his = k.history ? paras(k.history.text).map((p) => ({ p, lang: k.history!.lang })) : [];
+          const [lead, ...rest] = [...sum, ...his];
+          return <>
+            {lead && <p className="hist-lead" lang={lead.lang}>{lead.p}</p>}
+            {rest.length > 0 && <details className="hist-more">
+              <summary>{t.hiMore}</summary>
+              <div className="hist-body">{rest.map((x, i) => <p key={i} lang={x.lang}>{x.p}</p>)}</div>
+            </details>}
+          </>;
+        })()}
         <small className="hint hist-src">{t.hiSource} {k.summary && <a href={k.summary.url} target="_blank" rel="noopener noreferrer">Wikipedia</a>}{k.history && k.history.url !== k.summary?.url && <>{k.summary ? ", " : ""}<a href={k.history.url} target="_blank" rel="noopener noreferrer">Wikipedia</a></>} · {t.hiAdapted} · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a></small>
       </article>
     </section>
@@ -95,9 +103,9 @@ export function GoodToKnow({ t, locale, city, name }: { t: Dict; locale: Locale;
         {city.ap && <div><span>✈ {t.airportLbl}</span><span>{city.ap.iata} · {city.ap.name}</span></div>}
         <div><span>💶 {t.gkCurrency}</span><span>{city.cur}</span></div>
       </div>
-      <div className="gk-grid">{g.tips.map((tip, i) => (
-        <div key={i} className="card gk"><span className="label">{(t.tipK as Record<string, string>)[tip.k]}</span><p lang={locale === "pt" ? "pt" : "en"}>{tx(tip)}</p></div>
-      ))}</div>
+      <dl className="card gk-list">{g.tips.map((tip, i) => (
+        <div key={i}><dt>{(t.tipK as Record<string, string>)[tip.k]}</dt><dd lang={locale === "pt" ? "pt" : "en"}>{tx(tip)}</dd></div>
+      ))}</dl>
       <VerifyNote t={t} locale={locale} city={city.id} />
     </section>
   );

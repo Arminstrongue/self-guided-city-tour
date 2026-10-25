@@ -1,4 +1,4 @@
-{
+{"nxcT":"¿Adónde va después?","nxcHint":"Opcional. Escriba la ciudad: primero las de VOYBU, de la más cercana a la más lejana.","nxcPh":"Próxima ciudad","nxcGo":"Seguir a {c}","nxcGoSub":"{k} km · {h} {how} (estimación)","nxcNoGuide":"¡Buen viaje a {c}! Aún no tenemos ruta de esa ciudad.","nxcStation":"Aquí busca la estación o terminal desde la que sale de {c}. El destino se elige más abajo.","nbT":"Ciudades cerca de {c}","nbSub":"Para ir y volver en el día o para la próxima etapa. Tiempos estimados por la distancia: confirme horarios y billetes con el operador.","nbDay":"ida y vuelta en el día","nbGround":"en tren o autobús","nbPlane":"en avión, con aeropuerto",
   "fxInfo": "solo informativo",
   "hiAdapted": "extracto adaptado",
   "revTr": "Traducido por Google",
