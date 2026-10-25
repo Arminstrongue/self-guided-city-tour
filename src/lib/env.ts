@@ -10,7 +10,9 @@ const contact = process.env.COMPANY_EMAIL ?? `hello@${host.replace(/:\d+$/, "")}
 function secretOf(): string {
   const s = process.env.NEXTAUTH_SECRET ?? "";
   const building = process.env.NEXT_PHASE === "phase-production-build";
-  if (process.env.NODE_ENV === "production" && !building && s.length < 32) {
+  // Só no servidor: no navegador as variáveis secretas nunca existem (e não devem existir).
+  const server = typeof window === "undefined";
+  if (server && process.env.NODE_ENV === "production" && !building && s.length < 32) {
     throw new Error("NEXTAUTH_SECRET em falta ou curta (mínimo 32 caracteres). Gere com: openssl rand -base64 48");
   }
   return s || "dev-secret-change-me";
