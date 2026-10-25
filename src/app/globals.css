@@ -3298,3 +3298,17 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
 .tc-ol span{display:grid;line-height:1.2;min-width:0}
 .tc-ol b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tc-ol small{font-size:12px;opacity:.65}
+
+/* Admin · monitorização */
+.mon-sum{display:grid;gap:4px;border-left:4px solid #16a34a}
+.mon-sum.bad{border-left-color:#dc2626}
+.mon-sum small{opacity:.7}
+.mon-t{width:100%;border-collapse:collapse;font-size:14px}
+.mon-t th,.mon-t td{padding:10px 12px;text-align:left;border-bottom:.5px solid var(--line);vertical-align:top}
+.mon-t th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;opacity:.6}
+.mon-t td b{display:block}
+.mon-err{display:block;color:#dc2626;font-size:12px}
+.mon-ok{color:#16a34a;font-weight:700;white-space:nowrap}
+.mon-bad{color:#dc2626;font-weight:700}
+.mon-list{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14px}
+@media (max-width:560px){.mon-t th:nth-child(4),.mon-t td:nth-child(4){display:none}}

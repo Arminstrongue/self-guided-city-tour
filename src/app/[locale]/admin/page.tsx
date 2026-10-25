@@ -211,6 +211,7 @@ export default async function Admin(
           <nav className="ad-links">
             <Link href={`/${L}/admin/metrics`}>📈 Métricas e NPS</Link>
             <Link href={`/${L}/admin/content`}>🗺 Cidades e paragens</Link>
+            <Link href={`/${L}/admin/monitor`}>🟢 Monitorização</Link>
             <a href="https://dashboard.stripe.com" target="_blank" rel="noreferrer">💳 Stripe</a>
             <Link href={`/${L}`}>↗ Ver o site</Link>
           </nav>

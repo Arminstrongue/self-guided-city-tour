@@ -1,7 +1,8 @@
 /**
  * Processo automático (serviço "worker" no docker compose): todos os dias recolhe dados novos para cada cidade.
  * - de 6 em 6 horas: resumo "O que há de novo" (eventos, tempo, notícias de cultura em 12 línguas, tendências da app);
- * - uma vez por dia: renova os textos de história/resumo com mais de 7 dias e limpa histórias expiradas.
+ * - uma vez por dia: renova os textos de história/resumo com mais de 7 dias e limpa histórias expiradas;
+ * - de 5 em 5 minutos: circuito de monitorização (páginas, API, certificado, Instagram) com alertas por email e resumo diário.
  * Uso: npx tsx scripts/worker.ts            (fica a correr)
  *      npx tsx scripts/worker.ts --once     (uma volta e sai)
  */
@@ -54,5 +55,21 @@ async function main() {
   setInterval(() => { void safeRound(); }, PULSE_EVERY);
   // Pedidos a guias têm prazos curtos: verificar de 15 em 15 minutos (leve).
   setInterval(() => { void import("../src/lib/guides").then((g) => g.expireStale()).catch((e) => log(`guias: ${e}`)); }, 15 * 60_000);
+  // Monitorização: primeira volta 2 min depois de arrancar (a app pode ainda estar a subir no deploy).
+  setTimeout(() => { void monitor(); setInterval(() => { void monitor(); }, 5 * 60_000); }, 2 * 60_000);
+}
+
+let monitoring = false;
+async function monitor() {
+  if (monitoring || process.env.MONITOR === "0") return;
+  monitoring = true;
+  try {
+    const m = await import("../src/lib/monitor");
+    const ig = await import("../src/lib/instagram");
+    const { staleData } = await import("../src/lib/data-freshness");
+    await m.monitorRound(log, [ig.instagramCheck]);
+    await m.dailySummary(log, staleData, () => ig.instagramSummary());
+    if (new Date().getUTCMinutes() < 5) await m.pruneMonitor();
+  } catch (e) { log(`monitor: ${e}`); } finally { monitoring = false; }
 }
 void main();

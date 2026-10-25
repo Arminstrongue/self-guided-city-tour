@@ -662,3 +662,37 @@ export const stopReports = pgTable("stop_reports", {
   status: text("status").notNull().default("open"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("stop_reports_place_idx").on(t.city, t.stop, t.status)]);
+
+/** Monitorização: estado atual de cada verificação (página, API, certificado, rede social). */
+export const monitorState = pgTable("monitor_state", {
+  name: text("name").primaryKey(),
+  ok: boolean("ok").notNull().default(true),
+  fails: integer("fails").notNull().default(0),          // falhas seguidas
+  alerted: boolean("alerted").notNull().default(false),  // já foi enviado o alerta desta falha
+  since: timestamp("since", { withTimezone: true }).notNull().defaultNow(), // desde quando está neste estado
+  lastAt: timestamp("last_at", { withTimezone: true }).notNull().defaultNow(),
+  lastMs: integer("last_ms").notNull().default(0),
+  lastStatus: integer("last_status").notNull().default(0),
+  lastError: text("last_error").notNull().default("")
+});
+
+/** Histórico das verificações (14 dias), para disponibilidade e tempos de resposta. */
+export const monitorLog = pgTable("monitor_log", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  ok: boolean("ok").notNull(),
+  ms: integer("ms").notNull().default(0),
+  status: integer("status").notNull().default(0),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("monitor_log_name_at_idx").on(t.name, t.at)]);
+
+/** Fotografias diárias das redes sociais (seguidores, publicações, interação recente). */
+export const socialSnapshots = pgTable("social_snapshots", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  network: text("network").notNull(),        // instagram | …
+  account: text("account").notNull().default(""),
+  followers: integer("followers").notNull().default(0),
+  posts: integer("posts").notNull().default(0),
+  data: jsonb("data").$type<Record<string, unknown>>().notNull().default({}),
+  at: timestamp("at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("social_snapshots_net_at_idx").on(t.network, t.at)]);

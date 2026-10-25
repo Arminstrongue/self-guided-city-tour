@@ -40,6 +40,8 @@ services:
       DATABASE_URL: postgres://sgct:${POSTGRES_PASSWORD}@db:5432/sgct
       DB_POOL_MAX: 3
       MEDIA_DIR: /data/media
+      # Monitorização: verifica também a app por dentro da rede do docker (sem Cloudflare/Caddy).
+      MONITOR_INTERNAL: http://app:3000
     # Mesmo volume da app: ao limpar histórias expiradas, apaga também os vídeos e áudios do disco.
     volumes: [media:/data/media]
     command: ["npx", "tsx", "scripts/worker.ts"]
