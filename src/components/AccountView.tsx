@@ -1,4 +1,7 @@
 "use client";
+import { Coins, SunMoon } from "lucide-react";
+import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
+import { myCurrency } from "./TravelTools";
 import { useDict } from "@/i18n/client-dict";
 /**
  * "Definições e atividade" ao estilo do iOS: pesquisa no topo, secções agrupadas com ícones e setas,
@@ -24,7 +27,7 @@ type Acc = {
 type Activity = { likes: { posts: { id: string; handle: string; text: string; photo: boolean; video: string | null }[] }; comments: { id: string; text: string; at: string; postId: string; postText: string; photo: boolean; handle: string }[] };
 type NotifKey = "like" | "comment" | "follow" | "message" | "story_reply" | "video";
 const NOTIF_KEYS: NotifKey[] = ["message", "like", "comment", "follow", "story_reply", "video"];
-type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete" | "activity" | "close" | "words";
+type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete" | "activity" | "close" | "words" | "currency" | "appearance";
 
 function b64ToBytes(b64: string) {
   const pad = "=".repeat((4 - (b64.length % 4)) % 4);
@@ -34,6 +37,14 @@ function b64ToBytes(b64: string) {
 const langName = (l: string, inL: string) => { try { return new Intl.DisplayNames([inL], { type: "language" }).of(l) ?? l; } catch { return l; } };
 
 type Row = { k: string; I: LucideIcon; label: string; sub?: string; value?: string; href?: string; go?: Page; run?: () => void; red?: boolean; blue?: boolean; dl?: boolean };
+
+/** Tema da app: como o sistema, claro ou escuro (guardado neste aparelho). */
+function themeNow(): "system" | "light" | "dark" { try { const v = localStorage.getItem("sgct:theme"); return v === "light" || v === "dark" ? v : "system"; } catch { return "system"; } }
+function setTheme(m: "system" | "light" | "dark") {
+  try { if (m === "system") localStorage.removeItem("sgct:theme"); else localStorage.setItem("sgct:theme", m); } catch { /* ignorar */ }
+  if (m === "system") delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = m;
+}
+function currencyName(c: string, locale: string) { try { return new Intl.DisplayNames([locale], { type: "currency" }).of(c) ?? c; } catch { return c; } }
 
 export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
   const t = useDict(tProp);
@@ -126,6 +137,8 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
         ...(prof ? [{ k: "archive", I: Archive, label: s.archive, href: `/${locale}/u/${prof.handle}?tab=archive` }] : []),
         { k: "notifs", I: Bell, label: t.acNotifs, value: pushState === "on" ? s.on : `${onN}/${NOTIF_KEYS.length}`, go: "notifs" as Page },
         { k: "lang", I: Languages, label: s.language, value: langName(locale, locale), go: "language" as Page },
+        { k: "currency", I: Coins, label: t.gkCurrency, value: myCurrency(), go: "currency" as Page },
+        { k: "appearance", I: SunMoon, label: t.ap.title, value: t.ap[themeNow()], go: "appearance" as Page },
         { k: "offline", I: WifiOff, label: s.offline, href: `/${locale}/wallet#offline` }
       ] },
       { h: s.gSee, rows: [
@@ -363,6 +376,30 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
               <span className="st-tx"><span>{langName(l, l)}</span>{l !== locale && <small>{langName(l, locale)}</small>}</span>
               {l === locale && <span className="st-check" aria-hidden="true">✓</span>}
             </a>
+          ))}
+        </div>
+      </>}
+
+      {page === "currency" && <>
+        <Nav title={t.gkCurrency} />
+        <div className="st-group">
+          {CURRENCIES.map((c) => (
+            <button key={c} type="button" className="st-row" onClick={() => { document.cookie = `${CURRENCY_COOKIE}=${c}; path=/; max-age=${365 * 86400}; samesite=lax`; window.location.reload(); }}>
+              <span className="st-tx"><span>{c}</span><small>{currencyName(c, locale)}</small></span>
+              {c === myCurrency() && <span className="st-check" aria-hidden="true">✓</span>}
+            </button>
+          ))}
+        </div>
+      </>}
+
+      {page === "appearance" && <>
+        <Nav title={t.ap.title} />
+        <div className="st-group">
+          {(["system", "light", "dark"] as const).map((m) => (
+            <button key={m} type="button" className="st-row" onClick={() => { setTheme(m); setPage("root"); }}>
+              <span className="st-tx"><span>{t.ap[m]}</span></span>
+              {themeNow() === m && <span className="st-check" aria-hidden="true">✓</span>}
+            </button>
           ))}
         </div>
       </>}

@@ -3229,3 +3229,72 @@ body:has(.sticky-cta.on) main{padding-bottom:104px}
 .tm-chips button.on{background:var(--cobalt-soft);border-color:var(--cobalt-ink);color:var(--cobalt-ink)}
 .tm-info{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .tm-info li{display:flex;gap:8px;font-size:13.5px;line-height:1.4}.tm-info svg{flex:none;margin-top:2px;color:var(--cobalt-ink)}
+/* Barra de baixo em todo o lado (AppNav): 4 separadores; o conteúdo e os botões fixos sobem por cima dela */
+.appnav{grid-template-columns:repeat(4,1fr)}
+.appnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:58px;color:var(--muted);text-decoration:none;-webkit-tap-highlight-color:transparent}
+.appnav a span{display:grid;place-items:center;height:26px;transition:transform .15s}
+.appnav a small{font-size:10.5px;font-weight:600;letter-spacing:.01em}
+.appnav a.on{color:var(--ink)}
+.appnav a:active span{transform:scale(.88)}
+body:has(.appnav) main{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+body:has(.appnav) footer{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+body:has(.appnav) .sticky-cta{bottom:calc(58px + env(safe-area-inset-bottom));padding-bottom:10px}
+body:has(.appnav) .sos-fab{bottom:calc(74px + env(safe-area-inset-bottom))}
+body:has(.appnav) .tk{bottom:calc(58px + env(safe-area-inset-bottom));height:34px;padding-bottom:0}
+body:has(.appnav) .ex-toast{bottom:calc(82px + env(safe-area-inset-bottom))}
+@media print{.appnav{display:none}}
+/* Folha de filtros */
+.fsx{display:flex;flex-direction:column;max-height:88dvh;padding:0!important;overflow:hidden}
+.fsx-h{position:relative;display:flex;align-items:center;justify-content:center;min-height:56px;padding:10px 56px;border-bottom:.5px solid var(--line)}
+.fsx-h b{text-align:center;font-size:17px}
+.fsx-h>span:empty{display:none}
+.fsx-b{overflow:auto;padding:6px 18px 18px;display:grid;gap:4px}
+.fsx-sec{padding:14px 0;border-bottom:.5px solid var(--line)}
+.fsx-sec:last-child{border-bottom:0}
+.fsx-sec h3{margin:0 0 10px;font-size:17px}
+.fsx-opts{display:flex;flex-wrap:wrap;gap:8px}
+.fsx-opts button{min-height:40px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.fsx-opts button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.fsx-f{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:.5px solid var(--line);background:var(--surface)}
+.fsx-reset{white-space:nowrap;flex:0 0 auto;border:0;background:none;color:var(--ink);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer;min-height:44px}
+.fsx-go{flex:1 1 auto;width:auto!important;min-width:0;max-width:260px}
+.fsx-applied{display:flex;flex-wrap:wrap;gap:8px;padding:10px 0 14px;border-bottom:.5px solid var(--line)}
+/* Botão de filtros + filtros aplicados (barra) */
+.flt-bar{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;align-items:center;margin:-2px 0 10px}
+.flt-bar::-webkit-scrollbar{display:none}
+.flt-btn{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.flt-btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.flt-btn i{font-style:normal;display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--bg);color:var(--ink);font-size:12px}
+.flt-chip{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:5px 10px 5px 12px;border-radius:999px;background:var(--cobalt-soft);color:var(--cobalt-ink);border:0;font:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap}
+/* Detalhes do roteiro (página da cidade) */
+.rd-hl{list-style:none;margin:0;padding:6px 16px;display:grid}
+.rd-hl li{display:flex;align-items:center;gap:14px;padding:11px 0;border-top:.5px solid var(--line);font-size:15px;line-height:1.4}
+.rd-hl li:first-child{border-top:0}
+.rd-ic{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--surface-2);color:var(--ink)}
+.rd-grid{display:grid;gap:12px}
+@media (min-width:720px){.rd-grid{grid-template-columns:1fr 1fr}}
+.rd-box{padding:16px;display:grid;gap:8px;align-content:start}
+.rd-box h3{margin:6px 0 0;font-size:16px}
+.rd-box ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rd-box li{display:flex;gap:10px;font-size:14.5px;line-height:1.4}
+.rd-box li svg{flex:none;margin-top:1px}
+.rd-yes{color:#30a46c}.rd-no{color:#e5484d}
+.rd-dots li::before{content:"";flex:none;width:6px;height:6px;margin-top:8px;border-radius:50%;background:var(--ink)}
+.rd-start{display:flex;gap:10px;margin:0;font-size:14.5px}.rd-start svg{flex:none;color:var(--cobalt-ink);margin-top:2px}
+button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;text-align:start;cursor:pointer}
+
+/* Atrações de topo por país (página inicial) */
+.tc-list{display:grid;gap:8px}
+.tc{border:1px solid var(--line,rgba(0,0,0,.08));border-radius:14px;background:var(--card,#fff);overflow:hidden}
+.tc>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;cursor:pointer;min-height:44px}
+.tc>summary::-webkit-details-marker{display:none}
+.tc>summary small{margin-left:auto;opacity:.65;font-size:12.5px}
+.tc>summary::after{content:"›";transform:rotate(90deg);opacity:.5;transition:transform .2s}
+.tc:not([open])>summary::after{transform:none}
+.tc-ol{list-style:none;margin:0;padding:0 8px 8px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:6px}
+.tc-ol a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;text-decoration:none;color:inherit;min-height:44px}
+.tc-ol a:hover{background:rgba(127,127,127,.08)}
+.tc-ol i{font-style:normal;font-weight:700;font-size:12px;min-width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--tram,#0a7);color:#fff}
+.tc-ol span{display:grid;line-height:1.2;min-width:0}
+.tc-ol b{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tc-ol small{font-size:12px;opacity:.65}

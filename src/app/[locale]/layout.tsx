@@ -16,6 +16,7 @@ import { Welcome } from "@/components/Welcome";
 import { Feel } from "@/components/Feel";
 import { SkipLink } from "@/components/SkipLink";
 import { SheetManager } from "@/components/SheetManager";
+import { AppNav } from "@/components/AppNav";
 import { isLocale, RTL } from "@/i18n/core";
 import { getDict } from "@/i18n/dictionaries";
 import { DictProvider } from "@/i18n/client-dict";
@@ -70,6 +71,7 @@ export default async function LocaleLayout(props: { children: React.ReactNode; p
         <NavTracker />
         <Feel />
         <Welcome locale={params.locale} />
+        <AppNav locale={params.locale} />
         <LangSuggest locale={params.locale} />
         <OfflineBar text={t.ess.offline} link={t.ess.essentials} href={`/${params.locale}/wallet/essentials`} />
         <ErrorTracker />

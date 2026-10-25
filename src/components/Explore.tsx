@@ -15,6 +15,8 @@ import { WHEN_ICON, type When } from "@/data/moments";
 import { saveMemoryAnywhere } from "@/lib/diary";
 import { loadGoogle, type G } from "@/lib/gmaps-client";
 import { MapView, type Focus } from "./MapView";
+import { FilterSheet, type FSection } from "./FilterSheet";
+import { SlidersHorizontal, X as XIcon } from "lucide-react";
 import type { Airport, Stop } from "@/data/cities";
 import type { Museum } from "@/data/museums";
 
@@ -93,6 +95,10 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
   const show = (f: { lat: number; lng: number; name: string }) => { setFocus({ ...f, walk: true }); setTimeout(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 30); };
   const [failed, setFailed] = useState(false);
   const [cat, setCat] = useState<PlaceCat | "all">("all");
+  // Filtros (folha): quando, interesses, aberto agora, grátis, avaliação mínima, distância a pé.
+  const [flt, setFlt] = useState<Record<string, string[]>>({});
+  const [fltOpen, setFltOpen] = useState(false);
+  const has = (k: string, v: string) => (flt[k] ?? []).includes(v);
   const [pos, setPos] = useState<Pos | null>(null);
   const [save, setSave] = useState<{ title: string; lat: number; lng: number } | null>(null);
   const [toPlan, setToPlan] = useState<{ title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" } | null>(null);
@@ -135,14 +141,28 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
   }
 
   const isNow = (m: MomentView) => now.includes(m.when) && (m.days?.includes(weekdayNow(tz)) ?? true);
-  const ms = useMemo(() => [...moments].sort((a, b) => (score(b.h, hobbies) + (isNow(b) ? 2 : 0)) - (score(a.h, hobbies) + (isNow(a) ? 2 : 0))), [moments, hobbies, now]);
+  const msAll = useMemo(() => moments.filter((m) => (!flt.when?.length || flt.when.includes(m.when)) && (!flt.hob?.length || m.h.some((h) => flt.hob.includes(h)))), [moments, flt]);
+  const ms = useMemo(() => [...msAll].sort((a, b) => (score(b.h, hobbies) + (isNow(b) ? 2 : 0)) - (score(a.h, hobbies) + (isNow(a) ? 2 : 0))), [msAll, hobbies, now]); // eslint-disable-line react-hooks/exhaustive-deps
   const cats = useMemo(() => rankCats(hobbies).filter((c) => data?.places?.some((p) => p.cat === c)), [hobbies, data]);
   const from = pos && distM(pos, center) < 40000 ? pos : center;
   const places = useMemo(() => (data?.places ?? []).filter((p) => cat === "all" || p.cat === cat)
+    .filter((p) => (!has("place", "open") || p.openNow === true) && (!has("place", "free") || p.fee === false) && (!flt.rating?.length || (p.rating ?? 0) >= Number(flt.rating[0])))
     .map((p) => ({ ...p, d: distM(from, p) }))
+    .filter((p) => !flt.walk?.length || p.d <= Number(flt.walk[0]) * 80)
     .sort((a, b) => (cat === "all" ? (score(CAT_HOBBIES[b.cat], hobbies) - score(CAT_HOBBIES[a.cat], hobbies)) * 3000 : 0) + (a.d - pop(a)) - (b.d - pop(b)))
-    .slice(0, 60), [data, cat, from, hobbies]);
-  const events = useMemo(() => (data?.events ?? []).slice().sort((a, b) => a.start.localeCompare(b.start)), [data]);
+    .slice(0, 60), [data, cat, from, hobbies, flt]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Datas: hoje, amanhã, este fim de semana, próximos 7 dias (na data local do evento).
+  const dayOk = (d: string) => {
+    const want = flt.evDay?.[0]; if (!want) return true;
+    const iso = (x: Date) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    const t0 = new Date(); const day = (n: number) => iso(new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + n));
+    if (want === "today") return d === day(0);
+    if (want === "tomorrow") return d === day(1);
+    if (want === "week") return d >= day(0) && d <= day(7);
+    if (want === "weekend") { const wd = new Date(`${d}T12:00:00`).getDay(); return (wd === 6 || wd === 0) && d >= day(0) && d <= day(7); }
+    return true;
+  };
+  const events = useMemo(() => (data?.events ?? []).filter((e) => (!has("ev", "free") || e.free) && dayOk(e.localDate)).sort((a, b) => a.start.localeCompare(b.start)), [data, flt]); // eslint-disable-line react-hooks/exhaustive-deps
   const dayFmt = useMemo(() => new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "long", day: "numeric", month: "long" }), [locale]);
   const money = (n: number, c: string) => { try { return new Intl.NumberFormat(INTL_LOCALE[locale], { style: "currency", currency: c, maximumFractionDigits: 0 }).format(n); } catch { return `${n} ${c}`; } };
   const dist = (m: number) => (m < 1800 ? fmt(t.exWalk, { m: Math.max(1, Math.round(m / 80)) }) : fmt(t.exKm, { km: (m / 1000).toFixed(m < 10000 ? 1 : 0) }));
@@ -159,6 +179,34 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
         ))}
       </div>
 
+      {/* Filtros: botão com contador + filtros aplicados (tocar para tirar) */}
+      {tab !== "customs" && (() => {
+        const sections: FSection[] = tab === "moments" ? [
+          { key: "when", title: t.fl.when, options: (["morning", "day", "sunset", "night", "weekend"] as When[]).filter((w) => moments.some((m) => m.when === w)).map((w) => ({ value: w, label: `${WHEN_ICON[w]} ${t.when[w]}` })) },
+          { key: "hob", title: t.fl.interests, options: HOBBIES.filter((h) => moments.some((m) => m.h.includes(h))).map((h) => ({ value: h, label: `${HOBBY_ICON[h]} ${t.hob[h]}` })) }
+        ] : tab === "places" ? [
+          { key: "place", title: t.fl.features, options: [{ value: "open", label: `🟢 ${t.exOpen}` }, { value: "free", label: `🆓 ${t.exFreeEntry}` }] },
+          { key: "rating", title: t.fl.rating, multi: false, options: ["4", "4.5"].map((r) => ({ value: r, label: `★ ${r}+` })) },
+          { key: "walk", title: t.fl.walk, multi: false, options: ["10", "20", "30"].map((m) => ({ value: m, label: fmt(t.fl.walkN, { m }) })) }
+        ] : [
+          { key: "evDay", title: t.fl.dates, multi: false, options: (["today", "tomorrow", "weekend", "week"] as const).map((k) => ({ value: k, label: t.fl.day[k] })) },
+          { key: "ev", title: t.fl.features, options: [{ value: "free", label: `🆓 ${t.exFreeEntry}` }] }
+        ];
+        const keys = new Set(sections.map((x) => x.key));
+        const active = Object.entries(flt).filter(([k]) => keys.has(k)).flatMap(([k, vs]) => vs.map((v) => ({ k, v, label: sections.find((x) => x.key === k)?.options.find((o) => o.value === v)?.label ?? v })));
+        const n = tab === "moments" ? ms.length : tab === "places" ? places.length : events.length;
+        const chips = active.map((a) => <button key={a.k + a.v} type="button" className="flt-chip" onClick={() => setFlt({ ...flt, [a.k]: (flt[a.k] ?? []).filter((x) => x !== a.v) })}>{a.label} <XIcon size={14} aria-hidden="true" /></button>);
+        return <>
+          <div className="flt-bar">
+            <button type="button" className={`flt-btn${active.length ? " on" : ""}`} onClick={() => setFltOpen(true)} aria-haspopup="dialog"><SlidersHorizontal size={16} aria-hidden="true" />{t.fl.title}{active.length ? <i>{active.length}</i> : null}</button>
+            {chips}
+          </div>
+          {fltOpen && <FilterSheet title={t.fl.title} sections={sections} value={flt} onChange={(k, v) => setFlt({ ...flt, [k]: v })}
+            onReset={() => setFlt(Object.fromEntries(Object.entries(flt).filter(([k]) => !keys.has(k))))} onClose={() => setFltOpen(false)}
+            showLabel={fmt(t.fl.show, { n })} resetLabel={t.fl.reset} closeLabel={t.close}
+            applied={chips.length ? <div className="fsx-applied"><h3 style={{ margin: "0 0 4px", width: "100%", fontSize: 17 }}>{t.fl.applied}</h3>{chips}</div> : null} />}
+        </>;
+      })()}
       <div className={`card ex-hob ${picking ? "open" : ""}`}>
         <div className="row-between">
           <b>{hobbies.length && !picking ? `${t.exForYou}: ${hobbies.map((h) => HOBBY_ICON[h]).join(" ")}` : t.exHobbies}</b>

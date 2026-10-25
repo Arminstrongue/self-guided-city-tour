@@ -15,6 +15,7 @@ import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { dualMoney } from "@/lib/currency";
 import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
 import PageQR from "@/components/PageQR";
+import { stopName } from "@/data/stop-names";
 
 export const dynamic = "force-dynamic";
 
@@ -69,6 +70,16 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
   const from = fmt(t.fromP, { p: p.local ?? p.main });
+  // Atrações de topo por país: um país por bloco, numeradas, cada uma leva à página da cidade.
+  const byCountry = new Map<string, { name: string; items: { city: string; cityName: string; id: string; name: string }[] }>();
+  for (const c of list) {
+    const cc = COUNTRY[c.id]; if (!cc) continue;
+    const g = byCountry.get(cc) ?? { name: region.of(cc) ?? cc, items: [] };
+    for (const s of c.stops) if (s.top && !s.x) g.items.push({ city: c.id, cityName: cityName(c, params.locale), id: s.id, name: stopName(s, params.locale) });
+    byCountry.set(cc, g);
+  }
+  const countries = [...byCountry.entries()].filter(([, g]) => g.items.length).sort((a, b) => b[1].items.length - a[1].items.length || a[1].name.localeCompare(b[1].name));
+  const flagOf = (cc: string) => String.fromCodePoint(...[...cc.toUpperCase()].map((ch) => 0x1f1a5 + ch.charCodeAt(0)));
   const featured = ["lon", "lis", "nyc", "par", "rak", "dxb", "rio", "rom", "cpt", "sin", "ist", "mex", "prg", "cai", "bcn", "ams"].filter((id) => list.some((c) => c.id === id));
   return (
     <main className="app xl">
@@ -112,6 +123,22 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
           labels={{ stops: t.stops, search: t.qsSearch, all: t.exAll, none: t.gsNone, showAll: t.dShowAll, regions: t.dRegions }} />
         {SOON.length > 0 && <div className="soon-row"><span style={{ background: "none", boxShadow: "none", paddingInline: 0 }}>{t.soon}:</span>{SOON.map((n) => <span key={n.en}>{n[params.locale] ?? n.en}</span>)}</div>}
       </section>
+
+      {countries.length > 0 && <section className="sec" aria-labelledby="tc-h">
+        <div className="sec-h reveal"><div><h2 id="tc-h">{t.tcTitle}</h2><p>{t.tcSub}</p></div></div>
+        <div className="tc-list">
+          {countries.map(([cc, g], i) => (
+            <details key={cc} className="tc reveal" open={i < 2}>
+              <summary className="press"><span aria-hidden="true">{flagOf(cc)}</span><b>{g.name}</b><small>{fmt(t.tcN, { n: String(g.items.length) })}</small></summary>
+              <ol className="tc-ol">
+                {g.items.slice(0, 12).map((s, k) => (
+                  <li key={s.city + s.id}><Link href={`/${params.locale}/c/${s.city}`} className="press"><i>{k + 1}</i><span><b>{s.name}</b><small>{s.cityName}</small></span></Link></li>
+                ))}
+              </ol>
+            </details>
+          ))}
+        </div>
+      </section>}
 
       <section className="sec">
         <div className="sec-h reveal"><h2>{t.howTitle}</h2></div>

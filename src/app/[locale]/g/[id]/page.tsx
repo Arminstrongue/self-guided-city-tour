@@ -1,4 +1,6 @@
 import { dedupeText } from "@/lib/guide-input";
+import { Check, RotateCcw, ShieldCheck, Users, X } from "lucide-react";
+import { StickyBook } from "@/components/Showcase";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -55,13 +57,25 @@ export default async function GuidePage(
             ? <>{g.meetingPoint}<br /><a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${g.meetingPoint}, ${city ? cityName(city, "en") : ""}`)}`} target="_blank" rel="noopener noreferrer">{t.seeOnMaps} ↗</a></>
             : <span className="hint">{t.gdMeetTbc}</span>}</span></div>
         </div>
+        {/* Destaques e o que inclui (como a página de uma experiência) */}
+        <ul className="rd-hl card">
+          <li><span className="rd-ic"><ShieldCheck size={20} aria-hidden="true" /></span><span>{t.gh.pay}</span></li>
+          <li><span className="rd-ic"><RotateCcw size={20} aria-hidden="true" /></span><span>{t.gh.free}</span></li>
+          <li><span className="rd-ic"><Users size={20} aria-hidden="true" /></span><span>{fmt(t.gh.private, { n: g.maxPeople })}</span></li>
+        </ul>
+        <div className="card rd-box">
+          <h3>{t.gh.incT}</h3>
+          <ul>{t.gh.inc.map((x) => <li key={x}><Check size={18} className="rd-yes" aria-hidden="true" />{x}</li>)}</ul>
+          <h3>{t.gh.excT}</h3>
+          <ul>{t.gh.exc.map((x) => <li key={x}><X size={18} className="rd-no" aria-hidden="true" />{x}</li>)}</ul>
+        </div>
         <section className="stack" style={{ gap: 8 }}><h2 style={{ fontSize: 20 }}>{t.gdAbout}</h2>
           {g.languages[0] && g.languages[0] !== params.locale && <span className="hint">✍️ {fmt(t.gdBioLang, { l: langNames([g.languages[0]], params.locale)[0] ?? g.languages[0] })}</span>}
           <p style={{ whiteSpace: "pre-line" }} lang={g.languages[0] ?? undefined}>{dedupeText(g.bio)}</p>
           {/* A biografia é escrita pelo guia na língua dele: tradução automática à distância de um toque. */}
           <a className="link-btn" style={{ alignSelf: "flex-start" }} target="_blank" rel="noopener noreferrer"
             href={`https://translate.google.com/?sl=auto&tl=${params.locale === "zh" ? "zh-CN" : params.locale}&text=${encodeURIComponent(dedupeText(g.bio).slice(0, 1800))}&op=translate`}>🌐 {t.gdTranslate} ↗</a></section>
-        {bookable && <section className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
+        {bookable && <section id="book" className="card stack" style={{ padding: 16 }}><h2 style={{ fontSize: 20 }}>{t.gdBook}</h2><p className="hint g-indep">🧑‍💼 {fmt(t.gdIndep, { g: g.name })} <a href={`/${params.locale}/legal/terms`} target="_blank" rel="noreferrer">{t.lTerms}</a></p><BookGuide locale={params.locale} guide={{ id: g.id, name: g.name, hourlyCents: g.hourlyCents, maxPeople: g.maxPeople }} tz={city?.tz} /></section>}
         {reviews.length > 0 && (
           <section className="stack" style={{ gap: 8 }}>
             <h2 style={{ fontSize: 20 }}>{t.gdRevTitle}</h2>
@@ -76,6 +90,7 @@ export default async function GuidePage(
         )}
         {city && <Link className="mini" href={`/${params.locale}/guides/${city.id}`}>← {t.gdSeeAll}</Link>}
       </div>
+      {bookable && <StickyBook label={g.name} price={fmt(t.gdPerH, { p: eurH(g.hourlyCents, params.locale) })} cta={t.gh.book} />}
     </main>
   );
 }

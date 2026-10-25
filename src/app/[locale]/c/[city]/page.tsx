@@ -32,6 +32,8 @@ import { CityHub, CityToday, CityHistory, GoodToKnow } from "@/components/CityIn
 import { latestPulse } from "@/lib/city-pulse";
 import { cityKnowledge, ensureKnowledge } from "@/lib/city-knowledge";
 import PageQR from "@/components/PageQR";
+import { RouteDetails } from "@/components/RouteDetails";
+import { accessCount } from "@/data/access";
 
 /** Página de entrada do QR: fotografias, destaques, plano, voo e pagamento. */
 export const dynamic = "force-dynamic";
@@ -94,6 +96,8 @@ export default async function CityEntry(
         <CityTabs tabs={[{ key: "route", label: t.route }, { key: "today", label: t.hbToday }, { key: "safety", label: t.qsEssSafety }, { key: "know", label: t.hbTips }]}>
           <>
         <CityGallery cityId={city.id} cityName={name} stops={stops} locale={params.locale} />
+        <RouteDetails t={t} meta={meta} free={free} accessN={accessCount(core.plan.stops.map((s) => s.id))}
+          start={core.plan.stops[0] ? { name: stopName(core.plan.stops[0], params.locale), lat: core.plan.stops[0].lat, lng: core.plan.stops[0].lng } : null} />
         {free ? (
           <section className="sec book" id="book">
             <div className="sec-h reveal"><div><h2>{t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
