@@ -1,5 +1,7 @@
 "use client";
 import { SheetX } from "@/components/WinNav";
+import { AvatarStudio } from "./AvatarStudio";
+import type { TravelPrefs } from "@/lib/db/schema";
 /**
  * Rede social da carteira (fase 1): perfil, pessoas (pesquisa, pedidos, seguidores), algoritmo e aparência.
  * Tudo leve: só carrega dados quando o viajante abre cada parte.
@@ -49,6 +51,7 @@ async function squarePhoto(file: File): Promise<string> {
 export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyProfile | null; onClose: (changed: boolean) => void }) {
   const [v, setV] = useState({ handle: initial?.handle ?? "", name: initial?.name ?? "", bio: initial?.bio ?? "", photo: initial?.photo ?? null as string | null, isPrivate: initial?.isPrivate ?? true, adult: Boolean(initial) });
   const [err, setErr] = useState(""); const [busy, setBusy] = useState(false); const [del, setDel] = useState(false);
+  const [studio, setStudio] = useState(false);
   const okHandle = /^[a-z0-9._]{3,24}$/.test(v.handle) && !/^[._]|[._]$|\.\./.test(v.handle);
   async function save(e: React.FormEvent) {
     e.preventDefault(); setErr("");
@@ -66,11 +69,11 @@ export function ProfileEditor({ t, initial, onClose }: { t: Dict; initial: MyPro
       <form className="sheet stack sc-edit" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} onSubmit={save}>
         <SheetX onClose={() => onClose(false)} label={t.close} />
         <b style={{ fontSize: 19 }}>{initial ? t.scEdit : t.scCreate}</b>
-        <label className="sc-photo">
+        <button type="button" className="sc-photo" onClick={() => setStudio(true)}>
           <Avatar p={{ photo: v.photo, name: v.name }} size={84} />
           <span className="link-btn">{t.scPhoto}</span>
-          <input type="file" accept="image/*" hidden onChange={async (e) => { const f = e.target.files?.[0]; if (f) setV({ ...v, photo: await squarePhoto(f) }); }} />
-        </label>
+        </button>
+        {studio && <AvatarStudio t={t} name={v.name || v.handle} onClose={() => setStudio(false)} onDone={(photo) => { setV({ ...v, photo }); setStudio(false); }} />}
         <div className="field"><label htmlFor="scn">{t.scName}</label><input id="scn" required maxLength={60} value={v.name} onChange={(e) => setV({ ...v, name: e.target.value })} /></div>
         <div className="field"><label htmlFor="sch">{t.scHandle}</label>
           <div className="sc-handle"><span>@</span><input id="sch" required maxLength={24} value={v.handle} autoCapitalize="none" autoCorrect="off" spellCheck={false}
@@ -169,6 +172,10 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
   const [less, setLess] = useState<Hobby[]>(() => { try { return JSON.parse(localStorage.getItem("sgct:less") ?? "[]"); } catch { return []; } });
   const [follow, setFollow] = useState<string[]>(social?.profile?.cities ?? []);
   const [adding, setAdding] = useState<"more" | "less" | null>(null);
+  const [cq, setCq] = useState("");
+  const [travel, setTravel] = useState<TravelPrefs>(() => { try { return JSON.parse(localStorage.getItem("sgct:travel") ?? "{}"); } catch { return {}; } });
+  useEffect(() => { fetch("/api/me/prefs", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j?.travel) setTravel(j.travel); }).catch(() => null); }, []);
+  const toggleIn = <K extends "types" | "access">(k: K, v: NonNullable<TravelPrefs[K]>[number]) => setTravel((p) => { const cur = (p[k] ?? []) as string[]; return { ...p, [k]: cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v] }; });
   useEffect(() => { if (social?.profile?.lessOf?.length && !less.length) setLess(social.profile.lessOf as Hobby[]); }, [social]); // eslint-disable-line react-hooks/exhaustive-deps
   const setT = (th: Theme, ac: Accent) => { setTA({ theme: th, accent: ac }); applyTheme(th, ac); };
   const summary = useMemo(() => {
@@ -176,10 +183,10 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
     return parts.length ? fmt(t.scLately, { x: parts.length > 1 ? `${parts.slice(0, -1).join(", ")} ${t.scAnd} ${parts[parts.length - 1]}` : parts[0] }) : t.scLatelyNone;
   }, [more, follow, t, cities]);
   async function save() {
-    try { localStorage.setItem("sgct:hobbies", JSON.stringify(more)); localStorage.setItem("sgct:less", JSON.stringify(less)); } catch { /* ignorar */ }
+    try { localStorage.setItem("sgct:hobbies", JSON.stringify(more)); localStorage.setItem("sgct:less", JSON.stringify(less)); localStorage.setItem("sgct:travel", JSON.stringify(travel)); } catch { /* ignorar */ }
     onHobbies(more);
     await Promise.all([
-      fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hobbies: more }) }).catch(() => null),
+      fetch("/api/me/prefs", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ hobbies: more, travel }) }).catch(() => null),
       fetch("/api/me/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cities: follow, lessOf: less }) }).catch(() => null)
     ]);
     onClose(true);
@@ -207,13 +214,26 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
           {adding === "more" && <div className="sc-chips">{HOBBIES.filter((h) => !more.includes(h)).map((h) => chip(h, false, () => { setMore([...more, h]); setLess(less.filter((x) => x !== h)); }))}</div>}
           <b>{t.scCities}</b>
           {!social?.profile && <small className="hint">{t.scCitiesNeed}</small>}
-          <div className="sc-chips">{Object.entries(cities).map(([id, n]) => <button key={id} disabled={!social?.profile} className={`sc-chip ${follow.includes(id) ? "on" : ""}`} onClick={() => setFollow(follow.includes(id) ? follow.filter((x) => x !== id) : [...follow, id])}>{follow.includes(id) ? "✓ " : "+ "}{n}</button>)}</div>
+          {follow.length > 0 && <div className="sc-chips">{follow.filter((id) => cities[id]).map((id) => <button key={id} disabled={!social?.profile} className="sc-chip on" onClick={() => setFollow(follow.filter((x) => x !== id))}>✓ {cities[id]} ✕</button>)}</div>}
+          {social?.profile && <input className="sc-csearch" type="search" value={cq} onChange={(e) => setCq(e.target.value)} placeholder={`🔎 ${t.qsSearch}`} aria-label={t.qsSearch} />}
+          {cq.trim().length > 0 && <div className="sc-chips">{Object.entries(cities).filter(([id, n]) => !follow.includes(id) && n.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(cq.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""))).slice(0, 12).map(([id, n]) => <button key={id} className="sc-chip" onClick={() => { setFollow([...follow, id]); setCq(""); }}>+ {n}</button>)}</div>}
           <b>{t.scLess}</b>
           <div className="sc-chips">
             {less.map((h) => chip(h, true, () => setLess(less.filter((x) => x !== h)), true))}
             <button className="sc-chip add" onClick={() => setAdding(adding === "less" ? null : "less")}>+ {t.scAdd}</button>
           </div>
           {adding === "less" && <div className="sc-chips">{HOBBIES.filter((h) => !less.includes(h)).map((h) => chip(h, false, () => { setLess([...less, h]); setMore(more.filter((x) => x !== h)); }, true))}</div>}
+        </section>
+        <section className="stack" style={{ gap: 10 }}>
+          <b className="sc-h">🧭 {t.trv.title}</b>
+          <small className="hint">{t.trv.sub}</small>
+          <b>{t.trv.type}</b>
+          <div className="sc-chips">{(["layover", "business", "family", "leisure"] as const).map((k) => <button key={k} type="button" aria-pressed={travel.types?.includes(k) ?? false} className={`sc-chip ${travel.types?.includes(k) ? "on" : ""}`} onClick={() => toggleIn("types", k)}>{travel.types?.includes(k) ? "✓ " : ""}{t.trv.types[k]}</button>)}</div>
+          <b>{t.trv.pace}</b>
+          <div className="sc-seg sc-seg3">{(["calm", "balanced", "intense"] as const).map((k) => <button key={k} type="button" aria-pressed={(travel.pace ?? "balanced") === k} className={(travel.pace ?? "balanced") === k ? "on" : ""} onClick={() => setTravel({ ...travel, pace: k })}>{t.trv.paces[k]}</button>)}</div>
+          <b>{t.trv.access}</b>
+          <div className="sc-chips">{(["steps", "stroller", "wheelchair"] as const).map((k) => <button key={k} type="button" aria-pressed={travel.access?.includes(k) ?? false} className={`sc-chip ${travel.access?.includes(k) ? "on" : ""}`} onClick={() => toggleIn("access", k)}>{travel.access?.includes(k) ? "✓ " : ""}{t.trv.acc[k]}</button>)}</div>
+          {(travel.access?.length ?? 0) > 0 && <small className="hint">♿ {t.trv.accNote}</small>}
         </section>
         <div className="grid2"><button className="btn ghost press" onClick={() => onClose(false)}>{t.close}</button><button className="btn press" onClick={() => void save()}>{t.scSave}</button></div>
         <a className="hint" href={`/${locale}/legal/privacy`} style={{ fontSize: 12 }}>{t.lPrivacy}</a>

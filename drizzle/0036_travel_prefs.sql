@@ -1,0 +1,1 @@
+ALTER TABLE "traveller_prefs" ADD COLUMN IF NOT EXISTS "travel" jsonb DEFAULT '{}'::jsonb NOT NULL;

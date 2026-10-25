@@ -1,5 +1,5 @@
 "use client";
-import { Coins, SunMoon } from "lucide-react";
+import { Coins, SunMoon, MapPin } from "lucide-react";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 import { myCurrency } from "./TravelTools";
 import { useDict } from "@/i18n/client-dict";
@@ -54,6 +54,8 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
   const [editing, setEditing] = useState(false);
   const [msg, setMsg] = useState("");
   const [pushState, setPushState] = useState<"unknown" | "on" | "off" | "denied" | "unsupported" | "ios">("unknown");
+  const [geo, setGeo] = useState<"granted" | "denied" | "prompt" | null>(null);
+  useEffect(() => { navigator.permissions?.query({ name: "geolocation" as PermissionName }).then((p) => { setGeo(p.state as "granted"); p.onchange = () => setGeo(p.state as "granted"); }).catch(() => setGeo(null)); }, []);
   const [del, setDel] = useState("");
   const [busy, setBusy] = useState("");
   const [page, setPage] = useState<Page>("root");
@@ -144,7 +146,9 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
       { h: s.gSee, rows: [
         ...(prof ? [{ k: "privacy", I: Lock, label: t.acPrivacy, value: ok.isPrivate ? s.private : s.public, go: "privacy" as Page }] : []),
         ...(prof ? [{ k: "close", I: Star, label: t.cf.close, value: String(ok.closeFriends.filter((x) => x.close).length), go: "close" as Page }] : []),
-        { k: "blocked", I: Ban, label: t.acBlocked, value: String(ok.blocked.length), go: "blocked" as Page }
+        { k: "blocked", I: Ban, label: t.acBlocked, value: String(ok.blocked.length), go: "blocked" as Page },
+        { k: "loc", I: MapPin, label: t.trv.loc, sub: t.trv.locWhy, value: geo === "granted" ? t.trv.locOn : geo === "denied" ? t.trv.locOff : t.trv.locAsk,
+          run: async () => { if (geo === "granted") return; navigator.geolocation?.getCurrentPosition(() => setGeo("granted"), () => setGeo("denied")); } }
       ] },
       { h: s.gInteract, rows: [
         { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page },
@@ -215,7 +219,7 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
           <div className="st-group">
             <button type="button" className="st-row st-acc" onClick={() => setEditing(true)}>
               {prof ? <Avatar p={prof} size={56} /> : <span className="st-ic-big"><UserRound size={28} aria-hidden="true" /></span>}
-              <span className="st-tx"><span className="st-me-n">{prof?.name ?? t.acNoProfile}</span><small>{prof ? `@${prof.handle} · ` : ""}{a.email}</small><small>{s.accSub}</small></span>
+              <span className="st-tx"><span className="st-me-n">{prof?.name ?? t.acNoProfile}</span><small>{prof ? `@${prof.handle} · ` : ""}{a.email}</small><small className="st-ok">✓ {t.trv.emailOk} · {t.trv.signInHow}</small></span>
               <ChevronRight size={18} className="st-chev" aria-hidden="true" />
             </button>
             {prof && <a className="st-row" href={`/${locale}/u/${prof.handle}`}><UserRound size={22} strokeWidth={1.8} className="st-ic" aria-hidden="true" /><span className="st-tx"><span>{t.acView}</span></span><ChevronRight size={18} className="st-chev" aria-hidden="true" /></a>}

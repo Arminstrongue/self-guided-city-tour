@@ -12,7 +12,9 @@ import { BackLink } from "./BackLink";
 import { toast } from "@/lib/toast";
 import { Minus, Plus, Sparkles, Map as MapIcon, X } from "lucide-react";
 
-type CityIn = { id: string; name: string; stops: { id: string; name: string; lat: number; lng: number; top: boolean }[] };
+type CityIn = { id: string; name: string; stops: { id: string; name: string; lat: number; lng: number; top: boolean; access?: boolean }[] };
+type Travel = { types?: string[]; pace?: "calm" | "balanced" | "intense"; access?: string[] };
+const readTravel = (): Travel => { try { return JSON.parse(localStorage.getItem("sgct:travel") ?? "{}"); } catch { return {}; } };
 export const DRAFT_KEY = "sgct:plan-draft";
 const GROUP_ICON: Record<DayGroup, string> = { sights: "🏛", leisure: "🌿", food: "🍽", art: "🎨", nature: "🏖", night: "🌙", shopping: "🛍", family: "🧸" };
 const ORDER = Object.keys(DAY_GROUPS) as DayGroup[];
@@ -37,7 +39,11 @@ export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDa
   const [day, setDay] = useState(1);
   const [busy, setBusy] = useState(false);
   const [needSign, setNeedSign] = useState(false);
-  useEffect(() => { setGroups(presetGroups.length ? presetGroups : initialGroups()); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const tr = readTravel();
+    const g = presetGroups.length ? presetGroups : initialGroups();
+    setGroups(!presetGroups.length && tr.types?.includes("family") && !g.includes("family") ? [...g, "family"] : g);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggle = (g: DayGroup) => setGroups((x) => (x.includes(g) ? x.filter((y) => y !== g) : [...x, g]));
   async function build() {
@@ -46,8 +52,13 @@ export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDa
     const r = await fetch(`/api/explore?city=${city.id}&locale=${locale}`).catch(() => null);
     const places: Place[] = r?.ok ? ((await r.json().catch(() => null))?.places ?? []) : [];
     const hobbies = groupsToHobbies(groups).filter((h) => (HOBBIES as readonly string[]).includes(h));
-    const cands = [...stopCandidates(city.stops), ...candidates(moments, places)];
-    setItems(autoPlan(cands, hobbies, days, 1, perDay(cands.length, days)));
+    // Preferências de viagem: sem escadas/subidas quando pedido; ritmo calmo = menos lugares por dia, intenso = mais.
+    const tr = readTravel();
+    const stops = tr.access?.length ? city.stops.filter((s) => !s.access) : city.stops;
+    const cands = [...stopCandidates(stops), ...candidates(moments, places)];
+    const base = perDay(cands.length, days);
+    const cap = tr.pace === "calm" ? Math.min(base, 3) : tr.pace === "intense" ? Math.max(base, 5) : base;
+    setItems(autoPlan(cands, hobbies, days, 1, cap));
     setDay(1); setBusy(false); setNeedSign(false);
     requestAnimationFrame(() => document.getElementById("dp-res")?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }

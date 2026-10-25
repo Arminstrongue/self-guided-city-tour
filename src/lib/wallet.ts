@@ -45,6 +45,7 @@ export async function walletFor(email: string) {
     })),
     memories: memories.map((m) => ({ id: m.id, city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo, lat: m.lat ? Number(m.lat) : null, lng: m.lng ? Number(m.lng) : null, at: m.takenAt.getTime() })),
     hobbies: prefs[0]?.hobbies ?? [],
+    travel: (prefs[0]?.travel ?? {}) as import("./db/schema").TravelPrefs,
     saved: prefs[0]?.saved ?? [],
     visited: prefs[0]?.visited ?? [],
     plans: plans.map((p) => ({ id: p.id, title: p.title, city: p.city, cityName: p.cityName, startDate: p.startDate, days: p.days, count: p.items.length, updatedAt: p.updatedAt.toISOString(),
@@ -69,10 +70,10 @@ export async function removeMemory(email: string, id: string) {
   await d.delete(schema.travellerMemories).where(and(eq(schema.travellerMemories.id, id), eq(schema.travellerMemories.email, email)));
 }
 
-export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: Wallet["saved"]; visited?: Wallet["visited"] }) {
+export async function setPrefs(email: string, p: { hobbies?: string[]; saved?: Wallet["saved"]; visited?: Wallet["visited"]; travel?: import("./db/schema").TravelPrefs }) {
   const d = await db();
-  const set = { ...(p.hobbies ? { hobbies: p.hobbies } : {}), ...(p.saved ? { saved: p.saved } : {}), ...(p.visited ? { visited: p.visited } : {}), updatedAt: new Date() };
-  await d.insert(schema.travellerPrefs).values({ email, hobbies: p.hobbies ?? [], saved: p.saved ?? [], visited: p.visited ?? [] })
+  const set = { ...(p.hobbies ? { hobbies: p.hobbies } : {}), ...(p.saved ? { saved: p.saved } : {}), ...(p.visited ? { visited: p.visited } : {}), ...(p.travel ? { travel: p.travel } : {}), updatedAt: new Date() };
+  await d.insert(schema.travellerPrefs).values({ email, hobbies: p.hobbies ?? [], saved: p.saved ?? [], visited: p.visited ?? [], travel: p.travel ?? {} })
     .onConflictDoUpdate({ target: schema.travellerPrefs.email, set });
 }
 

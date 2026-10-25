@@ -253,6 +253,13 @@
       "when": 1792938117722,
       "tag": "0035_monitor",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792955912959,
+      "tag": "0036_travel_prefs",
+      "breakpoints": true
     }
   ]
 }

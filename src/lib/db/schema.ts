@@ -221,9 +221,12 @@ export const travellerPrefs = pgTable("traveller_prefs", {
   hobbies: jsonb("hobbies").$type<string[]>().notNull().default([]),
   saved: jsonb("saved").$type<{ city: string; cityName?: string; title: string; lat: number; lng: number; icon?: string; at: number }[]>().notNull().default([]),
   visited: jsonb("visited").$type<{ name: string; country: string; year?: number; want?: boolean; at: number }[]>().notNull().default([]),
+  /** Preferências de viagem: tipos de viagem, ritmo e necessidades de acessibilidade (só o próprio as vê). */
+  travel: jsonb("travel").$type<TravelPrefs>().notNull().default({}),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
+export type TravelPrefs = { types?: ("layover" | "business" | "family" | "leisure")[]; pace?: "calm" | "balanced" | "intense"; access?: ("steps" | "stroller" | "wheelchair")[] };
 export type PlanItem = { id: string; day: number; time?: string; title: string; kind: "moment" | "place" | "stop" | "custom"; lat?: number; lng?: number; note?: string; icon?: string };
 export const travellerPlans = pgTable("traveller_plans", {
   id: uuid("id").primaryKey().defaultRandom(),

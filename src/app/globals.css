@@ -1375,7 +1375,7 @@ html,body{overflow-x:clip}
 
 /* ===================== Navegação de app (update59) ===================== */
 .wl-app{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
-.wl-bar{position:sticky;top:calc(58px + env(safe-area-inset-top,0px));z-index:35;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 -16px;padding:8px 16px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border-bottom:.5px solid var(--line)}
+.wl-bar{position:sticky;top:calc(52px + env(safe-area-inset-top,0px));z-index:35;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 -16px;padding:8px 16px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border-bottom:.5px solid var(--line)}
 .wl-bar-t{font-size:17px;font-weight:700;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wl-bar-brand{font-size:17px;font-weight:800;letter-spacing:-.02em}
 .wl-bar-ic{position:relative;width:38px;height:38px;border-radius:50%;border:0;background:transparent;color:var(--ink);font-size:19px;display:grid;place-items:center;cursor:pointer;text-decoration:none}
@@ -1409,7 +1409,7 @@ html,body{overflow-x:clip}
 .wl-me-nums small{font-size:11.5px;opacity:.8}
 .wl-card-sm .wl-me-n{font-size:15px}
 .wl-card-sm .wl-me-acts{grid-template-columns:1fr 1fr auto}
-.wl-seg{position:sticky;top:calc(112px + env(safe-area-inset-top,0px));z-index:30;display:grid;grid-template-columns:repeat(5,1fr);margin:0 -16px;padding:0 8px;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:.5px solid var(--line)}
+.wl-seg{position:sticky;top:calc(106px + env(safe-area-inset-top,0px));z-index:30;display:grid;grid-template-columns:repeat(5,1fr);margin:0 -16px;padding:0 8px;background:color-mix(in srgb,var(--bg) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:.5px solid var(--line)}
 .wl-seg button{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 0 8px;border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;border-bottom:2px solid transparent}
 .wl-seg button span{font-size:18px;filter:grayscale(1);opacity:.7}
 .wl-seg button small{font-size:10.5px;font-weight:600}
@@ -3633,3 +3633,38 @@ button.ch-who{border:0;background:none;padding:0;font:inherit;color:inherit;text
 .ci-row.ci-top{padding:12px 14px}
 .ci-swatches{padding:4px 14px 14px}
 .ci-strip{padding:2px 14px 14px}
+/* Preferências de viagem e avatar */
+.sc-csearch{width:100%;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-size:15px}
+.sc-seg3 button{white-space:normal;line-height:1.2;font-size:13.5px;padding:8px 6px}
+.avs-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:var(--surface-2)}
+.avs-tabs button{min-height:40px;border:0;border-radius:9px;background:none;color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.avs-tabs button.on{background:var(--surface);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.avs-stage{display:grid;justify-items:center;gap:6px}
+.avs-cv{width:200px;height:200px;border-radius:50%;box-shadow:0 8px 24px rgba(0,0,0,.18);touch-action:none;cursor:grab;background:var(--surface-2)}
+.avs-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px}
+.avs-row.wrap{flex-wrap:wrap}
+.avs-bg{flex:none;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer}
+.avs-bg.on{outline:3px solid var(--ink);outline-offset:2px}
+.avs-sym{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);font-size:22px;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+.avs-sym.ini{font-size:15px;font-weight:800}
+.avs-sym.on{border:2px solid var(--ink);background:var(--surface)}
+.avs-chip{min-height:38px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);font:inherit;font-weight:600;cursor:pointer}
+.avs-chip.on{background:var(--ink);color:var(--bg)}
+.avs-pick{position:relative}
+.avs-video{width:100%;max-height:180px;border-radius:12px;background:#000}
+button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;font:inherit}
+/* As minhas viagens (perfil) */
+.tst{display:grid;gap:10px;padding:16px;border-radius:22px;background:var(--surface);border:1px solid var(--line)}
+.tst-h b{font-size:16px}
+.tst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tst-grid>div{display:grid;gap:2px;padding:10px;border-radius:14px;background:var(--surface-2)}
+.tst-grid svg{color:var(--muted)}
+.tst-grid b{font-size:20px;letter-spacing:-.01em}
+.tst-grid small{font-size:12px;color:var(--muted)}
+.tst-next,.tst-style{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--surface-2);border:0;color:var(--ink);text-decoration:none;font:inherit;text-align:left;cursor:pointer}
+.tst-next span,.tst-style span{flex:1;min-width:0;display:grid;gap:1px}
+.tst-next small,.tst-style small{font-size:12px;color:var(--muted)}
+.tst-next b,.tst-style b{font-size:15px}
+.tst-next em,.tst-style em{font-style:normal;font-size:13px;font-weight:700;color:var(--cobalt,#0a66c2)}
+.tst-next svg{flex:none;color:var(--muted)}
+.st-ok{color:#1e7a3a!important}

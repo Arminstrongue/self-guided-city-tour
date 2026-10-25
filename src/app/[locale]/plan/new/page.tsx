@@ -10,6 +10,7 @@ import { stopName } from "@/data/stop-names";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { isLocale, INTL_LOCALE } from "@/i18n/core";
 import { DAY_GROUPS, type DayGroup } from "@/lib/autoplan";
+import { accessOf } from "@/data/access";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export default async function NewDaysPlan(props: { params: Promise<{ locale: Loc
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <DaysPlanner locale={params.locale} cities={cities} initialDays={days} presetGroups={groups}
-        city={city ? { id: city.id, name: cityName(city, params.locale), stops: city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), lat: s.lat, lng: s.lng, top: Boolean(s.top) })) } : null}
+        city={city ? { id: city.id, name: cityName(city, params.locale), stops: city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), lat: s.lat, lng: s.lng, top: Boolean(s.top), access: accessOf(s.id).length > 0 })) } : null}
         moments={ex?.moments ?? []} />
     </main>
   );

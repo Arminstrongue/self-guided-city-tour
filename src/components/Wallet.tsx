@@ -21,6 +21,7 @@ import type { LucideIcon } from "lucide-react";
 import { currencyForCountry } from "@/lib/currency";
 import { useUnread } from "@/lib/unread-client";
 import { PointsCard, usePoints } from "./Points";
+import { TravelStats } from "./TravelStats";
 import { useLiveConnection } from "@/lib/live-client";
 import dynamic from "next/dynamic";
 // Ecrãs e folhas que só carregam quando são abertos (a carteira abre mais depressa).
@@ -112,6 +113,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: 0 }); };
 
   const signed = w && w !== "anon" ? w : null;
+  // Preferências de viagem da conta também neste telemóvel (o planeador usa-as sem nova ida ao servidor).
+  useEffect(() => { if (signed?.travel) { try { localStorage.setItem("sgct:travel", JSON.stringify(signed.travel)); } catch { /* ignorar */ } } }, [signed?.travel]);
   // Roteiro de vários dias criado antes de entrar: grava-o agora e abre-o.
   useEffect(() => {
     if (!signed) return;
@@ -156,7 +159,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     for (const p of signed?.passes ?? []) if (p.city && cities[p.city]) m.set(cities[p.city].toLowerCase(), countryOf[p.city] ?? "");
     for (const x of memories) m.set(x.cityName.toLowerCase(), countryOf[x.city] ?? "");
     for (const v of signed?.visited ?? []) if (!v.want) m.set(v.name.toLowerCase(), v.country);
-    return { cities: m.size, countries: new Set([...m.values()].filter(Boolean)).size };
+    const ccs = new Set([...m.values()].filter(Boolean));
+    return { cities: m.size, countries: ccs.size, ccs: [...ccs] };
   }, [signed, memories, cities, countryOf]);
   const lvl = LEVELS.filter((n) => world.cities >= n).length - 1;
   const nextAt = LEVELS[lvl + 1];
@@ -390,7 +394,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
             {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
           </div>}
         </section>
-        {signed && <PointsCard t={t} locale={locale} s={points} onOpen={() => setPointsOpen(true)} />}</>}
+        {signed && <PointsCard t={t} locale={locale} s={points} onOpen={() => setPointsOpen(true)} />}
+        {signed && <TravelStats t={t} locale={locale} world={world} plans={signed.plans} travel={signed.travel} onEdit={() => setSettings(true)} />}</>}
         <nav className="wl-seg" role="tablist">
           {profileSubs.map((k) => (
             <button key={k} role="tab" aria-selected={sub === k} className={sub === k ? "on" : ""} onClick={() => go(k)}>
