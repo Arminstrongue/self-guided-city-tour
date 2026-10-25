@@ -22,7 +22,7 @@ export default async function Success({ params, searchParams }: { params: { loca
         ) : (
           <>
             <h1 style={{ fontSize: 30 }}>✓ {t.successTitle}</h1>
-            <p>{fmt(t.successSub, { email })}</p>
+            <p>{email ? fmt(t.successSub, { email }) : t.successSub.split(/(?<=[.。])\s*/)[0]}</p>
             <Link className="btn tram" href={`/${params.locale}/tour/${city?.id ?? "lon"}`}>{t.openTour}</Link>
           </>
         )}

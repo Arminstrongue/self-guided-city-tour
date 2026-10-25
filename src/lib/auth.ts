@@ -69,10 +69,19 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     // Sessões Google/Apple/Facebook também obedecem a "terminar sessão em todos os dispositivos" e a apagar a conta.
+    // A hora de entrada (authAt) fica fixa: o NextAuth renova o token a cada pedido, por isso o "iat" não serve.
+    // Sessão revogada → erro aqui: o NextAuth apaga o cookie e a sessão deixa de existir de vez.
+    async jwt({ token, user }) {
+      if (user) token.authAt = Math.floor(Date.now() / 1000);
+      const email = typeof token.email === "string" ? token.email.toLowerCase() : null;
+      const at = typeof token.authAt === "number" ? token.authAt : typeof token.iat === "number" ? token.iat : 0;
+      if (email && at < (await sessionsAfter(email))) throw new Error("session_revoked");
+      return token;
+    },
     async session({ session, token }) {
       const email = session.user?.email?.toLowerCase();
-      const iat = typeof token.iat === "number" ? token.iat : 0;
-      if (email && iat < (await sessionsAfter(email))) return { expires: session.expires } as typeof session;
+      const at = typeof token.authAt === "number" ? token.authAt : typeof token.iat === "number" ? token.iat : 0;
+      if (email && at < (await sessionsAfter(email))) return { expires: session.expires } as typeof session;
       return session;
     }
   }
