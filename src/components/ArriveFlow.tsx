@@ -14,6 +14,7 @@ import { arrivalsFor, fareText, optionName, type ArrivalPoint, type Step } from 
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
 import { MiniRoute } from "./MiniRoute";
+import { StationGuide } from "./StationGuide";
 import { openLink } from "./ExtLink";
 import type { GuideStep } from "@/lib/route-steps";
 
@@ -236,6 +237,8 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
           {(step || g) && <button type="button" className="arv-sm press" onClick={() => say(step ? tx(step) : gText, locale)}><Volume2 size={18} aria-hidden="true" /> {a.listen}</button>}
         </div>
       </div>
+      {/* Guia da estação: elevadores, malas, bilhetes, plataformas — aberto no 1.º passo, recolhido nos seguintes. */}
+      {opt && i < steps.length && <StationGuide key={`${opt.id}-${i === 0}`} t={t} locale={locale} optionId={opt.id} open={i === 0} />}
       <p className="arv-note">{a.source}</p>
 
       {arrive && arrive.kind !== "checking" && (

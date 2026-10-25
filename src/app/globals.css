@@ -3181,3 +3181,21 @@ body:has(.sticky-cta.on) main{padding-bottom:104px}
 /* Alvos de toque com pelo menos 40 px (sem mudar o aspeto) */
 .sp-x{width:36px;height:36px}
 .rf-tbtn{min-height:36px;padding:8px 12px}
+/* Guia da estação (Acabei de chegar) */
+.sg{margin-top:12px;border-radius:18px;background:var(--surface);border:.5px solid var(--line);overflow:hidden}
+.sg-h{display:flex;align-items:center;gap:8px;width:100%;min-height:48px;padding:10px 14px;border:0;background:none;color:var(--ink);font:inherit;text-align:start;cursor:pointer}
+.sg-h b{font-size:15px;flex:1}.sg-h small{color:var(--muted);font-size:12.5px}.sg-h svg{flex:none;color:var(--muted);transition:transform .2s}
+.sg-b{padding:0 14px 14px;display:grid;gap:10px}
+.sg-follow{display:grid;gap:6px}
+.sg-sign{justify-self:start;padding:8px 14px 8px 18px;border-radius:10px;background:#111;color:#ffd60a;font-weight:700;font-size:15px;letter-spacing:.01em}
+.sg-follow p{margin:0;font-size:14px;line-height:1.45}
+.sg-photo{margin:0;border-radius:14px;overflow:hidden;background:var(--surface-2)}
+.sg-photo img{display:block;width:100%;max-height:220px;object-fit:cover}
+.sg-photo figcaption{padding:6px 10px;font-size:11px;color:var(--muted)}.sg-photo a{color:inherit}
+.sg-rows{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.sg-rows li{display:flex;gap:10px;padding:9px 0;border-top:.5px solid var(--line)}
+.sg-rows li:first-child{border-top:0}
+.sg-rows svg{flex:none;margin-top:2px;color:var(--cobalt-ink)}
+.sg-rows li>span{display:grid;gap:2px}.sg-rows b{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.sg-rows li>span>span{font-size:14px;line-height:1.45}
+.sg-note{margin:0;font-size:11.5px;color:var(--muted)}.sg-note a{color:inherit}

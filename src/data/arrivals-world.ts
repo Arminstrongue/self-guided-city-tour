@@ -44,7 +44,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     { id: "muc-s", name: "S-Bahn S1 / S8", min: 40, fare: "≈ €14", to: { name: "Marienplatz", lat: 48.1374, lng: 11.5755 },
       note: { pt: "O bilhete diário Airport-City-Day sai quase ao mesmo preço que o simples.", en: "The Airport-City-Day ticket costs about the same as a single." }, steps: [
       s("Siga o «S» verde até à estação (entre os terminais, no Munich Airport Center).", "Follow the green “S” to the station (between terminals, in the Munich Airport Center).", "S-Bahn", 6),
-      card("Compre na máquina MVV ou na app MVV/DB e valide se for de papel.", "Buy at the MVV machine or in the MVV/DB app, and validate paper tickets.", "MVV"),
+      card("Compre na máquina MVV ou na app MVV/DB; o bilhete Airport-City-Day já vem validado.", "Buy at the MVV machine or in the MVV/DB app; the Airport-City-Day ticket needs no validation.", "MVV"),
       s("S8 (mais rápido) ou S1 até Marienplatz ou Hauptbahnhof.", "S8 (faster) or S1 to Marienplatz or Hauptbahnhof.", "S8 → Herrsching · S1 → Ostbahnhof", 40)
     ] }
   ])],
@@ -64,7 +64,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     ] },
     { id: "prg-ae", name: "Airport Express (AE)", min: 35, fare: "≈ 100 CZK", to: { name: "Praha hlavní nádraží", lat: 50.0831, lng: 14.4353 }, steps: [
       s("Paragem AE à saída das chegadas dos terminais 1 e 2.", "AE stop outside arrivals at terminals 1 and 2.", "Airport Express AE", 3),
-      s("Compre o bilhete ao motorista.", "Buy the ticket from the driver.", "AE"),
+      s("Compre o bilhete AE ao motorista — os bilhetes normais de Praga não valem neste autocarro.", "Buy an AE ticket from the driver — regular Prague transport tickets are not valid on this bus.", "AE"),
       s("Até à estação central (Hlavní nádraží).", "To the main station (Hlavní nádraží).", "Hlavní nádraží", 35)
     ] }
   ])],
@@ -83,10 +83,10 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     ] }
   ])],
   auh: [ap("auh-ap", "Zayed International (Abu Dhabi)", "AUH", 24.433, 54.6511, [
-    { id: "auh-a1", name: "Autocarro A1", min: 50, fare: "≈ AED 4", to: { name: "Abu Dhabi Bus Station", lat: 24.4586, lng: 54.3828 }, steps: [
+    { id: "auh-a1", name: "Autocarro A1", min: 50, fare: "≈ AED 4", to: { name: "Al Zahiyah (City Centre)", lat: 24.4586, lng: 54.3828 }, steps: [
       s("Paragem do autocarro A1 à saída das chegadas.", "A1 bus stop outside arrivals.", "Bus A1", 4),
       s("Pague com cartão Hafilat (máquina no terminal).", "Pay with a Hafilat card (machine in the terminal).", "Hafilat"),
-      s("Até à estação central de autocarros; para a Mesquita Sheikh Zayed, táxi ou app.", "To the main bus station; for Sheikh Zayed Mosque, take a taxi or app.", "Bus Station", 45)
+      s("Até Al Zahiyah (centro da cidade); para a Mesquita Sheikh Zayed, táxi ou app.", "To Al Zahiyah (City Centre); for Sheikh Zayed Mosque, take a taxi or app.", "Al Zahiyah · City Centre", 45)
     ] },
     taxi("auh-taxi", "Uber · Careem", 25, "≈ AED 80", { name: "Sheikh Zayed Mosque", lat: 24.4128, lng: 54.475 })
   ])],
@@ -124,9 +124,9 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     taxi("mct-taxi", "Otaxi · Careem", 20, "", { name: "Muttrah Corniche", lat: 23.6197, lng: 58.5653 })
   ])],
   nyc: [ap("nyc-jfk", "New York JFK", "JFK", 40.6413, -73.7781, [
-    { id: "nyc-airtrain", name: "AirTrain + metro E", min: 70, fare: "≈ $11.40", to: { name: "World Trade Center", lat: 40.7127, lng: -74.0099 }, steps: [
+    { id: "nyc-airtrain", name: "AirTrain + metro E", min: 70, fare: "≈ $11.65", to: { name: "World Trade Center", lat: 40.7127, lng: -74.0099 }, steps: [
       s("Siga as placas AirTrain e apanhe-o para Jamaica Station.", "Follow the AirTrain signs and ride to Jamaica Station.", "AirTrain → Jamaica", 10),
-      s("Na saída do AirTrain paga $8,50; depois passe o cartão contactless (OMNY) no metro.", "Pay $8.50 at the AirTrain exit; then tap a contactless card (OMNY) at the subway.", "OMNY"),
+      s("Na saída do AirTrain paga a tarifa do AirTrain; depois passe o cartão contactless (OMNY) no metro.", "Pay the AirTrain fare at the AirTrain exit; then tap a contactless card (OMNY) at the subway.", "OMNY"),
       s("Metro E para Manhattan (Midtown, World Trade Center).", "E train to Manhattan (Midtown, World Trade Center).", "E → World Trade Center", 55)
     ] },
     { id: "nyc-lirr", name: "AirTrain + LIRR", min: 45, fare: "≈ $16", to: { name: "Penn Station", lat: 40.7506, lng: -73.9935 },
@@ -140,7 +140,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     { id: "was-silver", name: "Metro (linha Prata)", min: 65, fare: "≈ $6", to: { name: "Metro Center", lat: 38.8983, lng: -77.0281 }, steps: [
       s("Siga as placas Metrorail (passagem do terminal principal).", "Follow the Metrorail signs (walkway from the main terminal).", "Metrorail · Silver Line", 8),
       s("Passe o cartão contactless ou SmarTrip nas barreiras.", "Tap a contactless card or SmarTrip at the gates.", "SmarTrip · Contactless"),
-      s("Linha Prata para Downtown Largo; saia em Metro Center ou Capitol South.", "Silver line towards Downtown Largo; get off at Metro Center or Capitol South.", "Silver → Downtown Largo", 55)
+      s("Linha Prata para Largo / New Carrollton; saia em Metro Center ou Capitol South.", "Silver line towards Largo / New Carrollton; get off at Metro Center or Capitol South.", "Silver → Largo / New Carrollton", 55)
     ] }
   ])],
   sfo: [ap("sfo-ap", "San Francisco International", "SFO", 37.6213, -122.379, [
@@ -173,22 +173,22 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
   ])],
   lax: [ap("lax-ap", "Los Angeles International", "LAX", 33.9416, -118.4085, [
     { id: "lax-flyaway", name: "FlyAway", min: 50, fare: "≈ $9.75", to: { name: "Union Station", lat: 34.0562, lng: -118.2365 }, steps: [
-      s("No piso das chegadas, procure as paragens verdes «FlyAway».", "On the arrivals level, look for the green “FlyAway” stops.", "FlyAway", 5),
-      s("Pague com cartão ao embarcar.", "Pay by card when boarding.", "FlyAway"),
+      s("No piso das chegadas, procure as placas e paragens azuis «FlyAway».", "On the arrivals level, look for the blue “FlyAway” signs and stops.", "FlyAway", 5),
+      s("Pague ao embarcar com cartão contactless (Visa/Mastercard), Apple Pay ou Google Pay — não aceita dinheiro.", "Pay when boarding with a contactless card (Visa/Mastercard), Apple Pay or Google Pay — no cash.", "FlyAway · Contactless"),
       s("Direto a Union Station (depende do trânsito).", "Direct to Union Station (traffic-dependent).", "Union Station", 45)
     ] }
   ])],
   las: [ap("las-ap", "Harry Reid International", "LAS", 36.084, -115.1537, [
     taxi("las-taxi", "Uber · Lyft", 15, "", { name: "The Strip", lat: 36.1147, lng: -115.1728 }),
-    { id: "las-cx", name: "Autocarro RTC (CX / 109)", min: 40, fare: "≈ $2", to: { name: "Downtown Las Vegas", lat: 36.1699, lng: -115.1398 }, steps: [
-      s("Siga as placas «Public Transit» (piso inferior).", "Follow the “Public Transit” signs (lower level).", "RTC", 4),
+    { id: "las-cx", name: "Autocarro RTC (108 / Red Line)", min: 40, fare: "≈ $2", to: { name: "Downtown Las Vegas", lat: 36.1699, lng: -115.1398 }, steps: [
+      s("Siga as placas «Public Transit» até ao Terminal 1, piso Zero (Level Zero).", "Follow the “Public Transit” signs to Terminal 1, Level Zero.", "RTC · Level Zero", 4),
       s("Compre na app rideRTC ou na máquina.", "Buy in the rideRTC app or at the machine.", "rideRTC"),
-      s("Autocarro para o Strip ou Downtown.", "Bus to the Strip or Downtown.", "Strip · Downtown", 35)
+      s("Autocarro 108 ou Red Line para o Strip ou Downtown (o CX já não passa no aeroporto).", "Bus 108 or the Red Line to the Strip or Downtown (the CX no longer serves the airport).", "108 · Red Line", 35)
     ] }
   ])],
   msy: [ap("msy-ap", "Louis Armstrong New Orleans", "MSY", 29.9934, -90.258, [
     { id: "msy-202", name: "Autocarro 202 Airport Express", min: 45, fare: "≈ $1.50", to: { name: "Elk Place (Downtown)", lat: 29.9554, lng: -90.0751 }, steps: [
-      s("Paragem do 202 no piso das chegadas (porta 7, transporte terrestre).", "Bus 202 stop at arrivals (door 7, ground transport).", "RTA 202", 4),
+      s("Paragem do 202 no piso 1, à saída da porta 2 (zonas B4/B5).", "Bus 202 stop on Level 1, outside Door 2 (zones B4/B5).", "RTA 202 · Door 2", 4),
       s("Pague com a app Le Pass ou em dinheiro exato.", "Pay with the Le Pass app or exact cash.", "Le Pass"),
       s("Até Elk Place; o French Quarter fica a 10 min a pé.", "To Elk Place; the French Quarter is a 10-min walk.", "Downtown", 40)
     ] }
@@ -209,7 +209,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
   ])],
   mex: [ap("mex-ap", "Mexico City International", "MEX", 19.4361, -99.0719, [
     { id: "mex-mb4", name: "Metrobús Linha 4", min: 45, fare: "≈ MXN 30", to: { name: "República de Chile (Centro)", lat: 19.4351, lng: -99.1355 }, steps: [
-      s("Paragem Metrobús junto à porta 7 (T1) ou porta 3 (T2).", "Metrobús stop near door 7 (T1) or door 3 (T2).", "Metrobús 4", 5),
+      s("Paragem Metrobús junto à porta 7 (T1) ou porta 2 (T2).", "Metrobús stop near door 7 (T1) or gate 2 (T2).", "Metrobús 4", 5),
       s("Compre um cartão Movilidad Integrada na máquina e carregue a tarifa de aeroporto.", "Buy a Movilidad Integrada card at the machine and load the airport fare.", "Tarjeta MI"),
       s("Linha 4 até ao Centro Histórico (República de Chile, perto do Zócalo).", "Line 4 to the Historic Centre (República de Chile, near the Zócalo).", "Línea 4 → Buenavista", 40)
     ] },
@@ -219,7 +219,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     taxi("rio-taxi", "táxi do balcão · Uber · 99", 40, "", { name: "Lapa / Centro", lat: -22.9153, lng: -43.1791 }),
     { id: "rio-brt", name: "BRT TransCarioca + Metro", min: 75, fare: "≈ R$ 10", to: { name: "Centro", lat: -22.9068, lng: -43.1729 }, steps: [
       s("Siga as placas BRT até à estação do aeroporto.", "Follow the BRT signs to the airport station.", "BRT TransCarioca", 5),
-      s("Pague com cartão contactless ou Jaé.", "Pay with a contactless card or Jaé.", "Jaé"),
+      s("Pague com o cartão Jaé ou o código QR da app Jaé (sem dinheiro).", "Pay with the Jaé card or the Jaé app QR code (no cash).", "Jaé"),
       s("BRT até Vicente de Carvalho e troque para o Metro linha 2 para o Centro.", "BRT to Vicente de Carvalho, then Metro line 2 to the Centre.", "Metrô Linha 2", 70)
     ] }
   ])],
@@ -249,7 +249,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
   cpt: [ap("cpt-ap", "Cape Town International", "CPT", -33.9715, 18.6021, [
     { id: "cpt-a01", name: "MyCiTi A01", min: 35, fare: "≈ R100", to: { name: "Civic Centre", lat: -33.9208, lng: 18.4271 }, steps: [
       s("Paragem MyCiTi junto às chegadas domésticas.", "MyCiTi stop by domestic arrivals.", "MyCiTi A01", 5),
-      s("Compre um cartão myconnect no quiosque e carregue saldo.", "Buy a myconnect card at the kiosk and top up.", "myconnect"),
+      s("Na estação Airport, compre um cartão de viagem única (ou um cartão myconnect).", "At Airport station, buy a single-trip card (or a myconnect card).", "MyCiTi"),
       s("A01 até Civic Centre (centro).", "A01 to Civic Centre (city centre).", "Civic Centre", 30)
     ] },
     taxi("cpt-taxi", "Uber · Bolt", 25, "", { name: "City Bowl", lat: -33.9275, lng: 18.417 })
@@ -258,7 +258,7 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     taxi("zan-taxi", "táxi oficial · transfer do hotel", 20, "≈ $15", { name: "Stone Town", lat: -6.1617, lng: 39.188 })
   ])],
   tun: [ap("tun-ap", "Tunis-Carthage", "TUN", 36.851, 10.2272, [
-    taxi("tun-taxi", "táxi amarelo · Bolt", 20, "", { name: "Avenida Habib Bourguiba", lat: 36.7998, lng: 10.1806 },
+    taxi("tun-taxi", "táxi amarelo", 20, "", { name: "Avenida Habib Bourguiba", lat: 36.7998, lng: 10.1806 },
       s("Nos táxis amarelos, peça para ligar o taxímetro (compteur).", "In yellow taxis, ask for the meter to be switched on (compteur).", "Compteur"))
   ])],
   add: [ap("add-ap", "Addis Ababa Bole", "ADD", 8.9779, 38.7993, [

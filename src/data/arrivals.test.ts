@@ -30,3 +30,23 @@ test("option names are translated outside Portuguese", () => {
   assert.equal(optionName({ name: "Metro (linha Vermelha)" }, "en"), "Metro (Red line)");
   assert.equal(optionName({ name: "Autocarro 19" }, "pt"), "Autocarro 19");
 });
+
+import { GUIDES, GUIDE_FIELDS } from "./arrival-guides";
+import { arrivalsFor as arrivals2 } from "./arrivals";
+test("guias da estação: só para opções existentes, com fontes e traduzidos em todas as línguas", async () => {
+  const fs = await import("node:fs");
+  const ids = new Set<string>();
+  for (const c of ["lon", "lis", "opo", "mad", "bcn", "par", "rom", "ams", "edi", "man", "gla", "liv", "bir", "ist", "fra", "ber", "muc", "vie", "prg", "sin", "dxb", "auh", "doh", "ruh", "jed", "cai", "amm", "mct", "nyc", "was", "sfo", "chi", "bos", "mia", "lax", "las", "msy", "mco", "yyz", "mex", "rio", "bue", "rak", "cas", "cpt", "zan", "tun", "add", "nbo", "lad", "acc", "kgl", "dkr"])
+    for (const p of arrivals2(c)) for (const o of p.options) ids.add(o.id);
+  const keys: string[] = [];
+  for (const [id, g] of Object.entries(GUIDES)) {
+    assert.ok(ids.has(id), `opção inexistente: ${id}`);
+    assert.ok(g.sources.every((u) => u.startsWith("https://")), id);
+    for (const f of GUIDE_FIELDS) if (g[f]) { assert.ok(g[f]!.pt && g[f]!.en, `${id}.${f}`); keys.push(`${id}.${f}`); }
+  }
+  for (const l of ["es", "fr", "de", "it", "zh", "ar", "ja", "ko", "ru", "tr"]) {
+    const pack = JSON.parse(fs.readFileSync(`src/data/arrival-guides-i18n/${l}.json`, "utf8")) as Record<string, string>;
+    const miss = keys.filter((k) => !pack[k]);
+    assert.deepEqual(miss, [], `${l}: faltam ${miss.length}`);
+  }
+});

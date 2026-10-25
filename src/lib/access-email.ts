@@ -1,6 +1,7 @@
 import { emailBrand } from "./email";
 /** Email de acesso ao roteiro, na língua do cliente (12 línguas), com botão e texto simples. */
 import { INTL_LOCALE } from "@/i18n/core";
+import { linkFallback } from "./signin-email";
 import type { Locale } from "@/i18n/dictionaries";
 
 type T = { hi: string; hiName: string; ready: string; open: string; until: string; tip: string; help: string };
@@ -71,6 +72,7 @@ const f = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, 
 
 export function accessEmail(o: { locale: Locale; name?: string | null; place: string; link: string; expiresAt: Date; tz?: string; startsOnOpen?: { hours: number } }) {
   const t = TX[o.locale] ?? TX.en;
+  const fb = linkFallback(o.locale);
   const first = (o.name ?? "").trim().split(/\s+/)[0] ?? "";
   let when: string;
   try {
@@ -96,7 +98,7 @@ export function accessEmail(o: { locale: Locale; name?: string | null; place: st
 <tr><td style="font-size:15px;line-height:1.5;color:#6e6e73;padding-bottom:20px">${t.tip}</td></tr>
 <tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:8px">${esc(whatTxt)}</td></tr>
 <tr><td style="font-size:13px;line-height:1.5;color:#86868b;padding-bottom:16px">${esc(wdTxt)}</td></tr>
-<tr><td style="font-size:12px;line-height:1.5;color:#86868b;word-break:break-all;border-top:1px solid #e5e5ea;padding-top:16px"><a href="${o.link}" style="color:#86868b">${o.link}</a><br><br>${t.help}</td></tr>
+<tr><td style="font-size:12px;line-height:1.5;color:#86868b;border-top:1px solid #e5e5ea;padding-top:16px">${esc(fb.copy)} <a href="${o.link}" style="color:#0071e3;font-weight:600">${esc(fb.here)}</a><br><br>${t.help}</td></tr>
 </table></td></tr></table></body></html>`;
   const text = `${hello.replace(/<[^>]+>/g, "")}\n\n${f(t.ready, { c: o.place })}\n${o.link}\n\n${validity}\n${t.tip}\n\n${whatTxt}\n${wdTxt}\n\n${t.help}`;
   return { subject: `VOYBU — ${o.place}`, html, text };

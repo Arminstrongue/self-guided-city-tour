@@ -15,7 +15,7 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
         note: { pt: "Barato e sem trânsito; com malas grandes há escadas em algumas trocas.", en: "Cheap and traffic-free; some interchanges have stairs if you have big bags." },
         steps: [
           s("Saia das chegadas (Terminal 1) e siga o símbolo vermelho do metro.", "Leave arrivals (Terminal 1) and follow the red metro sign.", "Metro", 5),
-          pay("cartão Navegante ocasional (€0,50) + viagem.", "a Navegante occasional card (€0.50) plus a trip.", "Navegante · Zapping"),
+          pay("cartão Navegante ocasional + viagem — ou passe um cartão bancário contactless à entrada e à saída.", "a Navegante occasional card plus a trip — or tap a contactless bank card on entry and exit.", "Navegante · Contactless"),
           s("Apanhe a linha Vermelha. Para a Baixa, troque em Alameda para a Verde; para as Avenidas, saia em Saldanha.", "Take the Red line. For Baixa, change at Alameda to the Green line; for the Avenidas, get off at Saldanha.", "Linha Vermelha → São Sebastião", 20)
         ] },
       { id: "lis-aerobus", name: "Aerobus", min: 35, fare: "≈ €4", to: { name: "Cais do Sodré", lat: 38.7058, lng: -9.1449 },
@@ -73,7 +73,7 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
     { id: "mad-atocha", kind: "station", name: "Madrid Puerta de Atocha", lat: 40.4066, lng: -3.6892, options: [
       { id: "mad-atocha-metro", name: "Metro (linha 1)", min: 10, fare: "≈ €1.50", to: { name: "Sol", lat: 40.4169, lng: -3.7035 },
         steps: [
-          s("Siga as placas do Metro «Estación del Arte» (linha 1).", "Follow the Metro signs for “Estación del Arte” (line 1).", "Metro · Línea 1", 6),
+          s("Siga as placas do Metro «Atocha» (linha 1), dentro da estação.", "Follow the Metro signs for “Atocha” (line 1), inside the station.", "Metro · Línea 1 · Atocha", 6),
           pay("cartão Multi + viagem.", "a Multi card plus a trip.", "Tarjeta Multi"),
           s("Linha 1 até Sol, o centro.", "Line 1 to Sol, the centre.", "Línea 1 → Pinar de Chamartín", 5)
         ] }
@@ -112,13 +112,6 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
           s("Siga as placas «Paris par train» / RER (CDG 1: CDGVAL até à estação; CDG 2: estação no meio do terminal).", "Follow the “Paris by train” / RER signs (CDG 1: CDGVAL to the station; CDG 2: station in the middle of the terminal).", "Paris par train · RER B", 10),
           pay("bilhete Aéroport (ou passe Navigo / app).", "an Airport ticket (or Navigo pass / app).", "Billet Aéroport"),
           s("RER B para Paris; saia em Gare du Nord, Châtelet-Les Halles ou Saint-Michel.", "RER B to Paris; get off at Gare du Nord, Châtelet-Les Halles or Saint-Michel.", "RER B → Paris", 35)
-        ] },
-      { id: "par-roissybus", name: "Roissybus", min: 60, fare: "≈ €16", to: { name: "Opéra", lat: 48.871, lng: 2.3317 },
-        note: { pt: "Sem trocas nem escadas, mas depende do trânsito.", en: "No changes or stairs, but traffic-dependent." },
-        steps: [
-          s("Siga as placas Roissybus à saída das chegadas.", "Follow the Roissybus signs outside arrivals.", "Roissybus", 5),
-          s("Pague na máquina ou com contactless a bordo.", "Pay at the machine or contactless on board.", "Roissybus"),
-          s("Saia em Opéra (fim).", "Get off at Opéra (end).", "Opéra", 60)
         ] }
     ] },
     { id: "par-ory", kind: "airport", name: "Paris-Orly", code: "ORY", lat: 48.7262, lng: 2.3652, options: [
@@ -133,7 +126,7 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
       { id: "par-gdn-metro", name: "Metro / RER", min: 10, fare: "≈ €2.50", to: { name: "Châtelet", lat: 48.8584, lng: 2.3474 },
         steps: [
           s("Saia das chegadas e siga as placas Métro / RER (piso inferior).", "Leave arrivals and follow the Métro / RER signs (lower level).", "Métro · RER", 5),
-          pay("bilhete t+ (ou app / Navigo).", "a t+ ticket (or app / Navigo).", "Ticket t+"),
+          pay("bilhete Métro-Train-RER (ou app / Navigo).", "a Métro-Train-RER ticket (or app / Navigo).", "Ticket Métro-Train-RER"),
           s("RER B ou D até Châtelet; metro 4 para a margem esquerda, 5 para Bastille.", "RER B or D to Châtelet; metro 4 for the Left Bank, 5 for Bastille.", "RER B · D → Châtelet", 5)
         ] }
     ] }
@@ -216,7 +209,7 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
         steps: [
           s("Siga as placas Metrolink na zona The Station.", "Follow the Metrolink signs at The Station.", "Metrolink", 8),
           s("Passe o cartão contactless no leitor da plataforma antes de entrar.", "Tap your contactless card on the platform reader before boarding.", "Touch in"),
-          s("Linha do aeroporto para Victoria; troque em Cornbrook ou siga até St Peter's Square.", "Airport line towards Victoria; change at Cornbrook or ride on to St Peter's Square.", "Metrolink → Victoria", 45)
+          s("Elétrico do aeroporto direto para Victoria, sem trocas; saia em St Peter's Square para o centro.", "Airport tram direct towards Victoria, no change needed; get off at St Peter's Square for the centre.", "Metrolink → Victoria", 45)
         ] }
     ] },
     { id: "man-pic", kind: "station", name: "Manchester Piccadilly", lat: 53.4774, lng: -2.2309, options: [
@@ -245,9 +238,9 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
   ],
   liv: [
     { id: "liv-ap", kind: "airport", name: "Liverpool John Lennon", code: "LPL", lat: 53.3336, lng: -2.8497, options: [
-      { id: "liv-bus", name: "Autocarro 86 / 500", min: 35, fare: "≈ £3", to: { name: "Liverpool ONE", lat: 53.4029, lng: -2.9862 },
+      { id: "liv-bus", name: "Autocarro 86A / 500", min: 35, fare: "≈ £3", to: { name: "Liverpool ONE", lat: 53.4029, lng: -2.9862 },
         steps: [
-          s("Paragens em frente ao terminal: autocarros 86 ou 500 para o centro.", "Stops outside the terminal: buses 86 or 500 to the city centre.", "City Centre", 3),
+          s("Paragens em frente ao terminal: autocarros 86A ou 500 para o centro.", "Stops outside the terminal: buses 86A or 500 to the city centre.", "86A · 500 · City Centre", 3),
           ukPay,
           s("Saia em Liverpool ONE bus station ou Lime Street.", "Get off at Liverpool ONE bus station or Lime Street.", "Liverpool ONE", 35)
         ] }
