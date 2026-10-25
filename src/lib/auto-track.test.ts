@@ -28,6 +28,8 @@ test("walking adds km and estimated steps; GPS jumps are ignored", () => {
 
 test("staying near a stop for 3 minutes asks about the visit", () => {
   let s = blankState("2026-10-24");
+  s = step(s, { lat: 53.4700, lng: -2.2343, t: T0 - 6 * min }, [man]); // ~400 m antes: chegou a pé
+  s = step(s, { lat: 53.4682, lng: -2.2343, t: T0 - 3 * min }, [man]);
   s = step(s, { lat: 53.4664, lng: -2.2343, t: T0 }, [man]);
   s = step(s, { lat: 53.46645, lng: -2.2343, t: T0 + 2 * min }, [man]);
   assert.ok(!s.pending.some((p) => p.k === "visit"));
@@ -52,4 +54,26 @@ test("thin keeps ends and caps length", () => {
   const p = Array.from({ length: 1000 }, (_, i) => [i, i] as [number, number]);
   const t = thin(p, 300);
   assert.equal(t.length, 300); assert.deepEqual(t[0], [0, 0]); assert.deepEqual(t[299], [999, 999]);
+});
+
+test("phone lying still (home, hotel) never asks 'you stopped at…'", () => {
+  let s = blankState("2026-10-24");
+  for (let i = 0; i <= 40; i++) s = step(s, { lat: 53.4664 + (i % 2) * 0.00005, lng: -2.2343, t: T0 + i * min }, [man]); // ao lado do museu, sem sair
+  assert.ok(!s.pending.some((p) => p.k === "visit" || p.k === "place"));
+  let h = blankState("2026-10-24");
+  for (let i = 0; i <= 40; i++) h = step(h, { lat: 53.49, lng: -2.25 + (i % 2) * 0.00005, t: T0 + i * min }, [man]);
+  assert.ok(!h.pending.some((p) => p.k === "place"));
+});
+
+test("after walking somewhere and stopping 12 min, it asks once", () => {
+  let s = blankState("2026-10-24");
+  for (let i = 0; i <= 6; i++) s = step(s, { lat: 53.49 + i * 0.0009, lng: -2.25, t: T0 + i * min }, [man]); // ~600 m
+  for (let i = 1; i <= 14; i++) s = step(s, { lat: 53.4954, lng: -2.25, t: T0 + (6 + i) * min }, [man]);
+  assert.equal(s.pending.filter((p) => p.k === "place").length, 1);
+});
+
+test("old state without anchor drops queued 'stopped at' prompts", () => {
+  const old = { ...blankState("2026-10-24"), pending: [{ k: "place" as const, key: "place:1,1", name: "", lat: 1, lng: 1 }] };
+  const s = step(old, { lat: 53.49, lng: -2.25, t: T0 }, [man]);
+  assert.ok(!s.pending.some((p) => p.k === "place"));
 });

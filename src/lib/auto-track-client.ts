@@ -8,7 +8,7 @@ export const EVENT = "sgct:auto";
 
 export function autoOn(): boolean { try { return localStorage.getItem(ON_KEY) === "1"; } catch { return false; } }
 export function loadState(): TState {
-  try { const s = JSON.parse(localStorage.getItem(STATE_KEY) ?? "null") as TState | null; if (s?.v === 1) return s; } catch { /* ignorar */ }
+  try { const s = JSON.parse(localStorage.getItem(STATE_KEY) ?? "null") as TState | null; if (s?.v === 1) return s.anchor ? s : { ...s, pending: s.pending.filter((p) => p.k !== "place" && p.k !== "visit") }; } catch { /* ignorar */ }
   return blankState(dayOf(Date.now()));
 }
 export function saveState(s: TState) {

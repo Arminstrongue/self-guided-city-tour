@@ -14,8 +14,10 @@ export type TState = {
   v: 1; day: string; path: [number, number][]; km: number; walkKm: number; motionSteps: number;
   city: string | null; cityName: string; places: Place[]; last: Fix | null;
   near: { key: string; since: number; lat: number; lng: number } | null; // perto de uma paragem
-  stay: { lat: number; lng: number; since: number; asked: boolean } | null; // parado num sítio qualquer
+  stay: { lat: number; lng: number; since: number; asked: boolean; moved?: boolean } | null; // parado num sítio qualquer
   pending: Pending[]; asked: string[];
+  /** Onde o viajante esteve parado pela última vez (ou a 1.ª posição). Só se pergunta por um sítio a que chegou a deslocar-se. */
+  anchor?: { lat: number; lng: number };
 };
 
 export const MAX_ACC = 80;          // ignora posições pouco precisas (m)
@@ -26,6 +28,7 @@ export const STAY_DWELL = 12 * 60e3;
 export const CITY_KM = 35;
 export const STEP_M = 0.75;
 export const WALK_MAX_MS = 2.5;     // acima disto não é a pé (m/s)
+export const ARRIVE_M = 300;        // deslocação mínima desde o último sítio parado para perguntar "parou em…?"
 
 export const blankState = (day: string): TState => ({ v: 1, day, path: [], km: 0, walkKm: 0, motionSteps: 0, city: null, cityName: "", places: [], last: null, near: null, stay: null, pending: [], asked: [] });
 export const dayOf = (t: number) => { const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
@@ -64,6 +67,9 @@ export function step(prev: TState, fix: Fix, cities: LiteCity[]): TState {
   let s: TState = { ...prev, path: prev.path, places: prev.places, pending: [...prev.pending], asked: prev.asked };
   const today = dayOf(fix.t);
   if (s.day !== today) s = closeDay(s, today);
+  // Estado antigo sem âncora: as perguntas "parou em…" já em fila podem ter nascido sem deslocação — descartam-se.
+  if (!s.anchor) { s.anchor = { lat: fix.lat, lng: fix.lng }; s.pending = s.pending.filter((p) => p.k !== "place" && p.k !== "visit"); }
+  const anchor = s.anchor;
 
   // Distância (ignora saltos impossíveis do GPS e tremores parados).
   if (s.last) {
@@ -91,15 +97,21 @@ export function step(prev: TState, fix: Fix, cities: LiteCity[]): TState {
   if (stopHit && city) {
     const key = `visit:${city.id}:${stopHit[0]}`;
     if (!s.near || s.near.key !== key) s.near = { key, since: fix.t, lat: stopHit[2], lng: stopHit[3] };
-    else if (fix.t - s.near.since >= STOP_DWELL) ask(s, { k: "visit", key, city: city.id, stop: stopHit[0], name: stopHit[1], lat: stopHit[2], lng: stopHit[3] });
+    else if (fix.t - s.near.since >= STOP_DWELL) {
+      // Sem deslocação (ex.: o hotel fica ao lado da paragem, ou o telemóvel está pousado), não pergunta.
+      if (metres(anchor, s.near) >= ARRIVE_M) ask(s, { k: "visit", key, city: city.id, stop: stopHit[0], name: stopHit[1], lat: stopHit[2], lng: stopHit[3] });
+      s.anchor = { lat: s.near.lat, lng: s.near.lng };
+    }
   } else s.near = null;
 
   // Parado num sítio que não é paragem → pergunta se quer guardar (o nome vem depois, pela morada).
   if (!stopHit) {
-    if (!s.stay || metres(s.stay, fix) > STAY_R) s.stay = { lat: fix.lat, lng: fix.lng, since: fix.t, asked: false };
+    if (!s.stay || metres(s.stay, fix) > STAY_R) s.stay = { lat: fix.lat, lng: fix.lng, since: fix.t, asked: false, moved: metres(anchor, fix) >= ARRIVE_M };
     else if (!s.stay.asked && fix.t - s.stay.since >= STAY_DWELL) {
       s.stay = { ...s.stay, asked: true };
-      ask(s, { k: "place", key: `place:${s.stay.lat.toFixed(3)},${s.stay.lng.toFixed(3)}`, name: "", lat: s.stay.lat, lng: s.stay.lng });
+      // Só pergunta se chegou aqui a deslocar-se; parado desde o início (casa, hotel, telemóvel pousado) não gera alertas.
+      if (s.stay.moved) ask(s, { k: "place", key: `place:${s.stay.lat.toFixed(3)},${s.stay.lng.toFixed(3)}`, name: "", lat: s.stay.lat, lng: s.stay.lng });
+      s.anchor = { lat: s.stay.lat, lng: s.stay.lng };
     }
   } else s.stay = null;
   return s;
