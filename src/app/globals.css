@@ -3656,11 +3656,15 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 /* As minhas viagens (perfil) */
 .tst{display:grid;gap:10px;padding:16px;border-radius:22px;background:var(--surface);border:1px solid var(--line)}
 .tst-h b{font-size:16px}
-.tst-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tst-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .tst-grid>div{display:grid;gap:2px;padding:10px;border-radius:14px;background:var(--surface-2)}
 .tst-grid svg{color:var(--muted)}
 .tst-grid b{font-size:20px;letter-spacing:-.01em}
-.tst-grid small{font-size:12px;color:var(--muted)}
+.tst-grid small{display:block;font-size:11px;letter-spacing:-.01em;color:var(--muted);overflow-wrap:anywhere;line-height:1.2}
+.tst-grid small::first-letter{text-transform:uppercase}
+.tst-grid b{font-size:18px}
+.tst-grid>div{padding:9px 7px}
+.tst-empty{color:var(--muted);font-weight:600}
 .tst-next,.tst-style{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--surface-2);border:0;color:var(--ink);text-decoration:none;font:inherit;text-align:left;cursor:pointer}
 .tst-next span,.tst-style span{flex:1;min-width:0;display:grid;gap:1px}
 .tst-next small,.tst-style small{font-size:12px;color:var(--muted)}

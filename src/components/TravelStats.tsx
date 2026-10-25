@@ -1,11 +1,11 @@
 "use client";
-/** "As minhas viagens" no perfil: cidades, países, continentes, km e passos a pé, próxima viagem e estilo de viagem. */
+/** "As minhas viagens" no perfil: continentes, km e passos a pé, próxima viagem e estilo de viagem. */
 import { useEffect, useState } from "react";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { TravelPrefs } from "@/lib/db/schema";
 import { continentsCount } from "@/lib/continents";
-import { CalendarDays, ChevronRight, Footprints, Globe2, MapPin, Route } from "lucide-react";
+import { CalendarDays, ChevronRight, Earth, Footprints, Route } from "lucide-react";
 
 type Plan = { id: string; title: string; cityName: string; startDate: string | null; days: number };
 
@@ -26,9 +26,8 @@ export function TravelStats({ t, locale, world, plans, travel, onEdit }: { t: Di
     <section className="tst">
       <div className="tst-h"><b>✈️ {s.title}</b></div>
       <div className="tst-grid">
-        <div><MapPin size={16} aria-hidden="true" /><b className="num">{world.cities}</b><small>{t.wStatCities}</small></div>
-        <div><Globe2 size={16} aria-hidden="true" /><b className="num">{world.countries}</b><small>{t.wStatCountries}</small></div>
-        <div><Globe2 size={16} aria-hidden="true" /><b className="num">{continentsCount(world.ccs)}</b><small>{s.continents}</small></div>
+        {/* Cidades e países já estão no topo do perfil: aqui só o que não aparece noutro lado. */}
+        <div><Earth size={16} aria-hidden="true" /><b className="num">{continentsCount(world.ccs)}</b><small>{s.continents}</small></div>
         <div><Footprints size={16} aria-hidden="true" /><b className="num">{walk ? nf.format(walk.km) : "—"}</b><small>{s.km}</small></div>
         <div><Footprints size={16} aria-hidden="true" /><b className="num">{walk ? nf.format(walk.steps) : "—"}</b><small>{s.steps}</small></div>
         <div><Route size={16} aria-hidden="true" /><b className="num">{walk ? walk.n : "—"}</b><small>{s.walks}</small></div>
@@ -39,7 +38,7 @@ export function TravelStats({ t, locale, world, plans, travel, onEdit }: { t: Di
         <ChevronRight size={18} aria-hidden="true" />
       </a>
       <button type="button" className="tst-style press" onClick={onEdit}>
-        <span><small>{s.style}</small><b>{style.length ? style.join(" · ") : "—"}</b></span><em>{s.edit}</em>
+        <span><small>{s.style}</small><b className={style.length ? "" : "tst-empty"}>{style.length ? style.join(" · ") : s.pick}</b></span><em>{style.length ? s.edit : <ChevronRight size={18} aria-hidden="true" />}</em>
       </button>
     </section>
   );
