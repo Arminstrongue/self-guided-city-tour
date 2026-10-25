@@ -3475,3 +3475,43 @@ button.st-row{width:100%;border:0;background:none;font:inherit;color:inherit;tex
 @media (max-width:420px){.hs-tabs button svg{display:none}.hs{padding:12px;border-radius:20px}}
 
 @media (min-width:960px){.hx-qr{display:flex}.hs-tabs{grid-template-columns:auto auto auto}.hs-tabs button{white-space:nowrap;padding:8px 12px}}
+
+/* Barra de navegação no computador: no topo, ao centro, para nunca tapar conteúdo (no telemóvel continua em baixo). */
+@media (min-width:1024px) and (pointer:fine){
+  .nv.appnav{top:10px;bottom:auto;left:50%;right:auto;transform:translateX(-50%);width:auto;height:44px;padding:0 6px;display:flex;gap:2px;border-radius:999px;border:1px solid var(--line);border-top:1px solid var(--line);background:color-mix(in srgb,var(--bg) 92%,transparent);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+  .nv.appnav a{flex-direction:row;height:34px;padding:0 14px;border-radius:999px;gap:7px;margin:4px 0}
+  .nv.appnav a small{font-size:13px}
+  .nv.appnav a span{height:auto}
+  .nv.appnav a.on{background:var(--surface-2)}
+  body:has(.appnav) main,body:has(.appnav) footer{padding-bottom:0}
+  body:has(.appnav) .sticky-cta{bottom:0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  body:has(.appnav) .sos-fab{bottom:calc(16px + env(safe-area-inset-bottom))}
+  body:has(.appnav) .tk{bottom:0}
+  body:has(.appnav) .ex-toast{bottom:24px}
+}
+
+/* Preços claros */
+.pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.pr-card{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.pr-card.pr-main{border:2px solid var(--ink)}
+.pr-name{font-size:14px;font-weight:700}
+.pr-price{font-size:30px;letter-spacing:-.02em;line-height:1.1}
+.pr-local{color:var(--muted);font-size:13px}
+.pr-card p{margin:2px 0 0;font-size:14px;color:var(--muted);line-height:1.4;flex:1}
+.pr-once{font-size:12.5px;font-weight:600;color:#1e7a3a}
+.pr-card ul{list-style:none;margin:4px 0 8px;padding:0;display:grid;gap:6px;flex:1}
+.pr-card li{display:flex;gap:8px;align-items:flex-start;font-size:14px;line-height:1.35}
+.pr-card li svg{flex:none;color:#1e7a3a;margin-top:1px}
+.pr-incl{display:flex;gap:8px;align-items:flex-start;margin:12px 0 0;font-size:14px;line-height:1.4}
+.pr-incl svg{flex:none;color:#1e7a3a;margin-top:2px}
+.pr-incl.no{margin-top:6px;color:var(--muted)}
+.pr-incl.no svg{color:var(--muted)}
+.pr-biz{margin-top:16px;display:grid;gap:10px;padding:16px 18px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line)}
+.pr-biz>div{display:grid;gap:2px}
+.pr-biz>div small{color:var(--muted);font-size:13.5px}
+.pr-biz ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.pr-biz li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:var(--surface);font-size:14px}
+.pr-biz-go{font-weight:700;font-size:14px;color:var(--ink);text-decoration:none}
+@media (min-width:960px){.pr-biz{grid-template-columns:240px 1fr auto;align-items:center}}
+.pr-grid{align-items:start}
+.pr-card p{flex:none}

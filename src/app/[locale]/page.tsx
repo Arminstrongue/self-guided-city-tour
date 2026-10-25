@@ -11,13 +11,13 @@ import { fmt, INTL_LOCALE, LOCALES, isLocale } from "@/i18n/core";
 import { notFound } from "next/navigation";
 import { loadCities } from "@/lib/content";
 import { getDict, type Locale } from "@/i18n/dictionaries";
-import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
-import { dualMoney } from "@/lib/currency";
+import { TOUR_PLANS, MERCHANT_PLANS, isFreeCity } from "@/lib/pricing";
+import { dualMoney, formatMoney } from "@/lib/currency";
 import { Ticket as TicketIcon, Headphones, Clock, Star, CloudDownload, ArrowLeftRight, Receipt, ShieldAlert, Plane, Radar, Users, BadgeCheck, QrCode, CreditCard, Footprints } from "lucide-react";
 import PageQR from "@/components/PageQR";
 import { HeroSearch } from "@/components/HeroSearch";
 import { flag } from "@/data/countries";
-import { Building2, MapPinned, Languages, Compass, Sparkles, Baby, Store, ChevronRight, ShieldCheck, Globe, Heart, Smartphone } from "lucide-react";
+import { Building2, MapPinned, Languages, Compass, Sparkles, Baby, Store, ChevronRight, ShieldCheck, Globe, Heart, Smartphone, Check, X } from "lucide-react";
 import { stopName } from "@/data/stop-names";
 
 export const dynamic = "force-dynamic";
@@ -142,6 +142,42 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
             <li key={k}><Ic size={22} aria-hidden="true" /><span><b>{t.hx.trust[k][0]}</b><small>{t.hx.trust[k][1]}</small></span></li>
           ))}
         </ul>
+      </section>
+
+      {/* Preços claros: o que é grátis, o que custa um passe (pagamento único) e os planos para empresas. */}
+      <section className="sec pr" id="prices" aria-labelledby="pr-h" style={{ scrollMarginTop: 70 }}>
+        <div className="sec-h reveal"><div><h2 id="pr-h">{t.pr.title}</h2><p>{t.pr.sub}</p></div></div>
+        <div className="pr-grid">
+          <div className="pr-card pr-free reveal">
+            <span className="pr-name">{t.pr.freeName}</span>
+            <b className="pr-price num">{t.pr.free}</b>
+            <ul>{t.pr.freeItems.map((x) => <li key={x}><Check size={16} aria-hidden="true" />{x}</li>)}</ul>
+            <Link className="btn ghost press" href={`/${params.locale}/start`}>{t.pr.cta}</Link>
+          </div>
+          {(["city", "trip", "all"] as const).map((k) => {
+            const m = dualMoney(TOUR_PLANS[k].amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
+            return (
+              <div key={k} className={`pr-card reveal ${k === "city" ? "pr-main" : ""}`}>
+                <span className="pr-name">{t.pr[k][0]}</span>
+                <b className="pr-price num">{m.main}</b>
+                {m.local && <small className="pr-local num">{m.local}</small>}
+                <p>{t.pr[k][1]}</p>
+                <small className="pr-once">{t.pr.oneTime}</small>
+              </div>
+            );
+          })}
+        </div>
+        <p className="pr-incl"><Check size={16} aria-hidden="true" />{t.pr.incl}</p>
+        <p className="pr-incl no"><X size={16} aria-hidden="true" />{t.pr.notIncl}</p>
+        <div className="pr-biz reveal">
+          <div><b>{t.pr.bizTitle}</b><small>{t.pr.bizNote}</small></div>
+          <ul>
+            {(["basic", "featured", "partner"] as const).map((k) => (
+              <li key={k}><span>{t.mPlans[k][0]}</span><b className="num">{MERCHANT_PLANS[k].amount ? `${formatMoney(MERCHANT_PLANS[k].amount / 100, "EUR", INTL_LOCALE[params.locale])}${t.perMonth}` : t.pr.free}</b></li>
+            ))}
+          </ul>
+          <Link className="pr-biz-go" href={`/${params.locale}/merchants#plans`}>{t.pr.bizCta} →</Link>
+        </div>
       </section>
 
       {/* Para quem acabou de chegar ou precisa de algo já: quatro entradas diretas (Londres primeiro). */}
