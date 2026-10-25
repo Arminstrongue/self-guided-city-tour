@@ -80,6 +80,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const [pendingCompose, setPendingCompose] = useState<string | null>(null);
   const [composeText, setComposeText] = useState("");
   const [w, setW] = useState<Wallet | null | "anon">(null);
+  const [loadErr, setLoadErr] = useState(false);
   const [local, setLocal] = useState<Mem[]>([]);
   const [synced, setSynced] = useState(0);
   const [tab, setTabState] = useState<Tab>("home");
@@ -95,6 +96,9 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
 
   async function load() {
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
+    // Erro do servidor (não "sem sessão"): não mostrar o formulário de entrada, que dava a ideia de que o login falhou.
+    setLoadErr(Boolean(r && r.status >= 500));
+    if (r && r.status >= 500) return;
     if (r?.ok) {
       const n = await syncLocalToAccount().catch(() => 0); // memórias deste dispositivo passam para a conta
       if (n) { setSynced(n); const again = await fetch("/api/me", { cache: "no-store" }); setW(await again.json()); } else setW(await r.json());
@@ -296,7 +300,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
 
       {/* ---------- Início: o que vem a seguir + histórias + feed ---------- */}
       {section === "home" && <>
-        {w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
+        {loadErr ? <section className="card stack" role="alert" style={{ gap: 10 }}><b>⚠️ {t.esi.loadErr}</b><button className="btn press" onClick={() => void load()}>{t.esi.retry}</button></section>
+          : w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
         {/* Agora: o próximo passo (reserva, visita com guia, roteiro em curso ou roteiro planeado) */}
         <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned} hasPass={active.length > 0}
           bookings={(signed?.bookings ?? []).map((b) => ({ id: b.id, guide: b.guide, guideId: b.guideId, startAt: b.startAt, city: b.city, status: b.status, meeting: "meeting" in b ? (b.meeting as string | null) : null }))} />
