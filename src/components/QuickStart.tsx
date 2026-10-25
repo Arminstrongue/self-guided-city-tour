@@ -12,7 +12,7 @@ import { track } from "@/lib/track";
 
 type LL = { lat: number; lng: number };
 export type QsOption = { key: string; n: number; min: number; tour: number; air: number; ret: number; first: LL; last: LL; acc: number; cost: string; names: string[] };
-export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; tz: string; options: QsOption[] };
+export type QsCity = { id: string; name: string; country: string; flag: string; open: boolean; center: LL; tz: string; options: QsOption[]; iata?: string };
 
 type Time = { k: string; min: number };
 const fold = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -117,7 +117,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; 
 
       {step === 2 && city && (
         <div className="qs-times">
-          <TripPicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={trip} onChange={upd} />
+          <TripPicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={trip} onChange={upd} airport={city.iata} />
 
           <span className="bp-h">{t.tpWhenStart}</span>
           <div className="bp-seg tp-seg" role="radiogroup" aria-label={t.tpWhenStart}>

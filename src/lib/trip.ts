@@ -13,7 +13,8 @@ import { zonedToDate } from "./zoned";
 
 export type Mode = "plane" | "train" | "bus" | "ship" | "stay" | "walk";
 export type PlaceKind = "station" | "bus" | "port" | "hotel" | "address" | "here";
-export type Endpoint = { kind: "airport" } | { kind: PlaceKind; lat: number; lng: number; label: string };
+/** Aeroporto: terminal opcional (código oficial, ex.: "2", "2E", "N") — o viajante confirma no cartão de embarque. */
+export type Endpoint = { kind: "airport"; terminal?: string } | { kind: PlaceKind; lat: number; lng: number; label: string };
 /** buffer: margem antes da partida escolhida pelo viajante, em minutos (vazio = a recomendada para a modalidade). */
 /** next: a cidade para onde segue depois (avião, comboio, autocarro ou navio); `city` é o id quando é uma cidade VOYBU. */
 export type NextCity = { city?: string; name: string };
@@ -118,7 +119,7 @@ export function parseTrip(v: unknown): Trip | null {
   const ep = (x: unknown): Endpoint | null => {
     if (!x || typeof x !== "object") return null;
     const e = x as Record<string, unknown>;
-    if (e.kind === "airport") return AIRPORT;
+    if (e.kind === "airport") return typeof e.terminal === "string" && /^[A-Za-z0-9 ]{1,8}$/.test(e.terminal) ? { kind: "airport", terminal: e.terminal } : AIRPORT;
     if (!["station", "port", "hotel", "address", "here"].includes(String(e.kind))) return null;
     if (typeof e.lat !== "number" || typeof e.lng !== "number" || !Number.isFinite(e.lat) || !Number.isFinite(e.lng)) return null;
     return { kind: e.kind as PlaceKind, lat: e.lat, lng: e.lng, label: String(e.label ?? "").slice(0, 120) };

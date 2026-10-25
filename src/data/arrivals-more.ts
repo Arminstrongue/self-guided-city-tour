@@ -200,7 +200,7 @@ export const ARRIVALS_MORE: Record<string, ArrivalPoint[]> = {
     { id: "man-ap", kind: "airport", name: "Manchester Airport", code: "MAN", lat: 53.3537, lng: -2.275, options: [
       { id: "man-train", name: "Comboio para Piccadilly", min: 20, fare: "≈ £5", to: { name: "Manchester Piccadilly", lat: 53.4774, lng: -2.2309 },
         steps: [
-          s("Siga as placas Trains / The Station (entre os terminais 1, 2 e 3).", "Follow the Trains / The Station signs (between terminals 1, 2 and 3).", "The Station", 8),
+          s("Siga as placas Trains / The Station (Skylink a partir dos terminais 2 e 3).", "Follow the Trains / The Station signs (Skylink from terminals 2 and 3).", "The Station", 8),
           ukPay,
           s("Qualquer comboio para Manchester Piccadilly (a cada poucos minutos).", "Any train to Manchester Piccadilly (every few minutes).", "Manchester Piccadilly", 20)
         ] },

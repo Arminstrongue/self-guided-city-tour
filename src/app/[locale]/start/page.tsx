@@ -48,7 +48,7 @@ export default async function Start(
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, L);
   const cities: QsCity[] = list.map((c) => ({
     id: c.id, name: cityName(c, params.locale), country: (COUNTRY[c.id] && region.of(COUNTRY[c.id])) || "", flag: flag(COUNTRY[c.id] ?? ""),
-    open: owned.has(c.id) || isFreeCity(c.id), center: cityCenter(c), tz: c.tz ?? "UTC",
+    open: owned.has(c.id) || isFreeCity(c.id), center: cityCenter(c), tz: c.tz ?? "UTC", iata: c.ap?.iata,
     options: routeOptions(c).map((o) => ({
       key: o.key, n: o.plan.stops.length, min: o.plan.minutesTotal, tour: o.plan.minutesTour, air: c.air.min, ret: o.plan.ret.min, acc: accessCount(o.plan.stops.map((s) => s.id)),
       first: { lat: o.plan.stops[0].lat, lng: o.plan.stops[0].lng }, last: { lat: o.plan.stops[o.plan.stops.length - 1].lat, lng: o.plan.stops[o.plan.stops.length - 1].lng }, cost: formatMoney(o.plan.transport, c.cur, L),

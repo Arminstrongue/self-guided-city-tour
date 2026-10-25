@@ -323,7 +323,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
-          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} />}
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} airport={city.ap?.iata} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
             locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
@@ -363,7 +363,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
-          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} />}
+          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} airport={city.ap?.iata} />}
           {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
           <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
             locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}

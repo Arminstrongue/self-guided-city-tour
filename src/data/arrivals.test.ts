@@ -50,3 +50,20 @@ test("guias da estação: só para opções existentes, com fontes e traduzidos 
     assert.deepEqual(miss, [], `${l}: faltam ${miss.length}`);
   }
 });
+
+import { TERMINALS } from "./terminals";
+test("terminais: códigos únicos, fontes, textos pt/en e traduzidos", async () => {
+  const fs = await import("node:fs");
+  const keys: string[] = [];
+  for (const [iata, a] of Object.entries(TERMINALS)) {
+    assert.ok(a.sources.length > 0, iata);
+    const codes = a.terminals.map((x) => x.code);
+    assert.equal(new Set(codes).size, codes.length, `${iata}: códigos repetidos`);
+    for (const x of a.terminals) for (const k of ["serves", "transit"] as const) if (x[k]) { assert.ok(x[k]!.pt && x[k]!.en); keys.push(`${iata}.${x.code}.${k}`); }
+    for (const k of ["between", "arrive"] as const) if (a[k]) keys.push(`${iata}.${k}`);
+  }
+  for (const l of ["es", "fr", "de", "it", "zh", "ar", "ja", "ko", "ru", "tr"]) {
+    const pack = JSON.parse(fs.readFileSync(`src/data/terminals-i18n/${l}.json`, "utf8")) as Record<string, string>;
+    assert.deepEqual(keys.filter((k) => !pack[k]), [], l);
+  }
+});

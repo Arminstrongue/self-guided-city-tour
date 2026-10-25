@@ -965,8 +965,8 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
   ],
   "checked": "2026-10",
   "fromBaggage": {
-   "pt": "Chega-se à estação pelo Skylink, passadiço coberto com tapetes rolantes: cerca de 190 m do elevador de chegadas do T1 e 400 m do T2. Do T3, um passadiço coberto leva ao T1 e depois ao Skylink.",
-   "en": "The station is reached by the covered Skylink walkway with moving walkways: about 190 m from the T1 arrivals lift, about 400 m from T2. From T3, a covered walkway leads to T1, then the Skylink."
+   "pt": "Chega-se à estação pelo Skylink, passadiço coberto com tapetes rolantes (cerca de 400 m a partir do T2). Do T3, siga as placas Trains / The Station. O Terminal 1 fechou em 2026.",
+   "en": "The station is reached by the covered Skylink walkway with moving walkways (about 400 m from T2). From T3, follow the Trains / The Station signs. Terminal 1 closed in 2026."
   },
   "lift": {
    "pt": "Sem degraus: há elevadores de cada lado da rampa para as plataformas; outro elevador junto à entrada da estação liga o piso térreo ao superior.",
