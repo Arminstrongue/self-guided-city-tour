@@ -3199,3 +3199,26 @@ body:has(.sticky-cta.on) main{padding-bottom:104px}
 .sg-rows li>span{display:grid;gap:2px}.sg-rows b{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
 .sg-rows li>span>span{font-size:14px;line-height:1.45}
 .sg-note{margin:0;font-size:11.5px;color:var(--muted)}.sg-note a{color:inherit}
+/* Roteiro: botão para voltar à Minha viagem */
+.tv-back{flex:none;display:grid;place-items:center;width:40px;height:40px;margin-inline-end:4px;border-radius:50%;background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink);text-decoration:none;align-self:center}
+[dir="rtl"] .tv-back svg{transform:scaleX(-1)}
+/* Explorar: separadores primeiro; "Para si" compacto por baixo */
+.ex-tabs{margin-bottom:10px}
+.ex-hob{padding:10px 14px;gap:8px}
+.ex-hob:not(.open) .row-between b{font-size:14px;font-weight:600}
+/* Explorar — momentos compactos: ícone à esquerda, título e quando numa linha, texto curto, ações pequenas */
+.ex-moments{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px}
+.ex-m{display:grid;grid-template-columns:40px 1fr;column-gap:12px;row-gap:3px;padding:12px 14px}
+.ex-m .ex-m-top{display:contents}
+.ex-m .ex-ic{grid-column:1;grid-row:1 / span 5;align-self:start;width:40px;height:40px;font-size:20px;border-radius:12px}
+.ex-m .ex-when{grid-column:2;font-size:12px}
+.ex-m .ex-m-t{grid-column:2;font-size:15.5px;line-height:1.3}
+.ex-m>.hint{grid-column:2;font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ex-m .ex-tags{grid-column:2}
+.ex-m .ex-tags span:not(.on){display:none}
+.ex-m .ex-tags:not(:has(.on)){display:none}
+.ex-m .ex-acts{grid-column:2;gap:6px;margin-top:6px}
+.ex-m .ex-acts a,.ex-m .ex-acts button{min-height:32px;padding:5px 11px;font-size:12.5px}
+/* Mapa do Explorar mais baixo no telemóvel: a lista aparece logo */
+@media (max-width:640px){.ex .leaflet-box{height:240px!important;min-height:0}}
+.ex-bare{padding-top:6px!important;margin-top:0!important}

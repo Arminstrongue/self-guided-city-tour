@@ -77,6 +77,17 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
   const [sv, setSv] = useState<Place | null>(null);
   const [focus, setFocus] = useState<Focus | null>(focusIn ?? null);
   const mapRef = useRef<HTMLDivElement>(null);
+  // Separadores em cima: ao trocar, a página sobe até eles para se ver logo o que mudou (por baixo dos cabeçalhos fixos).
+  const tabsRef = useRef<HTMLDivElement>(null);
+  function showTabs() {
+    requestAnimationFrame(() => {
+      const el = tabsRef.current; if (!el) return;
+      const covers = Array.from(document.querySelectorAll<HTMLElement>("header.top, .ct-bar")).filter((h) => getComputedStyle(h).position === "sticky" || getComputedStyle(h).position === "fixed");
+      const offset = covers.reduce((m, h) => Math.max(m, h.getBoundingClientRect().bottom), 0) + 8;
+      const top = el.getBoundingClientRect().top;
+      if (top < offset || top > window.innerHeight * 0.35) window.scrollTo({ top: window.scrollY + top - offset, behavior: "smooth" });
+    });
+  }
   useEffect(() => { if (focusIn) { setFocus(focusIn); setTab("moments"); setTimeout(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 60); } }, [focusIn]);
   /** Mostra um lugar no mapa do separador atual (como em Diversão e lugares). */
   const show = (f: { lat: number; lng: number; name: string }) => { setFocus({ ...f, walk: true }); setTimeout(() => mapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 30); };
@@ -103,8 +114,8 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
     // Sem interesses neste dispositivo: tenta os da conta; se não houver, pede para escolher.
     fetch("/api/me/prefs").then((r) => (r.ok ? r.json() : null)).then((p) => {
       const fromAccount = (p?.hobbies ?? []).filter((x: string) => (HOBBIES as readonly string[]).includes(x)) as Hobby[];
-      if (fromAccount.length) { setHobbies(fromAccount); try { localStorage.setItem(KEY, JSON.stringify(fromAccount)); } catch { /* ignorar */ } } else setPicking(true);
-    }).catch(() => setPicking(true));
+      if (fromAccount.length) { setHobbies(fromAccount); try { localStorage.setItem(KEY, JSON.stringify(fromAccount)); } catch { /* ignorar */ } } // sem interesses: o cartão fica fechado (só "Os seus interesses · Editar"), para não empurrar o conteúdo para baixo
+    }).catch(() => null);
   }, []);
   // Carrega lugares e eventos só quando o viajante abre esses separadores.
   useEffect(() => {
@@ -137,8 +148,16 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
   const dist = (m: number) => (m < 1800 ? fmt(t.exWalk, { m: Math.max(1, Math.round(m / 80)) }) : fmt(t.exKm, { km: (m / 1000).toFixed(m < 10000 ? 1 : 0) }));
 
   return (
-    <section className="sec ex" id="explore">
+    <section className={`sec ex${bare ? " ex-bare" : ""}`} id="explore">
       {!bare && <div className="sec-h reveal"><div><h2>{fmt(t.exTitle, { city: cityName })}</h2><p>{t.exSub}</p></div></div>}
+
+      <div className="ex-tabs" role="tablist" ref={tabsRef}>
+        {(["moments", "places", "events", ...(customs.length ? ["customs" as const] : [])] as const).map((k) => (
+          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); setFocus(null); showTabs(); }}>
+            {k === "moments" ? `✨ ${t.exTabMoments}` : k === "places" ? `🎡 ${t.exTabPlaces}` : k === "events" ? `🎟 ${t.exTabEvents}` : `🤝 ${t.exTabCustoms}`}
+          </button>
+        ))}
+      </div>
 
       <div className={`card ex-hob ${picking ? "open" : ""}`}>
         <div className="row-between">
@@ -153,13 +172,6 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
         </>}
       </div>
 
-      <div className="ex-tabs" role="tablist">
-        {(["moments", "places", "events", ...(customs.length ? ["customs" as const] : [])] as const).map((k) => (
-          <button key={k} role="tab" aria-selected={tab === k} className={tab === k ? "on" : ""} onClick={() => { setTab(k); setFocus(null); }}>
-            {k === "moments" ? `✨ ${t.exTabMoments}` : k === "places" ? `🎡 ${t.exTabPlaces}` : k === "events" ? `🎟 ${t.exTabEvents}` : `🤝 ${t.exTabCustoms}`}
-          </button>
-        ))}
-      </div>
 
       {tab === "moments" && (
         <div ref={mapRef}>

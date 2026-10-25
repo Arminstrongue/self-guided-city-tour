@@ -25,7 +25,7 @@ import { SheetX } from "./WinNav";
 import { track } from "@/lib/track";
 import { COUNTRY } from "@/data/city-meta";
 import dynamic from "next/dynamic";
-import { ArrowLeftRight, ChevronRight } from "lucide-react";
+import { ArrowLeftRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { toast } from "@/lib/toast";
 import Portal from "@/components/Portal";
 import { CitySwitch } from "./CitySwitch";
@@ -274,8 +274,10 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
     <>
       <header className="top">
         <div className="top-row">
-          <div style={{ minWidth: 0 }}>
-            <span className="label">{t.yourRoute}</span>
+          {/* Voltar à Minha viagem (carteira): o roteiro abre em ecrã inteiro, sem o cabeçalho do site. */}
+          {!preview && <a className="tv-back press" href={`/${locale}/wallet`} aria-label={t.nvTrip} title={t.nvTrip}><ChevronLeft size={22} aria-hidden="true" /></a>}
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <span className="label" style={{ display: "block" }}>{t.yourRoute}</span>
             {otherCities.length > 0 ? (
               <CitySwitch current={city.id} cities={otherCities} label={t.qs1} placeholder={t.spCity} none={t.gsNone} closeLabel={t.close} onPick={(id) => { window.location.href = `/${locale}/tour/${id}`; }} />
             ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
@@ -354,7 +356,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         </div>
           </>}
         </>) : (<>
-        <div className="card stack" style={{ gap: 10, padding: 14 }}>
+        {/* Plano (tempo, início e fim, versões do roteiro): só no separador Roteiro — nos outros, o conteúdo aparece logo em cima. */}
+        {(tab === "route" || preview) && <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
             <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
@@ -390,7 +393,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span className="ios-tx"><b>{t.ttFx}</b>{city.cur !== fx.cur && <small>{city.cur} → {fx.cur}</small>}</span><ChevronRight size={18} className="ios-chev" aria-hidden="true" />
           </button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
-        </div>
+        </div>}
           {tab === "route" && !preview && (
             <button type="button" className="btn tram press tg-go" onClick={() => { setGoing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
               <span>▶ {t.tg.start}</span><small>{t.tg.startSub}</small>
