@@ -1,7 +1,7 @@
 "use client";
 import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
+import { ArrowLeft, CalendarDays, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
@@ -117,6 +117,9 @@ export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; 
 
       {step === 2 && city && (
         <div className="qs-times">
+          <a className="qs-days press" href={`/${locale}/plan/new?city=${city.id}&days=5`}>
+            <CalendarDays size={20} aria-hidden="true" /><span><b>{t.dp.cta}</b><small>{t.dp.ctaSub}</small></span><ChevronRight size={16} aria-hidden="true" />
+          </a>
           <TripPicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={trip} onChange={upd} airport={city.iata} />
 
           <span className="bp-h">{t.tpWhenStart}</span>

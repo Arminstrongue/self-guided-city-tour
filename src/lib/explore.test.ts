@@ -97,3 +97,16 @@ test("momentos com dias: nunca 'agora' num dia em que não acontecem", async () 
   const pijp = Object.values(MOMENTS).flat().find((m) => /Monday to Saturday/.test(m.en[1]));
   if (pijp) assert.deepEqual(momentDays(pijp), [1, 2, 3, 4, 5, 6]);
 });
+
+test("roteiro de vários dias: reparte os lugares por todos os dias e usa os interesses escolhidos", async () => {
+  const { autoPlan: ap, stopCandidates, groupsToHobbies, perDay } = await import("./autoplan");
+  const stops = Array.from({ length: 10 }, (_, i) => ({ id: `s${i}`, name: `S${i}`, lat: 38.7 + i * 0.001, lng: -9.1, top: i < 3 }));
+  const cands = stopCandidates(stops);
+  assert.equal(perDay(cands.length, 5), 2);
+  const items = ap(cands, groupsToHobbies(["sights"]), 5, 1, perDay(cands.length, 5));
+  const byDay = [1, 2, 3, 4, 5].map((d) => items.filter((i) => i.day === d).length);
+  assert.ok(byDay.every((n) => n >= 1), `todos os dias têm lugares: ${byDay}`);
+  assert.equal(new Set(items.map((i) => i.title)).size, items.length, "sem repetidos");
+  assert.ok(items.every((i) => i.kind === "stop"));
+  assert.deepEqual(groupsToHobbies(["food", "leisure"]).sort(), ["budget", "cafe", "food", "wellness", "wine"]);
+});

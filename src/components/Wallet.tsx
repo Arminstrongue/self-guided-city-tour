@@ -111,6 +111,17 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: 0 }); };
 
   const signed = w && w !== "anon" ? w : null;
+  // Roteiro de vários dias criado antes de entrar: grava-o agora e abre-o.
+  useEffect(() => {
+    if (!signed) return;
+    let draft: string | null = null;
+    try { draft = localStorage.getItem("sgct:plan-draft"); } catch { /* ignorar */ }
+    if (!draft) return;
+    void fetch("/api/me/plans", { method: "POST", headers: { "Content-Type": "application/json" }, body: draft }).then((r) => (r.ok ? r.json() : null)).then((j: { id?: string } | null) => {
+      try { localStorage.removeItem("sgct:plan-draft"); } catch { /* ignorar */ }
+      if (j?.id) { toast(t.dp.saved); window.location.href = `/${locale}/plan/${j.id}`; }
+    }).catch(() => null);
+  }, [Boolean(signed)]); // eslint-disable-line react-hooks/exhaustive-deps
   // Primeira vez com sessão e sem interesses: "Escolha o que gosta".
   useEffect(() => {
     if (!signed || signed.hobbies.length) return;
@@ -556,6 +567,7 @@ function Plans({ t, locale, cities, plans }: { t: Dict; locale: Locale; cities: 
   return (
     <section className="stack" style={{ gap: 10 }}>
       <div className="row-between"><h2 className="gp-h2">🗺 {t.plTitle}</h2><button className="link-btn" onClick={() => setOpen(!open)}>{t.plNew}</button></div>
+      <a className="qs-days press" href={`/${locale}/plan/new`}><span aria-hidden="true">✨</span><span><b>{t.dp.cta}</b><small>{t.dp.ctaSub}</small></span></a>
       {open && (
         <form className="card stack wl-form" onSubmit={create}>
           <div className="field"><label htmlFor="pn">{t.plName}</label><input id="pn" value={f.title} maxLength={120} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder={f.city === "__other" ? f.other : cities[f.city]} /></div>

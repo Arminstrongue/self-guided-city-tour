@@ -7,7 +7,7 @@ import type { PlanItem } from "./db/schema";
 import { CAT_HOBBIES, CAT_ICON, distM, type Hobby, type Place } from "./explore";
 import type { When } from "@/data/moments";
 
-export type Cand = { key: string; title: string; lat: number; lng: number; icon: string; h: Hobby[]; when: When | "any"; kind: "moment" | "place"; quality: number };
+export type Cand = { key: string; title: string; lat: number; lng: number; icon: string; h: Hobby[]; when: When | "any"; kind: "moment" | "place" | "stop"; quality: number };
 
 export function candidates(moments: { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string }[], places: Place[]): Cand[] {
   return [
@@ -29,24 +29,44 @@ const SLOTS: { time: string; fits: (w: Cand["when"]) => boolean }[] = [
   { time: "21:00", fits: (w) => w === "night" }
 ];
 
-export function autoPlan(cands: Cand[], hobbies: Hobby[], days: number, startDay = 1): PlanItem[] {
+/** `maxPerDay`: com poucos lugares para muitos dias, reparte-os em vez de encher os primeiros dias e deixar os últimos vazios. */
+/** Quantos lugares por dia para repartir `total` candidatos por `days` dias (entre 2 e 6). */
+export const perDay = (total: number, days: number) => Math.max(2, Math.min(SLOTS.length, Math.ceil(total / Math.max(1, days))));
+
+export function autoPlan(cands: Cand[], hobbies: Hobby[], days: number, startDay = 1, maxPerDay = SLOTS.length): PlanItem[] {
   const used = new Set<string>();
   const out: PlanItem[] = [];
   const score = (c: Cand) => c.h.filter((x) => hobbies.includes(x)).length * 2 + c.quality + (c.kind === "moment" ? 0.5 : 0);
   for (let d = 0; d < days; d++) {
     let last: { lat: number; lng: number } | null = null;
+    let n = 0;
     for (const slot of SLOTS) {
+      if (n >= maxPerDay) break;
       const pool = cands.filter((c) => !used.has(c.key) && slot.fits(c.when));
       if (!pool.length) continue;
       // Melhor equilíbrio entre interesse do viajante e distância ao lugar anterior (para não atravessar a cidade).
       const pick = pool.map((c) => ({ c, v: score(c) - (last ? distM(last, c) / 2500 : 0) })).sort((a, b) => b.v - a.v)[0].c;
       used.add(pick.key);
+      n++;
       last = pick;
       out.push({ id: `${pick.key}:${d}`.slice(0, 40), day: startDay + d, time: slot.time, title: pick.title, kind: pick.kind, lat: pick.lat, lng: pick.lng, icon: pick.icon });
     }
   }
   return out;
 }
+
+/** Paragens do roteiro da cidade como candidatos (passeios turísticos): as mais famosas valem mais. */
+export function stopCandidates(stops: { id: string; name: string; lat: number; lng: number; top?: boolean }[]): Cand[] {
+  return stops.map((s) => ({ key: `s:${s.id}`, title: s.name, lat: s.lat, lng: s.lng, icon: s.top ? "⭐" : "📍", h: ["history", "architecture", "photo"] as Hobby[], when: "day" as const, kind: "stop" as const, quality: s.top ? 2 : 1.3 }));
+}
+
+/** Grupos de interesse do planeador de vários dias (o que o viajante escolhe) → hobbies usados na pontuação. */
+export const DAY_GROUPS = {
+  sights: ["history", "architecture", "photo"], leisure: ["wellness", "cafe", "budget"], food: ["food", "cafe", "wine"], art: ["art", "music", "festival"],
+  nature: ["nature", "beach", "adventure"], night: ["night", "music"], shopping: ["shopping"], family: ["family"]
+} as const satisfies Record<string, readonly Hobby[]>;
+export type DayGroup = keyof typeof DAY_GROUPS;
+export const groupsToHobbies = (g: DayGroup[]): Hobby[] => [...new Set(g.flatMap((k) => DAY_GROUPS[k]))];
 
 /** Rota do dia no Google Maps (até 9 paragens intermédias). */
 export function dayRoute(items: { lat?: number; lng?: number }[]) {
