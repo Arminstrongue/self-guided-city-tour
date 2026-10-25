@@ -1538,7 +1538,7 @@
 "archiveSub": "Vous seul la voyez",
 "likesSub": "Les autres ne verront plus le nombre"
 },
-"st": {
+"st": {"profileVis":"Visibilité du profil","cAccount": "Compte et profil", "cAccountSub": "Données personnelles, e-mail, connexion et profil public", "cTravel": "Voyages et préférences", "cTravelSub": "Style de voyage, favoris et villes hors ligne", "cDisplay": "Langue, devise et apparence", "cDisplaySub": "Langue, devise de référence et thème", "cNotifsSub": "Alertes de voyage, réservations et messages", "cPrivacy": "Confidentialité et sécurité", "cPrivacySub": "Visibilité, localisation, sessions et vos données", "cCommunity": "Communauté", "cCommunitySub": "Messages, blocages et ce que vous voyez", "cHelp": "Aide et informations légales", "cHelpSub": "Assistance, signalements, confidentialité, conditions et à propos", "none": "Aucun", "nOn": "{n} sur {m} activées", "signIn": "E-mail et connexion", "report": "Signaler un problème ou une fraude", "reportSub": "Information erronée, commerce trompeur ou abus", "cookies": "Cookies", "secNote": "Nous ne collectons que le nécessaire. La localisation est facultative : vous pouvez toujours choisir la ville vous-même.", "commNote": "Facultatif : seulement si vous utilisez le profil voyageur, les publications et les messages.",
 "title": "Paramètres et activité",
 "search": "Rechercher",
 "gAccount": "Votre compte",

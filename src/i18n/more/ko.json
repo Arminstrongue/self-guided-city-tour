@@ -2000,7 +2000,7 @@
 "archiveSub": "나만 볼 수 있습니다",
 "likesSub": "다른 사람은 수를 볼 수 없습니다"
 },
-"st": {
+"st": {"profileVis":"프로필 공개 범위","cAccount": "계정 및 프로필", "cAccountSub": "개인 정보, 이메일, 로그인, 공개 프로필", "cTravel": "여행 및 선호", "cTravelSub": "여행 스타일, 저장한 항목, 오프라인 도시", "cDisplay": "언어, 통화, 화면", "cDisplaySub": "언어, 기준 통화, 테마", "cNotifsSub": "여행 알림, 예약, 메시지", "cPrivacy": "개인정보 및 보안", "cPrivacySub": "공개 범위, 위치, 세션, 내 데이터", "cCommunity": "커뮤니티", "cCommunitySub": "메시지, 차단, 보이는 콘텐츠", "cHelp": "도움말 및 법적 정보", "cHelpSub": "지원, 신고, 개인정보, 약관, VOYBU 소개", "none": "없음", "nOn": "{m}개 중 {n}개 켜짐", "signIn": "이메일 및 로그인", "report": "문제 또는 사기 신고", "reportSub": "잘못된 정보, 오해를 부르는 업체, 악용", "cookies": "쿠키", "secNote": "꼭 필요한 정보만 수집해요. 위치는 선택 사항이며 도시는 언제든 직접 고를 수 있어요.", "commNote": "선택 사항: 여행자 프로필, 게시물, 메시지를 쓸 때만 해당돼요.",
 "title": "설정 및 활동",
 "search": "검색",
 "gAccount": "내 계정",

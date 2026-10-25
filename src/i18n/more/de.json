@@ -1542,7 +1542,7 @@
 "archiveSub": "Nur Sie sehen ihn",
 "likesSub": "Andere sehen die Anzahl nicht"
 },
-"st": {
+"st": {"profileVis":"Sichtbarkeit des Profils","cAccount": "Konto und Profil", "cAccountSub": "Persönliche Daten, E-Mail, Anmeldung und öffentliches Profil", "cTravel": "Reisen und Vorlieben", "cTravelSub": "Reisestil, Gespeichertes und Offline-Städte", "cDisplay": "Sprache, Währung und Darstellung", "cDisplaySub": "Sprache, Referenzwährung und Design", "cNotifsSub": "Reisehinweise, Buchungen und Nachrichten", "cPrivacy": "Datenschutz und Sicherheit", "cPrivacySub": "Sichtbarkeit, Standort, Sitzungen und Ihre Daten", "cCommunity": "Community", "cCommunitySub": "Nachrichten, Blockierungen und was Sie sehen", "cHelp": "Hilfe und Rechtliches", "cHelpSub": "Support, Meldungen, Datenschutz, AGB und über VOYBU", "none": "Keine", "nOn": "{n} von {m} aktiv", "signIn": "E-Mail und Anmeldung", "report": "Problem oder Betrug melden", "reportSub": "Falsche Angaben, irreführendes Geschäft oder Missbrauch", "cookies": "Cookies", "secNote": "Wir erheben nur das Nötige. Der Standort ist freiwillig: Sie können die Stadt immer selbst wählen.", "commNote": "Optional: nur wenn Sie das Reiseprofil, Beiträge und Nachrichten nutzen.",
 "title": "Einstellungen und Aktivität",
 "search": "Suchen",
 "gAccount": "Dein Konto",

@@ -1514,7 +1514,7 @@
 "archiveSub": "自分だけが見られます",
 "likesSub": "他の人には数が表示されません"
 },
-"st": {
+"st": {"profileVis":"プロフィールの公開範囲","cAccount": "アカウントとプロフィール", "cAccountSub": "個人情報、メール、ログイン、公開プロフィール", "cTravel": "旅行と好み", "cTravelSub": "旅のスタイル、保存済み、オフラインの都市", "cDisplay": "言語・通貨・表示", "cDisplaySub": "言語、基準通貨、テーマ", "cNotifsSub": "旅行のお知らせ、予約、メッセージ", "cPrivacy": "プライバシーとセキュリティ", "cPrivacySub": "公開範囲、位置情報、セッション、あなたのデータ", "cCommunity": "コミュニティ", "cCommunitySub": "メッセージ、ブロック、表示する内容", "cHelp": "ヘルプと法的情報", "cHelpSub": "サポート、報告、プライバシー、規約、VOYBUについて", "none": "なし", "nOn": "{m}件中{n}件オン", "signIn": "メールとログイン", "report": "問題や詐欺を報告", "reportSub": "誤った情報、誤解を招く店舗、迷惑行為", "cookies": "Cookie", "secNote": "必要な情報だけを集めます。位置情報は任意で、都市はいつでも手動で選べます。", "commNote": "任意：旅行者プロフィール、投稿、メッセージを使う場合のみ。",
 "title": "設定とアクティビティ",
 "search": "検索",
 "gAccount": "アカウント",

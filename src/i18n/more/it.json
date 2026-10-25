@@ -1569,7 +1569,7 @@
 "archiveSub": "Lo vedi solo tu",
 "likesSub": "Gli altri non vedranno il numero"
 },
-"st": {
+"st": {"profileVis":"Visibilità del profilo","cAccount": "Account e profilo", "cAccountSub": "Dati personali, email, accesso e profilo pubblico", "cTravel": "Viaggi e preferenze", "cTravelSub": "Stile di viaggio, salvati e città offline", "cDisplay": "Lingua, valuta e aspetto", "cDisplaySub": "Lingua, valuta di riferimento e tema", "cNotifsSub": "Avvisi di viaggio, prenotazioni e messaggi", "cPrivacy": "Privacy e sicurezza", "cPrivacySub": "Visibilità, posizione, sessioni e i tuoi dati", "cCommunity": "Community", "cCommunitySub": "Messaggi, blocchi e ciò che vedi", "cHelp": "Aiuto e informazioni legali", "cHelpSub": "Assistenza, segnalazioni, privacy, termini e su VOYBU", "none": "Nessuno", "nOn": "{n} di {m} attive", "signIn": "Email e accesso", "report": "Segnala un problema o una frode", "reportSub": "Informazioni errate, attività ingannevole o abuso", "cookies": "Cookie", "secNote": "Raccogliamo solo il necessario. La posizione è facoltativa: puoi sempre scegliere la città a mano.", "commNote": "Facoltativo: solo se usi il profilo viaggiatore, i post e i messaggi.",
 "title": "Impostazioni e attività",
 "search": "Cerca",
 "gAccount": "Il tuo account",

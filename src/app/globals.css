@@ -3678,3 +3678,17 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .esi-err{margin:0;color:#d93025;font-size:14px;font-weight:600}
 .esi .linkish{background:none;border:0;padding:0;color:var(--accent,#0a84ff);font-weight:600;font-size:14px;cursor:pointer}
 .esi .linkish:disabled{opacity:.5}
+
+/* Definições: 7 categorias com ícone em quadrado colorido (estilo iOS) */
+.st-cats .st-cat{align-items:center}
+.st-cat-ic{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:#fff;background:#0a84ff}
+.st-cats .st-cat:nth-child(2) .st-cat-ic{background:#30b0c7}
+.st-cats .st-cat:nth-child(3) .st-cat-ic{background:#5e5ce6}
+.st-cats .st-cat:nth-child(4) .st-cat-ic{background:#ff3b30}
+.st-cats .st-cat:nth-child(5) .st-cat-ic{background:#34c759}
+.st-cats .st-cat:nth-child(6) .st-cat-ic{background:#ff9f0a}
+.st-cats .st-cat:nth-child(7) .st-cat-ic{background:#8e8e93}
+.st-cats .st-cat .st-tx small{white-space:normal}
+.st-cats .st-val{max-width:34%;text-align:right}
+.st-info{cursor:default}
+.st-info .st-val{color:#34c759;font-weight:700}

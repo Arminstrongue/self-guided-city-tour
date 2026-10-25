@@ -16,7 +16,7 @@ export default async function Legal(props: { params: Promise<{ locale: Locale; d
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <article className="stack legal">
         <h1 style={{ fontSize: 28 }}>{content.title}</h1>
-        <p className="hint">{params.locale === "pt" ? "Última atualização" : "Last updated"}: {company().updated}</p>
+        <p className="hint">{params.locale === "pt" ? "Última atualização" : "Last updated"}: {params.locale === "pt" ? company().updated : company().updatedEn}</p>
         {content.sections.map((s) => (
           <section key={s.h} className="stack" style={{ gap: 6 }}>
             <h2 style={{ fontSize: 18 }}>{s.h}</h2>

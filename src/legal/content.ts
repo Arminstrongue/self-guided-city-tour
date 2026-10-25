@@ -13,7 +13,8 @@ export function company() {
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
     email: v("COMPANY_EMAIL", env.contact),
-    updated: "24 de outubro de 2026"
+    updated: "25 de outubro de 2026",
+    updatedEn: "25 October 2026"
   };
 }
 
@@ -39,6 +40,27 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "As horas, tarifas e tempos de percurso são indicativos e podem mudar sem aviso dos operadores. Confirme no local antes de comprar bilhetes.",
         "A decisão de sair do aeroporto e a hora de regresso são do viajante. Verifique antes que o seu passaporte e visto lhe permitem sair e voltar a entrar.",
         "Não somos responsáveis por voos perdidos, atrasos de transportes, encerramentos de monumentos ou alterações de horários de voo."
+      ] },
+      { h: "Informação turística e informação de voo", p: [
+        "A VOYBU dá informação turística (o que ver, como lá chegar, quanto tempo e quanto custa, em estimativa). Não é uma fonte oficial de informação operacional de voo.",
+        "Horários, portas de embarque, terminais e condições de entrada podem mudar a qualquer momento. Confirme sempre com a companhia aérea, o aeroporto e os painéis no local.",
+        "Nenhuma estimativa de percurso ou hora de regresso é uma garantia de que chegará a tempo. Deixe sempre margem para filas, controlos de segurança e imprevistos."
+      ] },
+      { h: "Entrada no país, trânsito e vistos", p: [
+        "A VOYBU nunca afirma que pode sair do aeroporto. A ferramenta \"Posso sair?\" é um resumo informativo, com fonte e data, e não substitui a confirmação oficial.",
+        "Antes de sair, confirme as condições de entrada e de trânsito que se aplicam a si junto das autoridades oficiais (serviço de fronteiras, embaixada ou consulado) e da sua companhia aérea."
+      ] },
+      { h: "Preços transparentes", p: [
+        "Antes de pagar, mostramos o preço total (com IVA), o que está incluído, a validade do passe e as condições de livre resolução. Não há custos escondidos nem renovação automática nos passes de viajante.",
+        "Os custos de terceiros que aparecem no roteiro (transportes, entradas, refeições) são estimativas, pagos diretamente a quem presta o serviço, e podem ser diferentes no local."
+      ] },
+      { h: "Negócios na app, avaliações e denúncias", p: [
+        "Só aparecem na app estabelecimentos registados na VOYBU com a conta ativa. Os guias só aparecem depois de aprovados pela nossa equipa.",
+        `Se encontrar informação errada, um negócio enganador, uma possível fraude ou abuso, use Perfil → Definições → Ajuda e informações legais → Reportar um problema ou fraude, ou escreva para ${c.email}. Analisamos cada denúncia e podemos corrigir, suspender ou retirar conteúdos e contas.`
+      ] },
+      { h: "Fontes, atualização e emergências", p: [
+        "Nas informações importantes (aeroportos, entrada no país, segurança, emergências) indicamos a origem e a data de atualização. Só publicamos factos verificados em fontes oficiais.",
+        "Os contactos de emergência mostrados são os números oficiais de cada país. Numa emergência, ligue diretamente para o número local; não dependa só da app, sobretudo sem rede ou bateria."
       ] },
       { h: "Ofertas de comerciantes", p: ["As ofertas apresentadas no roteiro são da responsabilidade de cada comerciante. Não somos parte na compra que fizer junto deles."] },
       { h: "Comerciantes", p: [
@@ -110,6 +132,11 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Em resumo", p: [
         "Usar a app é grátis. Guardamos só o necessário para o serviço funcionar, não vendemos dados, não usamos publicidade nem análise de terceiros, e pode apagar a sua conta e os seus dados a qualquer momento em Perfil → Apagar a conta."
       ] },
+      { h: "Privacidade por defeito", p: [
+        "Recolhemos só os dados necessários para cada função e explicamos para que servem. As funções opcionais (localização, diário de percursos, perfil público, notificações) estão desligadas até as ativar.",
+        "A localização nunca é obrigatória: a app funciona com uma cidade ou um ponto escolhido à mão. Não pedimos localização permanente nem em segundo plano.",
+        "O perfil de viajante é privado por defeito e o seu email nunca é mostrado. Pode rever e mudar tudo em Perfil → Definições → Privacidade e segurança."
+      ] },
       { h: "Responsável pelo tratamento", p: [`${who}.`] },
       { h: "Que dados tratamos", p: [
         "Compra: email, nome, cidade e plano; hora e número do voo (opcionais) e o plano de viagem (início, fim, modalidade e horas). O pagamento é tratado pela Stripe; não guardamos o cartão.",
@@ -117,6 +144,9 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "A nacionalidade indicada em \"Posso sair?\" fica só no seu dispositivo; não a guardamos.",
         "Localização (só se a autorizar): serve para o guiar, mostrar o que está perto e calcular a hora de regresso. Para encontrar lugares perto de si, enviamos uma posição arredondada (cerca de 100 m) ao OpenStreetMap; para dar nome a um sítio onde parou, uma posição arredondada (cerca de 10 m). Não guardamos estas posições.",
         "Diário automático de percursos (opcional): o telemóvel deteta as cidades, os lugares por onde passa, a distância e os passos. Só guardamos um percurso na sua conta depois de o confirmar; pode apagá-lo ou desligar o diário a qualquer momento. Sem sessão iniciada, fica só no telemóvel.",
+        "Preferências de viagem (opcional): tipo de viagem, ritmo e necessidades de acessibilidade (por exemplo, evitar escadas ou viajar com carrinho de bebé). Servem só para adaptar roteiros e sugestões, só você as vê, nunca são partilhadas e pode apagá-las a qualquer momento.",
+        "Foto de perfil: ao criar um avatar, recortar uma foto ou escolher um momento de um vídeo, o tratamento é feito no seu telemóvel; só a imagem final é enviada. O vídeo e a foto originais não saem do dispositivo.",
+        "Entrada por email: enviamos um link e um código de 6 dígitos válidos durante 30 minutos. Não guardamos o código; a sessão fica num cookie necessário, que pode terminar em todos os dispositivos.",
         "Carteira (com sessão): memórias (fotos e notas, com o local se o indicar), lugares guardados, interesses, planos, reservas e bilhetes que adicionar (incluindo a foto do bilhete) e grupos de despesas (com os nomes que escrever para os outros participantes).",
         "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes.",
         "Publicações, vídeos e histórias (opcional): fotos, vídeos (convertidos e guardados nos nossos servidores na UE, sem metadados de localização), legendas, cidade, tema, gostos e comentários. As histórias deixam de estar visíveis ao fim de 24 horas; ficam no seu arquivo privado durante 1 ano (ou enquanto estiverem num destaque seu) e depois são apagadas.",
@@ -150,7 +180,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Alguns destes prestadores estão fora do EEE (por exemplo, nos EUA) e transferem dados ao abrigo do Quadro de Privacidade de Dados UE-EUA ou de cláusulas contratuais-tipo."
       ] },
       { h: "Os seus direitos", p: [
-        "Pode exportar os seus dados em Perfil → Descarregar os meus dados e apagar a conta em Perfil → Apagar a conta.",
+        "Pode exportar os seus dados em Perfil → Definições → Privacidade e segurança → Descarregar os meus dados, e apagar a conta em Perfil → Definições → Apagar a conta.",
         `Pode também pedir acesso, retificação, apagamento, limitação, portabilidade ou opor-se ao tratamento através de ${c.email}.`,
         "Pode apresentar queixa à Comissão Nacional de Proteção de Dados (cnpd.pt)."
       ] }
@@ -198,6 +228,27 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Times, fares and journey durations are indicative and operators may change them without notice. Check locally before buying tickets.",
         "The decision to leave the airport and when to return is yours. Check that your passport and visa allow you to leave and re-enter.",
         "We are not liable for missed flights, transport delays, closed sights or flight schedule changes."
+      ] },
+      { h: "Tourist information and flight information", p: [
+        "VOYBU provides tourist information (what to see, how to get there, how long and how much, as estimates). It is not an official source of operational flight information.",
+        "Schedules, gates, terminals and entry conditions can change at any time. Always check with your airline, the airport and the screens on site.",
+        "No route estimate or return time is a guarantee that you will be back in time. Always leave a margin for queues, security checks and the unexpected."
+      ] },
+      { h: "Entry, transit and visas", p: [
+        "VOYBU never states that you can leave the airport. The \"Can I leave?\" tool is an informative summary, with its source and date, and does not replace official confirmation.",
+        "Before leaving, check the entry and transit conditions that apply to you with the official authorities (border service, embassy or consulate) and your airline."
+      ] },
+      { h: "Transparent prices", p: [
+        "Before you pay, we show the total price (including VAT), what is included, how long the pass lasts and the withdrawal conditions. There are no hidden costs and traveller passes do not renew automatically.",
+        "Third-party costs shown on the route (transport, entry tickets, meals) are estimates, paid directly to the provider, and may differ on site."
+      ] },
+      { h: "Businesses in the app, ratings and reports", p: [
+        "Only establishments registered with VOYBU with an active account appear in the app. Guides only appear after our team approves them.",
+        `If you find wrong information, a misleading business, possible fraud or abuse, use Profile → Settings → Help and legal → Report a problem or fraud, or write to ${c.email}. We review every report and may correct, suspend or remove content and accounts.`
+      ] },
+      { h: "Sources, updates and emergencies", p: [
+        "For important information (airports, entry rules, safety, emergencies) we show where it comes from and when it was last updated. We only publish facts verified from official sources.",
+        "The emergency contacts shown are each country's official numbers. In an emergency, call the local number directly; don't rely only on the app, especially without signal or battery."
       ] },
       { h: "Merchant offers", p: ["Offers shown on the route are the responsibility of each merchant. We are not party to purchases you make from them."] },
       { h: "Merchants", p: [
@@ -266,6 +317,11 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "In short", p: [
         "Using the app is free. We keep only what the service needs, we don't sell data, we use no advertising or third-party analytics, and you can delete your account and data at any time in Profile → Delete account."
       ] },
+      { h: "Privacy by default", p: [
+        "We only collect the data each feature needs and explain what it is for. Optional features (location, route diary, public profile, notifications) stay off until you turn them on.",
+        "Location is never required: the app works with a city or a point you choose yourself. We don't ask for permanent or background location.",
+        "The traveller profile is private by default and your email is never shown. You can review and change everything in Profile → Settings → Privacy and security."
+      ] },
       { h: "Controller", p: [`${who}.`] },
       { h: "Data we process", p: [
         "Purchase: email, name, city and plan; flight time and number (optional) and the trip plan (start, end, mode and times). Payment is handled by Stripe; we never store your card.",
@@ -273,6 +329,9 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "The nationality entered in \"Can I leave?\" stays on your device; we don't store it.",
         "Location (only if you allow it): used to guide you, show what's nearby and work out your return time. To find places near you we send a rounded position (about 100 m) to OpenStreetMap; to name a spot where you stopped, a rounded position (about 10 m). We don't store these positions.",
         "Automatic route diary (optional): your phone detects cities, the places you pass, distance and steps. We only save a route to your account after you confirm it; you can delete it or turn the diary off at any time. Without signing in, it stays on your phone.",
+        "Travel preferences (optional): type of trip, pace and accessibility needs (for example avoiding stairs or travelling with a pushchair). They are only used to adapt routes and suggestions, only you can see them, they are never shared and you can delete them at any time.",
+        "Profile photo: when you create an avatar, crop a photo or pick a moment from a video, the processing happens on your phone; only the final image is uploaded. The original video and photo never leave your device.",
+        "Email sign-in: we send a link and a 6-digit code that work for 30 minutes. We don't store the code; your session is kept in a necessary cookie, which you can end on all devices.",
         "Wallet (signed in): memories (photos and notes, with the place if you add it), saved places, interests, plans, bookings and tickets you add (including the ticket photo) and expense groups (with the names you type for other participants).",
         "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers.",
         "Posts, videos and stories (optional): photos, videos (converted and stored on our EU servers, without location metadata), captions, city, topic, likes and comments. Stories stop being visible after 24 hours; they stay in your private archive for 1 year (or while they are in one of your highlights) and are then deleted.",
@@ -306,7 +365,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Some of these providers are outside the EEA (for example in the US) and transfer data under the EU-US Data Privacy Framework or standard contractual clauses."
       ] },
       { h: "Your rights", p: [
-        "You can export your data in Profile → Download my data and delete your account in Profile → Delete account.",
+        "You can export your data in Profile → Settings → Privacy and security → Download my data, and delete your account in Profile → Settings → Delete account.",
         `You may also request access, rectification, erasure, restriction, portability or object to processing at ${c.email}.`,
         "You may complain to the Portuguese data protection authority (cnpd.pt)."
       ] }

@@ -1514,7 +1514,7 @@
 "archiveSub": "仅你可见",
 "likesSub": "他人看不到数量"
 },
-"st": {
+"st": {"profileVis":"资料可见性","cAccount": "账户与个人资料", "cAccountSub": "个人信息、邮箱、登录和公开资料", "cTravel": "旅行与偏好", "cTravelSub": "旅行风格、收藏和离线城市", "cDisplay": "语言、货币与外观", "cDisplaySub": "语言、参考货币和主题", "cNotifsSub": "行程提醒、预订和消息", "cPrivacy": "隐私与安全", "cPrivacySub": "可见性、位置、会话和您的数据", "cCommunity": "社区", "cCommunitySub": "消息、屏蔽和您看到的内容", "cHelp": "帮助与法律信息", "cHelpSub": "支持、举报、隐私、条款和关于 VOYBU", "none": "无", "nOn": "已开启 {n}/{m}", "signIn": "邮箱与登录", "report": "报告问题或欺诈", "reportSub": "信息错误、误导性商家或滥用", "cookies": "Cookie", "secNote": "我们只收集必要的信息。位置是可选的：您随时可以手动选择城市。", "commNote": "可选：仅在您使用旅行者资料、帖子和消息时适用。",
 "title": "设置和活动",
 "search": "搜索",
 "gAccount": "你的账户",

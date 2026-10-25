@@ -1,5 +1,5 @@
 "use client";
-import { Coins, SunMoon, MapPin } from "lucide-react";
+import { Coins, SunMoon, MapPin, Compass, Globe2, Users, LifeBuoy, Mail, Flag, Cookie, Plane } from "lucide-react";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 import { myCurrency } from "./TravelTools";
 import { useDict } from "@/i18n/client-dict";
@@ -27,7 +27,8 @@ type Acc = {
 type Activity = { likes: { posts: { id: string; handle: string; text: string; photo: boolean; video: string | null }[] }; comments: { id: string; text: string; at: string; postId: string; postText: string; photo: boolean; handle: string }[] };
 type NotifKey = "like" | "comment" | "follow" | "message" | "story_reply" | "video";
 const NOTIF_KEYS: NotifKey[] = ["message", "like", "comment", "follow", "story_reply", "video"];
-type Page = "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete" | "activity" | "close" | "words" | "currency" | "appearance";
+type Cat = "account" | "travel" | "display" | "security" | "community" | "help";
+type Page = `cat-${Cat}` | "root" | "privacy" | "messages" | "blocked" | "muted" | "hidden" | "notifs" | "language" | "delete" | "activity" | "close" | "words" | "currency" | "appearance";
 
 function b64ToBytes(b64: string) {
   const pad = "=".repeat((4 - (b64.length % 4)) % 4);
@@ -36,7 +37,8 @@ function b64ToBytes(b64: string) {
 }
 const langName = (l: string, inL: string) => { try { return new Intl.DisplayNames([inL], { type: "language" }).of(l) ?? l; } catch { return l; } };
 
-type Row = { k: string; I: LucideIcon; label: string; sub?: string; value?: string; href?: string; go?: Page; run?: () => void; red?: boolean; blue?: boolean; dl?: boolean };
+type Row = { k: string; I: LucideIcon; label: string; sub?: string; value?: string; href?: string; go?: Page; run?: () => void; red?: boolean; blue?: boolean; dl?: boolean; info?: boolean };
+type CatDef = { k: Cat | "notifs"; I: LucideIcon; label: string; sub: string; value?: string; rows: Row[] };
 
 /** Tema da app: como o sistema, claro ou escuro (guardado neste aparelho). */
 function themeNow(): "system" | "light" | "dark" { try { const v = localStorage.getItem("sgct:theme"); return v === "light" || v === "dark" ? v : "system"; } catch { return "system"; } }
@@ -129,68 +131,78 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
 
   const prof = social?.profile ?? null;
   const ok = a && a !== "auth" ? a : null;
-  const groups = useMemo<{ h: string; rows: Row[] }[]>(() => {
+  // 7 categorias (como nas definições do iOS): o essencial à vista, o resto em subpáginas.
+  const cats = useMemo<CatDef[]>(() => {
     if (!ok) return [];
     const onN = NOTIF_KEYS.filter((k) => ok.notif[k] !== false).length;
+    const cnt = (n: number) => (n ? String(n) : s.none);
+    const notifVal = fmt(s.nOn, { n: onN, m: NOTIF_KEYS.length });
     return [
-      { h: s.gUse, rows: [
+      { k: "account", I: UserRound, label: s.cAccount, sub: s.cAccountSub, rows: [
+        { k: "edit", I: UserRound, label: prof ? t.scEdit : t.acNoProfile, run: () => setEditing(true) },
+        ...(prof ? [{ k: "view", I: UserRound, label: t.acView, sub: `@${prof.handle}`, href: `/${locale}/u/${prof.handle}` }] : []),
+        { k: "signin", I: Mail, label: s.signIn, sub: `${ok.email} · ${t.trv.signInHow}`, value: "✓", info: true }
+      ] },
+      { k: "travel", I: Compass, label: s.cTravel, sub: s.cTravelSub, rows: [
+        { k: "prefs", I: Plane, label: t.trv.title, sub: t.trv.sub, href: `/${locale}/wallet?settings=1` },
         { k: "saved", I: Bookmark, label: s.saved, href: `/${locale}/wallet#saved` },
-        ...(prof ? [{ k: "activity", I: ActivityIc, label: t.cf.activity, sub: t.cf.activitySub, go: "activity" as Page }] : []),
-        ...(prof ? [{ k: "archive", I: Archive, label: s.archive, href: `/${locale}/u/${prof.handle}?tab=archive` }] : []),
-        { k: "notifs", I: Bell, label: t.acNotifs, value: pushState === "on" ? s.on : `${onN}/${NOTIF_KEYS.length}`, go: "notifs" as Page },
-        { k: "lang", I: Languages, label: s.language, value: langName(locale, locale), go: "language" as Page },
-        { k: "currency", I: Coins, label: t.gkCurrency, value: myCurrency(), go: "currency" as Page },
-        { k: "appearance", I: SunMoon, label: t.ap.title, value: t.ap[themeNow()], go: "appearance" as Page },
         { k: "offline", I: WifiOff, label: s.offline, href: `/${locale}/wallet#offline` }
       ] },
-      { h: s.gSee, rows: [
-        ...(prof ? [{ k: "privacy", I: Lock, label: t.acPrivacy, value: ok.isPrivate ? s.private : s.public, go: "privacy" as Page }] : []),
-        ...(prof ? [{ k: "close", I: Star, label: t.cf.close, value: String(ok.closeFriends.filter((x) => x.close).length), go: "close" as Page }] : []),
-        { k: "blocked", I: Ban, label: t.acBlocked, value: String(ok.blocked.length), go: "blocked" as Page },
+      { k: "display", I: Globe2, label: s.cDisplay, sub: s.cDisplaySub, value: `${locale.toUpperCase()} · ${myCurrency()}`, rows: [
+        { k: "lang", I: Languages, label: s.language, value: langName(locale, locale), go: "language" as Page },
+        { k: "currency", I: Coins, label: t.gkCurrency, value: myCurrency(), go: "currency" as Page },
+        { k: "appearance", I: SunMoon, label: t.ap.title, value: t.ap[themeNow()], go: "appearance" as Page }
+      ] },
+      { k: "notifs", I: Bell, label: t.acNotifs, sub: s.cNotifsSub, value: notifVal, rows: [
+        { k: "notifs", I: Bell, label: t.acNotifs, value: notifVal, go: "notifs" as Page }
+      ] },
+      { k: "security", I: Shield, label: s.cPrivacy, sub: s.cPrivacySub, rows: [
+        ...(prof ? [{ k: "privacy", I: Lock, label: s.profileVis, value: ok.isPrivate ? s.private : s.public, go: "privacy" as Page }] : []),
         { k: "loc", I: MapPin, label: t.trv.loc, sub: t.trv.locWhy, value: geo === "granted" ? t.trv.locOn : geo === "denied" ? t.trv.locOff : t.trv.locAsk,
-          run: async () => { if (geo === "granted") return; navigator.geolocation?.getCurrentPosition(() => setGeo("granted"), () => setGeo("denied")); } }
-      ] },
-      { h: s.gInteract, rows: [
-        { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page },
-        ...(prof ? [{ k: "words", I: Type, label: t.cf.words, value: ok.hiddenWords.length ? String(ok.hiddenWords.length) : undefined, go: "words" as Page }] : [])
-      ] },
-      { h: s.gWhat, rows: [
-        { k: "muted", I: VolumeX, label: s.muted, value: String(ok.muted.length), go: "muted" as Page },
-        { k: "hidden", I: EyeOff, label: s.hidden, value: String(ok.hidden.length), go: "hidden" as Page }
-      ] },
-      { h: s.gApp, rows: [
+          run: async () => { if (geo === "granted") return; navigator.geolocation?.getCurrentPosition(() => setGeo("granted"), () => setGeo("denied")); } },
+        { k: "blocked", I: Ban, label: t.acBlocked, value: cnt(ok.blocked.length), go: "blocked" as Page },
         { k: "export", I: Download, label: t.acExport, sub: t.acExportHint, href: "/api/me/export", dl: true },
         { k: "outall", I: MonitorSmartphone, label: t.acOutAll, run: async () => { setBusy("out"); const r = await fetch("/api/me/account/signout-all", { method: "POST" }).catch(() => null); setBusy(""); flash(r?.ok ? t.acOutDone : t.acErr); } }
       ] },
-      { h: s.gSupport, rows: [
+      { k: "community", I: Users, label: s.cCommunity, sub: s.cCommunitySub, rows: [
+        { k: "messages", I: MessageCircle, label: t.acWhoDm, sub: t.acDm[ok.dmPolicy], go: "messages" as Page },
+        ...(prof ? [{ k: "close", I: Star, label: t.cf.close, value: cnt(ok.closeFriends.filter((x) => x.close).length), go: "close" as Page }] : []),
+        ...(prof ? [{ k: "words", I: Type, label: t.cf.words, value: cnt(ok.hiddenWords.length), go: "words" as Page }] : []),
+        { k: "muted", I: VolumeX, label: s.muted, value: cnt(ok.muted.length), go: "muted" as Page },
+        { k: "hidden", I: EyeOff, label: s.hidden, value: cnt(ok.hidden.length), go: "hidden" as Page },
+        ...(prof ? [{ k: "activity", I: ActivityIc, label: t.cf.activity, sub: t.cf.activitySub, go: "activity" as Page }] : []),
+        ...(prof ? [{ k: "archive", I: Archive, label: s.archive, href: `/${locale}/u/${prof.handle}?tab=archive` }] : [])
+      ] },
+      { k: "help", I: LifeBuoy, label: s.cHelp, sub: s.cHelpSub, rows: [
         { k: "help", I: CircleHelp, label: s.help, href: `/${locale}/support` },
+        { k: "report", I: Flag, label: s.report, sub: s.reportSub, href: `/${locale}/contact` },
         { k: "privacyc", I: Shield, label: t.lPrivacy, href: `/${locale}/legal/privacy` },
         { k: "terms", I: FileText, label: s.terms, href: `/${locale}/legal/terms` },
+        { k: "cookies", I: Cookie, label: s.cookies, href: `/${locale}/legal/cookies` },
         { k: "about", I: Info, label: s.about, href: `/${locale}/about` }
-      ] },
-      { h: s.gLogin, rows: [
-        { k: "logout", I: LogOut, label: t.wSignOut, red: true, run: logout },
-        { k: "delete", I: Trash2, label: t.acDelete, red: true, go: "delete" as Page }
       ] }
     ];
-  }, [ok, prof, pushState, locale, t, s]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [ok, prof, pushState, geo, locale, t, s]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (a === null) return <p className="hint" style={{ marginTop: 24 }}>{t.exLoading}</p>;
   if (a === "auth") return <div className="card gp-empty" style={{ marginTop: 16 }}><span aria-hidden="true">🔐</span><b>{t.acSignIn}</b><a className="btn press" href={`/${locale}/wallet`} style={{ width: "auto" }}>{t.wSignIn}</a></div>;
   const toggle = (k: NotifKey) => put({ notif: { ...a.notif, [k]: a.notif[k] === false } });
 
   const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
-  const shown = q.trim() ? groups.map((g) => ({ ...g, rows: g.rows.filter((r) => norm(`${r.label} ${r.sub ?? ""} ${g.h}`).includes(norm(q.trim()))) })).filter((g) => g.rows.length) : groups;
+  const shown = q.trim() ? cats.map((g) => ({ h: g.label, rows: g.rows.filter((r) => norm(`${r.label} ${r.sub ?? ""} ${g.label}`).includes(norm(q.trim()))) })).filter((g) => g.rows.length) : [];
+  const openCat = (c: CatDef) => go(c.k === "notifs" ? "notifs" : `cat-${c.k}`);
+  const curCat = page.startsWith("cat-") ? cats.find((c) => `cat-${c.k}` === page) : undefined;
 
   const RowEl = ({ r }: { r: Row }) => {
     const inner = <>
       <r.I size={22} strokeWidth={1.8} aria-hidden="true" className="st-ic" />
       <span className="st-tx"><span>{r.label}</span>{r.sub && <small>{r.sub}</small>}</span>
       {r.value && <span className="st-val">{r.value}</span>}
-      {!r.red && <ChevronRight size={18} className="st-chev" aria-hidden="true" />}
+      {!r.red && !r.info && <ChevronRight size={18} className="st-chev" aria-hidden="true" />}
     </>;
     const cls = `st-row${r.red ? " red" : ""}`;
     if (r.href) return <a className={cls} href={r.href} {...(r.dl ? { download: true } : {})}>{inner}</a>;
+    if (r.info) return <div className={`${cls} st-info`}>{inner}</div>;
     return <button type="button" className={cls} disabled={r.k === "outall" && busy === "out"} onClick={() => (r.go ? go(r.go) : r.run?.())}>{inner}</button>;
   };
   const Person = ({ p, label, onClick }: { p: PublicProfile; label: string; onClick: () => void }) => (
@@ -222,10 +234,23 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
               <span className="st-tx"><span className="st-me-n">{prof?.name ?? t.acNoProfile}</span><small>{prof ? `@${prof.handle} · ` : ""}{a.email}</small><small className="st-ok">✓ {t.trv.emailOk} · {t.trv.signInHow}</small></span>
               <ChevronRight size={18} className="st-chev" aria-hidden="true" />
             </button>
-            {prof && <a className="st-row" href={`/${locale}/u/${prof.handle}`}><UserRound size={22} strokeWidth={1.8} className="st-ic" aria-hidden="true" /><span className="st-tx"><span>{t.acView}</span></span><ChevronRight size={18} className="st-chev" aria-hidden="true" /></a>}
           </div>
         </>}
 
+        {!q && <>
+          <div className="st-group st-cats">{cats.map((c) => (
+            <button key={c.k} type="button" className="st-row st-cat" onClick={() => openCat(c)}>
+              <span className="st-cat-ic" aria-hidden="true"><c.I size={20} strokeWidth={1.9} /></span>
+              <span className="st-tx"><span>{c.label}</span><small>{c.sub}</small></span>
+              {c.value && <span className="st-val">{c.value}</span>}
+              <ChevronRight size={18} className="st-chev" aria-hidden="true" />
+            </button>
+          ))}</div>
+          <div className="st-group">
+            <RowEl r={{ k: "logout", I: LogOut, label: t.wSignOut, red: true, run: logout }} />
+            <RowEl r={{ k: "delete", I: Trash2, label: t.acDelete, red: true, go: "delete" }} />
+          </div>
+        </>}
         {shown.map((g) => (
           <section key={g.h} className="st-sec">
             <span className="st-h">{g.h}</span>
@@ -347,6 +372,14 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
         )}
       </>}
 
+      {curCat && <>
+        <Nav title={curCat.label} />
+        <p className="st-note">{curCat.sub}</p>
+        <div className="st-group">{curCat.rows.map((r) => <RowEl key={r.k} r={r} />)}</div>
+        {curCat.k === "security" && <p className="st-note">{s.secNote}</p>}
+        {curCat.k === "community" && <p className="st-note">{s.commNote}</p>}
+      </>}
+
       {page === "notifs" && <>
         <Nav title={t.acNotifs} />
         <div className="st-group">
@@ -400,7 +433,7 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
         <Nav title={t.ap.title} />
         <div className="st-group">
           {(["system", "light", "dark"] as const).map((m) => (
-            <button key={m} type="button" className="st-row" onClick={() => { setTheme(m); setPage("root"); }}>
+            <button key={m} type="button" className="st-row" onClick={() => { setTheme(m); back(); }}>
               <span className="st-tx"><span>{t.ap[m]}</span></span>
               {themeNow() === m && <span className="st-check" aria-hidden="true">✓</span>}
             </button>

@@ -2000,7 +2000,7 @@
 "archiveSub": "Yalnızca siz görürsünüz",
 "likesSub": "Diğerleri sayıyı görmez"
 },
-"st": {
+"st": {"profileVis":"Profil görünürlüğü","cAccount": "Hesap ve profil", "cAccountSub": "Kişisel bilgiler, e-posta, giriş ve herkese açık profil", "cTravel": "Seyahat ve tercihler", "cTravelSub": "Seyahat tarzı, kaydedilenler ve çevrimdışı şehirler", "cDisplay": "Dil, para birimi ve görünüm", "cDisplaySub": "Dil, referans para birimi ve tema", "cNotifsSub": "Seyahat uyarıları, rezervasyonlar ve mesajlar", "cPrivacy": "Gizlilik ve güvenlik", "cPrivacySub": "Görünürlük, konum, oturumlar ve verileriniz", "cCommunity": "Topluluk", "cCommunitySub": "Mesajlar, engellemeler ve gördükleriniz", "cHelp": "Yardım ve yasal bilgiler", "cHelpSub": "Destek, bildirimler, gizlilik, koşullar ve VOYBU hakkında", "none": "Yok", "nOn": "{m} içinden {n} açık", "signIn": "E-posta ve giriş", "report": "Sorun veya dolandırıcılık bildir", "reportSub": "Yanlış bilgi, yanıltıcı işletme veya kötüye kullanım", "cookies": "Çerezler", "secNote": "Yalnızca gerekeni topluyoruz. Konum isteğe bağlıdır: şehri her zaman kendiniz seçebilirsiniz.", "commNote": "İsteğe bağlı: yalnızca gezgin profilini, gönderileri ve mesajları kullanırsanız.",
 "title": "Ayarlar ve hareketler",
 "search": "Ara",
 "gAccount": "Hesabınız",

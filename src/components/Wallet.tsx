@@ -146,6 +146,14 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
       if (r.to && /^\/[a-z]{2}(\/|\?|#|$)/.test(r.to) && !r.to.startsWith("//") && Date.now() - (r.at ?? 0) < 30 * 60_000 && !r.to.includes("/wallet")) window.location.replace(r.to);
     } catch { /* ignorar */ }
   }, [w]);
+  // Vindo de Definições → Viagens e preferências (?settings=1): abre as preferências.
+  useEffect(() => {
+    if (!w || w === "anon") return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("settings") !== "1") return;
+    setSettings(true); q.delete("settings");
+    history.replaceState(null, "", `${location.pathname}${q.size ? `?${q}` : ""}${location.hash}`);
+  }, [w]);
   // Vindo de "Entrar" num roteiro (?signin=1&city=…): foca o email; se já tem sessão, volta ao roteiro.
   const [retCity, setRetCity] = useState<string | null>(null);
   useEffect(() => {
