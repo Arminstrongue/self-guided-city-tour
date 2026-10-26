@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -21,6 +22,12 @@ import { exploreProps } from "@/lib/explore-props";
 import { cityCenterOf } from "@/lib/city-center";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale; city: string }> }): Promise<Metadata> {
+  const { locale, city: id } = await props.params;
+  const c = await loadCity(id);
+  return { title: c ? `${cityName(c, locale)} · ${getDict(locale).wallet} | VOYBU` : "VOYBU", robots: { index: false } };
+}
 
 export default async function Tour(props: { params: Promise<{ locale: Locale; city: string }> }) {
   const params = await props.params;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { requestCurrency } from "@/lib/fx";
@@ -7,6 +8,11 @@ import { loadCity } from "@/lib/content";
 import { currentTraveller } from "@/lib/wallet";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  return { title: `${getDict(locale).successTitle} | VOYBU`, robots: { index: false } };
+}
 
 export default async function Success(
   props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; pending?: string }> }
@@ -23,6 +29,13 @@ export default async function Success(
       <div className="stack">
         {searchParams.pending ? (
           <p className="note">{t.processing}</p>
+        ) : !email ? (
+          // Sem sessão (página aberta à mão ou noutro navegador): não afirmar que houve pagamento.
+          <>
+            <h1 style={{ fontSize: 30 }}>{t.wallet}</h1>
+            <p>{t.acSignIn}</p>
+            <Link className="btn tram" href={`/${params.locale}/wallet?signin=1${city ? `&city=${city.id}` : ""}`}>{t.wSignIn}</Link>
+          </>
         ) : (
           <>
             <h1 style={{ fontSize: 30 }}>✓ {t.successTitle}</h1>

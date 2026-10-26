@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { PageBanner } from "@/components/SiteImage";
 import { requestCurrency } from "@/lib/fx";
@@ -8,6 +9,12 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 import { MERCHANT_PLANS, PARTNER_COMMISSION } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = getDict(locale);
+  return { title: `VOYBU Business · ${t.bzTitle}`, description: t.bzSub };
+}
 
 export default async function Merchants(
   props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ agent?: string }> }

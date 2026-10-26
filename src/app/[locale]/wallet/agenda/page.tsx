@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { WinNav } from "@/components/WinNav";
@@ -9,6 +10,11 @@ import { exploreProps } from "@/lib/explore-props";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  return { title: `${getDict(locale).evTitle} | VOYBU` };
+}
 
 export default async function AgendaPage(
   props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; ev?: string }> }

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { WalletView } from "@/components/Wallet";
 import { requestCurrency } from "@/lib/fx";
@@ -5,9 +6,14 @@ import { loadCities } from "@/lib/content";
 import { cityName, COUNTRY } from "@/data/cities";
 import { FREE_CITIES } from "@/lib/pricing";
 import { enabledProviders } from "@/lib/auth";
-import type { Locale } from "@/i18n/dictionaries";
+import { getDict, type Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  return { title: `${getDict(locale).wallet} | VOYBU`, robots: { index: false } };
+}
 
 export default async function WalletPage(props: { params: Promise<{ locale: Locale }> }) {
   const params = await props.params;

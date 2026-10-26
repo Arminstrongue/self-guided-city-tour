@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/Header";
 import { AgentSignup } from "@/components/AgentSignup";
 import { requestCurrency } from "@/lib/fx";
@@ -8,6 +9,12 @@ import { AGENT_COMMISSION, AGENT_MONTHS, MERCHANT_PLANS } from "@/lib/pricing";
 export const dynamic = "force-dynamic";
 
 /** Página pública do programa de comerciais independentes. */
+export async function generateMetadata(props: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = getDict(locale);
+  return { title: `${t.hpTitle} | VOYBU`, description: t.hpSub };
+}
+
 export default async function Agents(
   props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ expired?: string }> }
 ) {

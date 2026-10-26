@@ -19,7 +19,7 @@ const fold = (x: string) => x.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCa
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}`;
 
 /** Primeira experiência: 1) cidade, 2) tempo disponível, 3) começar (ou comprar) com o roteiro que cabe. */
-export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string }) {
+export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { t?: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string; top?: string[] }) {
   const t = useDict(tProp);
   const [cityId, setCityId] = useState(pre);
   const [time, setTime] = useState<Time | null>(null);
@@ -102,16 +102,25 @@ export function QuickStart({ t: tProp, locale, cities, pre, from }: { t?: Dict; 
       {step === 1 && (
         <>
           <label className="pk-q qs-q"><Search size={16} aria-hidden="true" /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.qsSearch} aria-label={t.qsSearch} autoComplete="off" /></label>
-          <div className="qs-cities">
-            {list.map((c) => (
+          {(() => {
+            // Sem pesquisa: primeiro as mais procuradas (o que a maioria quer), depois todas por ordem alfabética.
+            const row = (c: QsCity) => (
               <button key={c.id} className="qs-city press" onClick={() => pickCity(c.id)}>
                 <span className="qs-flag" aria-hidden="true">{c.flag}</span>
                 <span className="qs-tx"><b>{c.name}</b><small>{c.country}</small></span>
                 {c.open && <span className="qs-owned">{t.qsOpen}</span>}
                 <ChevronRight size={16} aria-hidden="true" />
               </button>
-            ))}
-          </div>
+            );
+            const topCities = q.trim() ? [] : top.map((id) => cities.find((c) => c.id === id)).filter((c): c is QsCity => Boolean(c));
+            if (!topCities.length) return <div className="qs-cities">{list.map(row)}</div>;
+            return <>
+              <span className="as-h qs-h">{t.qsTop}</span>
+              <div className="qs-cities">{topCities.map(row)}</div>
+              <span className="as-h qs-h">{t.qsAll}</span>
+              <div className="qs-cities">{list.map(row)}</div>
+            </>;
+          })()}
         </>
       )}
 

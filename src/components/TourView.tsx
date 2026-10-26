@@ -280,7 +280,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <span className="label" style={{ display: "block" }}>{t.yourRoute}</span>
             {otherCities.length > 0 ? (
               <CitySwitch current={city.id} cities={otherCities} label={t.qs1} placeholder={t.spCity} none={t.gsNone} closeLabel={t.close} onPick={(id) => { window.location.href = `/${locale}/tour/${id}`; }} />
-            ) : <h2 style={{ fontSize: 24 }}>{cityLabel}</h2>}
+            ) : <h1 style={{ fontSize: 24, margin: 0 }}>{cityLabel}</h1>}
+            {otherCities.length > 0 && <h1 className="sr-only">{t.yourRoute}: {cityLabel}</h1>}
           </div>
           {leave ? <div className="clock"><small>{t.leaveBy}</small><b className="num">{when(leave)}</b></div>
             : backAt && <div className="clock"><small>{t.bpBackShort}</small><b className="num">{when(backAt)}</b></div>}

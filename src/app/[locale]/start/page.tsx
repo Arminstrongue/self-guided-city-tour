@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { popularity } from "@/lib/popularity";
 import { PageBanner } from "@/components/SiteImage";
 import { alternates } from "@/lib/seo";
 import { cookies } from "next/headers";
@@ -57,11 +58,15 @@ export default async function Start(
     }))
   })).sort((a, b) => a.name.localeCompare(b.name, L));
   const pre = cities.some((c) => c.id === searchParams.city) ? searchParams.city! : "";
+  // Mais procuradas: o que os viajantes mais abrem (90 dias); sem dados, as cidades mais conhecidas.
+  const pop = await popularity();
+  const FAMOUS = ["lon", "par", "lis", "nyc", "dxb", "rom", "bcn", "ams", "ist", "sin"];
+  const top = [...cities.map((c) => c.id)].sort((a, b) => ((pop.city.get(b) ?? 0) - (pop.city.get(a) ?? 0)) || ((FAMOUS.indexOf(a) + 1 || 99) - (FAMOUS.indexOf(b) + 1 || 99))).slice(0, 6);
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <PageBanner k="find-my-way" alt={getDict(params.locale).img.alt["find-my-way"]} />
-      <QuickStart locale={params.locale} cities={cities} pre={pre} from={fmt(t.fromP, { p: p.local ?? p.main })} />
+      <QuickStart locale={params.locale} cities={cities} pre={pre} top={top} from={fmt(t.fromP, { p: p.local ?? p.main })} />
     </main>
   );
 }

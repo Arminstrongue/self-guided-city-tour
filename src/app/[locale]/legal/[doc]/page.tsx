@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { requestCurrency } from "@/lib/fx";
@@ -6,6 +7,12 @@ import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
 const DOCS: LegalDoc[] = ["terms", "privacy", "cookies", "guides"];
+
+export async function generateMetadata(props: { params: Promise<{ locale: Locale; doc: string }> }): Promise<Metadata> {
+  const { locale, doc } = await props.params;
+  if (!DOCS.includes(doc as LegalDoc)) return { title: "VOYBU" };
+  return { title: `${(locale === "pt" ? legalPT : legalEN)(doc as LegalDoc).title} | VOYBU` };
+}
 
 export default async function Legal(props: { params: Promise<{ locale: Locale; doc: string }> }) {
   const params = await props.params;

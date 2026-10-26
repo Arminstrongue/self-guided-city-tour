@@ -3241,7 +3241,7 @@ body:has(.sticky-cta.on) main{padding-bottom:104px}
 .tm-info{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .tm-info li{display:flex;gap:8px;font-size:13.5px;line-height:1.4}.tm-info svg{flex:none;margin-top:2px;color:var(--cobalt-ink)}
 /* Barra de baixo em todo o lado (AppNav): 4 separadores; o conteúdo e os botões fixos sobem por cima dela */
-.appnav{grid-template-columns:repeat(4,1fr)}
+.appnav{grid-template-columns:repeat(5,1fr)}
 .appnav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:58px;color:var(--muted);text-decoration:none;-webkit-tap-highlight-color:transparent}
 .appnav a span{display:grid;place-items:center;height:26px;transition:transform .15s}
 .appnav a small{font-size:10.5px;font-weight:600;letter-spacing:.01em}
@@ -3767,3 +3767,11 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .mo-tx{position:absolute;left:12px;right:12px;bottom:12px;z-index:1;display:grid;gap:2px}
 .mo-tx b{font-size:16px;letter-spacing:-.01em;text-shadow:0 1px 6px rgba(0,0,0,.35)}
 .mo-tx small{font-size:12.5px;line-height:1.35;opacity:.92}
+
+/* Barra de baixo igual no site e na app: a ligação "Início" da carteira tem o mesmo aspeto dos botões */
+.nv>a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;height:58px;color:var(--muted);text-decoration:none;font:inherit;-webkit-tap-highlight-color:transparent}
+.nv>a span{font-size:22px;line-height:1;display:grid;place-items:center;height:26px;filter:grayscale(1);opacity:.75;transition:transform .15s}
+.nv>a small{font-size:10.5px;font-weight:600;letter-spacing:.01em}
+.nv>a:active span{transform:scale(.88)}
+@media (min-width:960px){.nv>a{height:64px;gap:3px}}
+.qs-h{display:block;margin:12px 4px 6px}
