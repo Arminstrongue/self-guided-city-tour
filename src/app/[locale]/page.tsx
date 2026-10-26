@@ -129,7 +129,11 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
               ["business", "VOYBU Business", Store, `/${params.locale}/merchants`, t.hx.cards.tagBiz]
             ] as const).map(([k, name, Ic, href, tag]) => (
               <a key={k} href={href} className={`hx-card hx-${k} press reveal`}>
-                <span className="hx-card-art" aria-hidden="true"><Ic size={34} strokeWidth={1.8} /></span>
+                <span className="hx-card-art" aria-hidden="true">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={`/img/cards/${k}-960.webp`} srcSet={`/img/cards/${k}-480.webp 480w, /img/cards/${k}-960.webp 960w`} sizes="(min-width: 960px) 40vw, 100vw" alt="" loading="lazy" decoding="async" />
+                  <span className="hx-card-ic"><Ic size={18} strokeWidth={2} /></span>
+                </span>
                 <span className="hx-card-tx">
                   {tag && <span className="hx-tag">{tag}</span>}
                   <b>{name}</b>

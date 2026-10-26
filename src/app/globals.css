@@ -3702,3 +3702,32 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .mp-delta.down{color:#d93025;opacity:1}
 .mb-promo{margin-top:4px;font-size:13px;font-weight:700;color:#c2410c}
 .mb-promo.big{font-size:15px;padding:8px 12px;border-radius:12px;background:color-mix(in srgb,#f97316 12%,transparent)}
+
+/* Cartões VOYBU com fotografia (enquadradas nas pessoas) */
+.hx-card-art{position:relative;overflow:hidden;height:150px;place-items:stretch}
+.hx-card-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--fp,50% 40%);transition:transform .5s ease}
+.hx-card:hover .hx-card-art img{transform:scale(1.04)}
+.hx-card-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,0) 45%,rgba(0,0,0,.18))}
+.hx-card-ic{position:absolute;left:12px;bottom:12px;z-index:1;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.hx-card-go{z-index:2;background:rgba(0,0,0,.32);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.hx-layover{--fp:30% 45%}
+.hx-explore{--fp:28% 30%}
+.hx-experiences{--fp:50% 35%}
+.hx-family{--fp:55% 30%}
+.hx-business{--fp:50% 30%}
+@media (min-width:960px){
+  .hx-card-art{height:170px}
+  .hx-layover .hx-card-art{height:auto;min-height:240px}
+}
+@media (max-width:959px){
+  .hx-card-art{width:104px;height:auto;min-height:112px}
+  .hx-card-art::after{background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.12))}
+  .hx-card-ic{left:8px;bottom:8px;width:28px;height:28px;border-radius:9px}
+  .hx-card-ic svg{width:15px;height:15px}
+  .hx-card-go{background:var(--surface-2);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .hx-layover{--fp:25% 40%}
+  .hx-explore{--fp:22% 35%}
+  .hx-experiences{--fp:30% 40%}
+  .hx-family{--fp:45% 35%}
+  .hx-business{--fp:18% 35%}
+}
