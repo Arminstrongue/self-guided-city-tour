@@ -52,7 +52,8 @@ async function loadOffers(cityId: string) {
     instagram: m.instagram, tiktok: m.tiktok, facebook: m.facebook, featured: m.plan !== "basic",
     photos: m.photoCount, book: m.bookMode === "request" ? bookKind(m.category) : null, options: m.bookOptions,
     bookingUrl: m.bookingUrl, phone: m.phone, address: m.address, lat: m.lat, lng: m.lng, hours: m.hours, rev: m.updatedAt ? m.updatedAt.getTime() : 0,
-    promo: m.promo ?? null, languages: m.languages, payments: m.payments
+    promo: m.promo ?? null, languages: m.languages, payments: m.payments,
+    rating: m.ratingCount ? Math.round((m.ratingSum / m.ratingCount) * 10) / 10 : null, ratingCount: m.ratingCount
   }));
 }
 export type Offer = Awaited<ReturnType<typeof loadOffers>>[number];

@@ -80,6 +80,9 @@ export async function deleteAccount(email: string) {
   await d.delete(schema.userMutes).where(or(eq(schema.userMutes.email, email), eq(schema.userMutes.muted, email)));
   await d.delete(schema.messageReactions).where(eq(schema.messageReactions.email, email));
   await d.delete(schema.reports).where(or(eq(schema.reports.reporter, email), eq(schema.reports.target, email)));
+  // Avaliações de negócios: ficam as estrelas e o comentário, sem o nome.
+  const myReqs = (await d.select({ id: schema.bookingRequests.id }).from(schema.bookingRequests).where(eq(schema.bookingRequests.email, email))).map((r) => r.id);
+  if (myReqs.length) await d.update(schema.merchantReviews).set({ author: null }).where(inArray(schema.merchantReviews.bookingId, myReqs));
   await d.update(schema.bookingRequests).set({ name: "", email: "", phone: "", note: "" }).where(eq(schema.bookingRequests.email, email));
   // Avaliações de guias: ficam as estrelas e o comentário, sem o nome.
   const myBookings = (await d.select({ id: schema.guideBookings.id }).from(schema.guideBookings).where(eq(schema.guideBookings.email, email))).map((r) => r.id);

@@ -8,6 +8,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { MAX_OPTIONS, MAX_PHOTOS, PAYMENTS, bookKind, promoActive } from "@/lib/booking";
 import { LOCALES } from "@/i18n/core";
 import { langLabel } from "@/lib/lang-label";
+import { RatingLine, ReviewList, type MReview } from "./MerchantReviews";
 import { shrink } from "@/lib/photo-shrink";
 import { toast } from "@/lib/toast";
 
@@ -15,7 +16,7 @@ export type PortalMerchant = {
   id: string; name: string; category: string; city: string; cityName: string; stopName: string; address: string | null;
   offer: string; hours: string | null; phone: string | null; bookingUrl: string | null; instagram: string | null; tiktok: string | null; facebook: string | null;
   bookMode: string; bookOptions: { name: string; price: string }[]; plan: "basic" | "featured" | "partner"; status: "pending" | "active" | "past_due" | "cancelled";
-  paused: boolean; promo: { text: string; until: string } | null; languages: string[]; payments: string[]; photoCount: number; rev: number; billing: boolean;
+  paused: boolean; promo: { text: string; until: string } | null; languages: string[]; payments: string[]; rating: number | null; ratingCount: number; reviews: MReview[]; photoCount: number; rev: number; billing: boolean;
   stats: { views: number; taps: number; bookings: number; prev: { views: number; taps: number; bookings: number } };
 };
 export type PortalBooking = { id: string; merchantId: string; option: string; dateFrom: string; dateTo: string; time: string; people: number; units: number; name: string; email: string; phone: string; note: string; status: string; createdAt: string };
@@ -146,6 +147,12 @@ function Editor({ t, locale, x }: { t: Dict; locale: Locale; x: PortalMerchant }
           })}
         </div>
         {(() => { const hasPrev = x.stats.prev.views + x.stats.prev.taps + x.stats.prev.bookings > 0; const parts = [hasPrev ? m.period : "", x.stats.views > 0 ? fmt(m.rate, { n: Math.round((x.stats.taps / x.stats.views) * 100) }) : ""].filter(Boolean); return parts.length ? <small className="ess-muted">{parts.join(" · ")}</small> : null; })()}
+      </section>
+
+      <section className="ess-card">
+        <span className="ess-h">✓ {t.mr.verified}</span>
+        {x.ratingCount ? <><RatingLine t={t} locale={locale} rating={x.rating} count={x.ratingCount} /><ReviewList t={t} locale={locale} list={x.reviews} /></> : <p className="ess-muted" style={{ margin: 0 }}>{t.mr.none}</p>}
+        <small className="ess-muted">{t.mr.portalNote}</small>
       </section>
 
       <section className="ess-card mp-form">

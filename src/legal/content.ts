@@ -56,6 +56,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       ] },
       { h: "Negócios na app, avaliações e denúncias", p: [
         "Só aparecem na app estabelecimentos registados na VOYBU com a conta ativa. Os guias só aparecem depois de aprovados pela nossa equipa.",
+        "As avaliações de negócios são verificadas: só pode avaliar quem teve uma reserva confirmada pelo negócio, depois do dia da visita, através de um link pessoal enviado por email. Os negócios não podem apagar, editar nem pagar avaliações, e não é permitido oferecer contrapartidas por elas.",
         `Se encontrar informação errada, um negócio enganador, uma possível fraude ou abuso, use Perfil → Definições → Ajuda e informações legais → Reportar um problema ou fraude, ou escreva para ${c.email}. Analisamos cada denúncia e podemos corrigir, suspender ou retirar conteúdos e contas.`
       ] },
       { h: "Fontes, atualização e emergências", p: [
@@ -151,7 +152,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Perfil de viajante (opcional, só para maiores de 16 anos): nome, @nome de utilizador, foto, bio, cidades que segue, quem segue e quem o segue. A conta é privada por defeito; o seu email nunca é mostrado a outros viajantes.",
         "Publicações, vídeos e histórias (opcional): fotos, vídeos (convertidos e guardados nos nossos servidores na UE, sem metadados de localização), legendas, cidade, tema, gostos e comentários. As histórias deixam de estar visíveis ao fim de 24 horas; ficam no seu arquivo privado durante 1 ano (ou enquanto estiverem num destaque seu) e depois são apagadas.",
         "Mensagens privadas (opcional): texto, fotos, notas de voz e localização partilhada, com a data e se foi lida. A equipa não lê as conversas, exceto quando um participante as denuncia por abuso ou segurança.",
-        "Pedidos de reserva a negócios: nome, email, telefone e nota que escrever são enviados por email ao negócio escolhido. Ficam anónimos ao fim de 12 meses.",
+        "Pedidos de reserva a negócios: nome, email, telefone e nota que escrever são enviados por email ao negócio escolhido. Ficam anónimos ao fim de 12 meses. Se o negócio confirmar, no dia a seguir à visita enviamos um único email a pedir uma avaliação; na avaliação aparece o seu primeiro nome, as estrelas e o comentário.",
         "Reservas de guias: nome, email, telefone e nota, partilhados com o guia depois de ele aceitar. Nas avaliações de guias aparece o seu primeiro nome, as estrelas e o comentário; nas avaliações dos roteiros não aparece o nome.",
         "Problemas reportados numa paragem: o tipo de problema e a nota; se não tiver sessão, um código irreversível derivado do endereço IP, só para contar cada pessoa uma vez (anónimo ao fim de 12 meses).",
         "Convites (opcional): por email enviamos um único email em seu nome; por SMS ou WhatsApp a mensagem sai do seu telemóvel. Não guardamos o contacto de quem convida — só um código irreversível.",
@@ -244,6 +245,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       ] },
       { h: "Businesses in the app, ratings and reports", p: [
         "Only establishments registered with VOYBU with an active account appear in the app. Guides only appear after our team approves them.",
+        "Business reviews are verified: only someone whose booking the business confirmed can leave one, after the day of the visit, through a personal link sent by email. Businesses cannot delete, edit or pay for reviews, and offering incentives for them is not allowed.",
         `If you find wrong information, a misleading business, possible fraud or abuse, use Profile → Settings → Help and legal → Report a problem or fraud, or write to ${c.email}. We review every report and may correct, suspend or remove content and accounts.`
       ] },
       { h: "Sources, updates and emergencies", p: [
@@ -336,7 +338,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Traveller profile (optional, 16+ only): name, @username, photo, bio, cities you follow, who you follow and who follows you. Accounts are private by default; your email is never shown to other travellers.",
         "Posts, videos and stories (optional): photos, videos (converted and stored on our EU servers, without location metadata), captions, city, topic, likes and comments. Stories stop being visible after 24 hours; they stay in your private archive for 1 year (or while they are in one of your highlights) and are then deleted.",
         "Private messages (optional): text, photos, voice notes and shared location, with the time and whether it was read. Our team does not read chats, except when a participant reports one for abuse or safety.",
-        "Booking requests to businesses: the name, email, phone and note you enter are emailed to the business you chose. They are anonymised after 12 months.",
+        "Booking requests to businesses: the name, email, phone and note you enter are emailed to the business you chose. They are anonymised after 12 months. If the business confirms, the day after your visit we send a single email asking for a review; the review shows your first name, the stars and your comment.",
         "Guide bookings: name, email, phone and note, shared with the guide once they accept. Guide reviews show your first name, stars and comment; route ratings don't show your name.",
         "Problems reported at a stop: the kind of problem and the note; if you're not signed in, an irreversible code derived from your IP address, only so each person counts once (anonymised after 12 months).",
         "Invites (optional): by email we send a single email on your behalf; by SMS or WhatsApp the message goes from your own phone. We don't store your friends' contact details — only an irreversible code.",

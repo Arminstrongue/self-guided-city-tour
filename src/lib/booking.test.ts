@@ -72,3 +72,16 @@ test("promoção: só aparece até ao fim do dia indicado", async () => {
   assert.equal(promoActive({ text: "", until: "2026-12-31" }, "2026-10-25"), null);
   assert.equal(promoActive(null), null);
 });
+
+test("avaliações de negócios: dia da visita, média e token só para essa reserva", async () => {
+  const { visitDay, ratingOf, reviewToken } = await import("./merchant-reviews");
+  const { readPurposeToken } = await import("./access-token");
+  assert.equal(visitDay({ dateFrom: "2026-10-20", dateTo: "" }), "2026-10-20");
+  assert.equal(visitDay({ dateFrom: "2026-10-20", dateTo: "2026-10-23" }), "2026-10-23");
+  assert.equal(ratingOf(0, 0), null);
+  assert.equal(ratingOf(14, 3), 4.7);
+  const tok = reviewToken({ id: "11111111-1111-1111-1111-111111111111", email: "ana@example.com" });
+  assert.equal(readPurposeToken(tok, "mreview:11111111-1111-1111-1111-111111111111"), "ana@example.com");
+  assert.equal(readPurposeToken(tok, "mreview:22222222-2222-2222-2222-222222222222"), null);
+  assert.equal(readPurposeToken(tok, "review:11111111-1111-1111-1111-111111111111"), null);
+});

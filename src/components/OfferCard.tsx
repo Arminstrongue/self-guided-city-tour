@@ -9,6 +9,7 @@ import { SheetX } from "./WinNav";
 import { promoActive } from "@/lib/booking";
 import { INTL_LOCALE } from "@/i18n/core";
 import { langLabel } from "@/lib/lang-label";
+import { OfferReviews, RatingLine } from "./MerchantReviews";
 
 const photo = (id: string, i = 0, v = 0) => `/api/merchants/photo/${id}?i=${i}${v ? `&v=${v}` : ""}`;
 const today = () => new Date().toISOString().slice(0, 10);
@@ -25,6 +26,7 @@ export function OfferCard({ o, t, locale }: { o: Offer; t: Dict; locale: Locale 
         <div style={{ flex: 1, minWidth: 0, textAlign: "start" }}>
           <span className="cat">{cat}</span>
           <b>{o.name}</b>{o.offer}
+          {o.ratingCount > 0 && <div className="mr-mini"><RatingLine t={t} locale={locale} rating={o.rating} count={o.ratingCount} /></div>}
           {promoActive(o.promo) && <div className="mb-promo">🎁 {promoActive(o.promo)!.text}</div>}
           {o.book && <div className="mb-cta">{t.mbReq[o.book]} ›</div>}
         </div>
@@ -52,6 +54,7 @@ function OfferSheet({ o, t, locale, cat, onClose }: { o: Offer; t: Dict; locale:
         )}
         <span className="label">{cat} · <span className="ad-tag">{t.adPartner}</span></span>
         <b style={{ fontSize: 20 }}>{o.name}</b>
+        <RatingLine t={t} locale={locale} rating={o.rating} count={o.ratingCount} />
         <p style={{ margin: 0 }}>{o.offer}</p>
         {promoActive(o.promo) && <p className="mb-promo big" style={{ margin: 0 }}>🎁 {promoActive(o.promo)!.text} · {fmt(t.mp.promoBadge, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short" }).format(new Date(`${o.promo!.until}T12:00:00`)) })}</p>}
         {o.languages.length > 0 && <p className="hint" style={{ margin: 0 }}>🗣 {t.mp.speaks}: {o.languages.map((l) => langLabel(l, locale)).join(" · ")}</p>}
@@ -61,6 +64,7 @@ function OfferSheet({ o, t, locale, cat, onClose }: { o: Offer; t: Dict; locale:
         {o.options.length > 0 && (
           <ul className="mb-opts">{o.options.map((x) => <li key={x.name}><span>{x.name}</span>{x.price && <b>{x.price}</b>}</li>)}</ul>
         )}
+        <OfferReviews t={t} locale={locale} id={o.id} count={o.ratingCount} />
         {form && o.book ? <BookForm o={o} t={t} locale={locale} /> : (
           <div className="stack" style={{ gap: 8 }}>
             {o.book && <button type="button" className="btn tram press" onClick={() => { tap(); setForm(true); }}>{t.mbReq[o.book]}</button>}

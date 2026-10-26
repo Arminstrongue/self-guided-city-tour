@@ -267,6 +267,13 @@
       "when": 1795500000000,
       "tag": "0037_merchant_extras",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1795600000000,
+      "tag": "0038_merchant_reviews",
+      "breakpoints": true
     }
   ]
 }

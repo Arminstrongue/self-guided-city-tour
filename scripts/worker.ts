@@ -55,6 +55,8 @@ async function main() {
   setInterval(() => { void safeRound(); }, PULSE_EVERY);
   // Pedidos a guias têm prazos curtos: verificar de 15 em 15 minutos (leve).
   setInterval(() => { void import("../src/lib/guides").then((g) => g.expireStale()).catch((e) => log(`guias: ${e}`)); }, 15 * 60_000);
+  // Avaliações verificadas de negócios: pedido por email no dia a seguir à visita confirmada.
+  setInterval(() => { void import("../src/lib/merchant-reviews").then((r) => r.mailReviewInvites(log)).catch((e) => log(`avaliações: ${e}`)); }, 30 * 60_000);
   // Monitorização: primeira volta 2 min depois de arrancar (a app pode ainda estar a subir no deploy).
   setTimeout(() => { void monitor(); setInterval(() => { void monitor(); }, 5 * 60_000); }, 2 * 60_000);
 }

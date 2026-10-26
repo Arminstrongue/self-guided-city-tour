@@ -3731,3 +3731,18 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
   .hx-family{--fp:45% 35%}
   .hx-business{--fp:18% 35%}
 }
+
+/* Avaliações verificadas de negócios */
+.mr-stars{color:#f5a623;letter-spacing:1px}
+.mr-stars .off{color:var(--line)}
+.mr-line{font-size:14px;color:var(--muted)}
+.mr-line b{color:var(--ink)}
+.mr-mini{margin-top:4px}
+.mr-mini .mr-line{font-size:13px}
+.mr-box{display:grid;gap:8px;padding:12px 14px;border-radius:14px;background:var(--surface-2)}
+.mr-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.mr-list li{display:grid;gap:3px}
+.mr-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:14px}
+.mr-h small{color:var(--muted)}
+.mr-list p{margin:0;font-size:14px;line-height:1.45}
+.mr-star{color:#f5a623}

@@ -52,6 +52,8 @@ export const merchants = pgTable("merchants", {
   /** Línguas faladas (códigos da app) e meios de pagamento aceites. */
   languages: jsonb("languages").$type<string[]>().notNull().default([]),
   payments: jsonb("payments").$type<string[]>().notNull().default([]),
+  ratingSum: integer("rating_sum").notNull().default(0),
+  ratingCount: integer("rating_count").notNull().default(0),
   updatedAt: timestamp("updated_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [
@@ -86,9 +88,23 @@ export const bookingRequests = pgTable("booking_requests", {
   note: text("note").notNull().default(""),
   locale: text("locale").notNull().default("en"),
   status: text("status").notNull().default("new"),
+  /** Quando foi enviado o pedido de avaliação (no dia a seguir à visita confirmada). */
+  reviewMailedAt: timestamp("review_mailed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("booking_requests_merchant_idx").on(t.merchantId, t.createdAt)]);
 export type BookingRequest = typeof bookingRequests.$inferSelect;
+
+/** Avaliações verificadas de negócios: só de reservas confirmadas, depois da visita, com link assinado enviado por email. */
+export const merchantReviews = pgTable("merchant_reviews", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  bookingId: uuid("booking_id").notNull().references(() => bookingRequests.id, { onDelete: "cascade" }),
+  merchantId: uuid("merchant_id").notNull().references(() => merchants.id, { onDelete: "cascade" }),
+  stars: integer("stars").notNull(),
+  comment: text("comment"),
+  author: text("author"),
+  locale: text("locale"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [uniqueIndex("merchant_reviews_booking_idx").on(t.bookingId), index("merchant_reviews_merchant_idx").on(t.merchantId, t.createdAt)]);
 
 export const accesses = pgTable("accesses", {
   id: uuid("id").primaryKey().defaultRandom(),
