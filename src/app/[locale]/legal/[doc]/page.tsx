@@ -6,7 +6,7 @@ import { legalEN, legalPT, company, type LegalDoc } from "@/legal/content";
 import type { Locale } from "@/i18n/dictionaries";
 
 export const dynamic = "force-dynamic";
-const DOCS: LegalDoc[] = ["terms", "privacy", "cookies", "guides"];
+const DOCS: LegalDoc[] = ["terms", "privacy", "cookies", "guides", "delete"];
 
 export async function generateMetadata(props: { params: Promise<{ locale: Locale; doc: string }> }): Promise<Metadata> {
   const { locale, doc } = await props.params;

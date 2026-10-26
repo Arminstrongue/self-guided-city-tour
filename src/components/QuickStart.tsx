@@ -1,4 +1,5 @@
 "use client";
+import { useNative } from "@/lib/use-native";
 import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, CalendarDays, Check, ChevronRight, Clock, MapPin, Play, Search } from "lucide-react";
@@ -20,6 +21,7 @@ const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60))
 
 /** Primeira experiência: 1) cidade, 2) tempo disponível, 3) começar (ou comprar) com o roteiro que cabe. */
 export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { t?: Dict; locale: Locale; cities: QsCity[]; pre: string; from: string; top?: string[] }) {
+  const native = useNative();
   const t = useDict(tProp);
   const [cityId, setCityId] = useState(pre);
   const [time, setTime] = useState<Time | null>(null);
@@ -178,7 +180,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
                 <button className="link-btn" disabled={idx <= 0} onClick={() => setShift(shift - 1)}>− {t.qsShorter}</button>
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>
               </div>
-              <button className="btn tram qs-go press" onClick={go}><Play size={18} aria-hidden="true" />{city.open ? t.qsStart : fmt(t.qsBuy, { p: from })}</button>
+              <button className="btn tram qs-go press" onClick={go}><Play size={18} aria-hidden="true" />{city.open ? t.qsStart : native ? t.signIn : fmt(t.qsBuy, { p: from })}</button>
               {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={persist}>🎧 {t.qsTry}</a>}
             </>
           ) : (

@@ -1,4 +1,5 @@
 "use client";
+import { useNative } from "@/lib/use-native";
 import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -30,6 +31,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   t: Dict; locale: Locale; cities: Record<string, string>; signed: boolean; bookings: Booking[];
   planned: { city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "bus" | "ship" | "stay" | "walk"; startAt?: string } | null; hasPass: boolean;
 }) {
+  const native = useNative();
   const [res, setRes] = useState<Reservation[]>([]);
   const [prog, setProg] = useState<Progress[]>([]);
   const [pos, setPos] = useState<LL | null>(null);
@@ -110,7 +112,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
             <b className="now-t">{cities[planned.city]} · {fmt(t.wPlannedSub, { n: planned.n, h: planned.h })}</b>
             {planned.base && planned.end && <span className="hint">{planned.base} → {planned.end}{planned.mode ? ` · ${t.tpModes[planned.mode]}` : ""}</span>}
             {planned.startAt && <span className="hint">{fmt(t.tpStartsAt, { t: planned.startAt.replace("T", " ") })}</span>}
-            <div className="now-acts"><a className="btn tram press" href={`/${locale}/${planned.open ? "tour" : "c"}/${planned.city}${planned.open ? "" : "#book"}`}>{planned.open ? t.qsStart : t.bookTitle}</a><a className="btn ghost press" href={`/${locale}/start?city=${planned.city}`}>{t.bpChange}</a></div>
+            <div className="now-acts"><a className="btn tram press" href={`/${locale}/${planned.open ? "tour" : "c"}/${planned.city}${planned.open ? "" : native ? "" : "#book"}`}>{planned.open ? t.qsStart : native ? t.signIn : t.bookTitle}</a><a className="btn ghost press" href={`/${locale}/start?city=${planned.city}`}>{t.bpChange}</a></div>
           </div>
         ) : (
           <div className="card now-card now-empty">

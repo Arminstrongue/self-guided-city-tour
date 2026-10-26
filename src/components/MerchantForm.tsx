@@ -1,6 +1,6 @@
 "use client";
 import { useDict } from "@/i18n/client-dict";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { INTL_LOCALE } from "@/i18n/core";
 import { MAX_OPTIONS, MAX_PHOTOS, bookKind } from "@/lib/booking";
@@ -63,14 +63,20 @@ export function MerchantForm({ locale, t: tProp, cities, prices, agent, partnerP
     } catch { setError(t.errGeneric); setBusy(false); }
   }
 
+  // Na app das lojas só o plano gratuito: as subscrições pagas fazem-se no site.
+  const [native, setNative] = useState(false);
+  useEffect(() => {
+    const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+    if (cap?.isNativePlatform?.()) { setNative(true); setF((p) => ({ ...p, plan: "basic" })); }
+  }, []);
   const pick = (category: string, plan: Plan) => {
-    setF((p) => ({ ...p, category, plan }));
+    setF((p) => ({ ...p, category, plan: native ? "basic" : plan }));
     document.getElementById("start")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   return (
     <>
-      <span className="label">{t.mWaysT}</span>
-      <div className="mb-ways">
+      <span className="label web-only">{t.mWaysT}</span>
+      <div className="mb-ways web-only">
         <div className="mb-way"><b>🛏 {t.mWay1T}</b><p>{t.mWay1S}</p>
           <button type="button" className="btn ghost press" onClick={() => pick("hotel", "featured")}>{t.mWay1Btn}</button></div>
         <div className="mb-way"><b>📱 {t.mWay2T}</b><p>{t.mWay2S.replace("{p}", String(partnerPct))}</p>
@@ -79,7 +85,7 @@ export function MerchantForm({ locale, t: tProp, cities, prices, agent, partnerP
 
       <h2 id="plans" className="gp-h2" style={{ scrollMarginTop: 80, marginTop: 8 }}>{t.mPlansT}</h2>
       <div className="plans">
-        {(["basic", "featured", "partner"] as Plan[]).map((k) => {
+        {((native ? ["basic"] : ["basic", "featured", "partner"]) as Plan[]).map((k) => {
           const p = t.mPlans[k];
           return (
             <button key={k} type="button" className="plan" aria-pressed={f.plan === k} onClick={() => set("plan", k)}>

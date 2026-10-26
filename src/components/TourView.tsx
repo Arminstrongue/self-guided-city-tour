@@ -299,7 +299,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           <div className="card pv">
             <b>🎧 {t.pvTitle}</b>
             <p className="hint">{t.pvSub}</p>
-            <a className="btn tram press" href={preview.buy}>{fmt(t.pvUnlock, { p: preview.price })}</a>
+            <a className="btn tram press web-only" href={preview.buy}>{fmt(t.pvUnlock, { p: preview.price })}</a>
             <a className="link-btn" href={preview.signIn}>{t.pvHave}</a>
           </div>
         )}

@@ -3780,3 +3780,5 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 @media (max-width:420px){.nv small{font-size:10px;letter-spacing:-.01em}}
 /* Durante as instruções passo a passo (chegada) e com resultados no planeador, a imagem do topo sai: a ação fica logo à vista */
 body:has(.arv-run) .sbn,body:has(.arv-done) .sbn,body:has(.dp-tabs) .sbn{display:none}
+/* Apps das lojas (Capacitor marca <html data-platform>): sem preços nem compras de conteúdo digital */
+html[data-platform] .web-only{display:none!important}

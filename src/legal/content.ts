@@ -3,7 +3,7 @@
  * IMPORTANTE: rever com um advogado antes do lançamento.
  */
 import { env } from "@/lib/env";
-export type LegalDoc = "terms" | "privacy" | "cookies" | "guides";
+export type LegalDoc = "terms" | "privacy" | "cookies" | "guides" | "delete";
 export type Section = { h: string; p: string[] };
 
 export function company() {
@@ -125,6 +125,25 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Avaliações", p: ["Os viajantes podem avaliar o passeio depois de ele acontecer. Não é permitido pedir, oferecer ou manipular avaliações."] },
       { h: "Duração e fim", p: ["Pode deixar a plataforma a qualquer momento; as reservas já aceites devem ser cumpridas. Podemos terminar o acordo nos casos previstos acima."] },
       { h: "Lei aplicável", p: ["Aplica-se a lei portuguesa. Os litígios são resolvidos pelos tribunais portugueses competentes."] }
+    ]
+  };
+  if (doc === "delete") return {
+    title: "Apagar a conta e os dados (app VOYBU)",
+    sections: [
+      { h: "Na app ou no site", p: [
+        "Abra a VOYBU (app Android, iPhone ou voybu.com) → Perfil → ícone ☰ (Definições) → Apagar a conta. Escreva DELETE para confirmar.",
+        "A conta é apagada de imediato, sem precisar de nos contactar."
+      ] },
+      { h: "Sem acesso à app", p: [
+        `Envie um email para ${c.email} a partir do endereço da conta, com o assunto "Apagar a minha conta VOYBU". Apagamos a conta no prazo de 30 dias e confirmamos por email.`
+      ] },
+      { h: "O que é apagado", p: [
+        "Perfil, publicações, histórias, mensagens, notificações, memórias e fotos, planos, lugares guardados, percursos, pontos, preferências de viagem e sessões em todos os dispositivos.",
+        "Nas avaliações de guias e de negócios ficam só as estrelas e o comentário, sem o seu nome."
+      ] },
+      { h: "O que fica (obrigação legal)", p: [
+        "Os dados fiscais das compras (faturação) ficam guardados 10 anos, por obrigação legal, sem voo nem plano de viagem."
+      ] }
     ]
   };
   if (doc === "privacy") return {
@@ -311,6 +330,25 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Ratings", p: ["Travellers may rate the tour after it takes place. Asking for, offering incentives for or manipulating ratings is not allowed."] },
       { h: "Term and termination", p: ["You may leave the platform at any time; bookings already accepted must be honoured. We may end the agreement in the cases above."] },
       { h: "Governing law", p: ["Portuguese law applies. Disputes are settled by the competent Portuguese courts."] }
+    ]
+  };
+  if (doc === "delete") return {
+    title: "Delete your account and data (VOYBU app)",
+    sections: [
+      { h: "In the app or on the website", p: [
+        "Open VOYBU (Android app, iPhone app or voybu.com) → Profile → ☰ icon (Settings) → Delete account. Type DELETE to confirm.",
+        "Your account is deleted straight away, without contacting us."
+      ] },
+      { h: "Without access to the app", p: [
+        `Email ${c.email} from your account's address with the subject "Delete my VOYBU account". We delete the account within 30 days and confirm by email.`
+      ] },
+      { h: "What is deleted", p: [
+        "Profile, posts, stories, messages, notifications, memories and photos, plans, saved places, routes, points, travel preferences and sessions on all devices.",
+        "Guide and business reviews keep only the stars and the comment, without your name."
+      ] },
+      { h: "What we keep (legal obligation)", p: [
+        "Tax data from purchases (invoicing) is kept for 10 years as required by law, without flight or trip details."
+      ] }
     ]
   };
   if (doc === "privacy") return {

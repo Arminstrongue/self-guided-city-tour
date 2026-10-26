@@ -156,7 +156,8 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       </section>
 
       {/* Preços claros: o que é grátis, o que custa um passe (pagamento único) e os planos para empresas. */}
-      <section className="sec pr" id="prices" aria-labelledby="pr-h" style={{ scrollMarginTop: 70 }}>
+      {/* Nas apps das lojas não se mostram preços nem compras de conteúdo digital (regras do Google Play e da App Store). */}
+      <section className="sec pr web-only" id="prices" aria-labelledby="pr-h" style={{ scrollMarginTop: 70 }}>
         <div className="sec-h reveal"><div><h2 id="pr-h">{t.pr.title}</h2><p>{t.pr.sub}</p></div></div>
         <div className="pr-grid">
           <div className="pr-card pr-free reveal">
@@ -274,7 +275,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
             <div><b>{t.bzTitle}</b><span>{t.bzSub}</span></div>
             <div className="pcta-acts">
               <Link className="btn press pcta-btn" href={`/${params.locale}/merchants#start`}>{t.bzBtn}</Link>
-              <Link className="pcta-link" href={`/${params.locale}/merchants#plans`}>{t.bzLink}</Link>
+              <Link className="pcta-link web-only" href={`/${params.locale}/merchants#plans`}>{t.bzLink}</Link>
             </div>
           </div>
           <div className="pcta alt reveal">

@@ -34,7 +34,7 @@ function DestCard({ c, href, from, labels, i }: { c: DestCity; href: string; fro
       onClick={() => { try { localStorage.setItem("sgct:city", c.id); } catch { /* ignorar */ } }}>
       {p ? <Img src={p.thumb.replace("/500px-", "/960px-")} alt="" /> : <span className="skel" style={{ position: "absolute", inset: 0, opacity: .25 }} />}
       <span className="tagc">{c.country}</span>
-      <span className="txt"><b>{c.name}</b><small className="num">{c.stops} {labels.stops}</small><span className="from num">{c.free ? `🎁 ${c.free}` : from}</span></span>
+      <span className="txt"><b>{c.name}</b><small className="num">{c.stops} {labels.stops}</small><span className={`from num${c.free ? "" : " web-only"}`}>{c.free ? `🎁 ${c.free}` : from}</span></span>
     </a>
   );
 }
