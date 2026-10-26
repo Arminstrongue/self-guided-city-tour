@@ -76,7 +76,8 @@ Already have a VOYBU pass? Sign in with your email and your route opens straight
 
 ## Imagens
 - **Ícone da app 512×512:** `store/icon-512.png`
-- **Ícone de programador (página da empresa) 512×512:** `store/developer-icon-512.png` (logótipo VOYBU, fundo branco)
+- **Ícone de programador (página da empresa) 512×512:** `store/developer-icon-512.png` (logótipo VOYBU no fundo da app)
+- **Cabeçalho da página de programador 4096×2304:** `store/developer-header-4096x2304.jpg`
 - **Texto da página de programador (140):** EN "VOYBU helps travellers explore cities on their own: walking routes that fit your time, audio guides in 12 languages and always back on time." · PT "A VOYBU ajuda viajantes a explorar cidades sozinhos: roteiros a pé à medida do seu tempo, áudio-guia em 12 idiomas e regresso a horas."
 - **Imagem de destaque 1024×500:** `store/feature-graphic.png`
 - **Capturas do telemóvel (1080×1920, 9:16):** `store/screenshots/pt/` e `store/screenshots/en/` (7 cada, já no modo app, sem preços):
