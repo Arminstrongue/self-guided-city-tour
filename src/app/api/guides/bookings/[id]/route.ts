@@ -5,6 +5,7 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request, props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
+  if (!/^[0-9a-f-]{36}$/i.test(params.id)) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const g = await currentGuide();
   if (!g) return NextResponse.json({ error: "auth" }, { status: 401 });
   const b = await req.json().catch(() => ({}));

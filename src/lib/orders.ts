@@ -81,6 +81,15 @@ export async function findActiveAccess(emails: string[], cityId: string): Promis
   return rows[0] ?? null;
 }
 
+/** Cidades com passe ativo (uma só consulta para todas as cidades; "all" = todas). */
+export async function activeCities(emails: string[]): Promise<{ all: boolean; cities: Set<string> }> {
+  const list = [...new Set(emails.filter(Boolean).map((e) => e.toLowerCase()))];
+  if (!list.length) return { all: false, cities: new Set() };
+  const d = await db();
+  const rows = await d.select({ scope: schema.accesses.scope, city: schema.accesses.city }).from(schema.accesses)
+    .where(and(inArray(schema.accesses.email, list), gt(schema.accesses.expiresAt, new Date()))).limit(200);
+  return { all: rows.some((r) => r.scope === "all"), cities: new Set(rows.map((r) => r.city).filter((c): c is string => Boolean(c))) };
+}
 
 /**
  * Primeira abertura de um roteiro: o passe começa a contar agora (48 h, 72 h ou 30 dias). Idempotente.

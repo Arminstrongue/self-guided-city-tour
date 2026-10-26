@@ -5,7 +5,8 @@ import { db, schema } from "./db";
 
 export const MAX_PATH = 300;
 export const JourneyBody = z.object({
-  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  // Só os últimos 7 dias (o diário confirma o que se fez agora; não se inventam dias antigos para ganhar pontos).
+  day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((d) => { const t = Date.parse(`${d}T12:00:00Z`), now = Date.now(); return t <= now + 36 * 3600_000 && t >= now - 8 * 86400_000; }),
   city: z.string().regex(/^[a-z]{2,12}$/).nullable().default(null),
   cityName: z.string().trim().max(80).default(""),
   km: z.number().min(0).max(200),

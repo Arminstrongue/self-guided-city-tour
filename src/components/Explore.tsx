@@ -11,7 +11,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { CAT_HOBBIES, CAT_ICON, HOBBIES, HOBBY_ICON, distM, rankCats, type Hobby, type Place, type PlaceCat } from "@/lib/explore";
 import { EVENT_HOBBY, type CityEvent } from "@/lib/events";
-import { WHEN_ICON, type When } from "@/data/moments";
+import { WHEN_ICON, type When } from "@/data/moments-meta";
 import { saveMemoryAnywhere } from "@/lib/diary";
 import { loadGoogle, type G } from "@/lib/gmaps-client";
 import { MapView, type Focus } from "./MapView";
@@ -389,7 +389,8 @@ function ExploreMap({ places, pos, center, focus }: { places: (Place & { d: numb
     return () => { off = true; map.current?.remove(); map.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => { void import("leaflet").then((L) => draw(L)); });
+  const sig = JSON.stringify([places.map((p) => p.id), pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
+  useEffect(() => { void import("leaflet").then((L) => draw(L)); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
   function draw(L: typeof import("leaflet")) {
     const m = map.current, g = layer.current;
     if (!m || !g) return;
@@ -425,7 +426,8 @@ function GoogleMap({ apiKey, places, pos, center, focus }: { apiKey: string; pla
     return () => { off = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); });
+  const sig = JSON.stringify([places.map((p) => p.id), pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
+  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
   function draw(g: G) {
     marks.current.forEach((m) => m.setMap(null)); marks.current = [];
     const info = new g.maps.InfoWindow();
@@ -477,17 +479,20 @@ function StreetView({ apiKey, place, t, onClose }: { apiKey: string; place: Plac
 export function AddToPlan({ t, locale, cityId, cityName, item, onClose }: { t: Dict; locale: Locale; cityId: string; cityName: string; item: { title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" }; onClose: (msg?: string) => void }) {
   const [plans, setPlans] = useState<{ id: string; title: string; city: string | null; days: number }[] | null | "auth">(null);
   const [day, setDay] = useState(1);
-  useEffect(() => { fetch("/api/me/plans").then((r) => (r.status === 401 ? "auth" : r.json().then((j) => j.plans))).then(setPlans).catch(() => setPlans([])); }, []);
+  useEffect(() => { fetch("/api/me/plans").then((r) => (r.status === 401 ? "auth" : r.ok ? r.json().then((j) => j.plans ?? []) : [])).then(setPlans).catch(() => setPlans([])); }, []);
   const mine = Array.isArray(plans) ? plans.filter((p) => p.city === cityId) : [];
   const it = { id: Math.random().toString(36).slice(2, 10), title: item.title, lat: item.lat, lng: item.lng, icon: item.icon, kind: item.kind };
   async function addTo(id: string) {
-    const p = await fetch(`/api/me/plans/${id}`).then((r) => r.json());
-    await fetch(`/api/me/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [...p.items, { ...it, day: Math.min(day, p.days) }] }) });
-    onClose(t.plAdded);
+    // Só diz "adicionado" se o plano foi mesmo guardado.
+    const r = await fetch(`/api/me/plans/${id}`).catch(() => null);
+    const p = r?.ok ? ((await r.json()) as { items?: unknown[]; days?: number }) : null;
+    if (!p?.items) { onClose(t.tsError); return; }
+    const put = await fetch(`/api/me/plans/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [...p.items, { ...it, day: Math.min(day, p.days ?? 1) }] }) }).catch(() => null);
+    onClose(put?.ok ? t.plAdded : t.tsError);
   }
   async function createWith() {
-    const r = await fetch("/api/me/plans", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: cityName, city: cityId, cityName, startDate: null, days: 1, items: [{ ...it, day: 1 }] }) });
-    if (r.ok) onClose(t.plAdded);
+    const r = await fetch("/api/me/plans", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: cityName, city: cityId, cityName, startDate: null, days: 1, items: [{ ...it, day: 1 }] }) }).catch(() => null);
+    onClose(r?.ok ? t.plAdded : t.tsError);
   }
   return (
     <div className="ex-modal" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>

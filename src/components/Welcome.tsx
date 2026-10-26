@@ -44,9 +44,10 @@ export function Welcome({ locale }: { locale: string }) {
     if (seen || SKIP.test(path)) return;
     w.__sgctWelcome = true; // o aviso de idioma espera por este ecrã
     let alive = true;
-    fetch("/api/me/status", { cache: "no-store" }).then((r) => r.json()).then((j: { signed?: boolean }) => {
+    // Só mostra o ecrã de boas-vindas se o servidor disser claramente que não há sessão (não em erro ou manutenção).
+    fetch("/api/me/status", { cache: "no-store" }).then((r) => (r.ok ? r.json() : { signed: true })).then((j: { signed?: boolean }) => {
       if (!alive) return;
-      if (j.signed) finish(false); else setOpen(true);
+      if (j.signed !== false) finish(false); else setOpen(true);
     }).catch(() => alive && finish(false));
     return () => { alive = false; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

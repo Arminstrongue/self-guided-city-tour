@@ -40,6 +40,9 @@
 	# Ficheiros estáticos com cache longa (a Cloudflare guarda-os na rede dela).
 	@static path /_next/static/* /icon-* /apple-touch-icon.png /music/*
 	header @static Cache-Control "public, max-age=31536000, immutable"
+	# Imagens do site (nomes sem hash): uma semana em cache e renovação em segundo plano.
+	@img path /img/*
+	header @img Cache-Control "public, max-age=604800, stale-while-revalidate=86400"
 
 	# Se a app continuar indisponível: página "Estamos a atualizar — voltamos já" (12 línguas, volta sozinha).
 	handle_errors {

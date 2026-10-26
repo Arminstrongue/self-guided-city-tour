@@ -195,7 +195,7 @@ async function rowsFor(emails: string[] | null, since?: Date) {
 }
 
 export async function leaderboard(me: string, scope: "global" | "friends", period: "all" | "month") {
-  const since = period === "month" ? new Date(new Date().getFullYear(), new Date().getMonth(), 1) : undefined;
+  const since = period === "month" ? new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), 1)) : undefined; // mês em UTC (igual em qualquer servidor)
   let rows: (Row & { email: string; isPrivate?: boolean })[];
   if (scope === "friends") {
     const d = await db();

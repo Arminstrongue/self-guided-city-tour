@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Plane, ArrowLeftRight, TrainFront, Clock } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { GTxt } from "@/data/arrival-guides";
-import { terminalsOf } from "@/data/terminals";
+import type { terminalsOf as TerminalsOf } from "@/data/terminals";
 import { ARRIVAL_LANGS } from "@/lib/arrival-text";
 
 function useTermTx(locale: string) {
@@ -18,8 +18,20 @@ function useTermTx(locale: string) {
   return (key: string, x: GTxt) => (locale === "pt" ? x.pt : pack?.[key] ?? x.en);
 }
 
+/** Dados dos terminais (≈90 KB, todos os aeroportos): carregados só quando o seletor aparece. */
+function useTerminals(iata?: string | null) {
+  const [a, setA] = useState<ReturnType<typeof TerminalsOf> | null>(null);
+  useEffect(() => {
+    if (!iata) { setA(null); return; }
+    let live = true;
+    void import("@/data/terminals").then((m) => { if (live) setA(m.terminalsOf(iata) ?? null); }).catch(() => null);
+    return () => { live = false; };
+  }, [iata]);
+  return a;
+}
+
 export function TerminalPick({ t, locale, iata, value, onChange }: { t: Dict; locale: Locale; iata?: string | null; value?: string; onChange: (code: string | undefined) => void }) {
-  const a = terminalsOf(iata);
+  const a = useTerminals(iata);
   const tx = useTermTx(locale);
   if (!a || !a.terminals.length || !iata) return null;
   const one = a.terminals.length === 1;
@@ -48,10 +60,4 @@ export function TerminalPick({ t, locale, iata, value, onChange }: { t: Dict; lo
       {a.sources[0] && <p className="sg-note">{t.stgSource}: <a href={a.sources[0]} target="_blank" rel="noopener noreferrer">{new URL(a.sources[0]).hostname.replace(/^www\./, "")}</a></p>}
     </div>
   );
-}
-
-/** Nome curto do terminal para etiquetas ("Aeroporto · Terminal 2"). */
-export function terminalName(iata: string | null | undefined, code: string | undefined): string | null {
-  if (!code) return null;
-  return terminalsOf(iata)?.terminals.find((x) => x.code === code)?.name ?? null;
 }

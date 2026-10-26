@@ -9,7 +9,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import type { CityEvent } from "@/lib/events";
 import type { MomentView } from "./Explore";
 import { AddToPlan } from "./Explore";
-import { WHEN_ICON } from "@/data/moments";
+import { WHEN_ICON } from "@/data/moments-meta";
 import { loadWish, saveWish, toggleWish, wishKey, type Wish } from "@/lib/wishlist";
 import Portal from "@/components/Portal";
 

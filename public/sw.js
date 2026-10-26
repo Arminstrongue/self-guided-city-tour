@@ -1,5 +1,5 @@
 /* VOYBU — service worker: roteiros, mapas e ferramentas disponíveis sem internet. */
-const VERSION = "sgct-v12";
+const VERSION = "sgct-v13";
 const STATIC = `${VERSION}-static`;
 const PAGES = `${VERSION}-pages`;
 const OFFLINE = "sgct-offline";   // cidades descarregadas pelo viajante (sobrevive a novas versões)
@@ -80,7 +80,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   // Ficheiros com hash (JS, CSS, fontes): primeiro a cache.
-  if (url.pathname.startsWith("/_next/static/") || /\.(woff2?|png|svg|webmanifest)$/.test(url.pathname)) {
+  if (url.pathname.startsWith("/_next/static/") || /\.(woff2?|png|svg|webp|webmanifest)$/.test(url.pathname)) {
     e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then(async (r) => { if (r.ok) (await caches.open(STATIC)).put(req, r.clone()); return r; })));
     return;
   }

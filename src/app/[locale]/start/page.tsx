@@ -21,7 +21,7 @@ import { TOUR_PLANS, isFreeCity } from "@/lib/pricing";
 import { ACCESS_COOKIE } from "@/lib/access-token";
 import { validAccessEmail } from "@/lib/session-revoke";
 import { sessionEmail } from "@/lib/auth";
-import { findActiveAccess } from "@/lib/orders";
+import { activeCities } from "@/lib/orders";
 
 export const dynamic = "force-dynamic";
 
@@ -44,8 +44,9 @@ export default async function Start(
   const list = await loadCities();
   const region = new Intl.DisplayNames([L], { type: "region" });
   const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
-  const owned = new Set<string>();
-  if (emails.length) for (const c of list) if (await findActiveAccess(emails, c.id).catch(() => null)) owned.add(c.id);
+  // Uma só consulta (antes era uma por cidade).
+  const act = await activeCities(emails).catch(() => ({ all: false, cities: new Set<string>() }));
+  const owned = new Set(list.map((c) => c.id).filter((id) => act.all || act.cities.has(id)));
   const fx = await fxContext();
   const p = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, L);
   const cities: QsCity[] = list.map((c) => ({

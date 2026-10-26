@@ -3775,3 +3775,8 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 .nv>a:active span{transform:scale(.88)}
 @media (min-width:960px){.nv>a{height:64px;gap:3px}}
 .qs-h{display:block;margin:12px 4px 6px}
+/* 5 entradas na barra: nomes numa só linha */
+.nv small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;padding:0 2px}
+@media (max-width:420px){.nv small{font-size:10px;letter-spacing:-.01em}}
+/* Durante as instruções passo a passo (chegada) e com resultados no planeador, a imagem do topo sai: a ação fica logo à vista */
+body:has(.arv-run) .sbn,body:has(.arv-done) .sbn,body:has(.dp-tabs) .sbn{display:none}

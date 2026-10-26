@@ -17,5 +17,6 @@ export async function POST(req: Request) {
   if (!email) return NextResponse.json({ error: "auth" }, { status: 401 });
   const p = Mem.safeParse(await req.json().catch(() => null));
   if (!p.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
-  return NextResponse.json({ ok: true, id: await addMemory(email, p.data) });
+  const id = await addMemory(email, p.data);
+  return id ? NextResponse.json({ ok: true, id }) : NextResponse.json({ error: "limit" }, { status: 409 });
 }

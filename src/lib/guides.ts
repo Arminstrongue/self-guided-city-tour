@@ -5,7 +5,7 @@
  */
 import type Stripe from "stripe";
 import { cookies } from "next/headers";
-import { and, asc, desc, eq, gt, inArray, lt, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gt, inArray, lt, ne, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { stripe } from "./stripe";
 import { env } from "./env";
@@ -178,8 +178,20 @@ export async function respond(g: schema.Guide, bookingId: string, accept: boolea
   if (!b || b.status !== "requested" || !b.paymentIntentId) return { error: "state" as const };
   const tz = await cityTz(b.city);
   if (accept) {
-    try { await stripe().paymentIntents.capture(b.paymentIntentId); } catch (e) { console.error("capture", e); return { error: "capture" as const }; }
-    await d.update(schema.guideBookings).set({ status: "confirmed" }).where(eq(schema.guideBookings.id, b.id));
+    // Não aceitar duas reservas à mesma hora (outra pode ter sido confirmada entretanto).
+    const end = new Date(b.startAt.getTime() + b.hours * 3600_000);
+    const clash = await d.select({ s: schema.guideBookings.startAt, h: schema.guideBookings.hours }).from(schema.guideBookings)
+      .where(and(eq(schema.guideBookings.guideId, g.id), eq(schema.guideBookings.status, "confirmed"), ne(schema.guideBookings.id, b.id),
+        gt(schema.guideBookings.startAt, new Date(b.startAt.getTime() - 12 * 3600_000)), lt(schema.guideBookings.startAt, end)));
+    if (clash.some((r) => r.s.getTime() + r.h * 3600_000 > b.startAt.getTime())) return { error: "state" as const };
+    // Reserva o estado primeiro (só se ainda estiver "requested": não corre contra a expiração) e só depois cobra.
+    const won = await d.update(schema.guideBookings).set({ status: "confirmed" }).where(and(eq(schema.guideBookings.id, b.id), eq(schema.guideBookings.status, "requested"))).returning({ id: schema.guideBookings.id });
+    if (!won.length) return { error: "state" as const };
+    try { await stripe().paymentIntents.capture(b.paymentIntentId); } catch (e) {
+      console.error("capture", e);
+      await d.update(schema.guideBookings).set({ status: "requested" }).where(eq(schema.guideBookings.id, b.id));
+      return { error: "capture" as const };
+    }
     const m = tourist("ok", mailBooking(b, g, tz), { meet: g.meetingPoint, contact: [g.phone, g.email].filter(Boolean).join(" · "), rateUrl: reviewUrl(b) });
     await sendEmail(b.email, m.subject, m.html);
     return { ok: true as const, status: "confirmed" as const };
@@ -248,7 +260,9 @@ export async function isSlotFree(guideId: string, startAt: Date, hours: number) 
   const d = await db();
   const end = new Date(startAt.getTime() + hours * 3600_000);
   const rows = await d.select({ s: schema.guideBookings.startAt, h: schema.guideBookings.hours }).from(schema.guideBookings)
-    .where(and(eq(schema.guideBookings.guideId, guideId), inArray(schema.guideBookings.status, ["requested", "confirmed"]),
+    .where(and(eq(schema.guideBookings.guideId, guideId),
+      // Também os pagamentos ainda a decorrer (menos de 1 h): evita dois viajantes a pagar a mesma hora.
+      or(inArray(schema.guideBookings.status, ["requested", "confirmed"]), and(eq(schema.guideBookings.status, "pending"), gt(schema.guideBookings.createdAt, new Date(Date.now() - 3600_000)))),
       gt(schema.guideBookings.startAt, new Date(startAt.getTime() - 12 * 3600_000)), lt(schema.guideBookings.startAt, end)));
   return !rows.some((r) => r.s.getTime() < end.getTime() && r.s.getTime() + r.h * 3600_000 > startAt.getTime());
 }

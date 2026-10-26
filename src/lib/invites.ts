@@ -43,7 +43,15 @@ const MAIL: Record<string, { s: string; h: string; b: string; note: string; n: s
  * Envia convites por email. Limites: 20 por dia por viajante; o mesmo contacto não recebe outro convite
  * do mesmo viajante durante 30 dias; quem já tem perfil não recebe (mas a resposta não o revela).
  */
+/** Um envio de cada vez por pessoa (pedidos em paralelo não contornam o limite diário). */
+const inviteLocks = new Map<string, Promise<unknown>>();
 export async function sendEmailInvites(me: string, emails: string[], locale: string, note: string) {
+  const prev = inviteLocks.get(me) ?? Promise.resolve();
+  const run = prev.catch(() => null).then(() => sendEmailInvitesNow(me, emails, locale, note));
+  inviteLocks.set(me, run);
+  try { return await run; } finally { if (inviteLocks.get(me) === run) inviteLocks.delete(me); }
+}
+async function sendEmailInvitesNow(me: string, emails: string[], locale: string, note: string) {
   const prof = await myProfile(me);
   if (!prof) return { error: "no_profile" as const };
   const d = await db();

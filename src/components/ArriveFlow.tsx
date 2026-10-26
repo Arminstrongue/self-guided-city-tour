@@ -14,7 +14,9 @@ import { arrivalsFor, fareText, optionBadges, optionName, type ArrivalPoint, typ
 import { km } from "@/lib/route-cost";
 import Portal from "./Portal";
 import { MiniRoute } from "./MiniRoute";
-import { StationGuide } from "./StationGuide";
+import dynamic from "next/dynamic";
+// Guias das estações (≈120 KB de dados): só carregam quando se escolhe um transporte.
+const StationGuide = dynamic(() => import("./StationGuide").then((m) => m.StationGuide), { ssr: false });
 import { openLink } from "./ExtLink";
 import type { GuideStep } from "@/lib/route-steps";
 

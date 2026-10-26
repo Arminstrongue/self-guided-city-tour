@@ -19,7 +19,8 @@ export async function GET(req: Request) {
   try { session = await stripe().checkout.sessions.retrieve(id); } catch { session = null; }
   const dest = new URL(`${env.appUrl}/${locale}/success`);
   if (!session) { dest.searchParams.set("pending", "1"); return NextResponse.redirect(dest); }
-  const access = await fulfilTourSession(session);
+  // Um erro aqui (base de dados) não pode dar uma página de erro a quem acabou de pagar: fica "a processar" e o webhook trata.
+  const access = await fulfilTourSession(session).catch((e) => { console.error("claim", e); return null; });
   if (!access) { dest.searchParams.set("pending", "1"); return NextResponse.redirect(dest); }
   if (access.city) dest.searchParams.set("city", access.city);
   // O id da sessão Stripe fica no histórico do navegador: só abre sessão logo a seguir ao pagamento (2 h).

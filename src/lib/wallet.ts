@@ -4,7 +4,7 @@
  * A sessão é o mesmo cookie assinado do acesso pago (sgct_access); entra-se por link no email.
  */
 import { cookies } from "next/headers";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { ACCESS_COOKIE, createAccessToken, createSignInCode, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
@@ -31,7 +31,8 @@ export async function walletFor(email: string) {
       .from(schema.guideBookings).innerJoin(schema.guides, eq(schema.guides.id, schema.guideBookings.guideId))
       .where(and(eq(schema.guideBookings.email, email), inArray(schema.guideBookings.status, ["requested", "confirmed", "completed", "declined", "expired"])))
       .orderBy(desc(schema.guideBookings.startAt)).limit(50),
-    d.select().from(schema.travellerMemories).where(eq(schema.travellerMemories.email, email)).orderBy(desc(schema.travellerMemories.takenAt)).limit(MAX_MEMORIES),
+    d.select({ id: schema.travellerMemories.id, city: schema.travellerMemories.city, cityName: schema.travellerMemories.cityName, title: schema.travellerMemories.title, note: schema.travellerMemories.note, photo: sql<string | null>`case when ${schema.travellerMemories.photo} is null then null else '1' end`, lat: schema.travellerMemories.lat, lng: schema.travellerMemories.lng, takenAt: schema.travellerMemories.takenAt })
+      .from(schema.travellerMemories).where(eq(schema.travellerMemories.email, email)).orderBy(desc(schema.travellerMemories.takenAt)).limit(MAX_MEMORIES),
     d.select().from(schema.travellerPrefs).where(eq(schema.travellerPrefs.email, email)).limit(1),
     d.select().from(schema.travellerPlans).where(eq(schema.travellerPlans.email, email)).orderBy(desc(schema.travellerPlans.updatedAt)).limit(100)
   ]);
@@ -43,7 +44,8 @@ export async function walletFor(email: string) {
       // O contacto do guia só aparece depois de ele aceitar.
       ...(b.status === "confirmed" || b.status === "completed" ? { guidePhone, meeting } : {})
     })),
-    memories: memories.map((m) => ({ id: m.id, city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo, lat: m.lat ? Number(m.lat) : null, lng: m.lng ? Number(m.lng) : null, at: m.takenAt.getTime() })),
+    // A foto (até ~400 KB cada) não vai na resposta: é um endereço próprio, com cache no navegador.
+    memories: memories.map((m) => ({ id: m.id, city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo ? `/api/me/memories/${m.id}/photo` : null, lat: m.lat ? Number(m.lat) : null, lng: m.lng ? Number(m.lng) : null, at: m.takenAt.getTime() })),
     hobbies: prefs[0]?.hobbies ?? [],
     travel: (prefs[0]?.travel ?? {}) as import("./db/schema").TravelPrefs,
     saved: prefs[0]?.saved ?? [],
@@ -58,6 +60,8 @@ export type Wallet = Awaited<ReturnType<typeof walletFor>>;
 
 export async function addMemory(email: string, m: { city: string; cityName: string; title: string; note: string; photo: string | null; lat: number | null; lng: number | null; at?: number }) {
   const d = await db();
+  const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.travellerMemories).where(eq(schema.travellerMemories.email, email));
+  if (Number(n) >= MAX_MEMORIES) return null; // limite por conta
   const [row] = await d.insert(schema.travellerMemories).values({
     email, city: m.city, cityName: m.cityName, title: m.title, note: m.note, photo: m.photo,
     lat: m.lat === null ? null : String(m.lat), lng: m.lng === null ? null : String(m.lng), ...(m.at ? { takenAt: new Date(m.at) } : {})
@@ -110,4 +114,12 @@ export async function updatePlan(email: string, id: string, p: Partial<{ title: 
 export async function deletePlan(email: string, id: string) {
   const d = await db();
   await d.delete(schema.travellerPlans).where(and(eq(schema.travellerPlans.id, id), eq(schema.travellerPlans.email, email)));
+}
+
+/** Foto de uma memória (só do próprio viajante). */
+export async function memoryPhoto(email: string, id: string) {
+  const d = await db();
+  const [m] = await d.select({ photo: schema.travellerMemories.photo }).from(schema.travellerMemories)
+    .where(and(eq(schema.travellerMemories.id, id), eq(schema.travellerMemories.email, email))).limit(1);
+  return m?.photo ?? null;
 }

@@ -2,6 +2,7 @@
 /** Wishlist (❤️): lugares e momentos que o viajante quer visitar. Fica no dispositivo e, com sessão, na conta (prefs.saved). */
 export type Wish = { city: string; cityName?: string; title: string; lat: number; lng: number; icon?: string; at: number };
 const KEY = "sgct:wish";
+const SYNC = "sgct:wish-sync";
 export const wishKey = (w: { city: string; title: string }) => `${w.city}|${w.title.toLowerCase()}`;
 
 function readLocal(): Wish[] { try { const v = JSON.parse(localStorage.getItem(KEY) ?? "[]"); return Array.isArray(v) ? v : []; } catch { return []; } }
@@ -13,10 +14,15 @@ let signed: boolean | null = null;
 export async function loadWish(): Promise<{ list: Wish[]; signed: boolean }> {
   const local = readLocal();
   const r = await fetch("/api/me/prefs", { cache: "no-store" }).catch(() => null);
-  if (!r?.ok) { signed = false; return { list: local, signed: false }; }
+  // Só 401 quer dizer "sem sessão"; sem rede ou erro do servidor, continua a tentar da próxima vez.
+  if (!r?.ok) { if (r?.status === 401) signed = false; return { list: local, signed: false }; }
   signed = true;
   const account = ((await r.json()) as { saved?: Wish[] }).saved ?? [];
-  const list = merge(account, local);
+  // A conta manda: do dispositivo só entram os lugares guardados depois da última sincronização
+  // (assim, o que foi apagado noutro dispositivo não volta a aparecer).
+  let last = 0; try { last = Number(localStorage.getItem(SYNC) ?? 0) || 0; } catch { /* ignorar */ }
+  const list = merge(account, local.filter((w) => w.at > last));
+  try { localStorage.setItem(SYNC, String(Date.now())); } catch { /* ignorar */ }
   if (list.length !== account.length) void push(list);
   writeLocal(list);
   return { list, signed: true };

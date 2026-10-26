@@ -21,8 +21,9 @@ export function InstallApp({ t }: { t: Dict }) {
     window.addEventListener("beforeinstallprompt", onBip);
     const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && /safari/i.test(navigator.userAgent) && !/crios|fxios|edgios/i.test(navigator.userAgent);
     if (isIos) { setIos(true); setShow(true); }
-    window.addEventListener("appinstalled", () => setShow(false));
-    return () => window.removeEventListener("beforeinstallprompt", onBip);
+    const onInstalled = () => setShow(false);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => { window.removeEventListener("beforeinstallprompt", onBip); window.removeEventListener("appinstalled", onInstalled); };
   }, []);
   if (!show) return null;
   const dismiss = () => { setShow(false); try { localStorage.setItem(KEY, String(Date.now())); } catch { /* */ } };

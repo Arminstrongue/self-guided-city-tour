@@ -6,7 +6,6 @@ import { useDict } from "@/i18n/client-dict";
  */
 import { useEffect, useState } from "react";
 import { fmt } from "@/i18n/core";
-import { arrivalsFor } from "@/data/arrivals";
 import { BatteryCharging, ChevronRight, CloudOff, History, Timer, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import Portal from "./Portal";
@@ -112,8 +111,10 @@ function Resume({ t, locale }: { t: Dict; locale: Locale }) {
       const arrOk = a && a.point && Date.now() - a.at < 12 * 3600_000;
       const tourOk = g && g.done < g.n && Date.now() - g.at < 24 * 3600_000 && localStorage.getItem(`sgct:go:${g.id}`) !== "false";
       if (arrOk && (!tourOk || a.at >= g.at)) {
-        const pt = arrivalsFor(a.city).find((x) => x.id === a.point);
-        setR({ href: `/${locale}/arrive?city=${a.city}`, label: fmt(t.ess.resumeArr, { i: a.step + 1, x: a.dest?.label ?? pt?.name ?? "" }) });
+        const show = (name: string) => setR({ href: `/${locale}/arrive?city=${a.city}`, label: fmt(t.ess.resumeArr, { i: a.step + 1, x: a.dest?.label ?? name }) });
+        // Os dados das chegadas (≈50 KB) só carregam se for preciso o nome do ponto de partida.
+        if (a.dest?.label) show(a.dest.label);
+        else void import("@/data/arrivals").then((m) => show(m.arrivalsFor(a.city).find((x) => x.id === a.point)?.name ?? "")).catch(() => show(""));
       } else if (tourOk) setR({ href: `/${locale}/tour/${g.id}`, label: fmt(t.ess.resumeTour, { x: `${g.name} · ${g.done}/${g.n}` }) });
     } catch { /* ignorar */ }
   }, [t, locale]);

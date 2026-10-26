@@ -234,7 +234,7 @@ export function FlightCard({ city, flightNo, flightAt, enabled, onUse, onEdit, t
     const load = () => fetch(`/api/flight?no=${flightNo}&date=${date}&from=${city.ap?.iata ?? ""}`)
       .then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && !j.error) { setS(j); setAt(Date.now()); } }).catch(() => undefined);
     void load();
-    const i = setInterval(load, 10 * 60_000);
+    const i = setInterval(() => { if (document.visibilityState === "visible") void load(); }, 10 * 60_000);
     return () => clearInterval(i);
   }, [enabled, flightNo, flightAt, city.tz, city.ap?.iata]);
 

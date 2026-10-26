@@ -19,7 +19,7 @@ export function NewsFeed({ t, locale, cities, mine }: { t: Dict; locale: Locale;
         setItems(all.flat().filter((x) => !seen.has(x.url) && (seen.add(x.url), true)).sort((a, b) => Number(Boolean(b.official)) - Number(Boolean(a.official)) || b.at - a.at).slice(0, 20));
       });
     void load();
-    const id = setInterval(load, 10 * 60_000);
+    const id = setInterval(() => { if (document.visibilityState === "visible") void load(); }, 10 * 60_000);
     return () => { alive = false; clearInterval(id); };
   }, [ids, locale]);
   if (!items.length) return null;

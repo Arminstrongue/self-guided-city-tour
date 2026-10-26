@@ -68,7 +68,9 @@ export function checkSignInCode(challenge: string, code: string): string | null 
   try { email = String((JSON.parse(Buffer.from(body ?? "", "base64url").toString()) as { e?: string }).e ?? ""); } catch { return null; }
   return email ? readPurposeToken(challenge, codeTag(email, clean)) : null;
 }
-/** Email do desafio (sem validar o código) — só para limitar tentativas por email. */
+/** Email do desafio (sem validar o código, mas com a assinatura verificada) — para limitar tentativas por email.
+ *  Um desafio forjado com o email de outra pessoa não conta, por isso não serve para lhe bloquear a entrada. */
 export function challengeEmail(challenge: string): string | null {
-  try { const e = (JSON.parse(Buffer.from(challenge.split(".")[0] ?? "", "base64url").toString()) as { e?: string }).e; return typeof e === "string" ? e : null; } catch { return null; }
+  const r = verify(challenge);
+  return r && r.p?.startsWith("otp:") ? r.e : null;
 }

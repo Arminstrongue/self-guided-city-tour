@@ -51,7 +51,7 @@ function currencyName(c: string, locale: string) { try { return new Intl.Display
 export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) {
   const t = useDict(tProp);
   const s = t.st;
-  const [a, setA] = useState<Acc | null | "auth">(null);
+  const [a, setA] = useState<Acc | null | "auth" | "err">(null);
   const [social, setSocial] = useState<Social | null>(null);
   const [editing, setEditing] = useState(false);
   const [msg, setMsg] = useState("");
@@ -73,7 +73,8 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
   const load = async () => {
     const r = await fetch("/api/me/account", { cache: "no-store" }).catch(() => null);
     if (r?.status === 401) return setA("auth");
-    setA(r?.ok ? await r.json() : null);
+    // Sem rede ou erro do servidor: mostrar "tentar de novo" (antes ficava "A carregar…" para sempre).
+    setA(r?.ok ? await r.json() : "err");
     setSocial(await loadSocial());
   };
   useEffect(() => { void load(); }, []);
@@ -99,13 +100,13 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
   const back = () => { if (location.hash.startsWith("#st:")) history.back(); else setPage("root"); };
   const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(""), 2500); };
   async function put(v: Record<string, unknown>) {
-    if (!a || a === "auth") return;
+    if (!a || a === "auth" || a === "err") return;
     setA({ ...a, ...v } as Acc);
     await fetch("/api/me/account", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(v) }).catch(() => null);
     flash(t.acSaved);
   }
   async function pushOn() {
-    if (!a || a === "auth" || !a.push.key) return;
+    if (!a || a === "auth" || a === "err" || !a.push.key) return;
     setBusy("push");
     try {
       const reg = (await navigator.serviceWorker.getRegistration()) ?? (await navigator.serviceWorker.register("/sw.js"));
@@ -130,7 +131,7 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
   }
 
   const prof = social?.profile ?? null;
-  const ok = a && a !== "auth" ? a : null;
+  const ok = a && a !== "auth" && a !== "err" ? a : null;
   // 7 categorias (como nas definições do iOS): o essencial à vista, o resto em subpáginas.
   const cats = useMemo<CatDef[]>(() => {
     if (!ok) return [];
@@ -185,6 +186,7 @@ export function AccountView({ t: tProp, locale }: { t?: Dict; locale: Locale }) 
   }, [ok, prof, pushState, geo, locale, t, s]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (a === null) return <p className="hint" style={{ marginTop: 24 }}>{t.exLoading}</p>;
+  if (a === "err") return <div className="card stack" role="alert" style={{ marginTop: 16, gap: 10 }}><b>⚠️ {t.esi.loadErr}</b><button className="btn press" onClick={() => { setA(null); void load(); }}>{t.esi.retry}</button></div>;
   if (a === "auth") return <div className="card gp-empty" style={{ marginTop: 16 }}><span aria-hidden="true">🔐</span><b>{t.acSignIn}</b><a className="btn press" href={`/${locale}/wallet`} style={{ width: "auto" }}>{t.wSignIn}</a></div>;
   const toggle = (k: NotifKey) => put({ notif: { ...a.notif, [k]: a.notif[k] === false } });
 

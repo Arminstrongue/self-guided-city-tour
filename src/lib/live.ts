@@ -33,16 +33,27 @@ function listen(b: Bus) {
   if (!b.pg || b.listening) return;
   b.listening = (async () => {
     const { Client } = await import("pg");
+    // Volta a ligar sempre que a ligação cair ou falhar (ex.: reinício do PostgreSQL), com espera crescente até 30 s.
+    let wait = 2000, retrying = false;
+    const retry = () => {
+      if (retrying) return; retrying = true;
+      setTimeout(() => { retrying = false; void connect(); }, wait);
+      wait = Math.min(wait * 2, 30_000);
+    };
     const connect = async () => {
       const c = new Client({ connectionString: process.env.DATABASE_URL });
       c.on("notification", (n) => {
         try { const { to, ev } = JSON.parse(n.payload ?? "{}"); if (to && ev) b.em.emit(to, ev); } catch { /* ignorar */ }
       });
-      c.on("error", () => { c.end().catch(() => null); setTimeout(() => void connect(), 2000); });
-      await c.connect();
-      await c.query(`LISTEN ${CHANNEL}`);
+      c.on("error", () => { c.end().catch(() => null); retry(); });
+      c.on("end", retry);
+      try {
+        await c.connect();
+        await c.query(`LISTEN ${CHANNEL}`);
+        wait = 2000;
+      } catch { c.removeAllListeners("end"); c.end().catch(() => null); retry(); }
     };
-    await connect().catch(() => { b.listening = null; });
+    await connect();
   })();
 }
 

@@ -102,7 +102,9 @@ export async function inbox(me: string) {
 export async function unreadCount(me: string) {
   const d = await db();
   const [{ n }] = await d.select({ n: sql<number>`count(distinct ${schema.messages.sender})::int` }).from(schema.messages)
-    .where(and(eq(schema.messages.recipient, me), isNull(schema.messages.readAt)));
+    .where(and(eq(schema.messages.recipient, me), isNull(schema.messages.readAt),
+      // Mensagens de contas bloqueadas (em qualquer sentido) não contam: essas conversas ficam escondidas.
+      sql`not exists (select 1 from ${schema.blocks} b where (b.blocker = ${me} and b.blocked = ${schema.messages.sender}) or (b.blocked = ${me} and b.blocker = ${schema.messages.sender}))`));
   return n;
 }
 

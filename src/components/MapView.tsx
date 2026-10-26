@@ -51,7 +51,9 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
     return () => { off = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); });
+  // Só redesenha quando o que se vê muda (não a cada renderização, p. ex. o relógio de 60 s).
+  const sig = JSON.stringify([stops.map((s) => [s.id, s.lat, s.lng]), done, museums.length, extra.map((x) => [x.lat, x.lng, x.icon]), airport?.name, pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
+  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
   function draw(g: G) {
     objs.current.forEach((o) => o.setMap(null)); objs.current = [];
     const m = map.current, info = new g.maps.InfoWindow();
@@ -118,7 +120,9 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], cent
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => { void import("leaflet").then((L) => draw(L)); });
+  // Só redesenha quando o que se vê muda (não a cada renderização, p. ex. o relógio de 60 s).
+  const sig = JSON.stringify([stops.map((s) => [s.id, s.lat, s.lng]), done, museums.length, extra.map((x) => [x.lat, x.lng, x.icon]), airport?.name, pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
+  useEffect(() => { void import("leaflet").then((L) => draw(L)); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function draw(L: typeof import("leaflet")) {
     const m = map.current, g = layer.current;

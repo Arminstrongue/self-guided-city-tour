@@ -97,11 +97,13 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   async function load() {
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
     // Erro do servidor (não "sem sessão"): não mostrar o formulário de entrada, que dava a ideia de que o login falhou.
-    setLoadErr(Boolean(r && r.status >= 500));
-    if (r && r.status >= 500) return;
+    // Sem ligação ou erro do servidor: mostrar "tentar de novo", nunca o formulário de entrada (dava a ideia de sessão perdida).
+    const failed = !r || r.status >= 500;
+    setLoadErr(failed);
+    if (failed) return;
     if (r?.ok) {
       const n = await syncLocalToAccount().catch(() => 0); // memórias deste dispositivo passam para a conta
-      if (n) { setSynced(n); const again = await fetch("/api/me", { cache: "no-store" }); setW(await again.json()); } else setW(await r.json());
+      if (n) { setSynced(n); const again = await fetch("/api/me", { cache: "no-store" }).catch(() => null); setW(again?.ok ? await again.json() : await r.json()); } else setW(await r.json());
       setLocal(await listMemories());
     } else { setW("anon"); setLocal((await listMemories()).map((m) => ({ ...m, local: true }))); }
     void loadWish().then((x) => setWish(x.list));

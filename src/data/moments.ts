@@ -4,8 +4,8 @@
  */
 import type { Hobby } from "@/lib/explore";
 
-export type When = "sunset" | "morning" | "night" | "weekend" | "day";
-export const WHEN_ICON: Record<When, string> = { sunset: "🌅", morning: "☀️", night: "🌙", weekend: "📅", day: "🕐" };
+import type { When } from "./moments-meta";
+export { WHEN_ICON, type When } from "./moments-meta";
 export type Moment = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; pt: [string, string]; en: [string, string] };
 
 const m = (id: string, icon: string, when: When, h: Hobby[], lat: number, lng: number, pt: [string, string], en: [string, string]): Moment => ({ id, icon, when, h, lat, lng, pt, en });

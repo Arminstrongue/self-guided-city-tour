@@ -3,7 +3,7 @@
  * pesquisa de viajantes, bloqueios e denúncias. O email nunca é mostrado a outros viajantes.
  */
 import { cleanImageDataUrl } from "./strip-meta";
-import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { notify } from "./notify";
 
@@ -193,6 +193,8 @@ export async function block(me: string, handle: string) {
   if (!p || p.email === me) return;
   const d = await db();
   await d.insert(schema.blocks).values({ blocker: me, blocked: p.email }).onConflictDoNothing();
+  // As mensagens por ler dessa conta deixam de contar no contador (a conversa fica escondida).
+  await d.update(schema.messages).set({ readAt: new Date() }).where(and(eq(schema.messages.recipient, me), eq(schema.messages.sender, p.email), isNull(schema.messages.readAt)));
   await d.delete(schema.follows).where(or(and(eq(schema.follows.follower, me), eq(schema.follows.followee, p.email)), and(eq(schema.follows.follower, p.email), eq(schema.follows.followee, me))));
 }
 export async function unblock(me: string, handle: string) {

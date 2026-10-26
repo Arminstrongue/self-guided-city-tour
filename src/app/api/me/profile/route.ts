@@ -44,7 +44,11 @@ export async function PUT(req: Request) {
   if (await handleTaken(v.data.handle, email)) return NextResponse.json({ error: "taken" }, { status: 409 });
   const { adult: _a, ...data } = v.data;
   const isNew = !(await myProfile(email));
-  await saveProfile(email, data);
+  // Duas pessoas a escolher o mesmo @nome ao mesmo tempo: a segunda recebe "ocupado" (não um erro 500).
+  try { await saveProfile(email, data); } catch (e) {
+    if ((e as { code?: string; cause?: { code?: string } })?.code === "23505" || (e as { cause?: { code?: string } })?.cause?.code === "23505") return NextResponse.json({ error: "taken" }, { status: 409 });
+    throw e;
+  }
   const res = NextResponse.json({ ok: true });
   // Entrou por um convite: segue quem o convidou e avisa-o.
   const ref = (await cookies()).get(REF_COOKIE)?.value;
