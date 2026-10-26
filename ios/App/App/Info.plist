@@ -6,6 +6,12 @@
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>NSCameraUsageDescription</key>
+	<string>VOYBU uses the camera only when you choose to take a photo for a memory, a post, your profile picture or a chat.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>VOYBU uses the microphone only when you record a voice note in a chat.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>VOYBU opens your photos only when you choose a picture or video to add to a memory, a post, your profile or a chat.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location shows the way to the next stop and how long it takes to get back to the airport.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
