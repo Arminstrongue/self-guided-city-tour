@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { alternates } from "@/lib/seo";
 import { Header } from "@/components/Header";
@@ -37,6 +38,7 @@ export default async function Arrive(
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
+      <PageBanner k="airport-arrival" alt={getDict(params.locale).img.alt["airport-arrival"]} />
       <ArriveFlow locale={params.locale} cities={cities} initial={initial} go={searchParams.go === "1"} explicit={cities.some((c) => c.id === searchParams.city)} />
     </main>
   );

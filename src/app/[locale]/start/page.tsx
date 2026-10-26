@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/SiteImage";
 import { alternates } from "@/lib/seo";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -59,6 +60,7 @@ export default async function Start(
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
+      <PageBanner k="find-my-way" alt={getDict(params.locale).img.alt["find-my-way"]} />
       <QuickStart locale={params.locale} cities={cities} pre={pre} from={fmt(t.fromP, { p: p.local ?? p.main })} />
     </main>
   );

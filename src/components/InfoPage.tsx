@@ -4,7 +4,11 @@ import { company } from "@/legal/content";
 import { infoEN, infoPT, type InfoDoc } from "@/legal/info";
 import { loadCities } from "@/lib/content";
 import { LOCALES } from "@/i18n/core";
-import type { Locale } from "@/i18n/dictionaries";
+import { getDict, type Locale } from "@/i18n/dictionaries";
+import { PageBanner } from "@/components/SiteImage";
+import type { SiteImageKey } from "@/lib/site-images";
+
+const BANNER: Partial<Record<InfoDoc, SiteImageKey>> = { about: "homepage-hero", support: "dubai-city", eco: "tube-navigation" };
 
 /** Sobre nós / Apoio / Viajar com menos impacto / Contactos. */
 export async function InfoPage({ locale, doc }: { locale: Locale; doc: InfoDoc }) {
@@ -21,6 +25,7 @@ export async function InfoPage({ locale, doc }: { locale: Locale; doc: InfoDoc }
   return (
     <main className="app">
       <Header locale={locale} currency={(await requestCurrency())} />
+      {BANNER[doc] && <PageBanner k={BANNER[doc]!} alt={getDict(locale).img.alt[BANNER[doc]!]} />}
       <article className="stack legal info-page">
         <h1 style={{ fontSize: 30, lineHeight: 1.15 }}>{c.title}</h1>
         <p className="info-lead">{mail(c.lead)}</p>

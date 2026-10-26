@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { SiteImage } from "@/components/SiteImage";
+import type { SiteImageKey } from "@/lib/site-images";
 import { alternates } from "@/lib/seo";
 import Link from "next/link";
 import { Header } from "@/components/Header";
@@ -222,8 +224,9 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       <section className="sec">
         <div className="sec-h reveal"><h2>{t.howTitle}</h2></div>
         <ol className="steps2">
-          {([[QrCode, t.how1t, t.how1s], [CreditCard, t.how2t, t.how2s], [Footprints, t.how3t, t.how3s]] as const).map(([Ic, a, b], i) => (
-            <li key={a} className="step2 reveal"><span className="step2-n" aria-hidden="true"><Ic size={20} strokeWidth={2.2} /><i>{i + 1}</i></span><span className="step2-t"><b>{a}</b><small>{b}</small></span></li>
+          {([[QrCode, t.how1t, t.how1s, "find-my-way"], [CreditCard, t.how2t, t.how2s, "trip-wallet"], [Footprints, t.how3t, t.how3s, "nyc-neighbourhood"]] as const).map(([Ic, a, b, img], i) => (
+            <li key={a} className="step2 reveal"><span className="step2-n" aria-hidden="true"><Ic size={20} strokeWidth={2.2} /><i>{i + 1}</i></span>
+              <span className="step2-t"><b>{a}</b><small>{b}</small><SiteImage k={img} alt={t.img.alt[img]} className="step2-img" sizes="(min-width: 960px) 30vw, 90vw" /></span></li>
           ))}
         </ol>
       </section>
@@ -232,7 +235,9 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
         <div className="sec-h reveal"><h2>{t.featTitle}</h2></div>
         {(() => {
           const all = ([[t.f1t, t.f1s], [t.f2t, t.f2s], [t.f3t, t.f3s], [t.f4t, t.f4s], [t.f5t, t.f5s], [t.f6t, t.f6s], [t.f7t, t.f7s], [t.f8t, t.f8s], [t.f9t, t.f9s], [t.f10t, t.f10s], [t.f11t, t.f11s], [t.f12t, t.f12s]] as const);
-          const card = (i: number) => { const [a, b] = all[i]; const [Ic, q] = FEATS[i]; return <Link key={a} href={`/${params.locale}${FEAT_HREF[i]}`} className="feat2 feat2-link press reveal"><span className={`qi ${q}`} aria-hidden="true"><Ic size={18} strokeWidth={2.2} /></span><span className="f2-tx"><b>{a}</b><small>{b}</small></span></Link>; };
+          // As 4 principais têm fotografia; as outras ficam com ícone.
+          const PHOTO: Partial<Record<number, SiteImageKey>> = { 0: "nyc-subway", 1: "audio-walk", 2: "airport-arrival", 4: "stay-connected" };
+          const card = (i: number) => { const [a, b] = all[i]; const [Ic, q] = FEATS[i]; const ph = PHOTO[i]; return <Link key={a} href={`/${params.locale}${FEAT_HREF[i]}`} className={`feat2 feat2-link press reveal${ph ? " feat2-ph" : ""}`}>{ph && <SiteImage k={ph} alt="" className="feat2-img" sizes="(min-width: 960px) 25vw, 40vw" />}<span className={`qi ${q}`} aria-hidden="true"><Ic size={18} strokeWidth={2.2} /></span><span className="f2-tx"><b>{a}</b><small>{b}</small></span></Link>; };
           // O essencial primeiro (transporte, áudio, hora de voltar, offline); o resto fica a um toque.
           const CORE = [0, 1, 2, 4], MORE = [3, 5, 6, 7, 8, 9, 10, 11];
           return <>
@@ -243,6 +248,24 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
             </details>
           </>;
         })()}
+      </section>
+
+      {/* Momentos da viagem: imagens que levam a cada ajuda da app. */}
+      <section className="sec" aria-labelledby="mo-h">
+        <div className="sec-h reveal"><div><h2 id="mo-h">{t.img.mo.title}</h2><p>{t.img.mo.sub}</p></div></div>
+        <div className="mo-grid">
+          {([
+            ["family", "family-travel", "/plan/new?days=2&g=family,sights"], ["access", "accessible-city", "/wallet?settings=1"],
+            ["food", "local-food", "/plan/new?days=1&g=food"], ["culture", "dubai-old-city", "/plan/new?days=1&g=sights,art"],
+            ["luggage", "luggage-storage", "/wallet/essentials"], ["health", "pharmacy-help", "/c/man#safety"],
+            ["partner", "local-partner", "/merchants"], ["walk", "london-explore", "/start"]
+          ] as const).map(([k, img, href]) => (
+            <Link key={k} href={`/${params.locale}${href}`} className="mo-tile press reveal">
+              <SiteImage k={img} alt={t.img.alt[img]} sizes="(min-width: 960px) 25vw, 50vw" />
+              <span className="mo-tx"><b>{t.img.mo.items[k][0]}</b><small>{t.img.mo.items[k][1]}</small></span>
+            </Link>
+          ))}
+        </div>
       </section>
 
       <WebOnly>

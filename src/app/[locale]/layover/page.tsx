@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { LayoverMode } from "@/components/LayoverMode";
@@ -33,6 +34,7 @@ export default async function Layover(props: { params: Promise<{ locale: Locale 
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
+      <PageBanner k="dubai-metro" alt={getDict(params.locale).img.alt["dubai-metro"]} />
       <LayoverMode locale={params.locale} cities={cities}
         city={city ? {
           id: city.id, name: cityName(city, params.locale), iata: city.ap!.iata, tz: city.tz ?? "UTC", airMin: city.air.min, airLine: city.air.line ?? "",

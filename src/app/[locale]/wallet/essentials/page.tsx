@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { EssentialsView, type EssCity } from "@/components/EssentialsView";
@@ -30,6 +31,7 @@ export default async function Essentials(props: { params: Promise<{ locale: Loca
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
+      <PageBanner k="nearby-essentials" alt={getDict(params.locale).img.alt["nearby-essentials"]} />
       <EssentialsView locale={params.locale} cities={cities} />
     </main>
   );

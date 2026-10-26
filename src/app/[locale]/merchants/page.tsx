@@ -1,4 +1,5 @@
 import { Header } from "@/components/Header";
+import { PageBanner } from "@/components/SiteImage";
 import { requestCurrency } from "@/lib/fx";
 import { MerchantForm } from "@/components/MerchantForm";
 import { cityName } from "@/data/cities";
@@ -18,6 +19,7 @@ export default async function Merchants(
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
+      <PageBanner k="local-partner" alt={getDict(params.locale).img.alt["local-partner"]} />
       <div className="stack">
         <h1 style={{ fontSize: 28, lineHeight: 1.15 }}>{t.bzTitle}</h1>
         <p className="hint" style={{ fontSize: 15 }}>{t.bzSub}</p>
