@@ -47,7 +47,7 @@ export function chunkText(text: string, max = 220): string[] {
   return out;
 }
 
-type VoiceLike = { lang: string; name: string; localService: boolean; default: boolean };
+type VoiceLike = { lang: string; name: string; localService: boolean; default: boolean; voiceURI?: string };
 
 /** Melhor voz para o idioma: mesma variante > mesmo idioma; prefere vozes de alta qualidade e locais. */
 export function pickVoice<T extends VoiceLike>(voices: T[], lang: string): T | null {
@@ -56,8 +56,12 @@ export function pickVoice<T extends VoiceLike>(voices: T[], lang: string): T | n
   const score = (v: T) => {
     const l = norm(v.lang);
     let s = l === want ? 100 : l.startsWith(base) ? 50 : -1000;
-    if (/premium|enhanced|natural|neural|wavenet|google/i.test(v.name)) s += 10;
-    if (/compact|espeak|robot/i.test(v.name)) s -= 10;
+    const id = `${v.name} ${v.voiceURI ?? ""}`;
+    // iPhone: vozes "Premium" e "Melhorada" (descarregadas nas Definições) e Siri soam naturais; as "compact" soam a robô.
+    if (/premium/i.test(id)) s += 30;
+    else if (/enhanced|siri|natural|neural|wavenet/i.test(id)) s += 20;
+    else if (/google/i.test(id)) s += 10;
+    if (/compact|espeak|robot|eloquence|novelty|bad news|bells|bubbles|cellos|jester|organ|trinoids|whisper|zarvox|albert|bahh|boing|fred|junior|ralph|superstar/i.test(id)) s -= 40;
     if (v.localService) s += 3;
     if (v.default) s += 1;
     return s;
@@ -103,11 +107,19 @@ export async function speak(text: string, lang: string, fallback?: string): Prom
       const { supported } = await TextToSpeech.isLanguageSupported({ lang: tag });
       if (!supported && fallback) { useLang = VOICE_LANG.en; useText = fallback; }
     } catch { /* continua com o idioma pedido */ }
-    const parts = chunkText(cleanForSpeech(useText));
+    // Escolhe a melhor voz instalada no telemóvel para o idioma (antes usava a voz por defeito, a mais "robótica").
+    let voice: number | undefined;
+    try {
+      const { voices } = await TextToSpeech.getSupportedVoices();
+      const best = pickVoice(voices, useLang);
+      if (best) voice = voices.indexOf(best);
+    } catch { /* fica a voz do sistema */ }
+    // Blocos maiores = menos pausas entre frases; ritmo ligeiramente mais calmo soa mais natural.
+    const parts = chunkText(cleanForSpeech(useText), 400);
     const done = (async () => {
       for (const p of parts) {
         if (stopped) break;
-        await TextToSpeech.speak({ text: p, lang: useLang, rate: 1.0, pitch: 1.0, volume: 1.0, category: "playback" });
+        await TextToSpeech.speak({ text: p, lang: useLang, rate: 0.95, pitch: 1.0, volume: 1.0, category: "playback", ...(voice !== undefined && voice >= 0 ? { voice } : {}) });
       }
     })();
     return { stop: () => { stopped = true; void TextToSpeech.stop(); }, done, usedLang: useLang.slice(0, 2) };
@@ -121,7 +133,7 @@ export async function speak(text: string, lang: string, fallback?: string): Prom
   let voice = pickVoice(voices, tag);
   let useText = text, useLang = tag;
   if (!voice && fallback) { voice = pickVoice(voices, VOICE_LANG.en); useText = fallback; useLang = VOICE_LANG.en; }
-  const parts = chunkText(cleanForSpeech(useText));
+  const parts = chunkText(cleanForSpeech(useText), 300);
   const done = new Promise<void>((resolve) => {
     let i = 0;
     const next = () => {
@@ -129,7 +141,7 @@ export async function speak(text: string, lang: string, fallback?: string): Prom
       const u = new SpeechSynthesisUtterance(parts[i++]);
       u.lang = voice?.lang ?? useLang;
       if (voice) u.voice = voice;
-      u.rate = 1.0; u.pitch = 1.0; u.volume = 1.0;
+      u.rate = 0.95; u.pitch = 1.0; u.volume = 1.0;
       u.onend = next;
       u.onerror = () => resolve();
       s.speak(u);
