@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { sendWalletLink } from "@/lib/wallet";
+import { createSignInCode } from "@/lib/access-token";
 import { LOCALES } from "@/i18n/core";
 import { isProd } from "@/lib/env";
 import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
@@ -15,6 +16,11 @@ export async function POST(req: Request) {
   if (!p.success) return NextResponse.json({ error: "invalid" }, { status: 400 });
   // No máximo 3 links por email a cada 10 minutos (evita encher a caixa de alguém).
   if (!rateLimitKey(`me-link:${p.data.email.toLowerCase()}`, 3, 10 * 60_000)) return NextResponse.json({ error: "rate" }, { status: 429 });
+  // Conta de revisão das lojas: não há caixa de correio, por isso não se envia email (evita devoluções) — entra com o REVIEW_CODE.
+  const rv = process.env.REVIEW_EMAIL?.trim().toLowerCase();
+  if (rv && /^\d{6}$/.test(process.env.REVIEW_CODE?.trim() ?? "") && p.data.email.toLowerCase() === rv) {
+    return NextResponse.json({ ok: true, challenge: createSignInCode(rv).challenge, devLink: null, devCode: null });
+  }
   const r = await sendWalletLink(p.data.email.toLowerCase(), p.data.locale, p.data.city);
   // Em produção, se o email não saiu, diz-se ao viajante (antes parecia que nada acontecia).
   if (isProd && !r.sent) return NextResponse.json({ error: "email" }, { status: 502 });

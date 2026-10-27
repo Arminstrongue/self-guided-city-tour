@@ -129,10 +129,10 @@ Escolher **"Todas ou algumas funcionalidades estão restritas"** e dar estas ins
 
 **No servidor** (não enviar a ninguém por chat), acrescentar ao `.env` e reiniciar:
 ```
-read -rsp "Código de revisão (6+ dígitos): " C; echo; printf 'REVIEW_EMAIL=review@voybu.com\nREVIEW_CODE=%s\n' "$C" >> .env
+read -rsp "Código de revisão (exatamente 6 dígitos): " C; echo; printf 'REVIEW_EMAIL=review@voybu.com\nREVIEW_CODE=%s\n' "$C" >> .env
 docker compose up -d
 ```
-O email de revisão tem de receber emails (o envio tem de funcionar), e convém dar-lhe um passe ativo de Lisboa no painel de administração.
+O código tem de ter exatamente 6 algarismos (o campo da app só aceita 6). Para o email de revisão não se envia nenhum email (não tem caixa de correio); basta escrever o código. E convém dar-lhe um passe ativo de Lisboa no painel de administração.
 
 ## Versões
 Para cada atualização nativa: subir `versionCode` (e `versionName`) em `android/app/build.gradle`. Mudanças só no site não precisam de nova versão na loja.
