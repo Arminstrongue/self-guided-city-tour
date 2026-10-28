@@ -20,7 +20,9 @@ export const PLATFORM_RE = /^[A-Za-z0-9]{1,5}$/;
 /** buffer: margem antes da partida escolhida pelo viajante, em minutos (vazio = a recomendada para a modalidade). */
 /** next: a cidade para onde segue depois (avião, comboio, autocarro ou navio); `city` é o id quando é uma cidade VOYBU. */
 export type NextCity = { city?: string; name: string };
-export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string; buffer?: number; next?: NextCity };
+/** origin: de onde vem quando começa fora da cidade (ex.: Manchester Piccadilly ao planear Londres); `start` é onde chega à cidade. */
+export type Origin = { label: string; lat: number; lng: number };
+export type Trip = { v: 2; start: Endpoint; end: Endpoint; mode: Mode; startAt: string; deadline: string; key?: string; buffer?: number; next?: NextCity; origin?: Origin };
 
 /** Margem antes da partida (chegar com tempo ao aeroporto, à estação ou ao navio). */
 export const BUFFER_MIN: Record<Mode, number> = { plane: 150, train: 45, bus: 20, ship: 60, stay: 0, walk: 0 };
@@ -134,7 +136,13 @@ export function parseTrip(v: unknown): Trip | null {
   if (!start || !end || !mode) return null;
   return { v: 2, start, end, mode, startAt: dt(o.startAt), deadline: dt(o.deadline), ...(typeof o.key === "string" ? { key: o.key.slice(0, 8) } : {}),
     ...(typeof o.buffer === "number" && Number.isFinite(o.buffer) && BUFFER_RANGE[mode].max > 0 ? { buffer: bufferOf({ mode, buffer: o.buffer }) } : {}),
-    ...(nextOf(o.next, mode) ?? {}) };
+    ...(nextOf(o.next, mode) ?? {}), ...(originOf(o.origin) ?? {}) };
+}
+function originOf(x: unknown): { origin: Origin } | null {
+  if (!x || typeof x !== "object") return null;
+  const e = x as Record<string, unknown>;
+  if (typeof e.lat !== "number" || typeof e.lng !== "number" || !Number.isFinite(e.lat) || !Number.isFinite(e.lng) || typeof e.label !== "string" || !e.label.trim()) return null;
+  return { origin: { label: e.label.slice(0, 120), lat: e.lat, lng: e.lng } };
 }
 function nextOf(x: unknown, mode: Mode): { next: NextCity } | null {
   if (!x || typeof x !== "object" || mode === "stay" || mode === "walk") return null;

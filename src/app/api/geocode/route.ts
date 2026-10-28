@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   const lang = (u.searchParams.get("lang") ?? "en").slice(0, 5);
   const city = await loadCity(u.searchParams.get("city") ?? "");
   if (!city || q.length < 3) return NextResponse.json({ hits: [] });
-  const key = `${city.id}|${lang}|${u.searchParams.get("kind") ?? ""}|${q.toLowerCase()}`;
+  const key = `${city.id}|${lang}|${u.searchParams.get("kind") ?? ""}|${u.searchParams.get("scope") ?? ""}|${q.toLowerCase()}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < 24 * 3600_000) return NextResponse.json({ hits: hit.hits, elsewhere: hit.elsewhere ?? null });
   const c = cityCenter(city);
@@ -67,7 +67,9 @@ export async function GET(req: Request) {
     }
   } catch { /* sem resultados */ }
   // Só dentro da cidade; se a morada for noutra cidade da app, diz qual (para o viajante poder mudar).
-  const inside = hits.filter((h) => km(h, c) < 60);
+  // scope=any (ponto de partida): aceita lugares fora da cidade — quem vem de Manchester para Londres começa em Manchester.
+  const any = u.searchParams.get("scope") === "any";
+  const inside = any ? hits : hits.filter((h) => km(h, c) < 60);
   let elsewhere: { city: string; name: string } | null = null;
   if (!inside.length && hits.length) {
     const all = await loadCities();

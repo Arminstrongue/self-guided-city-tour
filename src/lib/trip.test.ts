@@ -102,3 +102,11 @@ test("plataforma/cais: guarda-se para estação e autocarros, rejeita lixo, e o 
   const hotel = parseTrip({ ...base, mode: "stay", end: { kind: "hotel", lat: 51.5, lng: -0.13, label: "Hotel", platform: "5" } });
   assert.equal(hotel?.end.kind !== "airport" && hotel?.end.platform, undefined);
 });
+
+test("começar fora da cidade: a origem fica guardada e valores inválidos são ignorados", () => {
+  const base = { v: 2, start: { kind: "station", lat: 51.528, lng: -0.134, label: "London Euston" }, end: AIRPORT, mode: "plane", startAt: "", deadline: "" };
+  const ok = parseTrip(({ ...base, origin: { label: "Manchester Piccadilly", lat: 53.477, lng: -2.231 } }));
+  assert.deepEqual(ok?.origin, { label: "Manchester Piccadilly", lat: 53.477, lng: -2.231 });
+  assert.equal(parseTrip(({ ...base, origin: { label: "X", lat: "a", lng: 2 } }))?.origin, undefined);
+  assert.equal(parseTrip(base)?.origin, undefined);
+});
