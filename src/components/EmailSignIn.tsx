@@ -62,6 +62,8 @@ export function EmailSignIn({ t, locale, city, next }: { t: Dict; locale: string
         <button className="btn press" style={{ width: "auto", whiteSpace: "nowrap" }} disabled={busy}>{busy ? e.sending : t.wSignBtn}</button>
       </form>
       {err && <p className="esi-err" role="alert">{err}</p>}
+      {/* Aceitação dos termos ao entrar (lojas: conteúdo criado pelos utilizadores exige termos com tolerância zero). */}
+      <small className="hint esi-terms">{t.ag.pre} <a href={`/${locale}/legal/terms`}>{t.lTerms}</a> {t.ag.and} <a href={`/${locale}/legal/privacy`}>{t.lPrivacy}</a>. {t.ag.post}</small>
     </div>
   );
 }
