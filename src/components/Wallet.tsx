@@ -15,7 +15,7 @@ import { NewsFeed } from "./NewsFeed";
 import { NeedNow } from "./NeedNow";
 import type { ToolTab } from "./TravelTools";
 import { I, House, Luggage, Zap, Compass, Clapperboard, Plus, Bell, MessageCircle, Settings, Menu, MapIcon, Globe, Wrench, Sparkles, CalendarDays, Ticket, Heart, BookOpen, Bookmark, Search, Users, LayoutGrid, MapPin } from "./Ico";
-import { CloudOff, Copy, Trash2 } from "lucide-react";
+import { CloudOff, Copy, Trash2, UserRound } from "lucide-react";
 import { toast, withUndo } from "@/lib/toast";
 import Portal from "./Portal";
 import type { LucideIcon } from "lucide-react";
@@ -25,6 +25,7 @@ import { PointsCard, usePoints } from "./Points";
 import { TravelStats } from "./TravelStats";
 import { useLiveConnection } from "@/lib/live-client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 // Ecrãs e folhas que só carregam quando são abertos (a carteira abre mais depressa).
 const Composer = dynamic(() => import("./Feed").then((m) => m.Composer), { ssr: false });
 const FeedTab = dynamic(() => import("./Feed").then((m) => m.FeedTab), { ssr: false });
@@ -92,7 +93,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const [settings, setSettings] = useState(false);
   const [shared, setShared] = useState(false);
   const goSignIn = () => { setTabState("home"); setTimeout(() => { const e = document.getElementById("wl-email"); e?.scrollIntoView({ behavior: "smooth", block: "center" }); (e as HTMLInputElement | null)?.focus(); }, 50); };
-  const refreshSocial = () => void loadSocial().then(setSocial);
+  const [socialDone, setSocialDone] = useState(false);
+  const refreshSocial = () => void loadSocial().then((x) => { setSocial(x); setSocialDone(true); });
 
   async function load() {
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
@@ -119,6 +121,9 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const setTab = (x: Tab) => { setTabState(x); try { if (x !== tab) history.pushState(null, "", x === "home" ? window.location.pathname : `#${x}`); } catch { /* ignorar */ } window.scrollTo({ top: 0 }); };
 
   const signed = w && w !== "anon" ? w : null;
+  // Enquanto a sessão e o perfil carregam, mostra-se um esqueleto (antes aparecia "Entrar" por instantes a quem já tinha sessão).
+  const pending = w === null || (Boolean(signed) && social === null && !socialDone);
+  const nudge = pending ? <div className="wl-skel" aria-hidden="true"><i /><i /></div> : <SignNudge t={t} onClick={goSignIn} />;
   // Preferências de viagem da conta também neste telemóvel (o planeador usa-as sem nova ida ao servidor).
   useEffect(() => { if (signed?.travel) { try { localStorage.setItem("sgct:travel", JSON.stringify(signed.travel)); } catch { /* ignorar */ } } }, [signed?.travel]);
   // Roteiro de vários dias criado antes de entrar: grava-o agora e abre-o.
@@ -358,14 +363,14 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
           ))}
         </div>
         {social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
-        {social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={goSignIn} />}
+        {social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : nudge}
       </>}
 
-      {section === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : <SignNudge t={t} onClick={goSignIn} />)}
+      {section === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : nudge)}
 
-      {section === "videos" && (signed ? <VideosTab t={t} locale={locale} social={social} cities={cities} onEdit={() => setEditing(true)} onClose={() => setTab("home")} /> : <SignNudge t={t} onClick={goSignIn} />)}
+      {section === "videos" && (signed ? <VideosTab t={t} locale={locale} social={social} cities={cities} onEdit={() => setEditing(true)} onClose={() => setTab("home")} /> : nudge)}
 
-      {section === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : <SignNudge t={t} onClick={goSignIn} />)}
+      {section === "chat" && (social ? <ChatTab t={t} locale={locale} social={social} onEdit={() => setEditing(true)} onRead={() => void refreshUnread()} /> : nudge)}
 
       {/* ---------- Perfil: cartão + passes, planos, wishlist, cidades, memórias ---------- */}
       {(section === "profile" || section === "trip") && <>
@@ -384,7 +389,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
               {prof.bio && <p className="wl-me-bio">{prof.bio}</p>}
               <span className="wl-mini-stats"><span className="wl-lvl">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span><span>{world.countries} {t.wStatCountries.toLowerCase()}</span><span>{memories.length} {t.wStatMem.toLowerCase()}</span></span>
             </div>
-          </> : <>
+          </> : pending ? <div className="wl-skel" aria-hidden="true"><i /></div> : <>
             <div className="wl-level">
               <span className="wl-level-b">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
               <span className="wl-who">{signed ? signed.email : t.walletSub}</span>
@@ -393,7 +398,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
             <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
             {w === "anon" && <button className="btn press wl-in-cta" onClick={goSignIn}>🔐 {t.wSignIn}</button>}
           </>}
-          {signed && <div className="wl-me-acts">
+          {signed && social && <div className="wl-me-acts">
             <button onClick={() => setEditing(true)}>{prof ? t.scEdit : t.scCreate}</button>
             {prof && <button onClick={() => void shareProfile()}>{shared ? `✓ ${t.scCopied}` : t.scShare}</button>}
             {prof && <button aria-label={t.ivTitle} title={t.ivTitle} onClick={() => setInviting(true)}>✉️</button>}
@@ -430,10 +435,10 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
           )}
         </>}
         {sub === "res" && <Reservations t={t} locale={locale} cities={cities} tzOf={tzOf} signed={Boolean(signed)} />}
-        {sub === "saved" && (social?.profile ? <SavedGrid t={t} locale={locale} cities={cities} /> : <SignNudge t={t} onClick={goSignIn} />)}
-        {sub === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : <SignNudge t={t} onClick={goSignIn} />)}
+        {sub === "saved" && (social?.profile ? <SavedGrid t={t} locale={locale} cities={cities} /> : nudge)}
+        {sub === "plans" && (signed ? <Plans t={t} locale={locale} cities={cities} plans={signed.plans} /> : nudge)}
         {sub === "wish" && <Wishlist t={t} locale={locale} cities={cities} signed={Boolean(signed)} list={wish} setList={setWish} />}
-        {sub === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : <SignNudge t={t} onClick={goSignIn} />)}
+        {sub === "places" && (signed ? <Visited t={t} locale={locale} wallet={signed} cities={cities} countryOf={countryOf} memories={memories} onChange={(visited) => setW({ ...signed, visited })} /> : nudge)}
         {sub === "memories" && (
           <section className="stack" style={{ gap: 10 }}>
             {memories.length === 0 && w !== null && <div className="card gp-empty"><span aria-hidden="true">📔</span><b>{t.diaryEmpty}</b><a className="btn press" href={`/${locale}#cities`} style={{ width: "auto", marginTop: 8 }}>{t.diaryExplore}</a></div>}
@@ -461,12 +466,12 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
 
       {/* ---------- Barra de baixo ---------- */}
       <Portal><nav className="nv" aria-label={t.wallet}>
-        <a href={`/${locale}`} aria-label={t.nvHome}><span><I icon={House} on={false} /></span><small>{t.nvHome}</small></a>
+        <Link href={`/${locale}`} prefetch aria-label={t.nvHome}><span><I icon={House} on={false} /></span><small>{t.nvHome}</small></Link>
         <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
         <button className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
         <button className={section === "trip" ? "on" : ""} onClick={() => go("trip")} aria-label={t.wallet}><span><I icon={Luggage} on={section === "trip"} /></span><small>{t.nvTrip}</small></button>
         <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
-          <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={Users} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
+          <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={UserRound} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>
       </nav></Portal>
 
