@@ -101,7 +101,8 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
 
   return (
     <section className="stack now" style={{ gap: 10 }} aria-labelledby="now-h">
-      <h2 className="gp-h2 sm" id="now-h">{t.nowTitle}</h2>
+      {/* O título do ecrã já diz "Agora": o cabeçalho fica só para leitores de ecrã. */}
+      <h2 className="sr-only" id="now-h">{t.nowTitle}</h2>
       {primary === "tour" && tour ? (
         <div className="card now-card">
           <span className="now-k">🧭 {tour.name} · {fmt(t.nxStep, { n: tour.i + 1, N: tour.total })}</span>
