@@ -2,6 +2,7 @@
 import { useDict } from "@/i18n/client-dict";
 import { track } from "@/lib/track";
 import { useEffect, useState } from "react";
+import { useNative } from "@/lib/use-native";
 import { loadTrip, saveTrip } from "./trip-store";
 import { BufferPicker } from "./BufferPicker";
 import { cityNowLocal, defaultTrip, type Trip } from "@/lib/trip";
@@ -23,6 +24,7 @@ type Props = {
 
 
 export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionEmail, prices, fx, t: tProp, tz }: Props) {
+  const native = useNative();
   const t = useDict(tProp);
   // Dois perfis: escala (voo obrigatório) e férias curtas (voo de regresso opcional).
   const [mode, setMode] = useState<"layover" | "trip">("layover");
@@ -89,11 +91,11 @@ export function BuyForm({ locale, cityId, cityName, refCode, providers, sessionE
 
   return (
     <form className="stack" onSubmit={submit} noValidate>
-      {providers.length > 0 && !sessionEmail && (
+      {providers.some((p) => !native || p.id === "apple") && !sessionEmail && (
         <>
           <span className="label">{t.signInWith}</span>
           <div className="socials">
-            {providers.map((p) => (
+            {providers.filter((p) => !native || p.id === "apple").map((p) => (
               <button key={p.id} type="button" className="social" onClick={() => signIn(p.id)}>{p.name}</button>
             ))}
           </div>

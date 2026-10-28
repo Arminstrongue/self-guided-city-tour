@@ -232,7 +232,9 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   // Na app nativa (Capacitor) o Google recusa o login dentro da app ("disallowed_useragent"): fica só a Apple e o email.
   const [native, setNative] = useState(false);
   useEffect(() => { setNative(Boolean((window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor?.isNativePlatform?.())); }, []);
-  const shownProviders = native ? providers.filter((p) => p.id !== "google") : providers;
+  // Nas apps nativas só "Entrar com a Apple" (e o código por email): Google e Facebook bloqueiam o início de sessão dentro de apps (WebView),
+  // e a Apple (regra 4.8) exige uma opção equivalente quando há início de sessão de terceiros.
+  const shownProviders = native ? providers.filter((p) => p.id === "apple") : providers;
   const { unread, notifs, refreshUnread } = useUnread(Boolean(prof));
   useLiveConnection(Boolean(signed));
   const [notifOpen, setNotifOpen] = useState(false);
