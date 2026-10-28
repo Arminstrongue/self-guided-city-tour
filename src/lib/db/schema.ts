@@ -672,8 +672,12 @@ export const reservations = pgTable("reservations", {
   notes: text("notes").notNull().default(""),
   photo: text("photo").notNull().default(""), // imagem do bilhete (data URL comprimida)
   paid: boolean("paid").notNull().default(false),
+  journey: jsonb("journey").$type<Journey | null>(),   // transporte com troços e mudanças (ex.: Manchester → Crewe → Londres)
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("reservations_email_idx").on(t.email, t.startsAt)]);
+/** Um troço da viagem: horas locais "HH:MM"; operador e plataforma opcionais. */
+export type JourneyLeg = { from: string; to: string; dep: string; arr: string; op?: string; pf?: string };
+export type Journey = { legs: JourneyLeg[] };
 
 /** "Reportar um problema" numa paragem (entrada errada, encerrado, preço, acessibilidade). Fica em aberto até ser verificado. */
 export const stopReports = pgTable("stop_reports", {

@@ -29,7 +29,7 @@ async function json(f: F, url: string) {
 }
 
 /** Título do mesmo artigo noutra língua (via ligações interlínguas). */
-async function localTitle(f: F, enTitle: string, lang: string): Promise<string | null> {
+export async function localTitle(f: F, enTitle: string, lang: string): Promise<string | null> {
   if (lang === "en") return enTitle;
   const j = await json(f, `https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=langlinks&lllang=${lang}&titles=${encodeURIComponent(enTitle)}`);
   const page = Object.values(j?.query?.pages ?? {})[0] as { langlinks?: { "*": string }[] } | undefined;
@@ -45,7 +45,7 @@ export function trimAtSentence(text: string, max: number) {
   return (end > max * 0.5 ? cut.slice(0, end + 1) : cut.replace(/\s+\S*$/, "") + "…").trim();
 }
 
-async function intro(f: F, lang: string, title: string, max: number) {
+export async function intro(f: F, lang: string, title: string, max: number) {
   const j = await json(f, `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=extracts&explaintext=1&exintro=1&titles=${encodeURIComponent(title)}`);
   const page = Object.values(j?.query?.pages ?? {})[0] as { title?: string; extract?: string; missing?: string } | undefined;
   if (!page?.extract || page.missing !== undefined) return null;

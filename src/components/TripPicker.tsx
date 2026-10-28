@@ -8,6 +8,8 @@ import { NextCityPick } from "./Onward";
 import { TerminalPick } from "./TerminalPick";
 import type { CityPoint } from "@/lib/nearby";
 import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type Endpoint, type Mode, type PlaceKind, type Trip } from "@/lib/trip";
+import { TipsButton } from "./TravelTips";
+import { tipsFor } from "@/data/travel-tips";
 
 type Hit = { label: string; sub: string; lat: number; lng: number };
 type Kind = Endpoint["kind"];
@@ -179,6 +181,8 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange,
           </button>
         ))}
       </div>
+
+      {(value.mode === "train" || value.mode === "bus") && <TipsButton t={t} tips={tipsFor({ cities: [city], mode: value.mode })} autoKey={`trip-${value.mode}`} />}
 
       <span className="bp-h">{t.tpEnd}</span>
       {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}

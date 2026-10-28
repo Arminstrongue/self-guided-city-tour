@@ -3804,3 +3804,47 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .pf-pick input{width:9em;max-width:100%;height:48px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:20px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
 .pf-pick input::placeholder{font-size:15px;font-weight:400;letter-spacing:0;text-transform:none;opacity:.6}
 .pf-pick .hint{margin:0}
+/* Ficha do lugar */
+.ps{background:var(--bg);border-radius:22px 22px 0 0;padding:8px 16px calc(16px + env(safe-area-inset-bottom));gap:12px}
+.ps-ph{width:100%;height:190px;object-fit:cover;border-radius:16px;background:var(--surface-2)}
+.ps-h{display:flex;align-items:flex-start;gap:12px}
+.ps-ic{flex:0 0 44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:var(--surface-2)}
+.ps-n{font-size:19px;line-height:1.25}
+.ps-x{flex:none}
+.ps-hours{margin:0;font-size:14px;line-height:1.4}
+.ps-about{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:var(--surface)}
+.ps-about p{margin:0;font-size:15px;line-height:1.5}
+.ps-src{font-size:12px;color:var(--muted)}
+.ps-acts{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.ps-acts .btn{white-space:nowrap;padding:13px 10px;font-size:15px}
+.ex-row.tap{cursor:pointer}
+.ex-row.tap:active{opacity:.7}
+/* Viagem com troços e mudanças (bilhete de comboio/autocarro) */
+.jr-ed{display:grid;gap:10px;margin:0;padding:12px;border:1px solid var(--line);border-radius:14px}
+.jr-ed legend{padding:0 6px;font-weight:700}
+.jr-ed-leg{display:grid;gap:6px;padding-top:6px}
+.jr-ed-leg+.jr-ed-leg{border-top:1px dashed var(--line)}
+.jr-ed .field{margin:0}
+.jr-ed small{font-weight:400;opacity:.65}
+.jr-tl{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.jr-leg{display:grid;grid-template-columns:auto 1fr;column-gap:12px;row-gap:2px;align-items:center;padding:12px 14px;border-radius:14px;background:var(--surface)}
+.jr-leg .chip{grid-column:2;justify-self:start}
+.jr-t{font-weight:800;font-size:16px}
+.jr-op{grid-column:2;font-size:12.5px;color:var(--muted);padding:4px 0;border-inline-start:2px dotted var(--line);padding-inline-start:10px;margin-inline-start:-14px}
+.jr-ch{margin:0;padding:2px 14px;font-size:13.5px;font-weight:600;color:var(--cobalt)}
+.jr-ch.tight{color:#ff9f0a}
+/* Guardar e partilhar (calendário, WhatsApp, PDF, lembretes) */
+.xo{display:grid;gap:8px}
+.xo-h{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.xo-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.xo-row button{display:grid;justify-items:center;gap:6px;padding:12px 4px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.xo-row button small{font-size:12px;font-weight:600;text-align:center;line-height:1.2}
+.xo-row button:disabled{opacity:.6}
+.xo-msg{margin:0;font-size:13.5px;color:var(--muted)}
+/* Bom saber (dicas de viagem) */
+.tt-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.tt-list li{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--surface)}
+.tt-list li>span{font-size:20px;line-height:1.3}
+.tt-list p{margin:0;font-size:14.5px;line-height:1.45}
+.tt-list a{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.tt-btn{justify-self:start;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--cobalt) 35%,transparent);background:var(--cobalt-soft);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}

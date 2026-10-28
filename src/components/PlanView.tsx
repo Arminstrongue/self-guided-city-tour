@@ -12,11 +12,18 @@ import type { MomentView } from "./Explore";
 import Portal from "./Portal";
 import { BackLink } from "./BackLink";
 import { RULE_ICON, WARN, officialRulesUrl, placeRules } from "@/lib/place-rules";
+import { PlaceSheet, type SheetPlace } from "./PlaceSheet";
+import { ExportBar } from "./ExportBar";
+import type { IcsEvent } from "@/lib/ics";
+import { notifId, type Reminder, type TripDoc } from "@/lib/trip-export";
+import { zonedToDate } from "@/lib/zoned";
+import { TipsButton } from "./TravelTips";
+import { tipsFor } from "@/data/travel-tips";
 
 type Plan = { id: string; title: string; city: string | null; cityName: string; startDate: string | null; days: number; items: PlanItem[] };
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dict; locale: Locale; plan: Plan; moments: MomentView[] }) {
+export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" }: { t?: Dict; locale: Locale; plan: Plan; moments: MomentView[]; tz?: string }) {
   const t = useDict(tProp);
   const [rulesOf, setRulesOf] = useState<PlanItem | null>(null);
   const [plan, setPlan] = useState(initial);
@@ -48,6 +55,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
   }
   useEffect(() => { if (adding === "places") void loadPlaces(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [adding]);
   // Pesquisa: filtra as sugestões e, a partir de 3 letras, procura também no mapa da cidade.
+  const [showPlace, setShowPlace] = useState<{ p: SheetPlace; add: { title: string; icon: string; lat: number; lng: number; kind: "moment" | "place" } } | null>(null);
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<{ label: string; sub: string; lat: number; lng: number }[] | null>(null);
   useEffect(() => {
@@ -87,6 +95,32 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
     const text = lines.join("\n");
     try { if (navigator.share) await navigator.share({ title: plan.title, text }); else { await navigator.clipboard.writeText(text); toast(t.tsCopied, { icon: "📋" }); } } catch { /* cancelado */ }
   }
+
+  // Calendário, PDF, WhatsApp e lembretes do plano (horas no fuso da cidade).
+  const dDate = (n: number) => { const d = new Date(`${plan.startDate}T12:00:00Z`); d.setUTCDate(d.getUTCDate() + n - 1); return d.toISOString().slice(0, 10); };
+  const dItems = (n: number) => plan.items.filter((x) => x.day === n).sort((a, b) => (a.time ?? "99").localeCompare(b.time ?? "99"));
+  const dayLabel = (n: number) => plan.startDate ? `${fmt(t.xo.day, { n })} · ${new Intl.DateTimeFormat(INTL_LOCALE[locale], { weekday: "long", day: "numeric", month: "long", timeZone: "UTC" }).format(new Date(`${dDate(n)}T12:00:00Z`))}` : fmt(t.xo.day, { n });
+  const days = Array.from({ length: plan.days }, (_, k) => k + 1);
+  const exp = {
+    doc: (): TripDoc => ({ title: plan.title, subtitle: plan.cityName || undefined, footer: "VOYBU · voybu.com",
+      sections: days.map((n) => ({ heading: dayLabel(n), rows: dItems(n).map((x) => ({ time: x.time, text: `${x.icon ?? "📍"} ${x.title}`, sub: x.note || undefined })) })).filter((d) => d.rows.length) }),
+    events: (): IcsEvent[] | null => {
+      if (!plan.startDate) return null;
+      return days.flatMap((n) => {
+        const items = dItems(n);
+        const timed = items.filter((x) => x.time).map((x) => ({ uid: `plan-${plan.id}-${x.id}`, title: `${x.icon ?? "📍"} ${x.title}`, start: zonedToDate(`${dDate(n)}T${x.time}`, tz),
+          location: x.lat !== undefined ? `${x.lat},${x.lng}` : plan.cityName, description: x.note, alarms: [30] }));
+        const loose = items.filter((x) => !x.time);
+        return [...timed, ...(loose.length ? [{ uid: `plan-${plan.id}-d${n}`, title: `${plan.title} · ${fmt(t.xo.day, { n })}`, start: new Date(), allDay: dDate(n), location: plan.cityName,
+          description: loose.map((x) => `• ${x.title}`).join("\n") }] : [])];
+      });
+    },
+    reminders: (): Reminder[] => !plan.startDate ? [] : days.flatMap((n) => {
+      const items = dItems(n);
+      const morning = items.length ? [{ id: notifId(`${plan.id}:d${n}`), at: zonedToDate(`${dDate(n)}T09:00`, tz), title: `${plan.title} · ${fmt(t.xo.day, { n })}`, body: items.map((x) => x.title).join(" · ").slice(0, 180) }] : [];
+      return [...morning, ...items.filter((x) => x.time).map((x) => ({ id: notifId(`${plan.id}:${x.id}`), at: new Date(zonedToDate(`${dDate(n)}T${x.time}`, tz).getTime() - 30 * 60_000), title: `${x.icon ?? "📍"} ${x.title}`, body: fmt(t.xo.starts, { x: x.time! }) }))];
+    })
+  };
 
   return (
     <div className="stack" style={{ gap: 16 }}>
@@ -152,11 +186,15 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
               <input type="text" inputMode="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.plSearch} aria-label={t.plSearch} autoComplete="off" enterKeyHint="search" />
               {q && <button type="button" className="link-btn" onClick={() => setQ("")} aria-label={t.close}>✕</button>}
             </label>
-            {[...moments.map((m) => ({ key: `m:${m.id}`, title: m.title, icon: m.icon, lat: m.lat, lng: m.lng, sub: m.text, kind: "moment" as const })),
-              ...(places ?? []).slice(0, q ? 400 : 80).map((p) => ({ key: p.id, title: p.name, icon: CAT_ICON[p.cat], lat: p.lat, lng: p.lng, sub: p.rating ? `★ ${p.rating.toFixed(1)} · ${t.cat[p.cat]}` : t.cat[p.cat], kind: "place" as const }))]
+            {[...moments.map((m) => ({ key: `m:${m.id}`, title: m.title, icon: m.icon, lat: m.lat, lng: m.lng, sub: m.text, kind: "moment" as const, sheet: { name: m.title, lat: m.lat, lng: m.lng, icon: m.icon, text: m.text } as SheetPlace })),
+              ...(places ?? []).slice(0, q ? 400 : 80).map((p) => ({ key: p.id, title: p.name, icon: CAT_ICON[p.cat], lat: p.lat, lng: p.lng, sub: p.rating ? `★ ${p.rating.toFixed(1)} · ${t.cat[p.cat]}` : t.cat[p.cat], kind: "place" as const,
+                sheet: { name: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], catLabel: t.cat[p.cat], rating: p.rating, reviews: p.reviews, openNow: p.openNow, hours: p.hours, fee: p.fee, web: p.web, gmaps: p.gmaps, photo: p.photo, wiki: p.wiki } as SheetPlace }))]
               .filter((c) => !q.trim() || norm(`${c.title} ${c.sub}`).includes(norm(q.trim())))
               .map((c) => (
-                <div key={c.key} className="ex-row">
+                // Tocar no lugar abre a ficha (foto, horário, descrição); o "+" continua a juntar logo ao plano.
+                <div key={c.key} className="ex-row tap" role="button" tabIndex={0} aria-label={`${t.pi.more}: ${c.title}`}
+                  onClick={(e) => { if ((e.target as HTMLElement).closest("button:not(.ex-row)")) return; setShowPlace({ p: c.sheet, add: { title: c.title, icon: c.icon, lat: c.lat, lng: c.lng, kind: c.kind } }); }}
+                  onKeyDown={(e) => { if (e.key === "Enter" && e.target === e.currentTarget) setShowPlace({ p: c.sheet, add: { title: c.title, icon: c.icon, lat: c.lat, lng: c.lng, kind: c.kind } }); }}>
                   <span className="ex-ic sm" aria-hidden="true">{c.icon}</span>
                   <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}><b className="ad-ellip">{c.title}</b><span className="hint ad-ellip">{c.sub}</span></div>
                   <button className="mini" disabled={inPlan.has(c.title)} onClick={() => add({ title: c.title, icon: c.icon, lat: c.lat, lng: c.lng, kind: c.kind })}>{inPlan.has(c.title) ? "✓" : "+"}</button>
@@ -189,10 +227,13 @@ export function PlanView({ t: tProp, locale, plan: initial, moments }: { t?: Dic
       )}
 
       <div className="grid2">
+        <TipsButton t={t} tips={tipsFor({ cities: plan.city ? [plan.city] : [], mode: "plan" })} />
+        <ExportBar t={t} name={plan.title} doc={exp.doc} events={exp.events} reminders={exp.reminders} />
         <button className="btn ghost press" onClick={() => void share()}>↗ {t.plShare}</button>
         <button className={`btn ghost press ${del ? "danger" : ""}`} onClick={async () => { if (!del) { setDel(true); setTimeout(() => setDel(false), 4000); return; } await fetch(`/api/me/plans/${plan.id}`, { method: "DELETE" }).catch(() => null); window.location.href = `/${locale}/wallet`; }}>🗑 {del ? `${t.plDelete}?` : t.plDelete}</button>
       </div>
 
+      {showPlace && <PlaceSheet t={t} locale={locale} place={showPlace.p} inPlan={inPlan.has(showPlace.add.title)} onAdd={() => add(showPlace.add)} onClose={() => setShowPlace(null)} />}
       {rulesOf && (
         <Portal><div className="as-bg" onClick={() => setRulesOf(null)}>
           <div className="as wt-sheet" role="dialog" aria-modal="true" aria-label={t.pa.title} onClick={(e) => e.stopPropagation()}>
