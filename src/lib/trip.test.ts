@@ -90,3 +90,15 @@ test("margem ajustável: limites, contas e validação", () => {
   const now = Date.parse("2026-10-24T08:00:00Z");
   assert.equal(availableMin({ mode: "plane", startAt: "", deadline: "2026-10-24T18:00", buffer: 90 }, "Europe/Lisbon", now), 9 * 60 - 90);
 });
+
+test("plataforma/cais: guarda-se para estação e autocarros, rejeita lixo, e o terminal de autocarros não se perde", () => {
+  const base = { v: 2, start: AIRPORT, mode: "train", startAt: "", deadline: "" };
+  const st = parseTrip({ ...base, end: { kind: "station", lat: 51.5, lng: -0.13, label: "Euston", platform: "13A" } });
+  assert.deepEqual(st?.end, { kind: "station", lat: 51.5, lng: -0.13, label: "Euston", platform: "13A" });
+  const bus = parseTrip({ ...base, mode: "bus", end: { kind: "bus", lat: 51.49, lng: -0.15, label: "Victoria Coach Station", platform: "7" } });
+  assert.deepEqual(bus?.end, { kind: "bus", lat: 51.49, lng: -0.15, label: "Victoria Coach Station", platform: "7" });
+  const bad = parseTrip({ ...base, end: { kind: "station", lat: 51.5, lng: -0.13, label: "Euston", platform: "<script>" } });
+  assert.equal(bad?.end.kind !== "airport" && bad?.end.platform, undefined);
+  const hotel = parseTrip({ ...base, mode: "stay", end: { kind: "hotel", lat: 51.5, lng: -0.13, label: "Hotel", platform: "5" } });
+  assert.equal(hotel?.end.kind !== "airport" && hotel?.end.platform, undefined);
+});

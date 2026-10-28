@@ -13,7 +13,23 @@ type Hit = { label: string; sub: string; lat: number; lng: number };
 type Kind = Endpoint["kind"];
 const ICON: Record<Kind, string> = { airport: "✈", station: "🚆", bus: "🚌", port: "🛳", hotel: "🏨", address: "📍", here: "📍" };
 
-export const endLabel = (e: Endpoint, t: Dict) => (e.kind === "airport" ? (e.terminal ? `${t.bpAirport} · ${/^[0-9A-Z]{1,3}$/.test(e.terminal) ? `T${e.terminal}` : e.terminal}` : t.bpAirport) : e.kind === "here" ? t.bpHereLabel : e.label);
+export const endLabel = (e: Endpoint, t: Dict) => (e.kind === "airport" ? (e.terminal ? `${t.bpAirport} · ${/^[0-9A-Z]{1,3}$/.test(e.terminal) ? `T${e.terminal}` : e.terminal}` : t.bpAirport) : e.kind === "here" ? t.bpHereLabel
+  : e.platform ? `${e.label} · ${e.kind === "bus" ? t.pf.standShort : t.pf.short} ${e.platform}` : e.label);
+
+/** Plataforma (estação) ou cais (autocarros), opcional: número curto com letras (ex.: 5, 13A). */
+function PlatformPick({ t, value, onChange }: { t: Dict; value: Endpoint; onChange: (e: Endpoint) => void }) {
+  if (value.kind !== "station" && value.kind !== "bus") return null;
+  if (!endpointReady(value)) return null;
+  const label = value.kind === "bus" ? t.pf.stand : t.pf.platform;
+  return (
+    <label className="pf-pick">
+      <span className="pf-l">{label} <small>({t.tpOptional})</small></span>
+      <input value={value.platform ?? ""} inputMode="text" autoCapitalize="characters" autoComplete="off" maxLength={5} placeholder={t.pf.ph} aria-label={label}
+        onChange={(ev) => { const v = ev.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5); const { platform: _p, ...rest } = value; onChange(v ? { ...rest, platform: v } : rest); }} />
+      <small className="hint">{t.pf.hint}</small>
+    </label>
+  );
+}
 export const endIcon = (e: Endpoint) => ICON[e.kind];
 
 /** Pesquisa de uma estação, terminal, hotel ou morada na cidade. */
@@ -172,6 +188,7 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange,
           <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
             kinds={needKind === "station" ? ["station", "airport"] : needKind === "bus" ? ["bus", "hotel", "station"] : [needKind]} onChange={(e) => set({ end: e })} />
           {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
+          <PlatformPick t={t} value={value.end} onChange={(e) => set({ end: e })} />
         </>
       )}
       {value.mode === "walk" && (

@@ -14,7 +14,9 @@ import { zonedToDate } from "./zoned";
 export type Mode = "plane" | "train" | "bus" | "ship" | "stay" | "walk";
 export type PlaceKind = "station" | "bus" | "port" | "hotel" | "address" | "here";
 /** Aeroporto: terminal opcional (código oficial, ex.: "2", "2E", "N") — o viajante confirma no cartão de embarque. */
-export type Endpoint = { kind: "airport"; terminal?: string } | { kind: PlaceKind; lat: number; lng: number; label: string };
+/** Estação ou terminal de autocarros: plataforma / cais opcional (ex.: "5", "13A") — anunciada pouco antes da partida, o viajante confirma no painel. */
+export type Endpoint = { kind: "airport"; terminal?: string } | { kind: PlaceKind; lat: number; lng: number; label: string; platform?: string };
+export const PLATFORM_RE = /^[A-Za-z0-9]{1,5}$/;
 /** buffer: margem antes da partida escolhida pelo viajante, em minutos (vazio = a recomendada para a modalidade). */
 /** next: a cidade para onde segue depois (avião, comboio, autocarro ou navio); `city` é o id quando é uma cidade VOYBU. */
 export type NextCity = { city?: string; name: string };
@@ -120,9 +122,11 @@ export function parseTrip(v: unknown): Trip | null {
     if (!x || typeof x !== "object") return null;
     const e = x as Record<string, unknown>;
     if (e.kind === "airport") return typeof e.terminal === "string" && /^[A-Za-z0-9 ]{1,8}$/.test(e.terminal) ? { kind: "airport", terminal: e.terminal } : AIRPORT;
-    if (!["station", "port", "hotel", "address", "here"].includes(String(e.kind))) return null;
+    // "bus" faltava aqui: o terminal de autocarros escolhido perdia-se ao voltar a abrir o plano.
+    if (!["station", "bus", "port", "hotel", "address", "here"].includes(String(e.kind))) return null;
     if (typeof e.lat !== "number" || typeof e.lng !== "number" || !Number.isFinite(e.lat) || !Number.isFinite(e.lng)) return null;
-    return { kind: e.kind as PlaceKind, lat: e.lat, lng: e.lng, label: String(e.label ?? "").slice(0, 120) };
+    const platform = (e.kind === "station" || e.kind === "bus") && typeof e.platform === "string" && PLATFORM_RE.test(e.platform) ? { platform: e.platform } : {};
+    return { kind: e.kind as PlaceKind, lat: e.lat, lng: e.lng, label: String(e.label ?? "").slice(0, 120), ...platform };
   };
   const start = ep(o.start), end = ep(o.end);
   const mode = ["plane", "train", "bus", "ship", "stay", "walk"].includes(String(o.mode)) ? (o.mode as Mode) : null;
