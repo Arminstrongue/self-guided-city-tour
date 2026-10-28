@@ -32,6 +32,7 @@ import { CitySwitch } from "./CitySwitch";
 import { NearbyCities, OnwardLink } from "./Onward";
 import type { CityPoint } from "@/lib/nearby";
 import { achievementText } from "@/lib/achievement-text";
+import { TravellerUpdates, UPDATE_ICON, useUpdates } from "./TravellerUpdates";
 // Separadores carregados só quando abertos.
 // Partes que só aparecem depois de uma ação (começar, abrir uma paragem, sem rede…): carregadas quando são precisas.
 const WalkTools = dynamic(() => import("./WalkTools").then((m) => m.WalkTools), { ssr: false });
@@ -86,7 +87,10 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const [warn, setWarn] = useState<Record<string, string[]>>({});
   useEffect(() => { fetch(`/api/stop-reports?city=${city.id}`).then((r) => (r.ok ? r.json() : null)).then((j) => j?.warnings && setWarn(j.warnings)).catch(() => null); }, [city.id]);
   const [open, setOpen] = useState<string>(city.stops[0].id);
-  const [tab, setTab] = useState<"route" | "live" | "map" | "cost" | "museums" | "guide">("route");
+  const updates = useUpdates(cityIn.id);
+  // #updates abre logo o separador das atualizações dos viajantes (ligação do ecrã Agora).
+  useEffect(() => { const f = () => { if (location.hash === "#updates") setTab("updates"); }; f(); window.addEventListener("hashchange", f); return () => window.removeEventListener("hashchange", f); }, []);
+  const [tab, setTab] = useState<"route" | "live" | "updates" | "map" | "cost" | "museums" | "guide">("route");
   const [focus, setFocus] = useState<Focus | null>(null);
   // O mapa vive dentro de "Explorar": mostrar um lugar abre esse separador já centrado nele.
   const showOnMap = (f: Focus) => { setFocus({ ...f }); setTab(explore ? "live" : "map"); };
@@ -288,8 +292,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         </div>
         {!preview && <div className="progress"><i style={{ width: `${(doneN / plan.stops.length) * 100}%` }} /></div>}
         {!preview && <div className="tabs" role="tablist">
-          {(preview ? (["route"] as const) : (["route", ...(explore ? ["live" as const] : ["map" as const]), "cost", "museums", "guide"] as const)).map((k) => (
-            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map" || k === "live") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
+          {(preview ? (["route"] as const) : (["route", ...(explore ? ["live" as const] : ["map" as const]), "updates", "cost", "museums", "guide"] as const)).map((k) => (
+            <button key={k} role="tab" aria-selected={tab === k} onClick={() => { setTab(k); if (k === "map" || k === "live") setFocus(null); }}>{k === "route" ? t.route : k === "live" ? `✨ ${t.tabLive}` : k === "updates" ? t.tu.tab : k === "map" ? t.map : k === "cost" ? t.costs : k === "museums" ? t.museums : t.guide}</button>
           ))}
         </div>}
       </header>
@@ -417,6 +421,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         {(tab === "map" || tab === "live") && !online && <RouteSketch stops={plan.stops} done={done} base={toBase(trip.start)} pos={geo.pos} t={t} />}
         {tab === "live" && explore && online && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}
           route={{ stops: plan.stops, done, museums, airport: city.ap, pos: geo.pos }} focusIn={focus} />}
+        {tab === "updates" && <TravellerUpdates t={t} locale={locale} city={city.id} cityName={cityLabel} stops={Object.fromEntries(city.stops.map((s) => [s.id, stopName(s, locale)]))} onChange={updates.reload} />}
         {tab === "guide" && <CityGuide city={city} cityLabel={cityLabel} t={t} locale={locale} money={both} />}
 
 
@@ -482,6 +487,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                         </div>
                         <span className="cost-tag num" style={{ color: s.c ? "var(--warn)" : "var(--good)" }}>{s.c ? `~${money(s.c)}` : t.free}</span>
                       </button>
+                      {(() => { const us = (updates.list ?? []).filter((u) => u.stop === s.id); if (!us.length) return null; const top = us[0];
+                            return <button type="button" className="tu-badge" onClick={() => { setTab("updates"); window.scrollTo({ top: 0, behavior: "smooth" }); }}>{UPDATE_ICON[top.kind]} {top.kind === "alert" || top.kind === "warn" ? top.text.slice(0, 80) : fmt(t.tu.here, { n: us.length })}</button>; })()}
                       {isOpen && (
                         <div className="detail">
                           <p className="bio">{bios[s.id]?.text ?? desc(s)}</p>

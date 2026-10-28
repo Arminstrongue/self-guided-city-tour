@@ -73,6 +73,9 @@ export async function deleteAccount(email: string) {
   await d.delete(schema.reservations).where(eq(schema.reservations.email, email));
   await d.delete(schema.journeys).where(eq(schema.journeys.email, email));
   await d.update(schema.stopReports).set({ reporter: "" }).where(eq(schema.stopReports.reporter, email));
+  // Atualizações de viagem (textos, fotos) e votos da pessoa: apagados com a conta.
+  await d.delete(schema.travellerUpdates).where(eq(schema.travellerUpdates.author, email));
+  await d.delete(schema.travellerUpdateVotes).where(or(eq(schema.travellerUpdateVotes.voter, email), eq(schema.travellerUpdateVotes.voter, `report:${email}`)));
   // Restos sociais e pedidos a negócios (antes ficavam para trás).
   await d.delete(schema.closeFriends).where(or(eq(schema.closeFriends.email, email), eq(schema.closeFriends.friend, email)));
   await d.delete(schema.highlights).where(eq(schema.highlights.author, email));

@@ -7,6 +7,7 @@ import { hop } from "@/lib/route-cost";
 import { cachedReservations, loadReservations, type Reservation } from "@/lib/trip-local";
 import { loadTrip } from "./trip-store";
 import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
+import { TravellerAlerts } from "./TravellerUpdates";
 
 type LL = { lat: number; lng: number };
 export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number };
@@ -104,6 +105,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
     <section className="stack now" style={{ gap: 10 }} aria-labelledby="now-h">
       {/* O título do ecrã já diz "Agora": o cabeçalho fica só para leitores de ecrã. */}
       <h2 className="sr-only" id="now-h">{t.nowTitle}</h2>
+      {(() => { const c = tour?.city ?? planned?.city; return c && cities[c] ? <TravellerAlerts t={t} locale={locale} city={c} cityName={cities[c]} /> : null; })()}
       {primary === "tour" && tour ? (
         <div className="card now-card">
           <span className="now-k">🧭 {tour.name} · {fmt(t.nxStep, { n: tour.i + 1, N: tour.total })}</span>

@@ -3848,3 +3848,37 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .tt-list p{margin:0;font-size:14.5px;line-height:1.45}
 .tt-list a{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .tt-btn{justify-self:start;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;border:1px solid color-mix(in srgb,var(--cobalt) 35%,transparent);background:var(--cobalt-soft);color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+/* Atualizações dos viajantes */
+.tu-card{display:grid;gap:8px;padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.tu-card.k-alert{border-color:color-mix(in srgb,#ff3b30 55%,transparent)}
+.tu-card.k-warn{border-color:color-mix(in srgb,#ff9f0a 55%,transparent)}
+.tu-h{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;align-items:baseline}
+.tu-k{font-size:13px;font-weight:800;letter-spacing:.02em}
+.tu-text{margin:0;font-size:15.5px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+.tu-where{margin:0;font-size:13.5px;color:var(--muted)}
+.tu-ph{padding:0;border:0;background:none;cursor:zoom-in}
+.tu-ph img{width:100%;max-height:260px;object-fit:cover;border-radius:14px;display:block}
+.tu-acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tu-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;text-decoration:none;cursor:pointer}
+.tu-chip.on{border-color:var(--cobalt);background:var(--cobalt-soft)}
+.tu-exp{font-size:12.5px;color:var(--muted)}
+.tu-vote{display:flex;flex-wrap:wrap;gap:8px}
+.tu-vote button{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:13.5px;cursor:pointer}
+.tu-vote button.on{border-color:var(--cobalt);background:var(--cobalt-soft)}
+.tu-vote button:disabled{opacity:.55;cursor:default}
+.tu-vote .tu-more{margin-inline-start:auto;border:0;background:none;color:var(--muted)}
+.tu-vote .tu-more.danger{color:#ff453a}
+.tu-rep{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.tu-rep small{width:100%;color:var(--muted)}
+.tu-rep button{padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
+.tu-kinds{display:flex;flex-wrap:wrap;gap:6px}
+.tu-kinds button{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.tu-kinds button.on{border-color:var(--cobalt);background:var(--cobalt-soft);font-weight:700}
+.tu-media{display:flex;flex-wrap:wrap;gap:8px}
+.tu-prev{width:100%;max-height:200px;object-fit:cover;border-radius:12px}
+.tu-zoom{position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,.92);display:grid;place-items:center;padding:16px}
+.tu-zoom img{max-width:100%;max-height:100%;border-radius:12px}
+.tu-note{font-size:12.5px}
+.tu-badge{display:inline-flex;align-items:center;gap:6px;margin-top:6px;padding:6px 10px;border-radius:10px;font-size:13px;font-weight:600;background:color-mix(in srgb,#ff9f0a 14%,transparent);color:var(--ink);border:0;cursor:pointer;text-align:start}
+.tu-live{border:1px solid color-mix(in srgb,#ff9f0a 45%,transparent)}
+.tu-live-r{margin:0;font-size:14.5px;line-height:1.4}
