@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Luggage, Check, X, Search } from "lucide-react";
+import { Check, X, Search } from "lucide-react";
 import { LOCALES } from "@/i18n/core";
 import { CURRENCIES, CURRENCY_COOKIE } from "@/lib/currency";
 import Portal from "@/components/Portal";
@@ -62,16 +62,12 @@ const UI: Record<string, [string, string, string, string, string]> = {
 };
 const SUGGESTED = ["EUR", "GBP", "USD", "CHF"];
 /** Nome da área pessoal ("My Trip") por idioma, para o botão do topo. */
-const TRIP: Record<string, string> = { en: "My Trip", pt: "A minha viagem", es: "Mi viaje", fr: "Mon voyage", de: "Meine Reise", it: "Il mio viaggio", zh: "我的行程", ar: "رحلتي", ja: "マイトリップ", tr: "Seyahatim", ru: "Моя поездка", ko: "내 여행" };
 const SYM: Record<string, string> = { EUR: "€", GBP: "£", USD: "$", JPY: "¥", CNY: "¥", KRW: "₩", INR: "₹", TRY: "₺", ILS: "₪", BRL: "R$", CHF: "CHF", THB: "฿", PHP: "₱" };
 
 /** Barra superior em vidro. `over` = transparente por cima de uma fotografia (página inicial e da cidade). */
 export function Header({ locale, currency, over = false }: { locale: string; currency?: string; over?: boolean }) {
   const [open, setOpen] = useState(false);
   const [l, c] = UI[locale] ?? UI.en;
-  // Dentro de "Minha viagem" o botão da mala levaria à própria página: não aparece.
-  const [inWallet, setInWallet] = useState(false);
-  useEffect(() => { setInWallet(/^\/[a-z]{2}\/wallet(\/|$)/.test(location.pathname)); }, []);
   useEffect(() => {
     if (!open) return;
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
@@ -83,7 +79,7 @@ export function Header({ locale, currency, over = false }: { locale: string; cur
     <div className={`bar${over ? " over" : ""}`}>
       <Link className="brand" href={`/${locale}`} aria-label="VOYBU"><span className="mark" aria-hidden="true"><BrandMark size={30} ring="auto" /></span><span className="word">VOYBU</span></Link>
       <div className="bar-end">
-        {!inWallet && <Link className="hb-ic press" href={`/${locale}/wallet`} aria-label={TRIP[locale] ?? TRIP.en} title={TRIP[locale] ?? TRIP.en}><Luggage size={18} strokeWidth={2} aria-hidden="true" /></Link>}
+        {/* Sem botão vermelho "Minha viagem" no topo: a barra de baixo já o tem em todas as páginas (era repetido e parecia um alerta). */}
         <button className="hb-chip press" onClick={() => setOpen(true)} aria-label={`${l} · ${c}`} title={`${l} · ${c}`} aria-haspopup="dialog">
           <span className="hb-flag" aria-hidden="true">{FLAG[locale] ?? "🌐"}</span><b>{locale.toUpperCase()}</b>{currency && <><i aria-hidden="true" /><span>{SYM[currency] ?? currency}</span></>}
         </button>

@@ -56,6 +56,7 @@ function left(ms: number, locale: Locale) {
   return rtf.format(h >= 48 ? Math.round(h / 24) : h);
 }
 
+const SNAP = "sgct:wallet-snap";
 type Tab = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "trip" | "passes" | "res" | "plans" | "wish" | "places" | "memories" | "saved";
 type Section = "home" | "explore" | "videos" | "chat" | "people" | "profile" | "trip";
 const TABS: Tab[] = ["home", "explore", "videos", "chat", "people", "profile", "trip", "passes", "res", "plans", "wish", "places", "memories", "saved"];
@@ -113,7 +114,21 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     void loadWish().then((x) => setWish(x.list));
     if (r?.ok) void socialP.then((x) => { setSocial(x); setSocialDone(true); });
   }
-  useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
+  useEffect(() => {
+    // Abre logo com a última cópia deste telemóvel (conta e perfil) e atualiza em segundo plano — sem esqueletos ao voltar à app.
+    // A cópia apaga-se ao terminar a sessão (o "Terminar sessão" limpa o armazenamento local) ou quando o servidor diz "sem sessão".
+    try {
+      const snap = JSON.parse(localStorage.getItem(SNAP) ?? "null") as { w: Wallet; s: Social | null; at: number } | null;
+      if (snap?.w && Date.now() - snap.at < 14 * 86400_000) { setW(snap.w); setSocial(snap.s); setSocialDone(true); }
+    } catch { /* cópia inválida: carrega normalmente */ }
+    void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f);
+  }, []);
+  useEffect(() => {
+    try {
+      if (w === "anon") localStorage.removeItem(SNAP);
+      else if (w && socialDone) { const v = JSON.stringify({ w, s: social, at: Date.now() }); if (v.length < 300_000) localStorage.setItem(SNAP, v); }
+    } catch { /* armazenamento cheio: fica sem cópia */ }
+  }, [w, social, socialDone]);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
   useEffect(() => {
     const read = () => { const raw = window.location.hash.slice(1).split(":")[0]; const h = (raw === "feed" ? "home" : raw) as Tab; setTabState(TABS.includes(h) ? h : "home"); };
@@ -301,7 +316,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     <div className="stack wl wl-app" style={{ gap: 14 }}>
       {/* Barra de cima: título + notificações e mensagens (como no Instagram) */}
       <div className="wl-bar">
-        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-brand">{t.wallet}</b>}
+        {/* Cada separador tem o seu nome (antes o "Agora" chamava-se "Minha viagem", igual ao separador seguinte). */}
+        {title ? <b className="wl-bar-t">{title}</b> : <b className="wl-bar-t">{t.nvNow}</b>}
         <span className="row" style={{ gap: 4 }}>
           {section === "profile" && <button className="wl-bar-ic" aria-label={t.scSettings} title={t.scSettings} onClick={() => setSettings(true)}><I icon={Settings} size={22} /></button>}
           {section === "profile" && signed && <a className="wl-bar-ic" aria-label={t.acTitle} title={t.acTitle} href={`/${locale}/wallet/account`}><I icon={Menu} size={22} /></a>}
@@ -398,7 +414,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
               <span className="wl-level-b">{["🧳", "🧭", "✈️", "🌍", "👑"][lvl]} {t.wLevels[lvl]}</span>
               <span className="wl-who">{signed ? signed.email : t.walletSub}</span>
             </div>
-            <div className="wl-prog" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
+            <div className="wl-prog" role="progressbar" aria-label={t.wLevels[lvl]} aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${pct}%` }} /></div>
             <span className="wl-prog-l">{nextAt ? fmt(nextAt - world.cities === 1 ? t.wLevelNext1 : t.wLevelNext, { n: nextAt - world.cities, l: t.wLevels[lvl + 1] }) : t.wLevelMax}</span>
             {w === "anon" && <button className="btn press wl-in-cta" onClick={goSignIn}>🔐 {t.wSignIn}</button>}
           </>}

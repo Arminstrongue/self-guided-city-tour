@@ -72,6 +72,8 @@ export async function removeCity(city: string, locale: Locale) {
 
 /** Ao terminar a sessão: apaga as cópias de páginas e dados pessoais guardadas para uso offline. */
 export async function clearPersonalCache() {
+  // Cópias da conta guardadas neste telemóvel (abrir a app sem esperar, reservas sem rede, preferências de viagem).
+  try { for (const k of ["sgct:wallet-snap", "sgct:res", "sgct:travel"]) localStorage.removeItem(k); } catch { /* ignorar */ }
   try { for (const k of await caches.keys()) if (k.endsWith("-pages")) await caches.delete(k); } catch { /* ignorar */ }
 }
 

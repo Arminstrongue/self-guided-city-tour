@@ -198,7 +198,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       {/* O produto logo a seguir ao topo: escolher → roteiro → próximo passo → bilhete */}
       <section className="sec dm" aria-labelledby="dm-h">
         <div className="sec-h reveal"><div><h2 id="dm-h">{t.dmTitle}</h2></div><a href={`/${params.locale}/tour/man`}>🎧 {t.qsTry} →</a></div>
-        <ol className="dm-rail">
+        <ol className="dm-rail" tabIndex={0}>
           <li className="dm-card reveal"><span className="dm-n">1</span><b>{t.dm1t}</b><small>{t.dm1s}</small>
             <div className="dm-ui"><div className="dm-search">⌕ Lond…</div><div className="dm-row on">🇬🇧 {cityName(list.find((c) => c.id === "lon")!, params.locale)}</div><div className="dm-row">🇬🇧 Manchester</div></div></li>
           <li className="dm-card reveal"><span className="dm-n">2</span><b>{t.dm2t}</b><small>{t.dm2s}</small>
