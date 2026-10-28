@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { hop } from "@/lib/route-cost";
-import { loadReservations, type Reservation } from "@/lib/trip-local";
+import { cachedReservations, loadReservations, type Reservation } from "@/lib/trip-local";
 import { loadTrip } from "./trip-store";
 import { RES_ICON, resWhen, TicketSheet } from "./Reservations";
 
@@ -38,8 +38,11 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   const [now, setNow] = useState(() => Date.now());
   const [show, setShow] = useState<Reservation | null>(null);
   useEffect(() => {
-    const r = () => void loadReservations(signed).then(setRes);
-    r(); window.addEventListener("sgct:res", r);
+    // Ao carregar, a lista vem da conta e guarda uma cópia local (que dispara "sgct:res").
+    // O evento só relê essa cópia: voltar a pedir à conta criava um ciclo sem fim de pedidos.
+    void loadReservations(signed).then(setRes);
+    const r = () => setRes(cachedReservations());
+    window.addEventListener("sgct:res", r);
     try { setProg(Object.values(JSON.parse(localStorage.getItem("sgct:progress") ?? "{}") as Record<string, Progress>)); } catch { /* ignorar */ }
     void quietPos().then(setPos);
     const i = setInterval(() => setNow(Date.now()), 60_000);

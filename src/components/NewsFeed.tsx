@@ -9,7 +9,9 @@ type Item = NewsItem & { city: string | null };
 export function NewsFeed({ t, locale, cities, mine }: { t: Dict; locale: Locale; cities: Record<string, string>; mine: string[] }) {
   const [items, setItems] = useState<Item[]>([]);
   // Com cidades na viagem: só avisos dessas cidades (as notícias gerais de aeroportos ficam para quem ainda não tem viagem).
-  const ids = useMemo(() => { const m = mine.filter((c) => cities[c]).slice(0, 4); return m.length ? m : [null]; }, [mine, cities]);
+  // Chave em texto: a lista "mine" é um array novo a cada render da carteira e voltava a pedir as notícias sem parar.
+  const key = mine.filter((c) => cities[c]).slice(0, 4).join(",");
+  const ids = useMemo(() => (key ? key.split(",") : [null]), [key]);
   useEffect(() => {
     let alive = true;
     const load = () => Promise.all(ids.map((c) => fetch(`/api/news?locale=${locale}${c ? `&city=${c}` : ""}`).then((r) => (r.ok ? r.json() : null)).then((j) => ((j?.items ?? []) as NewsItem[]).map((x) => ({ ...x, city: c }))).catch(() => [] as Item[])))

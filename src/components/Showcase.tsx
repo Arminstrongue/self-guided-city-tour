@@ -5,9 +5,19 @@ import { useEffect, useMemo, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { Credit, Img, Lightbox, PhotoGrid, Slides, useCityMedia, useNear, type Photo } from "./Media";
 
+// Capas das cidades: os pedidos feitos no mesmo instante juntam-se num só (?covers=a,b,c) em vez de um por cidade.
 const memo = new Map<string, Promise<Photo[]>>();
+let queue: { id: string; ok: (p: Photo[]) => void }[] = [];
+function flush() {
+  const batch = queue; queue = [];
+  for (let i = 0; i < batch.length; i += 24) {
+    const part = batch.slice(i, i + 24);
+    void fetch(`/api/media?covers=${part.map((x) => x.id).join(",")}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      .then((j: { covers?: Record<string, Photo[]> } | null) => { for (const x of part) x.ok(j?.covers?.[x.id] ?? []); });
+  }
+}
 function covers(id: string): Promise<Photo[]> {
-  if (!memo.has(id)) memo.set(id, fetch(`/api/media?city=${id}&cover=1`).then((r) => (r.ok ? r.json() : null)).then((j) => (j?.cover ?? []) as Photo[]).catch(() => []));
+  if (!memo.has(id)) memo.set(id, new Promise<Photo[]>((ok) => { if (!queue.length) setTimeout(flush, 30); queue.push({ id, ok }); }));
   return memo.get(id)!;
 }
 
