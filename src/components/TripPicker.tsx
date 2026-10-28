@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { BedDouble, LocateFixed, Plane, Search, Ship, TrainFront, Home, Footprints, Bus } from "lucide-react";
+import { BedDouble, ChevronRight, LocateFixed, Plane, Search, Ship, TrainFront, Home, Footprints, Bus } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { FAR_KM, km } from "@/lib/route-cost";
@@ -105,6 +105,21 @@ function PlaceSearch({ t, locale, city, kind, onPick, anywhere = false }: { t: D
 }
 
 /** Escolher um ponto (início ou fim). `kinds` limita as opções (ex.: comboio → só estação). */
+const kindIcon = (k: Kind, size = 20) => k === "airport" ? <Plane size={size} aria-hidden="true" /> : k === "station" ? <TrainFront size={size} aria-hidden="true" /> : k === "bus" ? <Bus size={size} aria-hidden="true" /> : k === "port" ? <Ship size={size} aria-hidden="true" /> : k === "here" ? <LocateFixed size={size} aria-hidden="true" /> : <BedDouble size={size} aria-hidden="true" />;
+const modeIcon = (m: Mode, size = 20) => m === "plane" ? <Plane size={size} aria-hidden="true" /> : m === "train" ? <TrainFront size={size} aria-hidden="true" /> : m === "bus" ? <Bus size={size} aria-hidden="true" /> : m === "ship" ? <Ship size={size} aria-hidden="true" /> : m === "walk" ? <Footprints size={size} aria-hidden="true" /> : <Home size={size} aria-hidden="true" />;
+const isSearch = (k: Kind): k is "station" | "bus" | "port" | "hotel" => k === "station" || k === "bus" || k === "port" || k === "hotel";
+
+/** Uma opção grande (ícone, título, explicação, seta): uma pergunta de cada vez, como nos ecrãs de passos. */
+function Card({ icon, title, sub, on, onClick }: { icon: React.ReactNode; title: string; sub?: string; on?: boolean; onClick: () => void }) {
+  return (
+    <button type="button" role="radio" aria-checked={Boolean(on)} className={`tp-card press${on ? " on" : ""}`} onClick={onClick}>
+      <span className="tp-ic">{icon}</span>
+      <span className="tp-tx"><b>{title}</b>{sub && <small>{sub}</small>}</span>
+      <ChevronRight size={18} className="tp-chev" aria-hidden="true" />
+    </button>
+  );
+}
+
 function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onChange, anywhere = false }: {
   t: Dict; locale: Locale; city: string; cityName: string; center: { lat: number; lng: number }; value: Endpoint; kinds: Kind[]; onChange: (e: Endpoint) => void; anywhere?: boolean;
 }) {
@@ -119,26 +134,30 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
       setMsg(""); onChange({ kind: "here", ...pos, label: t.bpHereLabel });
     }, () => setMsg(t.bpDenied), { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
   }
-  const icon = (k: Kind) => k === "airport" ? <Plane size={15} aria-hidden="true" /> : k === "station" ? <TrainFront size={15} aria-hidden="true" /> : k === "bus" ? <Bus size={15} aria-hidden="true" /> : k === "port" ? <Ship size={15} aria-hidden="true" /> : k === "here" ? <LocateFixed size={15} aria-hidden="true" /> : <BedDouble size={15} aria-hidden="true" />;
-  const searchKind = want === "station" || want === "bus" || want === "port" || want === "hotel" ? want : null;
+  const searchKind = isSearch(want) ? want : null;
+  // Depois de escolher o tipo (estação, hotel…), a lista recolhe e fica só a pesquisa.
+  const [list, setList] = useState(kinds.length > 1 && !isSearch(value.kind));
   return (
     <>
-      {kinds.length > 1 && (
-        <div className="bp-seg tp-seg" role="radiogroup">
+      {kinds.length > 1 && (list ? (
+        <div className="tp-cards" role="radiogroup">
           {kinds.map((k) => (
-            <button key={k} type="button" role="radio" aria-checked={want === k} className={want === k ? "on" : ""}
+            <Card key={k} icon={kindIcon(k)} title={t.tpKinds[k === "address" ? "hotel" : k]} sub={t.tq.kind[k === "address" ? "hotel" : k]} on={want === k && (k === "airport" || endpointReady(value))}
               onClick={() => {
                 setMsg("");
                 if (k === "airport") { setWant(k); onChange(AIRPORT); }
                 else if (k === "here") here();
                 // Mudar de tipo invalida logo a escolha anterior (nunca fica "✓ Aeroporto" com "Hotel" selecionado).
-                else { setWant(k); if (value.kind !== k) onChange({ kind: k, lat: NaN, lng: NaN, label: "" }); }
-              }}>
-              {icon(k)}{t.tpKinds[k === "address" ? "hotel" : k]}
-            </button>
+                else { setWant(k); setList(false); if (value.kind !== k) onChange({ kind: k, lat: NaN, lng: NaN, label: "" }); }
+              }} />
           ))}
         </div>
-      )}
+      ) : (
+        <div className="tp-picked">
+          <span className="tp-ic">{kindIcon(want)}</span><b>{t.tpKinds[want === "address" ? "hotel" : want]}</b>
+          <button type="button" className="link-btn" onClick={() => setList(true)}>{t.tq.other}</button>
+        </div>
+      ))}
       {searchKind && <PlaceSearch t={t} locale={locale} city={city} kind={searchKind} onPick={onChange} anywhere={anywhere} />}
       {value.kind !== "airport" && value.kind === want && endpointReady(value) && <p className="bp-ok">✓ {endIcon(value)} {endLabel(value, t)}</p>}
       {want !== "airport" && !msg && !(value.kind === want && endpointReady(value)) && <p className="tp-need">{t.tpChoose[want === "address" ? "hotel" : want]}</p>}
@@ -234,69 +253,108 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange,
   const needKind = END_FOR_MODE[value.mode];
   const endMissing = value.end.kind !== "airport" && !Number.isFinite(value.end.lat);
   const startKinds: Kind[] = ["airport", "station", "bus", "port", "hotel", "here"];
+  const startReady = value.start.kind === "airport" || endpointReady(value.start);
+  const endReady = value.end.kind === "airport" || endpointReady(value.end);
+  // Uma pergunta de cada vez: as respondidas ficam numa linha de resumo com "Alterar".
+  const [sec, setSec] = useState<"start" | "leave" | "end" | null>(!startReady ? "start" : !endReady ? "end" : null);
+  const pickStart = (s: Endpoint) => {
+    if (s.kind !== "airport" && endpointReady(s) && km(s, center) > FAR_KM) {
+      // Fora da cidade: guarda a origem e pede onde chega à cidade (estação, autocarro ou porto).
+      const kind = s.kind === "bus" || s.kind === "port" ? s.kind : "station";
+      const arrive: Endpoint = { kind, lat: NaN, lng: NaN, label: "" };
+      onChange({ ...value, origin: { label: s.label || t.bpHereLabel, lat: s.lat, lng: s.lng }, start: arrive, end: value.mode === "stay" && !other ? arrive : value.end });
+      return;
+    }
+    onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end });
+    if (s.kind === "airport" || endpointReady(s)) setSec("leave");
+  };
+  const startText = (value.origin ? `${value.origin.label} → ` : "") + (startReady ? endLabel(value.start, t) : t.tpChoose[value.start.kind === "address" || value.start.kind === "airport" ? "hotel" : value.start.kind]);
+  const endText = endReady ? endLabel(value.end, t) : t.tpNeedEnd;
+  const Row = ({ k, icon, q, v, warn }: { k: "start" | "leave" | "end"; icon: React.ReactNode; q: string; v: string; warn?: boolean }) => (
+    <button type="button" className={`tp-row press${warn ? " warn" : ""}`} onClick={() => setSec(k)} aria-expanded={false}>
+      <span className="tp-ic">{icon}</span>
+      <span className="tp-tx"><small>{q}</small><b>{v}</b></span>
+      <span className="tp-chg">{t.tq.change}</span>
+    </button>
+  );
+  const Done = () => <button type="button" className="btn ghost press tp-done" onClick={() => setSec(null)}>{t.tq.done}</button>;
   return (
     <div className="bp tp">
-      <span className="bp-h">{t.tpStart}</span>
-      {value.origin ? (
-        <>
-          <OriginInfo t={t} locale={locale} origin={value.origin} arrival={value.start} cityName={cityName}
-            onStart={(at) => set({ startAt: at })} onRemove={() => set({ origin: undefined })} />
-          <span className="bp-h">{fmt(t.og.arrive, { c: cityName })}</span>
-          <EndpointChooser key="arrive" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={["station", "bus", "airport", "port"]}
-            onChange={(s) => onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end })} />
-        </>
+      {/* 1. Onde começa? */}
+      {sec === "start" ? (
+        <div className="tp-sec">
+          <span className="bp-h">{t.tpStart}</span>
+          {value.origin ? (
+            <>
+              <OriginInfo t={t} locale={locale} origin={value.origin} arrival={value.start} cityName={cityName}
+                onStart={(at) => set({ startAt: at })} onRemove={() => set({ origin: undefined })} />
+              <span className="bp-h">{fmt(t.og.arrive, { c: cityName })}</span>
+              <EndpointChooser key="arrive" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={["station", "bus", "airport", "port"]}
+                onChange={(s) => { onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end }); if (s.kind === "airport" || endpointReady(s)) setSec("leave"); }} />
+            </>
+          ) : (
+            <EndpointChooser key="start" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={startKinds} anywhere onChange={pickStart} />
+          )}
+        </div>
       ) : (
-        <EndpointChooser key="start" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={startKinds} anywhere
-          onChange={(s) => {
-            if (s.kind !== "airport" && endpointReady(s) && km(s, center) > FAR_KM) {
-              // Fora da cidade: guarda a origem e pede onde chega à cidade (estação, autocarro ou porto).
-              const kind = s.kind === "bus" || s.kind === "port" ? s.kind : "station";
-              const arrive: Endpoint = { kind, lat: NaN, lng: NaN, label: "" };
-              onChange({ ...value, origin: { label: s.label || t.bpHereLabel, lat: s.lat, lng: s.lng }, start: arrive, end: value.mode === "stay" && !other ? arrive : value.end });
-              return;
-            }
-            onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end });
-          }} />
+        <>
+          <Row k="start" icon={kindIcon(value.start.kind)} q={t.tpStart} v={startText} warn={!startReady} />
+          {value.origin && <OriginInfo t={t} locale={locale} origin={value.origin} arrival={value.start} cityName={cityName}
+            onStart={(at) => set({ startAt: at })} onRemove={() => set({ origin: undefined })} />}
+        </>
       )}
 
-      <span className="bp-h">{t.tpLeave}</span>
-      <div className="bp-seg tp-modes" role="radiogroup" aria-label={t.tpLeave}>
-        {(["plane", "train", "bus", "ship", "walk", "stay"] as const).map((m) => (
-          <button key={m} type="button" role="radio" aria-checked={value.mode === m} className={value.mode === m ? "on" : ""} onClick={() => pickMode(m)}>
-            {m === "plane" ? <Plane size={15} aria-hidden="true" /> : m === "train" ? <TrainFront size={15} aria-hidden="true" /> : m === "bus" ? <Bus size={15} aria-hidden="true" /> : m === "ship" ? <Ship size={15} aria-hidden="true" /> : m === "walk" ? <Footprints size={15} aria-hidden="true" /> : <Home size={15} aria-hidden="true" />}{t.tpModes[m]}
-          </button>
-        ))}
-      </div>
-
+      {/* 2. Como sai da cidade? */}
+      {sec === "leave" ? (
+        <div className="tp-sec">
+          <span className="bp-h">{t.tpLeave}</span>
+          <div className="tp-cards" role="radiogroup" aria-label={t.tpLeave}>
+            {(["plane", "train", "bus", "ship", "walk", "stay"] as const).map((m) => (
+              <Card key={m} icon={modeIcon(m)} title={t.tpModes[m]} sub={t.tq.mode[m]} on={value.mode === m}
+                onClick={() => { pickMode(m); setSec(m === "stay" && !other ? null : "end"); }} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <Row k="leave" icon={modeIcon(value.mode)} q={t.tpLeave} v={t.tpModes[value.mode]} />
+      )}
       {(value.mode === "train" || value.mode === "bus") && <TipsButton t={t} tips={tipsFor({ cities: [city], mode: value.mode })} autoKey={`trip-${value.mode}`} />}
 
-      <span className="bp-h">{t.tpEnd}</span>
-      {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
-      {(needKind === "station" || needKind === "port" || needKind === "bus") && (
-        <>
-          <p className="hint">{fmt(t.nxcStation, { c: cityName })}</p>
-          <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
-            kinds={needKind === "station" ? ["station", "airport"] : needKind === "bus" ? ["bus", "hotel", "station"] : [needKind]} onChange={(e) => set({ end: e })} />
-          {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
-          <PlatformPick t={t} value={value.end} onChange={(e) => set({ end: e })} />
-        </>
+      {/* 3. Onde precisa de terminar? */}
+      {sec === "end" ? (
+        <div className="tp-sec">
+          <span className="bp-h">{t.tpEnd}</span>
+          {needKind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
+          {(needKind === "station" || needKind === "port" || needKind === "bus") && (
+            <>
+              <p className="hint">{fmt(t.nxcStation, { c: cityName })}</p>
+              <EndpointChooser key={needKind} t={t} locale={locale} city={city} cityName={cityName} center={center} value={endMissing ? { kind: needKind, lat: NaN, lng: NaN, label: "" } : value.end}
+                kinds={needKind === "station" ? ["station", "airport"] : needKind === "bus" ? ["bus", "hotel", "station"] : [needKind]} onChange={(e) => set({ end: e })} />
+              {value.end.kind === "airport" && <p className="bp-ok">✓ ✈ {t.bpAirport}</p>}
+              <PlatformPick t={t} value={value.end} onChange={(e) => set({ end: e })} />
+            </>
+          )}
+          {value.mode === "walk" && (
+            <EndpointChooser key="walk" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["hotel", "station", "port", "airport"]} onChange={(e) => set({ end: e })} />
+          )}
+          {!needKind && value.mode !== "walk" && (
+            <>
+              <div className="tp-cards" role="radiogroup">
+                <Card icon={kindIcon(value.start.kind)} title={t.tpSameAsStart} sub={startReady ? endLabel(value.start, t) : undefined} on={!other} onClick={() => { setOther(false); set({ end: value.start }); setSec(null); }} />
+                <Card icon={<Search size={20} aria-hidden="true" />} title={t.tpElsewhere} on={other} onClick={() => setOther(true)} />
+              </div>
+              {other && <EndpointChooser t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["airport", "station", "port", "hotel"]} onChange={(e) => set({ end: e })} />}
+            </>
+          )}
+          {value.end.kind === "airport" && (
+            <TerminalPick t={t} locale={locale} iata={airport} value={value.end.terminal} onChange={(code) => set({ end: code ? { kind: "airport", terminal: code } : AIRPORT })} />
+          )}
+          {endReady && <Done />}
+        </div>
+      ) : (
+        <Row k="end" icon={kindIcon(value.end.kind)} q={t.tpEnd} v={endText} warn={!endReady} />
       )}
-      {value.mode === "walk" && (
-        <EndpointChooser key="walk" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["hotel", "station", "port", "airport"]} onChange={(e) => set({ end: e })} />
-      )}
-      {!needKind && value.mode !== "walk" && (
-        <>
-          <div className="bp-seg tp-seg" role="radiogroup">
-            <button type="button" role="radio" aria-checked={!other} className={!other ? "on" : ""} onClick={() => { setOther(false); set({ end: value.start }); }}>{t.tpSameAsStart}</button>
-            <button type="button" role="radio" aria-checked={other} className={other ? "on" : ""} onClick={() => setOther(true)}>{t.tpElsewhere}</button>
-          </div>
-          {other ? <EndpointChooser t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.end} kinds={["airport", "station", "port", "hotel"]} onChange={(e) => set({ end: e })} />
-            : endpointReady(value.start) ? <p className="bp-ok">✓ {endIcon(value.start)} {endLabel(value.start, t)}</p> : <p className="hint">{t.tpNeedEnd}</p>}
-        </>
-      )}
-      {value.end.kind === "airport" && (
-        <TerminalPick t={t} locale={locale} iata={airport} value={value.end.terminal} onChange={(code) => set({ end: code ? { kind: "airport", terminal: code } : AIRPORT })} />
-      )}
+
       {cities && cities.length > 0 && value.mode !== "stay" && value.mode !== "walk" && (
         <NextCityPick t={t} locale={locale} from={{ id: city, name: cityName, ...center }} cities={cities} value={value.next} onChange={(next) => set({ next })} />
       )}
