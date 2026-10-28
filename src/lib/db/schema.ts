@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, jsonb, boolean, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, pgEnum, index, uniqueIndex, jsonb, boolean, doublePrecision, primaryKey } from "drizzle-orm/pg-core";
 
 export const accessScope = pgEnum("access_scope", ["city", "all"]);
 export const merchantPlan = pgEnum("merchant_plan", ["basic", "featured", "partner"]);
@@ -724,3 +724,30 @@ export const socialSnapshots = pgTable("social_snapshots", {
   data: jsonb("data").$type<Record<string, unknown>>().notNull().default({}),
   at: timestamp("at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [index("social_snapshots_net_at_idx").on(t.network, t.at)]);
+
+/** Atualizações dos viajantes (estilo Waze): sinais, caminhos, avisos, alertas, dicas e fotos/vídeos. Alertas e avisos expiram. */
+export const travellerUpdates = pgTable("traveller_updates", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  author: text("author").notNull(),               // email (nunca mostrado)
+  city: text("city").notNull(),
+  stop: text("stop"),                              // paragem do roteiro (opcional)
+  kind: text("kind").notNull(),                    // sign | path | warn | alert | tip | photo
+  text: text("text").notNull().default(""),
+  place: text("place").notNull().default(""),
+  lat: doublePrecision("lat"),
+  lng: doublePrecision("lng"),
+  photo: text("photo"),                            // data URL sem metadados (sem GPS)
+  postId: uuid("post_id"),                         // vídeo (publicação de vídeo do autor)
+  status: text("status").notNull().default("live"), // live | hidden | removed
+  up: integer("up").notNull().default(0),          // "ainda está"
+  down: integer("down").notNull().default(0),      // "já não está"
+  reports: integer("reports").notNull().default(0),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [index("traveller_updates_city_idx").on(t.city, t.status, t.createdAt)]);
+export const travellerUpdateVotes = pgTable("traveller_update_votes", {
+  updateId: uuid("update_id").notNull(),
+  voter: text("voter").notNull(),
+  value: integer("value").notNull(),               // 1 ainda está · -1 já não está · 0 denúncia
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
+}, (t) => [primaryKey({ columns: [t.updateId, t.voter] })]);

@@ -13,8 +13,8 @@ export function company() {
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
     email: v("COMPANY_EMAIL", env.contact),
-    updated: "25 de outubro de 2026",
-    updatedEn: "25 October 2026"
+    updated: "28 de outubro de 2026",
+    updatedEn: "28 October 2026"
   };
 }
 
@@ -62,6 +62,11 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
       { h: "Fontes, atualização e emergências", p: [
         "Nas informações importantes (aeroportos, entrada no país, segurança, emergências) indicamos a origem e a data de atualização. Só publicamos factos verificados em fontes oficiais.",
         "Os contactos de emergência mostrados são os números oficiais de cada país. Numa emergência, ligue diretamente para o número local; não dependa só da app, sobretudo sem rede ou bateria."
+      ] },
+      { h: "Atualizações dos viajantes", p: [
+        "Com sessão iniciada, pode partilhar atualizações numa cidade, paragem ou ponto do mapa: sinais e direções, mudanças de caminho, avisos, alertas, dicas, fotos e vídeos. Outros viajantes podem confirmar (\"ainda está\" / \"já não está\") ou denunciar.",
+        "As atualizações são partilhadas por viajantes e não são verificadas pela VOYBU. Use o bom senso e siga sempre a sinalização e os avisos oficiais.",
+        "Não publique conteúdo falso, ofensivo, publicitário ou perigoso, nem fotos com rostos de outras pessoas, matrículas ou dados privados. Os alertas deixam de aparecer ao fim de 48 horas e os avisos ao fim de 7 dias; as atualizações marcadas como \"já não está\" por várias pessoas ou denunciadas por três pessoas ficam escondidas automaticamente. A nossa equipa revê as denúncias e pode remover conteúdo e suspender contas."
       ] },
       { h: "Ofertas de comerciantes", p: ["As ofertas apresentadas no roteiro são da responsabilidade de cada comerciante. Não somos parte na compra que fizer junto deles."] },
       { h: "Comerciantes", p: [
@@ -138,7 +143,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         `Envie um email para ${c.email} a partir do endereço da conta, com o assunto "Apagar a minha conta VOYBU". Apagamos a conta no prazo de 30 dias e confirmamos por email.`
       ] },
       { h: "O que é apagado", p: [
-        "Perfil, publicações, histórias, mensagens, notificações, memórias e fotos, planos, lugares guardados, percursos, pontos, preferências de viagem e sessões em todos os dispositivos.",
+        "Perfil, publicações, histórias, atualizações de viagem, mensagens, notificações, memórias e fotos, planos, lugares guardados, percursos, pontos, preferências de viagem e sessões em todos os dispositivos.",
         "Nas avaliações de guias e de negócios ficam só as estrelas e o comentário, sem o seu nome."
       ] },
       { h: "O que fica (obrigação legal)", p: [
@@ -173,6 +178,7 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
         "Mensagens privadas (opcional): texto, fotos, notas de voz e localização partilhada, com a data e se foi lida. A equipa não lê as conversas, exceto quando um participante as denuncia por abuso ou segurança.",
         "Pedidos de reserva a negócios: nome, email, telefone e nota que escrever são enviados por email ao negócio escolhido. Ficam anónimos ao fim de 12 meses. Se o negócio confirmar, no dia a seguir à visita enviamos um único email a pedir uma avaliação; na avaliação aparece o seu primeiro nome, as estrelas e o comentário.",
         "Reservas de guias: nome, email, telefone e nota, partilhados com o guia depois de ele aceitar. Nas avaliações de guias aparece o seu primeiro nome, as estrelas e o comentário; nas avaliações dos roteiros não aparece o nome.",
+        "Atualizações dos viajantes (opcional): o tipo, o texto, o local ou paragem, a localização se a juntar, e a foto (sem metadados de localização) ou o vídeo. Mostram o seu @nome só se o perfil for público; o email nunca. São apagadas quando as apagar ou quando apagar a conta.",
         "Problemas reportados numa paragem: o tipo de problema e a nota; se não tiver sessão, um código irreversível derivado do endereço IP, só para contar cada pessoa uma vez (anónimo ao fim de 12 meses).",
         "Convites (opcional): por email enviamos um único email em seu nome; por SMS ou WhatsApp a mensagem sai do seu telemóvel. Não guardamos o contacto de quem convida — só um código irreversível.",
         "Comerciantes, comerciais independentes e guias: os dados de contacto, profissionais e fiscais que indicam ao aderir (os guias também o registo da atividade, seguro, NIF, morada e data de nascimento, por obrigação fiscal); contas bancárias e IBAN são tratados pela Stripe ou só para pagar comissões.",
@@ -271,6 +277,11 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "For important information (airports, entry rules, safety, emergencies) we show where it comes from and when it was last updated. We only publish facts verified from official sources.",
         "The emergency contacts shown are each country's official numbers. In an emergency, call the local number directly; don't rely only on the app, especially without signal or battery."
       ] },
+      { h: "Traveller updates", p: [
+        "When signed in, you can share updates for a city, a stop or a point on the map: signs and directions, path changes, warnings, alerts, tips, photos and videos. Other travellers can confirm them (\"still there\" / \"not there\") or report them.",
+        "Updates are shared by travellers and are not checked by VOYBU. Use your judgement and always follow official signs and announcements.",
+        "Don't post false, offensive, advertising or dangerous content, or photos showing other people's faces, number plates or private information. Alerts stop showing after 48 hours and warnings after 7 days; updates marked \"not there\" by several people or reported by three people are hidden automatically. Our team reviews reports and may remove content and suspend accounts."
+      ] },
       { h: "Merchant offers", p: ["Offers shown on the route are the responsibility of each merchant. We are not party to purchases you make from them."] },
       { h: "Merchants", p: [
         "Featured and QR Partner plans are monthly subscriptions that renew automatically and can be cancelled at any time, effective at the end of the paid period.",
@@ -343,7 +354,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         `Email ${c.email} from your account's address with the subject "Delete my VOYBU account". We delete the account within 30 days and confirm by email.`
       ] },
       { h: "What is deleted", p: [
-        "Profile, posts, stories, messages, notifications, memories and photos, plans, saved places, routes, points, travel preferences and sessions on all devices.",
+        "Profile, posts, stories, traveller updates, messages, notifications, memories and photos, plans, saved places, routes, points, travel preferences and sessions on all devices.",
         "Guide and business reviews keep only the stars and the comment, without your name."
       ] },
       { h: "What we keep (legal obligation)", p: [
@@ -378,6 +389,7 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
         "Private messages (optional): text, photos, voice notes and shared location, with the time and whether it was read. Our team does not read chats, except when a participant reports one for abuse or safety.",
         "Booking requests to businesses: the name, email, phone and note you enter are emailed to the business you chose. They are anonymised after 12 months. If the business confirms, the day after your visit we send a single email asking for a review; the review shows your first name, the stars and your comment.",
         "Guide bookings: name, email, phone and note, shared with the guide once they accept. Guide reviews show your first name, stars and comment; route ratings don't show your name.",
+        "Traveller updates (optional): the kind, text, place or stop, the location if you add it, and the photo (without location metadata) or video. They show your @username only if your profile is public, never your email. They are deleted when you delete them or your account.",
         "Problems reported at a stop: the kind of problem and the note; if you're not signed in, an irreversible code derived from your IP address, only so each person counts once (anonymised after 12 months).",
         "Invites (optional): by email we send a single email on your behalf; by SMS or WhatsApp the message goes from your own phone. We don't store your friends' contact details — only an irreversible code.",
         "Merchants, independent sales partners and guides: the contact, professional and tax details they give when joining (guides also activity registration, insurance, tax ID, address and date of birth, as required for tax reporting); bank accounts and IBAN are handled by Stripe or used only to pay commissions.",
