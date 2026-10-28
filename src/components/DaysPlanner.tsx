@@ -1,5 +1,6 @@
 "use client";
 /** Roteiro de vários dias: dias + interesses → plano dia a dia com lugares reais; guardar na Minha viagem. */
+import { Locked } from "./Locked";
 import { useEffect, useMemo, useState } from "react";
 import { useDict } from "@/i18n/client-dict";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -29,7 +30,7 @@ function initialGroups(): DayGroup[] {
   return ["sights", "food", "art"];
 }
 
-export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDays, presetGroups = [] }: { t?: Dict; locale: Locale; cities: { id: string; name: string }[]; city: CityIn | null; moments: MomentView[]; initialDays: number; presetGroups?: DayGroup[] }) {
+export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDays, presetGroups = [], locked = false }: { t?: Dict; locale: Locale; cities: { id: string; name: string }[]; city: CityIn | null; locked?: boolean; moments: MomentView[]; initialDays: number; presetGroups?: DayGroup[] }) {
   const t = useDict(tProp);
   const d = t.dp;
   const [days, setDays] = useState(initialDays);
@@ -119,9 +120,10 @@ export function DaysPlanner({ t: tProp, locale, cities, city, moments, initialDa
           ))}
         </div>
         {!groups.length && <p className="hint">{d.pick}</p>}
+        {locked && city ? <Locked t={t} locale={locale} city={city.id} cityName={city.name} what="plan" /> : (
         <button className="btn tram press" disabled={!city || !groups.length || busy} onClick={() => void build()}>
           <Sparkles size={18} aria-hidden="true" />{busy && !items ? d.building : fmt(d.build, { n: String(days) })}
-        </button>
+        </button>)}
       </div>
 
       {items && city && (

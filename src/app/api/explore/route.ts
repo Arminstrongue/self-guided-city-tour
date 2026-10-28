@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasCityAccess } from "@/lib/city-access";
 import { loadCity } from "@/lib/content";
 import { cityCenter, COMMERCIAL_CATS, placesFor } from "@/lib/explore";
 import { eventsEnabled, eventsNear } from "@/lib/events";
@@ -14,11 +15,13 @@ export async function GET(req: Request) {
   const u = new URL(req.url);
   const city = await loadCity(u.searchParams.get("city") ?? "");
   if (!city) return NextResponse.json({ error: "city" }, { status: 404 });
+  // Lugares e eventos só com passe da cidade.
+  if (!(await hasCityAccess(city.id))) return NextResponse.json({ error: "locked" }, { status: 402, headers: { "Cache-Control": "private, no-store" } });
   const l = u.searchParams.get("locale") ?? "en";
   const lang = isLocale(l) ? l : "en";
   // Google Places quando há chave (fotos, avaliações, horário); OpenStreetMap como reserva.
   const google = googleExploreEnabled();
   const [gp, events] = await Promise.all([google ? googlePlacesFor(city, lang).catch(() => null) : Promise.resolve(null), eventsNear(city.id, cityCenter(city), 30)]);
   const places = ((gp ?? (await placesFor(city, lang))) ?? []).filter((p) => !COMMERCIAL_CATS.has(p.cat));
-  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": gp ? "private, no-store" : "public, max-age=600, s-maxage=3600" } });
+  return NextResponse.json({ places, events, eventsEnabled: eventsEnabled(), source: gp ? "google" : "osm" }, { headers: { "Cache-Control": gp ? "private, no-store" : "private, max-age=600" } });
 }

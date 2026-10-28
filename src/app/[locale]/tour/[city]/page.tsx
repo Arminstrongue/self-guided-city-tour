@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Locked } from "@/components/Locked";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -51,6 +52,14 @@ export default async function Tour(props: { params: Promise<{ locale: Locale; ci
   const all = await loadCities();
   const otherCities = access?.scope === "all" ? all.map((c) => ({ id: c.id, name: cityName(c, params.locale) })) : [];
   const allCities = all.filter((c) => c.stops.length).map((c) => ({ id: c.id, name: cityName(c, params.locale), ...cityCenterOf(c) }));
+  // Sem passe: nada do roteiro (paragens, textos, áudio, mapa) — só o convite para desbloquear.
+  if (preview) return (
+    <main className="app">
+      <Header locale={params.locale} currency={(await requestCurrency())} />
+      <h1 className="arv-h" style={{ marginTop: 16 }}>{cityName(city, params.locale)}</h1>
+      <Locked t={t} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="route" more={city.stops.length} />
+    </main>
+  );
   return (
     <main className="app">
       {preview && <Header locale={params.locale} currency={(await requestCurrency())} />}

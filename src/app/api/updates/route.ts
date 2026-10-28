@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasCityAccess } from "@/lib/city-access";
 import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
 import { createUpdate, listUpdates, UPDATE_KINDS } from "@/lib/updates";
@@ -16,6 +17,8 @@ export async function GET(req: Request) {
   const city = u.searchParams.get("city") ?? "";
   const stop = u.searchParams.get("stop") ?? undefined;
   if (!/^[a-z]{2,12}$/.test(city) || (stop && !/^[a-z0-9-]{1,40}$/.test(stop))) return NextResponse.json({ error: "invalid" }, { status: 400 });
+  // Atualizações dos viajantes só com passe da cidade.
+  if (!(await hasCityAccess(city))) return NextResponse.json({ error: "locked", list: [] }, { status: 402, headers: { "Cache-Control": "private, no-store" } });
   const me = await currentTraveller();
   return NextResponse.json({ list: await listUpdates(city, me, { stop }) }, { headers: { "Cache-Control": "private, no-store" } });
 }

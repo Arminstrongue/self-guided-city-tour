@@ -9,6 +9,8 @@ import { getDict, type Locale } from "@/i18n/dictionaries";
 import { loadCity } from "@/lib/content";
 import { requestCurrency } from "@/lib/fx";
 import { sharedMapUrl, sharedMinutes, sharedStops } from "@/lib/route-share";
+import { hasCityAccess } from "@/lib/city-access";
+import { Locked } from "@/components/Locked";
 
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ locale: Locale; city: string }>; searchParams: Promise<Record<string, string | undefined>> };
@@ -28,8 +30,7 @@ export async function generateMetadata(p: P): Promise<Metadata> {
   const d = await load(p);
   if (!d || d.stops.length < 1) return {};
   const title = `${fmt(d.t.rs.lead, { n: d.stops.length, c: d.name, h: hrs(sharedMinutes(d.stops)) })} | VOYBU`;
-  const loc = (await p.params).locale;
-  const description = d.stops.map((s) => stopName(s, loc)).join(" → ");
+  const description = d.name;
   return { title, description, robots: { index: false }, openGraph: { title, description, type: "website" } };
 }
 
@@ -40,6 +41,9 @@ export default async function SharedRoute(p: P) {
   const { t, city, stops, name } = d;
   const l = (await p.params).locale;
   const from = ((await p.searchParams).p ?? "").slice(0, 60);
+  // Sem passe: só o total; a ordem, os trajetos, os textos e o mapa abrem com o passe.
+  const open = await hasCityAccess(city.id);
+  const shown = open ? stops : [] as typeof stops;
   const lead = fmt(t.rs.lead, { n: stops.length, c: name, h: hrs(sharedMinutes(stops)) });
   return (
     <main className="app">
@@ -49,9 +53,9 @@ export default async function SharedRoute(p: P) {
         {stops.length === 0 ? <p className="ess-card ess-muted">{t.rs.invalid}</p> : <>
           <h1 className="arv-h">{lead}</h1>
           {from && <p className="ess-sub">{fmt(t.rs.from, { p: from })}</p>}
-          <section className="ess-card">
+          {shown.length > 0 && <section className="ess-card">
             <ol className="ft-list rs-list">
-              {stops.map((s, i) => (
+              {shown.map((s, i) => (
                 <li key={s.id}>
                   <span className="ft-n num">{i + 1}</span>
                   <span className="ess-tx">
@@ -62,8 +66,9 @@ export default async function SharedRoute(p: P) {
                 </li>
               ))}
             </ol>
-          </section>
-          <a className="btn tram press" href={sharedMapUrl(stops)} target="_blank" rel="noopener noreferrer">🗺️ {t.rs.openMap}</a>
+          </section>}
+          {!open && <Locked t={t} locale={l} city={city.id} cityName={name} what="route" more={stops.length - shown.length} />}
+          {open && <a className="btn tram press" href={sharedMapUrl(stops)} target="_blank" rel="noopener noreferrer">🗺️ {t.rs.openMap}</a>}
           <a className="ios-row press" href={`/${l}/c/${city.id}`}><span className="ios-tx"><b>{t.rs.doIt}</b><small>{t.rs.doItSub}</small></span><span aria-hidden="true">›</span></a>
           <ShareAgain label={t.rs.forward} title={t.rs.title} text={fmt(t.rs.msg, { n: stops.length, c: name, h: hrs(sharedMinutes(stops)) })} copied={t.rs.copied} />
         </>}

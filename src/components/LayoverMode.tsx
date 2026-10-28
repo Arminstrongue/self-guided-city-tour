@@ -1,5 +1,6 @@
 "use client";
 /** VOYBU Layover · Modo Escala: aeroporto, tempo de escala, interesses e bagagem → plano com tempos reais. */
+import { LockedMore } from "./Locked";
 import { useEffect, useMemo, useState } from "react";
 import { useDict } from "@/i18n/client-dict";
 import { fmt } from "@/i18n/core";
@@ -92,7 +93,7 @@ export function LayoverMode({ t: tProp, locale, cities, city }: { t?: Dict; loca
           <div className={`card ly-verdict ${plan.verdict}`}>
             <b>{plan.verdict === "stay" ? l.resStay : plan.verdict === "short" ? l.resShort : plan.verdict === "explore" ? l.resExplore : l.resLong}</b>
             {plan.verdict === "stay" ? <p>{fmt(l.resStaySub, { h: fmt(l.hoursN, { n: String(hours) }) })}</p>
-              : <><p>{fmt(l.resRoute, { n: String(opt!.n), m: dur(opt!.tour) })}</p><ol className="qs-stops">{opt!.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}</ol></>}
+              : <><p>{fmt(l.resRoute, { n: String(opt!.n), m: dur(opt!.tour) })}</p><ol className="qs-stops">{opt!.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt!.n - opt!.names.length} /></ol></>}
             <small className="ly-bucket">{fmt(l.hoursN, { n: String(hours) })} · {l.bucket[String(bucketOf(hours)) as "3"]}</small>
           </div>
 

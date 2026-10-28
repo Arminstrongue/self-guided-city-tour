@@ -7,6 +7,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
 import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
+import { LockedMore } from "./Locked";
 import { loadTrip, saveTrip } from "./trip-store";
 import { BufferPicker } from "./BufferPicker";
 import { track } from "@/lib/track";
@@ -177,13 +178,12 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
               {time && time.k !== "dep" && <span className="hint">{fmt(t.tpDurFits, { h: hrs(time.min === Infinity ? bd(opt).total : time.min) })}</span>}
               <TimeBreakdown b={bd(opt)} t={t} trip={time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip} hrs={hrs} />
               {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
-              <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}</ol>
+              <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt.n - opt.names.length} /></ol>
               <div className="qs-adj">
                 <button className="link-btn" disabled={idx <= 0} onClick={() => setShift(shift - 1)}>− {t.qsShorter}</button>
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>
               </div>
               <button className="btn tram qs-go press" onClick={go}><Play size={18} aria-hidden="true" />{city.open ? t.qsStart : native ? t.signIn : fmt(t.qsBuy, { p: from })}</button>
-              {!city.open && <a className="btn ghost qs-try press" href={`/${locale}/tour/${city.id}`} onClick={persist}>🎧 {t.qsTry}</a>}
             </>
           ) : (
             <p className="fit bad">{fmt(t.qsNone, { h: hrs(city.options[0] ? bd(city.options[0]).total : 0) })}</p>

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { hasCityAccess } from "@/lib/city-access";
+import { liteCity } from "@/lib/city-lite";
 import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -31,6 +33,8 @@ export default async function Layover(props: { params: Promise<{ locale: Locale 
   const list = (await loadCities()).filter((c) => c.ap?.iata);
   const cities = list.map((c) => ({ id: c.id, name: cityName(c, params.locale), iata: c.ap!.iata })).sort((a, b) => a.name.localeCompare(b.name, INTL_LOCALE[params.locale]));
   const city = list.find((c) => c.id === sp.city) ?? null;
+  // Sem passe: tempos e viabilidade da escala ficam visíveis; o roteiro (paragens) abre com o passe.
+  const open = city ? await hasCityAccess(city.id) : false;
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
@@ -38,12 +42,12 @@ export default async function Layover(props: { params: Promise<{ locale: Locale 
       <LayoverMode locale={params.locale} cities={cities}
         city={city ? {
           id: city.id, name: cityName(city, params.locale), iata: city.ap!.iata, tz: city.tz ?? "UTC", airMin: city.air.min, airLine: city.air.line ?? "",
-          options: routeOptions(city).map((o) => ({ key: o.key, n: o.plan.stops.length, tour: o.plan.minutesTour, ret: o.plan.ret.min, names: o.plan.stops.map((s) => stopName(s, params.locale)) }))
+          options: routeOptions(city).map((o) => ({ key: o.key, n: o.plan.stops.length, tour: o.plan.minutesTour, ret: o.plan.ret.min, names: o.plan.stops.slice(0, open ? undefined : 0).map((s) => stopName(s, params.locale)) }))
         } : null} />
       {city && (
         <section className="sec ly-exit" id="exit">
           <div className="sec-h"><div><h2>{t.ly.exitT}</h2><p>{t.ly.exitSub}</p></div></div>
-          <ExitCheck city={city} locale={params.locale} compact onlyPlane />
+          <ExitCheck city={open ? city : liteCity(city)} locale={params.locale} compact onlyPlane />
         </section>
       )}
     </main>

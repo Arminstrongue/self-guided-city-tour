@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { openCities } from "@/lib/city-access";
 import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { alternates } from "@/lib/seo";
@@ -29,7 +30,9 @@ export default async function Arrive(
   const params = await props.params;
   if (!isLocale(params.locale)) notFound();
   const list = await loadCities();
+  const isOpen = await openCities();
   const cities: ArriveCity[] = list.map((c) => ({
+    open: isOpen(c.id),
     id: c.id, name: cityName(c, params.locale), center: cityCenterOf(c),
     ap: c.ap ? { name: c.ap.name, iata: c.ap.iata, lat: c.ap.lat, lng: c.ap.lng } : null,
     air: { min: c.air.min, line: lineText(c.air.line, params.locale) }

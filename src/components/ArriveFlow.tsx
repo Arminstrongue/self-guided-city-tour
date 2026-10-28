@@ -1,4 +1,5 @@
 "use client";
+import { Locked } from "./Locked";
 import { useDict } from "@/i18n/client-dict";
 import { CitySwitch } from "./CitySwitch";
 /**
@@ -20,7 +21,7 @@ const StationGuide = dynamic(() => import("./StationGuide").then((m) => m.Statio
 import { openLink } from "./ExtLink";
 import type { GuideStep } from "@/lib/route-steps";
 
-export type ArriveCity = { id: string; name: string; center: { lat: number; lng: number }; ap: { name: string; iata: string; lat: number; lng: number } | null; air: { min: number; line: string } };
+export type ArriveCity = { open?: boolean; id: string; name: string; center: { lat: number; lng: number }; ap: { name: string; iata: string; lat: number; lng: number } | null; air: { min: number; line: string } };
 /** g = veio da Google (não se desenha em mapas que não são da Google, por exigência dos termos da Google). */
 type Place = { label: string; lat: number; lng: number; g?: boolean };
 type State = { city: string; point: string | null; dest: Place | null; opt: string | null; step: number; at: number; done?: boolean };
@@ -154,6 +155,14 @@ export function ArriveFlow({ t: tProp, locale, cities, initial, go, explicit = t
       <DestSearch t={t} locale={locale} city={city.id} onPick={(d) => set({ dest: d, step: 0 })} />
       {opt?.to && <button type="button" className="arv-card press" onClick={() => set({ dest: { label: opt.to.name, lat: opt.to.lat, lng: opt.to.lng }, step: 0 })}><span className="arv-ic"><MapPin size={22} aria-hidden="true" /></span><span className="arv-tx"><b>{a.centre}</b><small>{opt.to.name}</small></span><ChevronRight size={18} className="arv-chev" aria-hidden="true" /></button>}
       {!opt?.to && <button type="button" className="arv-card press" onClick={() => set({ dest: { label: a.centre, ...city.center }, step: 0 })}><span className="arv-ic"><MapPin size={22} aria-hidden="true" /></span><span className="arv-tx"><b>{a.centre}</b></span><ChevronRight size={18} className="arv-chev" aria-hidden="true" /></button>}
+    </div>
+  );
+
+  /* ---------- Sem passe: as opções, tempos, preços e o passo a passo abrem com o passe ---------- */
+  if (city.open === false) return (
+    <div className="arv">
+      <BackBar t={t} onBack={() => set({ dest: null })} label={`${point?.name ?? here?.label ?? ""} → ${st.dest.label}`} />
+      <Locked t={t} locale={locale} city={city.id} cityName={city.name} what="steps" />
     </div>
   );
 

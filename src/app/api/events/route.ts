@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasCityAccess } from "@/lib/city-access";
 import { loadCity } from "@/lib/content";
 import { cityCenter } from "@/lib/explore";
 import { eventsEnabled, eventsNear } from "@/lib/events";
@@ -12,8 +13,10 @@ export async function GET(req: Request) {
   if (!rateLimit(req, "events", 30)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const city = await loadCity(new URL(req.url).searchParams.get("city") ?? "");
   if (!city) return NextResponse.json({ error: "city" }, { status: 404 });
+  // Agenda só com passe da cidade.
+  if (!(await hasCityAccess(city.id))) return NextResponse.json({ error: "locked", events: [], enabled: eventsEnabled() }, { status: 402, headers: { "Cache-Control": "private, no-store" } });
   const events = await eventsNear(city.id, cityCenter(city), 30);
-  return NextResponse.json({ events: events ?? [], enabled: eventsEnabled() }, { headers: { "Cache-Control": "public, max-age=600, s-maxage=1800" } });
+  return NextResponse.json({ events: events ?? [], enabled: eventsEnabled() }, { headers: { "Cache-Control": "private, max-age=600" } });
 }
 
 /** Regista um evento anónimo do funil (sem cookies nem dados pessoais). Partilha o endereço com a agenda (GET). */

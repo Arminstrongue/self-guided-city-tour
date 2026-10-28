@@ -121,7 +121,7 @@ export function CityGallery({ cityId, cityName, stops, sub, t: tProp, locale }: 
               <span className="ph">{m ? <><Img src={m.stops[s.id]?.thumb} alt="" /><Credit p={m.stops[s.id]} /></> : <span className="skel" style={{ position: "absolute", inset: 0 }} />}
                 {s.top && !s.optional && <span className="cnt" style={{ left: 10, right: "auto", background: "linear-gradient(135deg,#ffb340,#ff7a1a)", color: "#1a0d00" }}>Top</span>}
                 {s.optional && <span className="cnt" style={{ left: 10, right: "auto" }}>+ {t.tpOptional}</span>}</span>
-              <span className="tx"><b>{s.name}</b><small className="num">{s.area} · {s.minutes} min</small></span>
+              <span className="tx"><b>{s.name}</b>{s.minutes > 0 && <small className="num">{s.area} · {s.minutes} min</small>}</span>
             </button>
           ))}
         </div>
