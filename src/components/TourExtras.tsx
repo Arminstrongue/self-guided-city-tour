@@ -286,10 +286,20 @@ export function FlightCard({ city, flightNo, flightAt, enabled, onUse, onEdit, t
 
 /* ---------- Meteorologia ---------- */
 
+// Um só pedido de meteorologia por cidade (o cartão do tempo e a sugestão "para agora" partilham-no; renova a cada 15 min).
+const wxMemo = new Map<string, { at: number; p: Promise<(Weather & { error?: string }) | null> }>();
+function getWeather(id: string) {
+  const m = wxMemo.get(id);
+  if (m && Date.now() - m.at < 15 * 60_000) return m.p;
+  const p: Promise<(Weather & { error?: string }) | null> = fetch(`/api/weather?city=${id}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+  wxMemo.set(id, { at: Date.now(), p });
+  return p;
+}
+
 export function WeatherCard({ cityId, t, locale }: { cityId: string; t: Dict; locale?: Locale }) {
   const [w, setW] = useState<Weather | null>(null);
   useEffect(() => {
-    fetch(`/api/weather?city=${cityId}`).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j && !j.error) setW(j); }).catch(() => undefined);
+    void getWeather(cityId).then((j) => { if (j && !j.error) setW(j); });
   }, [cityId]);
   if (!w?.now) return null;
   const next = w.hours.slice(0, 8);
@@ -360,7 +370,7 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
   // Tempo nas próximas horas (chuva ou calor), para a sugestão "para agora".
   const [wx, setWx] = useState<{ rain: boolean; hot: boolean } | null>(null);
   useEffect(() => {
-    fetch(`/api/weather?city=${city.id}`).then((r) => (r.ok ? r.json() : null)).then((w: Weather & { error?: string } | null) => {
+    void getWeather(city.id).then((w) => {
       if (!w || w.error || !w.hours) return;
       const next = w.hours.slice(0, 3);
       setWx({ rain: next.some((h) => h.rain >= 60), hot: next.some((h) => h.temp >= 32) });

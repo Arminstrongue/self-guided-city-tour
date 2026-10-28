@@ -10,11 +10,21 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET /api/media?city=lis&stop=rossio&locale=pt — fotos, nota e avaliações de uma paragem.
+ * GET /api/media?covers=lis,lon — capas de várias cidades de uma vez.
  * GET /api/media?city=lis[&cover=1] — capa da cidade e uma foto por paragem (para cartões e galerias).
  */
 export async function GET(req: Request) {
   if (!rateLimit(req, "media", 120)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const q = new URL(req.url).searchParams;
+  // ?covers=lis,lon,par — capas de várias cidades num só pedido (página inicial).
+  const many = q.get("covers");
+  if (many !== null) {
+    const ids = [...new Set(many.split(",").filter((x) => /^[a-z]{2,12}$/.test(x)))].slice(0, 30);
+    const out: Record<string, Photo[]> = {};
+    await Promise.all(ids.map(async (id) => { const c = await loadCity(id); if (c) out[id] = await cityCover(c.id, cityName(c, "en")).catch(() => []); }));
+    const full = ids.every((id) => out[id]?.length);
+    return NextResponse.json({ covers: out }, { headers: { "Cache-Control": full ? "public, max-age=3600, stale-while-revalidate=86400" : "public, max-age=300" } });
+  }
   const city = await loadCity(q.get("city") ?? "");
   if (!city) return NextResponse.json({ error: "invalid" }, { status: 400 });
   const l = q.get("locale") ?? "en";

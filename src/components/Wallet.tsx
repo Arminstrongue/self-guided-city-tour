@@ -97,6 +97,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const refreshSocial = () => void loadSocial().then((x) => { setSocial(x); setSocialDone(true); });
 
   async function load() {
+    // Conta e perfil social pedidos em paralelo (antes o perfil só começava depois da conta).
+    const socialP = loadSocial();
     const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
     // Erro do servidor (não "sem sessão"): não mostrar o formulário de entrada, que dava a ideia de que o login falhou.
     // Sem ligação ou erro do servidor: mostrar "tentar de novo", nunca o formulário de entrada (dava a ideia de sessão perdida).
@@ -109,7 +111,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
       setLocal(await listMemories());
     } else { setW("anon"); setLocal((await listMemories()).map((m) => ({ ...m, local: true }))); }
     void loadWish().then((x) => setWish(x.list));
-    if (r?.ok) refreshSocial();
+    if (r?.ok) void socialP.then((x) => { setSocial(x); setSocialDone(true); });
   }
   useEffect(() => { void load(); const f = () => void load(); window.addEventListener("sgct:diary", f); return () => window.removeEventListener("sgct:diary", f); }, []);
   useEffect(() => { const id = setInterval(() => setNow(Date.now()), 30_000); return () => clearInterval(id); }, []);
@@ -204,8 +206,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
     } catch { /* cancelado */ }
   }
 
-  const passes = signed?.passes ?? [];
-  const active = passes.filter((p) => new Date(p.expiresAt).getTime() > now);
+  const passes = useMemo(() => signed?.passes ?? [], [signed]);
+  const active = useMemo(() => passes.filter((p) => new Date(p.expiresAt).getTime() > now), [passes, now]);
   // Último roteiro escolhido em "Começar em 3 passos" (neste dispositivo): é a viagem do viajante, não a demonstração.
   const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null>(null);
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("sgct:planned") ?? "null"); if (v?.city) setPlanned(v); } catch { /* ignorar */ } }, []);
@@ -354,7 +356,6 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
           <button className="btn press" onClick={create}><I icon={Plus} size={18} stroke={2.6} /> {t.pfNew}</button>
           <button className="btn ghost press" onClick={() => go("videos")}><I icon={Clapperboard} size={18} /> {t.rlTitle}</button>
         </div>
-        {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         <button className="gs-fake press" onClick={() => setSearching(true)}><I icon={Search} size={18} /><span>{t.gsPlaceholder}</span></button>
         <div className="nv-cities">
           <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
@@ -362,6 +363,9 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
             <a key={id} className="nv-city" href={`#feed:${id}`}><span>{flag(countryOf[id] ?? "")}</span><b>{n}</b></a>
           ))}
         </div>
+        {/* O feed fica por baixo da pesquisa e das cidades: ao chegar, já não empurra o ecrã para baixo. */}
+        {!social && pending && <div className="pf-skel card" aria-hidden="true" />}
+        {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         {social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
         {social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : nudge}
       </>}
