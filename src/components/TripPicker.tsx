@@ -5,6 +5,9 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { FAR_KM, km } from "@/lib/route-cost";
 import { NextCityPick } from "./Onward";
+import { fuzzyFilter, matchScore } from "@/lib/fuzzy";
+/** Resultados do mapa: os que combinam com o que se escreveu primeiro (sem esconder os outros). */
+const fuzzyFirst = <T extends { label: string; sub: string }>(hits: T[], q: string) => [...hits].sort((a, b) => matchScore(q, `${b.label} ${b.sub}`) - matchScore(q, `${a.label} ${a.sub}`));
 import { TerminalPick } from "./TerminalPick";
 import type { CityPoint } from "@/lib/nearby";
 import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type Endpoint, type Mode, type PlaceKind, type Trip } from "@/lib/trip";
@@ -47,16 +50,17 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
     fetch(`/api/stations?city=${city}&kind=${kind}&lang=${locale}`).then((r) => (r.ok ? r.json() : null)).then((j: { hits?: Hit[] } | null) => { if (live) setList(j?.hits ?? []); }).catch(() => { if (live) setList([]); });
     return () => { live = false; };
   }, [city, kind, locale]);
-  const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  const shown = list?.filter((h) => !q.trim() || norm(`${h.label} ${h.sub}`).includes(norm(q.trim())));
+  // Palavras incompletas, em qualquer ordem e com um erro de letra ("Manchester Piccadil" → Piccadilly).
+  const shown = list ? fuzzyFilter(list, q, (h) => `${h.label} ${h.sub}`) : list;
+  const [elsewhere, setElsewhere] = useState<{ city: string; name: string } | null>(null);
   // Escrever pesquisa sozinho (sem ter de tocar na lupa) quando a lista da cidade não tem o que procura.
   useEffect(() => {
     const v = q.trim();
     if (v.length < 4 || (shown && shown.length > 0)) return;
     const id = setTimeout(() => {
       setBusy(true);
-      fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
-        .then((j: { hits?: Hit[] } | null) => { setHits(j?.hits ?? []); setBusy(false); });
+      fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+        .then((j: { hits?: Hit[]; elsewhere?: { city: string; name: string } | null } | null) => { setHits(fuzzyFirst(j?.hits ?? [], v)); setElsewhere(j?.elsewhere ?? null); setBusy(false); });
     }, 800);
     return () => clearTimeout(id);
   }, [q]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -64,13 +68,13 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
     e.preventDefault();
     if (q.trim().length < 3) return;
     setBusy(true); setHits(null);
-    const j = await fetch(`/api/geocode?city=${city}&lang=${locale}&q=${encodeURIComponent(q.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[] } | null;
-    setHits(j?.hits ?? []); setBusy(false);
+    const j = await fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}&q=${encodeURIComponent(q.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[]; elsewhere?: { city: string; name: string } | null } | null;
+    setHits(fuzzyFirst(j?.hits ?? [], q.trim())); setElsewhere(j?.elsewhere ?? null); setBusy(false);
   }
   return (
     <>
       <form className="bp-q" onSubmit={search}>
-        <input value={q} onChange={(e) => { setQ(e.target.value); setHits(null); }} placeholder={t.tpSearchPh[kind]} aria-label={t.tpSearchPh[kind]} autoComplete="off" />
+        <input value={q} onChange={(e) => { setQ(e.target.value); setHits(null); setElsewhere(null); }} placeholder={t.tpSearchPh[kind]} aria-label={t.tpSearchPh[kind]} autoComplete="off" />
         <button className="btn tram" disabled={busy || q.trim().length < 3}><Search size={16} aria-hidden="true" /><span className="sr-only">{t.bpSearch}</span></button>
       </form>
       {!hits && kind !== "hotel" && (list === null ? <p className="hint">…</p> : shown && shown.length > 0 && (
@@ -91,6 +95,9 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
             </button>
           ))}
         </div>
+      ) : elsewhere ? (
+        // Fica noutra cidade da app (ex.: Manchester Piccadilly ao planear Londres): dizer onde e oferecer mudar.
+        <div className="card note-card"><p>{fmt(t.arvElsewhere, { c: elsewhere.name })}</p><a className="btn tram press" href={`/${locale}/start?city=${elsewhere.city}`}>{fmt(t.arvSwitchBtn, { c: elsewhere.name })}</a></div>
       ) : <p className="hint">{t.bpNone}</p>)}
     </>
   );

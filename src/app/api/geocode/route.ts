@@ -20,7 +20,7 @@ export async function GET(req: Request) {
   const lang = (u.searchParams.get("lang") ?? "en").slice(0, 5);
   const city = await loadCity(u.searchParams.get("city") ?? "");
   if (!city || q.length < 3) return NextResponse.json({ hits: [] });
-  const key = `${city.id}|${lang}|${q.toLowerCase()}`;
+  const key = `${city.id}|${lang}|${u.searchParams.get("kind") ?? ""}|${q.toLowerCase()}`;
   const hit = cache.get(key);
   if (hit && Date.now() - hit.at < 24 * 3600_000) return NextResponse.json({ hits: hit.hits, elsewhere: hit.elsewhere ?? null });
   const c = cityCenter(city);
@@ -41,6 +41,19 @@ export async function GET(req: Request) {
       if (r.ok) {
         const j = (await r.json()) as { places?: { displayName?: { text: string }; formattedAddress?: string; location?: { latitude: number; longitude: number } }[] };
         hits = (j.places ?? []).filter((p) => p.location).map((p) => ({ label: p.displayName?.text ?? q, sub: p.formattedAddress ?? "", lat: p.location!.latitude, lng: p.location!.longitude, g: true }));
+      }
+    }
+    // Pesquisa enquanto se escreve (Photon, dados OpenStreetMap): aceita palavras incompletas ("Manchester Piccadil").
+    if (!hits.length && !isPostcode) {
+      const kind = u.searchParams.get("kind");
+      const tag = kind === "station" ? "&osm_tag=railway:station&osm_tag=railway:halt&osm_tag=public_transport:station" : kind === "bus" ? "&osm_tag=amenity:bus_station" : kind === "port" ? "&osm_tag=amenity:ferry_terminal" : "";
+      const pl = ["en", "de", "fr", "it"].includes(lang.slice(0, 2)) ? `&lang=${lang.slice(0, 2)}` : "";
+      const r = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${c.lat}&lon=${c.lng}&limit=8${pl}${tag}`, { headers: { "User-Agent": env.ua }, signal: AbortSignal.timeout(6000), cache: "no-store" }).catch(() => null);
+      if (r?.ok) {
+        const j = (await r.json()) as { features?: { geometry: { coordinates: [number, number] }; properties: { name?: string; street?: string; housenumber?: string; city?: string; postcode?: string; country?: string } }[] };
+        hits = (j.features ?? []).map((f) => { const p = f.properties; const label = p.name || [p.street, p.housenumber].filter(Boolean).join(" ");
+          return { label, sub: [p.name ? [p.street, p.housenumber].filter(Boolean).join(" ") : "", p.postcode, p.city, p.country].filter(Boolean).join(", "), lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] }; })
+          .filter((h) => h.label);
       }
     }
     if (!hits.length) {
