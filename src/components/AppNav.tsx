@@ -2,8 +2,10 @@
 /**
  * Barra de baixo em todo o site/app (como nas apps de viagem): Início · Agora · Explorar · Minha viagem · Perfil.
  * A carteira usa exatamente as mesmas 5 entradas, pela mesma ordem, para nunca mudar de "mapa" ao navegar.
+ * Navegação do lado do cliente (next/link, com pré-carregamento): trocar de separador não recarrega a página nem pisca.
  * Nunca há becos sem saída. A carteira (/wallet) tem a sua própria barra; portais e admin não mostram nenhuma.
  */
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Compass, Home, Luggage, UserRound, Zap } from "lucide-react";
 import { useDict } from "@/i18n/client-dict";
@@ -25,9 +27,9 @@ export function AppNav({ locale }: { locale: string }) {
   return (
     <nav className="nv appnav" aria-label="VOYBU">
       {items.map(({ k, href, icon: I, label }) => (
-        <a key={k} href={href} className={active === k ? "on" : ""} aria-current={active === k ? "page" : undefined}>
+        <Link key={k} href={href} prefetch className={active === k ? "on" : ""} aria-current={active === k ? "page" : undefined}>
           <span><I size={22} strokeWidth={active === k ? 2.4 : 1.9} aria-hidden="true" /></span><small>{label}</small>
-        </a>
+        </Link>
       ))}
     </nav>
   );

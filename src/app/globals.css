@@ -3097,15 +3097,14 @@ a.ios-row{text-decoration:none;color:inherit}
 .note-card{display:grid;gap:10px;padding:14px}.note-card p{margin:0}
 .ph-credit{position:absolute;top:6px;inset-inline-end:6px;max-width:70%;padding:2px 6px;border-radius:6px;background:rgba(0,0,0,.45);color:rgba(255,255,255,.9);font-size:9.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;z-index:1}
 /* Transições suaves: entre páginas (navegadores que o suportam) e ao trocar de ecrã dentro da app */
-@view-transition { navigation: auto; }
-::view-transition-old(root),::view-transition-new(root){animation-duration:.22s;animation-timing-function:cubic-bezier(.2,.8,.2,1)}
+/* Sem transição entre documentos: o fundido mostrava duas páginas sobrepostas (fantasma) enquanto a nova carregava. */
 /* Só opacidade: um transform no <main> prende as barras fixas ao main em vez do ecrã (no iPhone a barra de baixo saltava para o meio da página). */
 @keyframes pageIn{from{opacity:.001}to{opacity:1}}
 main.page-in{animation:pageIn .2s ease-out backwards}
 .sheet,.as,.pk{animation-timing-function:cubic-bezier(.2,.8,.2,1)}
 .btn,.press{transition:transform .12s cubic-bezier(.2,.8,.2,1),background-color .2s,box-shadow .2s}
 .tabs button{transition:background-color .2s,color .2s,box-shadow .2s}
-@media (prefers-reduced-motion: reduce){main.page-in{animation:none}@view-transition{navigation:none}}
+@media (prefers-reduced-motion: reduce){main.page-in{animation:none}}
 /* Sugestão "para agora" e confirmação de chegada no cartão A seguir */
 .nx-sg{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;padding:10px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--cobalt) 25%,transparent);background:var(--cobalt-soft);color:var(--ink);font:inherit;text-align:start;cursor:pointer}
 .nx-sg>span:nth-child(2){display:flex;flex-direction:column;flex:1;min-width:0;line-height:1.3}
@@ -3782,3 +3781,10 @@ button.sc-photo{border:0;background:none;padding:0;cursor:pointer;color:inherit;
 body:has(.arv-run) .sbn,body:has(.arv-done) .sbn,body:has(.dp-tabs) .sbn{display:none}
 /* Apps das lojas (Capacitor marca <html data-platform>): sem preços nem compras de conteúdo digital */
 html[data-platform] .web-only{display:none!important}
+
+/* Navegação estável (revisão do vídeo de 28/10):
+   - os alertas "LIVE" no separador Agora ficam no fluxo da página (antes flutuavam por cima dos cartões, colados à barra);
+   - por baixo da barra flutuante há um degradê do fundo, para o conteúdo não aparecer cortado como se fosse uma segunda barra. */
+.wl-app .tk{position:relative;bottom:auto;left:auto;right:auto;z-index:auto;height:40px;padding-bottom:0;border-radius:14px;margin:0}
+.wl-app .tk-space{display:none}
+body:has(.nv)::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(84px + env(safe-area-inset-bottom));background:linear-gradient(to bottom,transparent,var(--bg) 62%);pointer-events:none;z-index:25}
