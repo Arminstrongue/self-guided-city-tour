@@ -55,6 +55,12 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
   }
   useEffect(() => { if (adding === "places") void loadPlaces(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [adding]);
   // Pesquisa: filtra as sugestões e, a partir de 3 letras, procura também no mapa da cidade.
+  // Preferência guardada neste telemóvel: lista escondida ou com todos os detalhes abertos.
+  const [pref, setPrefState] = useState<{ hidden?: boolean; all?: boolean }>({});
+  useEffect(() => { try { setPrefState(JSON.parse(localStorage.getItem("sgct:plan-view") ?? "{}") ?? {}); } catch { /* ignorar */ } }, []);
+  const setPref = (p: { hidden?: boolean; all?: boolean }) => setPrefState((x) => { const n = { ...x, ...p }; try { localStorage.setItem("sgct:plan-view", JSON.stringify(n)); } catch { /* ignorar */ } return n; });
+  const listHidden = Boolean(pref.hidden), allOpen = Boolean(pref.all);
+  const [openIds, setOpenIds] = useState<Set<string>>(new Set());
   const [showPlace, setShowPlace] = useState<{ p: SheetPlace; add: { title: string; icon: string; lat: number; lng: number; kind: "moment" | "place" } } | null>(null);
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<{ label: string; sub: string; lat: number; lng: number }[] | null>(null);
@@ -145,31 +151,49 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
 
       <div className="stack" style={{ gap: 8 }}>
         {dayItems.length === 0 && <p className="hint">{t.plEmptyDay}</p>}
-        {dayItems.map((i) => (
-          <div key={i.id} className="card pl-item">
+        {/* Lista compacta: uma linha por lugar; tocar abre os detalhes. A lista inteira também se esconde. */}
+        {dayItems.length > 0 && (
+          <div className="plv-bar">
+            <button type="button" className="plv-tog" aria-expanded={!listHidden} onClick={() => setPref({ hidden: !listHidden })}>
+              <span aria-hidden="true">{listHidden ? "▸" : "▾"}</span> {fmt(t.plv.places, { n: dayItems.length })}
+            </button>
+            {!listHidden && <button type="button" className="link-btn" onClick={() => { setPref({ all: !allOpen }); setOpenIds(new Set()); }}>{allOpen ? t.plv.none : t.plv.all}</button>}
+            {listHidden && <button type="button" className="link-btn" onClick={() => setPref({ hidden: false })}>{t.plv.show}</button>}
+          </div>
+        )}
+        {!listHidden && dayItems.map((i) => {
+          const rules = placeRules(i.title, i.icon);
+          const open = allOpen || openIds.has(i.id);
+          const warn = rules.some((r) => WARN.has(r));
+          const toggle = () => setOpenIds((s) => { const n = new Set(s); if (n.has(i.id)) n.delete(i.id); else n.add(i.id); return n; });
+          return (
+          <div key={i.id} className={`card pl-item ${open ? "open" : "compact"}`}>
             <input className="pl-time" type="time" value={i.time ?? ""} aria-label={t.plTime} onChange={(e) => update(i.id, { time: e.target.value || undefined })} />
             <span className="ex-ic sm" aria-hidden="true">{i.icon ?? "📍"}</span>
             <div className="stack" style={{ gap: 2, minWidth: 0, flex: 1 }}>
-              <b className="ad-ellip">{i.title}</b>
-              {i.note && <span className="hint">{i.note}</span>}
-              {(() => {
-                const rules = placeRules(i.title, i.icon);
-                if (!rules.length) return null;
-                return (
+              <button type="button" className="pl-head" aria-expanded={open} onClick={toggle} aria-label={`${t.plv.more}: ${i.title}`}>
+                <b className="ad-ellip">{i.title}</b>
+                {!open && warn && <span className="pl-dot" aria-hidden="true">⚠️</span>}
+                <span className="pl-chev" aria-hidden="true">{open ? "▴" : "▾"}</span>
+              </button>
+              {open && <>
+                {i.note && <span className="hint">{i.note}</span>}
+                {rules.length > 0 && (
                   <button type="button" className="pa-chips press" onClick={() => setRulesOf(i)} aria-label={`${t.pa.title}: ${i.title}`}>
                     {rules.slice(0, 2).map((r) => <span key={r} className={`pa-chip${WARN.has(r) ? " warn" : ""}`}>{RULE_ICON[r]} {t.pa[r]}</span>)}
                     {rules.length > 2 && <span className="pa-chip more">{fmt(t.pa.more, { n: rules.length - 2 })}</span>}
                   </button>
-                );
-              })()}
-              <span className="ex-acts sm">
-                {i.lat !== undefined && <a href={`https://www.google.com/maps/dir/?api=1&destination=${i.lat},${i.lng}&travelmode=walking`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>}
-                {plan.days > 1 && <select aria-label={t.plDays} value={i.day} onChange={(e) => update(i.id, { day: Number(e.target.value) })}>{Array.from({ length: plan.days }, (_, k) => k + 1).map((n) => <option key={n} value={n}>{fmt(t.plDay, { n })}</option>)}</select>}
-                <button onClick={() => remove(i.id)}>🗑</button>
-              </span>
+                )}
+                <span className="ex-acts sm">
+                  {i.lat !== undefined && <a href={`https://www.google.com/maps/dir/?api=1&destination=${i.lat},${i.lng}&travelmode=walking`} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>}
+                  {plan.days > 1 && <select aria-label={t.plDays} value={i.day} onChange={(e) => update(i.id, { day: Number(e.target.value) })}>{Array.from({ length: plan.days }, (_, k) => k + 1).map((n) => <option key={n} value={n}>{fmt(t.plDay, { n })}</option>)}</select>}
+                  <button onClick={() => remove(i.id)}>🗑</button>
+                </span>
+              </>}
             </div>
           </div>
-        ))}
+          );
+        })}
         {route && <a className="btn ghost press" href={route} target="_blank" rel="noreferrer">{t.plRoute}</a>}
       </div>
 
