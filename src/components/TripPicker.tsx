@@ -10,7 +10,8 @@ import { fuzzyFilter, matchScore } from "@/lib/fuzzy";
 const fuzzyFirst = <T extends { label: string; sub: string }>(hits: T[], q: string) => [...hits].sort((a, b) => matchScore(q, `${b.label} ${b.sub}`) - matchScore(q, `${a.label} ${a.sub}`));
 import { TerminalPick } from "./TerminalPick";
 import type { CityPoint } from "@/lib/nearby";
-import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type Endpoint, type Mode, type PlaceKind, type Trip } from "@/lib/trip";
+import { AIRPORT, END_FOR_MODE, endpointReady, sameEnd, type Breakdown, type Endpoint, type Mode, type Origin, type PlaceKind, type Trip } from "@/lib/trip";
+import { cachedReservations } from "@/lib/trip-local";
 import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
 
@@ -38,7 +39,7 @@ function PlatformPick({ t, value, onChange }: { t: Dict; value: Endpoint; onChan
 export const endIcon = (e: Endpoint) => ICON[e.kind];
 
 /** Pesquisa de uma estação, terminal, hotel ou morada na cidade. */
-function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Locale; city: string; kind: Exclude<PlaceKind, "here" | "address">; onPick: (e: Endpoint) => void }) {
+function PlaceSearch({ t, locale, city, kind, onPick, anywhere = false }: { t: Dict; locale: Locale; city: string; kind: Exclude<PlaceKind, "here" | "address">; onPick: (e: Endpoint) => void; anywhere?: boolean }) {
   const [q, setQ] = useState("");
   const [hits, setHits] = useState<Hit[] | null>(null);
   const [busy, setBusy] = useState(false);
@@ -59,7 +60,7 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
     if (v.length < 4 || (shown && shown.length > 0)) return;
     const id = setTimeout(() => {
       setBusy(true);
-      fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+      fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}${anywhere ? "&scope=any" : ""}&q=${encodeURIComponent(v)}`).then((r) => (r.ok ? r.json() : null)).catch(() => null)
         .then((j: { hits?: Hit[]; elsewhere?: { city: string; name: string } | null } | null) => { setHits(fuzzyFirst(j?.hits ?? [], v)); setElsewhere(j?.elsewhere ?? null); setBusy(false); });
     }, 800);
     return () => clearTimeout(id);
@@ -68,7 +69,7 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
     e.preventDefault();
     if (q.trim().length < 3) return;
     setBusy(true); setHits(null);
-    const j = await fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}&q=${encodeURIComponent(q.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[]; elsewhere?: { city: string; name: string } | null } | null;
+    const j = await fetch(`/api/geocode?city=${city}&lang=${locale}&kind=${kind}${anywhere ? "&scope=any" : ""}&q=${encodeURIComponent(q.trim())}`).then((r) => (r.ok ? r.json() : null)).catch(() => null) as { hits?: Hit[]; elsewhere?: { city: string; name: string } | null } | null;
     setHits(fuzzyFirst(j?.hits ?? [], q.trim())); setElsewhere(j?.elsewhere ?? null); setBusy(false);
   }
   return (
@@ -104,8 +105,8 @@ function PlaceSearch({ t, locale, city, kind, onPick }: { t: Dict; locale: Local
 }
 
 /** Escolher um ponto (início ou fim). `kinds` limita as opções (ex.: comboio → só estação). */
-function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onChange }: {
-  t: Dict; locale: Locale; city: string; cityName: string; center: { lat: number; lng: number }; value: Endpoint; kinds: Kind[]; onChange: (e: Endpoint) => void;
+function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onChange, anywhere = false }: {
+  t: Dict; locale: Locale; city: string; cityName: string; center: { lat: number; lng: number }; value: Endpoint; kinds: Kind[]; onChange: (e: Endpoint) => void; anywhere?: boolean;
 }) {
   const [want, setWant] = useState<Kind>(value.kind);
   const [msg, setMsg] = useState("");
@@ -114,7 +115,7 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
     if (!navigator.geolocation) { setMsg(t.bpDenied); return; }
     navigator.geolocation.getCurrentPosition((p) => {
       const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-      if (km(pos, center) > FAR_KM) { setMsg(fmt(t.bpFar, { c: cityName })); return; }
+      if (!anywhere && km(pos, center) > FAR_KM) { setMsg(fmt(t.bpFar, { c: cityName })); return; }
       setMsg(""); onChange({ kind: "here", ...pos, label: t.bpHereLabel });
     }, () => setMsg(t.bpDenied), { enableHighAccuracy: true, timeout: 12000, maximumAge: 120000 });
   }
@@ -138,11 +139,70 @@ function EndpointChooser({ t, locale, city, cityName, center, value, kinds, onCh
           ))}
         </div>
       )}
-      {searchKind && <PlaceSearch t={t} locale={locale} city={city} kind={searchKind} onPick={onChange} />}
+      {searchKind && <PlaceSearch t={t} locale={locale} city={city} kind={searchKind} onPick={onChange} anywhere={anywhere} />}
       {value.kind !== "airport" && value.kind === want && endpointReady(value) && <p className="bp-ok">✓ {endIcon(value)} {endLabel(value, t)}</p>}
       {want !== "airport" && !msg && !(value.kind === want && endpointReady(value)) && <p className="tp-need">{t.tpChoose[want === "address" ? "hotel" : want]}</p>}
       {msg && <p className="hint">{msg}</p>}
     </>
+  );
+}
+
+/** Hora "HH:MM" + minutos, devolve "AAAA-MM-DDTHH:MM" (passa para o dia seguinte se for preciso). */
+function addMin(day: string, hm: string, add: number): string {
+  const [h, m] = hm.split(":").map(Number);
+  const d = new Date(`${day}T00:00:00Z`); d.setUTCMinutes(h * 60 + m + add);
+  return d.toISOString().slice(0, 16);
+}
+/** O bilhete que o utilizador guardou e que chega a esta estação (última perna do trajeto). */
+export function arrivalTicket(arrival: Endpoint): { at: string; hm: string } | null {
+  if (arrival.kind === "airport" || !arrival.label) return null;
+  const label = arrival.label;
+  const now = Date.now() - 6 * 3600_000;
+  for (const r of cachedReservations()) {
+    const legs = r.journey?.legs ?? [];
+    if (r.kind !== "transport" || !legs.length || new Date(r.startsAt).getTime() < now) continue;
+    const last = legs[legs.length - 1];
+    if (!/^\d{1,2}:\d{2}$/.test(last.arr) || matchScore(last.to, label) < 0.6 && matchScore(label, last.to) < 0.6) continue;
+    const day = r.localAt.slice(0, 10);
+    // Chega depois da meia-noite quando a hora de chegada é anterior à de partida.
+    const next = legs[0].dep && last.arr < legs[0].dep ? 1440 : 0;
+    return { at: addMin(day, last.arr, next), hm: last.arr };
+  }
+  return null;
+}
+
+/** Começa fora da cidade: mostra o trajeto até lá (comboio/autocarro) e a seguir o percurso a pé a partir da chegada. */
+function OriginInfo({ t, locale, origin, arrival, cityName, onStart, onRemove }: {
+  t: Dict; locale: Locale; origin: Origin; arrival: Endpoint; cityName: string; onStart: (at: string) => void; onRemove: () => void;
+}) {
+  const [ticket, setTicket] = useState<{ at: string; hm: string } | null>(null);
+  useEffect(() => { setTicket(arrivalTicket(arrival)); }, [arrival]);
+  const pt = arrival.kind !== "airport" && endpointReady(arrival) ? arrival : null;
+  const ready = arrival.kind === "airport" || !!pt;
+  const name = arrival.kind === "airport" ? t.bpAirport : arrival.label;
+  const dest = pt ? `${pt.lat},${pt.lng}` : encodeURIComponent(arrival.kind === "airport" ? `${cityName} airport` : cityName);
+  const maps = `https://www.google.com/maps/dir/?api=1&origin=${origin.lat},${origin.lng}&destination=${dest}&travelmode=transit`;
+  const dist = pt ? Math.round(km(origin, pt)) : null;
+  const later = ticket ? addMin(ticket.at.slice(0, 10), ticket.at.slice(11), 15) : "";
+  return (
+    <div className="og-card">
+      <div className="og-head">
+        <span className="og-route">{ICON[arrival.kind]} {origin.label} → {ready ? name : cityName}</span>
+        <button type="button" className="og-x" aria-label={t.og.remove} onClick={onRemove}>✕</button>
+      </div>
+      {dist != null && <p className="og-dist">{fmt(t.og.dist, { k: String(dist) })}</p>}
+      <p className="hint">{fmt(t.og.note, { c: cityName })}</p>
+      <div className="og-acts">
+        <a className="btn ghost sm" href={maps} target="_blank" rel="noopener noreferrer">{t.og.plan} ↗</a>
+        <a className="btn ghost sm" href={`/${locale}/wallet#res`}>{t.og.ticket}</a>
+      </div>
+      {ticket && (
+        <div className="og-ticket">
+          <p>{fmt(t.og.yours, { t: ticket.hm })}</p>
+          <button type="button" className="btn sm" onClick={() => onStart(later)}>{fmt(t.og.useIt, { t: later.slice(11) })}</button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -173,12 +233,31 @@ export function TripPicker({ t, locale, city, cityName, center, value, onChange,
   }
   const needKind = END_FOR_MODE[value.mode];
   const endMissing = value.end.kind !== "airport" && !Number.isFinite(value.end.lat);
-  const startKinds: Kind[] = ["airport", "station", "port", "hotel", "here"];
+  const startKinds: Kind[] = ["airport", "station", "bus", "port", "hotel", "here"];
   return (
     <div className="bp tp">
       <span className="bp-h">{t.tpStart}</span>
-      <EndpointChooser t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={startKinds}
-        onChange={(s) => onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end })} />
+      {value.origin ? (
+        <>
+          <OriginInfo t={t} locale={locale} origin={value.origin} arrival={value.start} cityName={cityName}
+            onStart={(at) => set({ startAt: at })} onRemove={() => set({ origin: undefined })} />
+          <span className="bp-h">{fmt(t.og.arrive, { c: cityName })}</span>
+          <EndpointChooser key="arrive" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={["station", "bus", "airport", "port"]}
+            onChange={(s) => onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end })} />
+        </>
+      ) : (
+        <EndpointChooser key="start" t={t} locale={locale} city={city} cityName={cityName} center={center} value={value.start} kinds={startKinds} anywhere
+          onChange={(s) => {
+            if (s.kind !== "airport" && endpointReady(s) && km(s, center) > FAR_KM) {
+              // Fora da cidade: guarda a origem e pede onde chega à cidade (estação, autocarro ou porto).
+              const kind = s.kind === "bus" || s.kind === "port" ? s.kind : "station";
+              const arrive: Endpoint = { kind, lat: NaN, lng: NaN, label: "" };
+              onChange({ ...value, origin: { label: s.label || t.bpHereLabel, lat: s.lat, lng: s.lng }, start: arrive, end: value.mode === "stay" && !other ? arrive : value.end });
+              return;
+            }
+            onChange({ ...value, start: s, end: value.mode === "stay" && !other ? s : value.end });
+          }} />
+      )}
 
       <span className="bp-h">{t.tpLeave}</span>
       <div className="bp-seg tp-modes" role="radiogroup" aria-label={t.tpLeave}>

@@ -33,7 +33,7 @@ export function ChosenRoute({ t: tProp, locale, city, tz, coreN, extN, children 
     <div className="card cr" role="note">
       <div className="cr-h"><span className="cr-k">⏱ {t.crTitle}</span><a href={`/${locale}/start?city=${city}`} className="link-btn">{t.bpChange}</a></div>
       <b style={{ fontSize: 18 }}>{fmt(t.tpChosen, { n: p.n })}</b>
-      <span className="hint">{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endLabel(trip.end, t)} · {t.tpModes[trip.mode]}</span>
+      <span className="hint">{trip.origin && <>📍 {trip.origin.label} → </>}{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endLabel(trip.end, t)} · {t.tpModes[trip.mode]}</span>
       {trip.startAt && <span className="hint">{fmt(t.tpStartsAt, { t: when(w.start) })}</span>}
       {p.bd && <TimeBreakdown b={p.bd} t={t} trip={trip} hrs={hrs} />}
       {p.cost && <span>{fmt(t.bkTransport, { c: p.cost })}</span>}

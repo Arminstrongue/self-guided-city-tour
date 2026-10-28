@@ -39,6 +39,8 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
   const bd = (o: QsOption) => breakdownOf(o, time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip);
   const pickCity = (id: string) => { setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
   const upd = (v: Trip) => { setTrip(v); setErr(""); };
+  // O bilhete guardado pode definir a hora de início ("Começar o percurso às …").
+  useEffect(() => { if (trip.startAt) setLater(true); }, [trip.startAt]);
   useEffect(() => { if (pre) { const v = loadTrip(pre); setTrip(v); setLater(Boolean(v.startAt)); } }, [pre]);
 
   const list = useMemo(() => { const f = fold(q.trim()); return f ? cities.filter((c) => fold(`${c.name} ${c.country}`).includes(f)) : cities; }, [q, cities]);
@@ -167,7 +169,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
               <div className="qs-sum">
                 <b>{city.flag} {city.name}</b>
                 <span>{fmt(t.qsFits, { n: opt.n, h: hrs(bd(opt).total), c: opt.cost })}</span>
-                <span className="qs-back-at">{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endLabel(trip.end, t)}</span>
+                <span className="qs-back-at">{trip.origin && <>📍 {trip.origin.label} → </>}{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endLabel(trip.end, t)}</span>
                 <span className="qs-back-at">{fmt(t.tpStartsAt, { t: later && trip.startAt ? when(win.start) : t.tpNow })}</span>
                 <span className="qs-back-at">{fmt(t.bpBackAt, { p: endLabel(trip.end, t), t: when(win.start + bd(opt).total * 60000) })}</span>
                 {time?.k === "dep" && win.dep !== null && <span className="qs-back-at">{fmt(t.tpDepAt, { m: t.tpModes[trip.mode], t: when(win.dep) })}</span>}

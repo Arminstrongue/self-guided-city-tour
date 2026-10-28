@@ -3890,3 +3890,13 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .pl-head b{flex:1;min-width:0}
 .pl-dot{font-size:13px}
 .pl-chev{color:var(--muted);font-size:14px;flex:none}
+
+/* Começar fora da cidade: trajeto até lá */
+.og-card { border: 1px solid var(--line, #e5e7eb); border-radius: 14px; padding: 12px 14px; margin: 6px 0 10px; background: var(--card, #fff); display: grid; gap: 6px; }
+.og-head { display: flex; align-items: flex-start; gap: 8px; justify-content: space-between; }
+.og-route { font-weight: 600; line-height: 1.35; }
+.og-x { border: 0; background: none; font-size: 15px; padding: 2px 6px; cursor: pointer; color: var(--muted, #6b7280); min-width: 32px; min-height: 32px; }
+.og-dist { margin: 0; color: var(--muted, #6b7280); font-size: 14px; }
+.og-acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.og-ticket { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 6px; border-top: 1px dashed var(--line, #e5e7eb); }
+.og-ticket p { margin: 0; font-weight: 600; }

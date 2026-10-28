@@ -325,7 +325,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
-            <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
+            <span>{trip.origin && <>📍 {trip.origin.label} → </>}{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} airport={city.ap?.iata} />}
@@ -365,7 +365,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
         {(tab === "route" || preview) && <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
-            <span>{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
+            <span>{trip.origin && <>📍 {trip.origin.label} → </>}{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
             <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
           </div>
           {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} airport={city.ap?.iata} />}
