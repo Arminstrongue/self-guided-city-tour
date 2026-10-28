@@ -22,7 +22,7 @@ export default async function PlanPage(props: { params: Promise<{ locale: Locale
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <PlanView locale={params.locale}
         plan={{ id: plan.id, title: plan.title, city: plan.city, cityName: plan.cityName, startDate: plan.startDate, days: plan.days, items: plan.items }}
-        moments={ex?.moments ?? []} />
+        moments={ex?.moments ?? []} tz={city?.tz ?? "UTC"} />
     </main>
   );
 }

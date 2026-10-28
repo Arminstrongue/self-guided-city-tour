@@ -6,7 +6,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { hop } from "@/lib/route-cost";
 import { cachedReservations, loadReservations, type Reservation } from "@/lib/trip-local";
 import { loadTrip } from "./trip-store";
-import { RES_ICON, resWhen, TicketSheet } from "./Reservations";
+import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
 
 type LL = { lat: number; lng: number };
 export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number };
@@ -75,6 +75,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
         <span className="now-k">{RES_ICON[r.kind]} {t.rsKinds[r.kind as keyof Dict["rsKinds"]]}{r.city && cities[r.city] ? ` · ${cities[r.city]}` : ""}</span>
         <b className="now-t">{r.title}</b>
         <p className="now-row">🕒 {fmt(t.nwStarts, { t: w.hm, d: w.day })} <span className="is-tag">{t.isYou}</span></p>
+        {r.journey?.legs.length ? <p className="now-row">🚆 {journeyLine(r.journey, t)}{r.journey.legs[0].pf ? ` · ${t.pf.short} ${r.journey.legs[0].pf}` : ""}</p> : null}
         {leave ? <p className={`now-row ${late ? "bad" : ""}`}>🚶 {fmt(late ? t.nwLeaveNow : t.nwLeave, { t: hm(leave), m: h!.min, g: MARGIN })} <span className="is-tag">{t.isEst}</span></p>
           : <p className="now-row hint">{to ? t.nwNoFrom : t.nwNoPlace}</p>}
         {r.place && <p className="now-row">📍 {r.place}</p>}
@@ -129,7 +130,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
         <div className="stack" style={{ gap: 6 }}>
           <span className="bp-h">{t.nwLater}</span>
           {later.map((x) => x.kind === "res" ? (
-            <button key={x.r.id} className="card now-mini press" onClick={() => setShow(x.r)}><span>{RES_ICON[x.r.kind]}</span><span className="stack" style={{ gap: 0, minWidth: 0 }}><b>{x.r.title}</b><small className="hint">{resWhen(x.r, locale).day} · {resWhen(x.r, locale).hm}</small></span></button>
+            <button key={x.r.id} className="card now-mini press" onClick={() => setShow(x.r)}><span>{RES_ICON[x.r.kind]}</span><span className="stack" style={{ gap: 0, minWidth: 0 }}><b>{x.r.title}</b><small className="hint">{resWhen(x.r, locale).day} · {x.r.journey?.legs.length ? journeyLine(x.r.journey, t) : resWhen(x.r, locale).hm}</small></span></button>
           ) : (
             <a key={x.b.id} className="card now-mini press" href={`/${locale}/g/${x.b.guideId}`}><span>🧑‍💼</span><span className="stack" style={{ gap: 0 }}><b>{x.b.guide}</b><small className="hint">{hm(new Date(x.b.startAt))}</small></span></a>
           ))}

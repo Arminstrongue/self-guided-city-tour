@@ -19,6 +19,7 @@ import { FilterSheet, type FSection } from "./FilterSheet";
 import { SlidersHorizontal, X as XIcon } from "lucide-react";
 import type { Airport, Stop } from "@/data/cities";
 import type { Museum } from "@/data/museums";
+import { PlaceSheet, type SheetPlace } from "./PlaceSheet";
 
 export type CustomView = { icon: string; title: string; text: string; community: boolean };
 export type MomentView = { id: string; icon: string; when: When; h: Hobby[]; lat: number; lng: number; title: string; text: string; days?: number[] | null };
@@ -102,6 +103,7 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
   const [pos, setPos] = useState<Pos | null>(null);
   const [save, setSave] = useState<{ title: string; lat: number; lng: number } | null>(null);
   const [toPlan, setToPlan] = useState<{ title: string; lat: number; lng: number; icon: string; kind: "moment" | "place" } | null>(null);
+  const [infoOf, setInfoOf] = useState<SheetPlace | null>(null);
   const [toast, setToast] = useState("");
   const [wish, setWish] = useState<Wish[]>([]);
   useEffect(() => { void loadWish().then((r) => setWish(r.list)); }, []);
@@ -277,6 +279,7 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
                     </span>
                     <span className="ex-acts sm">
                       <button className="ex-main" onClick={() => setToPlan({ title: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], kind: "place" })}>🗺 {t.plAddTo}</button>
+                      <button onClick={() => setInfoOf({ name: p.name, lat: p.lat, lng: p.lng, icon: CAT_ICON[p.cat], catLabel: t.cat[p.cat], rating: p.rating, reviews: p.reviews, openNow: p.openNow, hours: p.hours, fee: p.fee, web: p.web, gmaps: p.gmaps, photo: p.photo, wiki: p.wiki })}>ℹ️ {t.pi.more}</button>
                       <a href={p.gmaps ?? (p.d < 1800 ? walkLink(p) : goLink(p))} target="_blank" rel="noreferrer">🧭 {t.exGo}</a>
                       <details className="ex-more"><summary aria-label={t.exMore}>⋯</summary>
                         <span className="ex-more-m">
@@ -336,6 +339,7 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
         </div>
       )}
 
+      {infoOf && <PlaceSheet t={t} locale={locale} place={infoOf} onAdd={() => { setToPlan({ title: infoOf.name, lat: infoOf.lat, lng: infoOf.lng, icon: infoOf.icon, kind: "place" }); setInfoOf(null); }} onClose={() => setInfoOf(null)} />}
       {toPlan && <AddToPlan t={t} locale={locale} cityId={cityId} cityName={cityName} item={toPlan} onClose={(msg) => { setToPlan(null); if (msg) { setToast(msg); setTimeout(() => setToast(""), 3000); } }} />}
       {save && <SaveMemory t={t} cityId={cityId} cityName={cityName} item={save} onClose={(ok) => { setSave(null); if (ok) { setToast(t.exSaved); setTimeout(() => setToast(""), 2500); } }} />}
       {toast && <div className="ex-toast" role="status">{toast} <a href={`/${locale}/wallet`}>{t.wallet} →</a></div>}
