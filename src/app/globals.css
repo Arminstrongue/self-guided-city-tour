@@ -3900,3 +3900,11 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .og-acts { display: flex; flex-wrap: wrap; gap: 8px; }
 .og-ticket { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 6px; border-top: 1px dashed var(--line, #e5e7eb); }
 .og-ticket p { margin: 0; font-weight: 600; }
+
+/* Conteúdo pago: amostra + desbloquear */
+.lk { display: grid; gap: 8px; justify-items: start; padding: 18px; margin: 12px 0; border: 1px dashed var(--line, #d1d5db); }
+.lk-ic { font-size: 26px; line-height: 1; }
+.lk b { font-size: 17px; }
+.lk .hint { margin: 0; }
+.lk-more, .lk-li { color: var(--muted, #6b7280); font-weight: 600; }
+.lk-li { list-style: none; margin-top: 4px; }

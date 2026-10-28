@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { hasCityAccess } from "@/lib/city-access";
 import { PageBanner } from "@/components/SiteImage";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -30,15 +31,17 @@ export default async function NewDaysPlan(props: { params: Promise<{ locale: Loc
   const list = await loadCities();
   const cities = list.map((c) => ({ id: c.id, name: cityName(c, params.locale) })).sort((a, b) => a.name.localeCompare(b.name, INTL_LOCALE[params.locale]));
   const city = list.find((c) => c.id === sp.city) ?? null;
-  const ex = city ? exploreProps(city, params.locale) : null;
+  // Sem passe da cidade: escolhe dias e interesses, mas o plano dia a dia abre com o passe.
+  const locked = city ? !(await hasCityAccess(city.id)) : false;
+  const ex = city && !locked ? exploreProps(city, params.locale) : null;
   const days = Math.min(14, Math.max(1, Number(sp.days) || 5));
   const groups = (sp.g ?? "").split(",").filter((g): g is DayGroup => g in DAY_GROUPS);
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <PageBanner k="london-explore" alt={getDict(params.locale).img.alt["london-explore"]} />
-      <DaysPlanner locale={params.locale} cities={cities} initialDays={days} presetGroups={groups}
-        city={city ? { id: city.id, name: cityName(city, params.locale), stops: city.stops.map((s) => ({ id: s.id, name: stopName(s, params.locale), lat: s.lat, lng: s.lng, top: Boolean(s.top), access: accessOf(s.id).length > 0 })) } : null}
+      <DaysPlanner locked={locked} locale={params.locale} cities={cities} initialDays={days} presetGroups={groups}
+        city={city ? { id: city.id, name: cityName(city, params.locale), stops: (locked ? [] : city.stops).map((s) => ({ id: s.id, name: stopName(s, params.locale), lat: s.lat, lng: s.lng, top: Boolean(s.top), access: accessOf(s.id).length > 0 })) } : null}
         moments={ex?.moments ?? []} />
     </main>
   );

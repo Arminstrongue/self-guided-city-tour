@@ -55,7 +55,8 @@ export default async function Start(
     options: routeOptions(c).map((o) => ({
       key: o.key, n: o.plan.stops.length, min: o.plan.minutesTotal, tour: o.plan.minutesTour, air: c.air.min, ret: o.plan.ret.min, acc: accessCount(o.plan.stops.map((s) => s.id)),
       first: { lat: o.plan.stops[0].lat, lng: o.plan.stops[0].lng }, last: { lat: o.plan.stops[o.plan.stops.length - 1].lat, lng: o.plan.stops[o.plan.stops.length - 1].lng }, cost: formatMoney(o.plan.transport, c.cur, L),
-      names: o.plan.stops.map((s) => stopName(s, params.locale))
+      // Sem passe: nenhuma paragem tem nome (o resto do roteiro abre com o passe).
+      names: o.plan.stops.slice(0, owned.has(c.id) || isFreeCity(c.id) ? undefined : 0).map((s) => stopName(s, params.locale))
     }))
   })).sort((a, b) => a.name.localeCompare(b.name, L));
   const pre = cities.some((c) => c.id === searchParams.city) ? searchParams.city! : "";
