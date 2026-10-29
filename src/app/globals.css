@@ -3927,3 +3927,4 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .tp-picked b{flex:1}
 .tp-done{justify-self:stretch}
 .tp>.tp-row+.tp-row,.tp>.tp-row+.tp-sec,.tp>.tp-sec+.tp-row{margin-top:2px}
+.cr-lock{margin:2px 0}

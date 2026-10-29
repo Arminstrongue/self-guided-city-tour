@@ -93,7 +93,7 @@ export function LayoverMode({ t: tProp, locale, cities, city }: { t?: Dict; loca
           <div className={`card ly-verdict ${plan.verdict}`}>
             <b>{plan.verdict === "stay" ? l.resStay : plan.verdict === "short" ? l.resShort : plan.verdict === "explore" ? l.resExplore : l.resLong}</b>
             {plan.verdict === "stay" ? <p>{fmt(l.resStaySub, { h: fmt(l.hoursN, { n: String(hours) }) })}</p>
-              : <><p>{fmt(l.resRoute, { n: String(opt!.n), m: dur(opt!.tour) })}</p><ol className="qs-stops">{opt!.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt!.n - opt!.names.length} /></ol></>}
+              : <><p>{fmt(l.resRoute, { n: String(opt!.n), m: dur(opt!.tour) })}</p>{opt!.names.length > 0 ? <ol className="qs-stops">{opt!.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt!.n - opt!.names.length} /></ol> : <p className="lk-more cr-lock">🔒 {fmt(t.lk.more, { n: opt!.n })}</p>}</>}
             <small className="ly-bucket">{fmt(l.hoursN, { n: String(hours) })} · {l.bucket[String(bucketOf(hours)) as "3"]}</small>
           </div>
 

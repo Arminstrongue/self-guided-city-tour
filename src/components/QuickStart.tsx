@@ -178,7 +178,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
               {time && time.k !== "dep" && <span className="hint">{fmt(t.tpDurFits, { h: hrs(time.min === Infinity ? bd(opt).total : time.min) })}</span>}
               <TimeBreakdown b={bd(opt)} t={t} trip={time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip} hrs={hrs} />
               {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
-              <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt.n - opt.names.length} /></ol>
+              {opt.names.length > 0 ? <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt.n - opt.names.length} /></ol> : <p className="lk-more cr-lock">🔒 {fmt(t.lk.more, { n: opt.n })}</p>}
               <div className="qs-adj">
                 <button className="link-btn" disabled={idx <= 0} onClick={() => setShift(shift - 1)}>− {t.qsShorter}</button>
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>
