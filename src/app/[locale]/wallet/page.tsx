@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { popularity } from "@/lib/popularity";
 import { Header } from "@/components/Header";
 import { WalletView } from "@/components/Wallet";
 import { requestCurrency } from "@/lib/fx";
@@ -20,10 +21,14 @@ export default async function WalletPage(props: { params: Promise<{ locale: Loca
   const all = await loadCities();
   const cities = Object.fromEntries(all.map((c) => [c.id, cityName(c, params.locale)]));
   const tzOf = Object.fromEntries(all.map((c) => [c.id, c.tz ?? "UTC"]));
+  // Cidades mais procuradas (90 dias); sem dados, as mais conhecidas.
+  const pop = await popularity();
+  const FAMOUS = ["lon", "par", "lis", "nyc", "dxb", "rom", "bcn", "ams", "ist", "sin", "man", "mad"];
+  const popular = all.map((c) => c.id).sort((a, b) => ((pop.city.get(b) ?? 0) - (pop.city.get(a) ?? 0)) || ((FAMOUS.indexOf(a) + 1 || 99) - (FAMOUS.indexOf(b) + 1 || 99)));
   return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
-      <WalletView locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} providers={enabledProviders()} />
+      <WalletView locale={params.locale} cities={cities} free={FREE_CITIES} countryOf={COUNTRY} tzOf={tzOf} popular={popular} providers={enabledProviders()} />
     </main>
   );
 }

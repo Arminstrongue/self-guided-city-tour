@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RememberCity } from "@/components/RememberCity";
 import { alternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -81,6 +82,7 @@ export default async function CityEntry(
   if (!know.summary || know.summary.lang !== params.locale) ensureKnowledge(city.id, params.locale);
   return (
     <main className="app xl">
+      <RememberCity id={city.id} />
       <Track name="view_city" city={city.id} locale={params.locale} refCode={searchParams.ref} />
       <CityHero cityId={city.id}>
         <Header locale={params.locale} currency={fx.cur} over />

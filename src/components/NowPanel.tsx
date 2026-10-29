@@ -10,7 +10,7 @@ import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
 import { TravellerAlerts } from "./TravellerUpdates";
 
 type LL = { lat: number; lng: number };
-export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number };
+export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number; started?: boolean };
 type Booking = { id: string; guide: string; guideId: string; startAt: string; city: string; meeting?: string | null; status: string };
 /** Margem antes de uma hora marcada (minutos). */
 const MARGIN = 15;
@@ -56,7 +56,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
     ...res.filter((r) => new Date(r.startsAt).getTime() > now - 30 * 60_000).map((r) => ({ at: new Date(r.startsAt).getTime(), kind: "res" as const, r })),
     ...bookings.filter((b) => b.status === "confirmed" && new Date(b.startAt).getTime() > now - 30 * 60_000).map((b) => ({ at: new Date(b.startAt).getTime(), kind: "guide" as const, b }))
   ].sort((a, b) => a.at - b.at);
-  const tour = prog.filter((p) => p.i < p.total && now - p.at < 36 * 3600_000).sort((a, b) => b.at - a.at)[0] ?? null;
+  const tour = prog.filter((p) => (p.started || p.i > 0) && p.i < p.total && now - p.at < 36 * 3600_000).sort((a, b) => b.at - a.at)[0] ?? null;
   const soon = items.find((x) => x.at - now < 6 * 3600_000) ?? null;
   const primary: Item | "tour" | null = soon ?? (tour ? "tour" : items[0] ?? null);
   const later = items.filter((x) => x !== primary).slice(0, 4);

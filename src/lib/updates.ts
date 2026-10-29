@@ -23,6 +23,9 @@ export type PublicUpdate = {
 
 export type NewUpdate = { city: string; kind: UpdateKind; text: string; stop?: string | null; place?: string; lat?: number | null; lng?: number | null; photo?: string | null; postId?: string | null };
 
+const norm = (x: string) => x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+export const sameText = (a: string, b: string) => norm(a) === norm(b);
+
 export async function createUpdate(author: string, v: NewUpdate): Promise<{ id: string } | { error: "offensive" | "empty" | "rate" | "video" }> {
   const mod = moderate(v.text.trim());
   if (!mod.ok) return { error: "offensive" };
@@ -34,6 +37,13 @@ export async function createUpdate(author: string, v: NewUpdate): Promise<{ id: 
   const [{ n }] = await d.select({ n: sql<number>`count(*)::int` }).from(schema.travellerUpdates)
     .where(and(eq(schema.travellerUpdates.author, author), gt(schema.travellerUpdates.createdAt, new Date(Date.now() - 86400_000))));
   if (n >= 20) return { error: "rate" };
+  // A mesma pessoa a publicar o mesmo texto na mesma cidade (duplo toque, reenvio): devolve a que já existe.
+  if (mod.text && !v.photo && !v.postId) {
+    const recent = await d.select({ id: schema.travellerUpdates.id, text: schema.travellerUpdates.text }).from(schema.travellerUpdates)
+      .where(and(eq(schema.travellerUpdates.author, author), eq(schema.travellerUpdates.city, v.city), gt(schema.travellerUpdates.createdAt, new Date(Date.now() - 86400_000)))).limit(50);
+    const same = recent.find((r) => sameText(r.text, mod.text));
+    if (same) return { id: same.id };
+  }
   if (v.postId) {
     const [p] = await d.select({ author: schema.posts.author, video: schema.posts.video }).from(schema.posts).where(eq(schema.posts.id, v.postId)).limit(1);
     if (!p || p.author !== author || !p.video) return { error: "video" };
@@ -70,7 +80,10 @@ export async function listUpdates(city: string, me: string | null, o: { stop?: s
     .where(and(eq(schema.travellerUpdateVotes.voter, me), inArray(schema.travellerUpdateVotes.updateId, rows.map((r) => r.id)))) : [];
   const myVote = new Map(votes.map((v) => [v.id, v.value]));
   const rank = (k: string) => (k === "alert" ? 0 : k === "warn" ? 1 : 2);
-  return rows.map((r) => ({
+  // Textos iguais (de quem quer que seja) aparecem uma só vez: a mais recente.
+  const seen = new Set<string>();
+  const unique = rows.filter((r) => { if (!r.text) return true; const k = `${r.stop ?? ""}|${norm(r.text)}`; if (seen.has(k)) return false; seen.add(k); return true; });
+  return unique.map((r) => ({
     id: r.id, city: r.city, stop: r.stop, kind: r.kind as UpdateKind, text: r.text, place: r.place, lat: r.lat, lng: r.lng, hasPhoto: Boolean(r.hasPhoto), postId: r.postId,
     up: r.up, down: r.down, at: r.createdAt.toISOString(), expiresAt: r.expiresAt?.toISOString() ?? null,
     by: handle.get(r.author) ?? null, mine: me === r.author, myVote: myVote.get(r.id) ?? 0

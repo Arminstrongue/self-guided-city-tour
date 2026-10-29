@@ -4,7 +4,6 @@ import type { SiteImageKey } from "@/lib/site-images";
 import { alternates } from "@/lib/seo";
 import Link from "next/link";
 import { Header } from "@/components/Header";
-import { NeedNow } from "@/components/NeedNow";
 import { fxContext } from "@/lib/fx";
 import { WebOnly } from "@/components/WebOnly";
 import { SOON, cityName, cityNames, regionOf, COUNTRY } from "@/data/cities";
@@ -21,7 +20,7 @@ import { HeroSearch } from "@/components/HeroSearch";
 import { TopByCountry } from "@/components/TopByCountry";
 import { popularity } from "@/lib/popularity";
 import { flag } from "@/data/countries";
-import { Building2, MapPinned, Languages, Compass, Sparkles, Baby, Store, ChevronRight, ShieldCheck, Globe, Heart, Smartphone, Check, X } from "lucide-react";
+import { Building2, MapPinned, Languages, ShieldCheck, Globe, Heart, Smartphone, Check, X } from "lucide-react";
 import { stopName } from "@/data/stop-names";
 
 export const dynamic = "force-dynamic";
@@ -115,39 +114,8 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       </HomeHero>
 
       {/* Experiências: entradas diretas para cada forma de viajar. */}
-      <section className="sec hx-exp" aria-labelledby="hx-exp-h">
-        <div className="hx-exp-in">
-          <div className="hx-exp-h reveal">
-            <h2 id="hx-exp-h">{t.hx.expTitle}</h2>
-            <p>{t.hx.expSub}</p>
-            <a href="#features">{t.hx.expAll} →</a>
-          </div>
-          <div className="hx-cards">
-            {([
-              ["layover", "VOYBU Layover", Plane, `/${params.locale}/layover`, t.hx.cards.tagMain],
-              ["explore", "VOYBU Explore", Compass, `/${params.locale}/plan/new?days=1&g=sights,food`, ""],
-              ["experiences", "VOYBU Experiences", Sparkles, `/${params.locale}/plan/new?days=3&g=food,art`, t.hx.cards.tagFree],
-              ["family", "VOYBU Family", Baby, `/${params.locale}/plan/new?days=2&g=family,sights`, ""],
-              ["business", "VOYBU Business", Store, `/${params.locale}/merchants`, t.hx.cards.tagBiz]
-            ] as const).map(([k, name, Ic, href, tag]) => (
-              <a key={k} href={href} className={`hx-card hx-${k} press reveal`}>
-                <span className="hx-card-art" aria-hidden="true">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/img/cards/${k}-960.webp`} srcSet={`/img/cards/${k}-480.webp 480w, /img/cards/${k}-960.webp 960w`} sizes="(min-width: 960px) 40vw, 100vw" alt="" loading="lazy" decoding="async" />
-                  <span className="hx-card-ic"><Ic size={18} strokeWidth={2} /></span>
-                </span>
-                <span className="hx-card-tx">
-                  {tag && <span className="hx-tag">{tag}</span>}
-                  <b>{name}</b>
-                  <span className="hx-card-sub">{t.hx.cards[k][0]}</span>
-                  <small>{t.hx.cards[k][1]}</small>
-                  <em>{t.hx.cards[k][2]}</em>
-                </span>
-                <span className="hx-card-go" aria-hidden="true"><ChevronRight size={16} /></span>
-              </a>
-            ))}
-          </div>
-        </div>
+      <section className="sec hx-exp" aria-label={t.hx.expTitle}>
+        {/* Um só começo (cidade → tempo → roteiro, no topo): as antigas entradas paralelas (Layover, Explore, Experiences, Family) foram retiradas. */}
         <ul className="hx-trust">
           {([["info", ShieldCheck], ["langs", Globe], ["community", Heart], ["offline", Smartphone]] as const).map(([k, Ic]) => (
             <li key={k}><Ic size={22} aria-hidden="true" /><span><b>{t.hx.trust[k][0]}</b><small>{t.hx.trust[k][1]}</small></span></li>
@@ -193,11 +161,11 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       </section>
 
       {/* Para quem acabou de chegar ou precisa de algo já: quatro entradas diretas (Londres primeiro). */}
-      <div className="sec nn-sec"><NeedNow locale={params.locale} city="lon" /></div>
+      {/* "O que precisa agora?" vive no separador Agora (durante a viagem), não na página inicial. */}
 
       {/* O produto logo a seguir ao topo: escolher → roteiro → próximo passo → bilhete */}
       <section className="sec dm" aria-labelledby="dm-h">
-        <div className="sec-h reveal"><div><h2 id="dm-h">{t.dmTitle}</h2></div><a href={`/${params.locale}/tour/man`}>🎧 {t.qsTry} →</a></div>
+        <div className="sec-h reveal"><div><h2 id="dm-h">{t.dmTitle}</h2></div><a href={`/${params.locale}/tour/man`}>🎧 {t.wDemo} →</a></div>
         <ol className="dm-rail" tabIndex={0}>
           <li className="dm-card reveal"><span className="dm-n">1</span><b>{t.dm1t}</b><small>{t.dm1s}</small>
             <div className="dm-ui"><div className="dm-search">⌕ Lond…</div><div className="dm-row on">🇬🇧 {cityName(list.find((c) => c.id === "lon")!, params.locale)}</div><div className="dm-row">🇬🇧 Manchester</div></div></li>

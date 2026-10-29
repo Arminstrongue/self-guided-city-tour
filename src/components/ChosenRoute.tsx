@@ -38,7 +38,8 @@ export function ChosenRoute({ t: tProp, locale, city, tz, coreN, extN, children 
       {trip.startAt && <span className="hint">{fmt(t.tpStartsAt, { t: when(w.start) })}</span>}
       {p.bd && <TimeBreakdown b={p.bd} t={t} trip={trip} hrs={hrs} />}
       {p.cost && <span>{fmt(t.bkTransport, { c: p.cost })}</span>}
-      {p.names && <ol className="cr-stops">{p.names.map((n, i) => <li key={n + i}>{n}</li>)}<LockedMore t={t} n={p.n - p.names.length} /></ol>}
+      {p.names && p.names.length > 0 && <ol className="cr-stops">{p.names.map((n, i) => <li key={n + i}>{n}</li>)}<LockedMore t={t} n={p.n - p.names.length} /></ol>}
+      {(!p.names || p.names.length === 0) && <p className="lk-more cr-lock">🔒 {fmt(t.lk.more, { n: p.n })}</p>}
       <span className="hint">{fmt(t.tpVersions, { n: coreN })}{extN > 0 ? ` · ${fmt(t.tpExtVersion, { n: extN })}` : ""}</span>
       <p className="hint">{t.bkIncl}</p>
       <span className="hint">{t.crNote}</span>
