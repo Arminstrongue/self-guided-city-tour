@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RememberCity } from "@/components/RememberCity";
 import { Locked } from "@/components/Locked";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -55,6 +56,7 @@ export default async function Tour(props: { params: Promise<{ locale: Locale; ci
   // Sem passe: nada do roteiro (paragens, textos, áudio, mapa) — só o convite para desbloquear.
   if (preview) return (
     <main className="app">
+      <RememberCity id={city.id} />
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <h1 className="arv-h" style={{ marginTop: 16 }}>{cityName(city, params.locale)}</h1>
       <Locked t={t} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="route" more={city.stops.length} />
@@ -62,6 +64,7 @@ export default async function Tour(props: { params: Promise<{ locale: Locale; ci
   );
   return (
     <main className="app">
+      <RememberCity id={city.id} />
       {preview && <Header locale={params.locale} currency={(await requestCurrency())} />}
       <TourView
         preview={preview ? { buy: `/${params.locale}/c/${city.id}#book`, price: fmt(t.fromP, { p: price.local ?? price.main }), signIn: `/${params.locale}/wallet?signin=1&city=${city.id}` } : undefined}

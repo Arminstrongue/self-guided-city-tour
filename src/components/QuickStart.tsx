@@ -1,4 +1,5 @@
 "use client";
+import { rememberCity } from "@/lib/last-city";
 import { useNative } from "@/lib/use-native";
 import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
@@ -38,7 +39,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
   const when = (ms: number) => whenLabel(ms, tz, INTL_LOCALE[locale], words);
   // "Cerca de 3 horas" = tempo para passear (com ida e regresso), sem margem de partida; só "até à partida" soma a margem.
   const bd = (o: QsOption) => breakdownOf(o, time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip);
-  const pickCity = (id: string) => { setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
+  const pickCity = (id: string) => { rememberCity(id); setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
   const upd = (v: Trip) => { setTrip(v); setErr(""); };
   // O bilhete guardado pode definir a hora de início ("Começar o percurso às …").
   useEffect(() => { if (trip.startAt) setLater(true); }, [trip.startAt]);
@@ -131,9 +132,6 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
 
       {step === 2 && city && (
         <div className="qs-times">
-          <a className="qs-days press" href={`/${locale}/plan/new?city=${city.id}&days=5`}>
-            <CalendarDays size={20} aria-hidden="true" /><span><b>{t.dp.cta}</b><small>{t.dp.ctaSub}</small></span><ChevronRight size={16} aria-hidden="true" />
-          </a>
           <TripPicker t={t} locale={locale} city={city.id} cityName={city.name} center={city.center} value={trip} onChange={upd} airport={city.iata} />
 
           <span className="bp-h">{t.tpWhenStart}</span>
@@ -156,9 +154,13 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
             {trip.mode !== "stay" && trip.mode !== "walk" && <small className="hint">{trip.mode === "plane" ? t.qsUntilHint : trip.mode === "train" ? t.qsHintTrain : trip.mode === "bus" ? t.tpDepHint.bus : t.qsHintShip}</small>}
             <BufferPicker trip={trip} onChange={upd} t={t} />
           </div>
-          {TIMES.map((x) => (
+          {TIMES.filter((x) => x.k !== "wk").map((x) => (
             <button key={x.k} className="qs-time press" onClick={() => choose(x.k, x.min)}><Clock size={18} aria-hidden="true" /><span>{x.label}</span><ChevronRight size={16} aria-hidden="true" /></button>
           ))}
+          {/* Vários dias: o mesmo caminho continua no roteiro dia a dia (já com a cidade escolhida). */}
+          <a className="qs-time qs-days press" href={`/${locale}/plan/new?city=${city.id}&days=3`}>
+            <CalendarDays size={18} aria-hidden="true" /><span><b>{t.qsWeekend}</b><small>{t.dp.ctaSub}</small></span><ChevronRight size={16} aria-hidden="true" />
+          </a>
           {err && <p className="err" role="alert">{err}</p>}
         </div>
       )}

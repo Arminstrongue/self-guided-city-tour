@@ -6,7 +6,7 @@ import { useDict } from "@/i18n/client-dict";
  */
 import { useEffect, useState } from "react";
 import { fmt } from "@/i18n/core";
-import { BatteryCharging, ChevronRight, CloudOff, History, Timer, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
+import { BatteryCharging, ChevronRight, CloudOff, History, Compass, Cross, Droplets, Landmark, Luggage, MapPinned, Pill, PlaneLanding, Search, Toilet, Utensils, Wifi, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import Portal from "./Portal";
 
@@ -82,7 +82,6 @@ export function NeedNow({ t: tProp, locale, city = "lon", compact = false }: { t
     { k: "go", I: MapPinned, label: t.nn.go, sub: t.nn.goSub, href: `/${locale}/arrive?city=${city}&go=1` },
     { k: "near", I: Search, label: t.nn.near, sub: t.nn.nearSub, run: () => setNear(true) },
     { k: "exp", I: Compass, label: t.nn.explore, sub: t.nn.exploreSub, href: `/${locale}/start?city=${city}` },
-    { k: "free", I: Timer, label: t.dx.free, sub: t.dx.freeSub, href: `/${locale}/free?city=${city}` },
     { k: "ess", I: CloudOff, label: t.ess.essentials, sub: t.ess.sub, href: `/${locale}/wallet/essentials?city=${city}` }
   ];
   return (

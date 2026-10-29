@@ -204,13 +204,14 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   useEffect(() => { track("tour_open", { city: city.id, locale }, "day"); }, [city.id, locale]);
   // Progresso para o ecrã "Agora" da My Trip (neste telemóvel).
   useEffect(() => {
-    if (preview) return;
+    // Só depois de começar a caminhar (abrir o roteiro não é "estar a meio").
+    if (preview || !started) return;
     try {
       const all = JSON.parse(localStorage.getItem("sgct:progress") ?? "{}");
-      all[city.id] = { city: city.id, name: cityLabel, next: nextStop?.n ?? "", i: doneN, total: plan.stops.length, at: Date.now() };
+      all[city.id] = { city: city.id, name: cityLabel, next: nextStop?.n ?? "", i: doneN, total: plan.stops.length, at: Date.now(), started: true };
       localStorage.setItem("sgct:progress", JSON.stringify(all));
     } catch { /* ignorar */ }
-  }, [doneN, plan.stops.length, nextStop?.n]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [doneN, plan.stops.length, nextStop?.n, started]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pontos: cada paragem marcada conta (com GPS por perto vale o dobro); sincroniza entre dispositivos.
   const [cmCounts, setCmCounts] = useState<Record<string, number>>({});

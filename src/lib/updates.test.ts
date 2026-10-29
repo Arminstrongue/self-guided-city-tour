@@ -54,3 +54,10 @@ test("atualizações dos viajantes: criar, listar, votar, esconder, denunciar, e
   await deleteAccount("ana@x.com");
   assert.equal((await d.select().from(schema.travellerUpdates).where(eq(schema.travellerUpdates.id, tip.id))).length, 0);
 });
+
+test("texto repetido: maiúsculas, acentos e pontuação não contam", async () => {
+  const { sameText } = await import("./updates");
+  assert.equal(sameText("Piccadilly station: platforms 13–14 closed!", "piccadilly station platforms 13 14 closed"), true);
+  assert.equal(sameText("Estação fechada", "estacao  FECHADA."), true);
+  assert.equal(sameText("Platform 13 closed", "Platform 14 closed"), false);
+});

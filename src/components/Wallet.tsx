@@ -1,4 +1,5 @@
 "use client";
+import { lastCity } from "@/lib/last-city";
 import { EmailSignIn } from "./EmailSignIn";
 import { useDict } from "@/i18n/client-dict";
 /** Carteira do viajante: passes, reservas de guias, memórias, carimbos e interesses — na conta, em qualquer dispositivo. */
@@ -72,7 +73,7 @@ const LEVELS = [0, 1, 3, 6, 12] as const; // cidades necessárias para cada nív
 /** Cor do bilhete de cada cidade (estável). */
 function hue(id: string) { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
 
-export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {}, providers = [] }: { t?: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; tzOf?: Record<string, string>; providers?: { id: string; name: string }[] }) {
+export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {}, popular = [], providers = [] }: { t?: Dict; locale: Locale; cities: Record<string, string>; free: string[]; countryOf: Record<string, string>; tzOf?: Record<string, string>; popular?: string[]; providers?: { id: string; name: string }[] }) {
   const t = useDict(tProp);
   const [composing, setComposing] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -227,6 +228,13 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   const [planned, setPlanned] = useState<{ city: string; n: number; h: string; open: boolean; base?: string; end?: string; mode?: "plane" | "train" | "ship" | "stay"; startAt?: string } | null>(null);
   useEffect(() => { try { const v = JSON.parse(localStorage.getItem("sgct:planned") ?? "null"); if (v?.city) setPlanned(v); } catch { /* ignorar */ } }, []);
   const myCities = useMemo(() => [...new Set([...active.map((p) => p.city ?? ""), ...(signed?.plans ?? []).map((p) => p.city ?? ""), ...(wish ?? []).map((w) => w.city), ...(social?.profile?.cities ?? []), ...(planned ? [planned.city] : [])])].filter(Boolean), [active, signed, wish, social, planned]);
+  // Explorar: primeiro as minhas cidades, depois a última que abri, depois as mais procuradas; o resto por ordem alfabética.
+  const [recent, setRecent] = useState("");
+  useEffect(() => { setRecent(lastCity()); }, []);
+  const cityOrder = useMemo(() => {
+    const rank = (id: string) => { const m = myCities.indexOf(id); if (m >= 0) return m; if (id === recent) return 100; const p = popular.indexOf(id); return p >= 0 && p < 12 ? 200 + p : 1000; };
+    return Object.entries(cities).sort((a, b) => rank(a[0]) - rank(b[0]) || a[1].localeCompare(b[1]));
+  }, [cities, myCities, recent, popular]);
   const prof = social?.profile ?? null;
   const points = usePoints(Boolean(signed));
   // Na app nativa (Capacitor) o Google recusa o login dentro da app ("disallowed_useragent"): fica só a Apple e o email.
@@ -339,7 +347,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
         {/* Agora: o próximo passo (reserva, visita com guia, roteiro em curso ou roteiro planeado) */}
         <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned} hasPass={active.length > 0}
           bookings={(signed?.bookings ?? []).map((b) => ({ id: b.id, guide: b.guide, guideId: b.guideId, startAt: b.startAt, city: b.city, status: b.status, meeting: "meeting" in b ? (b.meeting as string | null) : null }))} />
-        <NeedNow t={t} locale={locale} city={planned?.city ?? myCities[0] ?? "lon"} compact />
+        <NeedNow t={t} locale={locale} city={planned?.city ?? myCities[0] ?? (recent || "lon")} compact />
         {w === "anon" && (
           <section className="card stack wl-sign">
             <b style={{ fontSize: 17 }}>🔐 {t.wSignTitle}</b>
@@ -360,7 +368,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
           <button className="press" onClick={() => go("places")}><span className="qi q2"><I icon={Globe} size={22} /></span>{t.wQuickCity}</button>
           <button className="press" onClick={() => setTools({ tab: "fx" })}><span className="qi q3"><I icon={Wrench} size={22} /></span>{t.wQuickTools}</button>
           <a className="press" href={`/${locale}#cities`}><span className="qi q4"><I icon={Sparkles} size={22} /></span>{t.wQuickExplore}</a>
-          <a className="press" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
+          <a className="press" href={`/${locale}/wallet/agenda${(myCities[0] || recent) ? `?city=${myCities[0] || recent}` : ""}`}><span className="qi q5"><I icon={CalendarDays} size={22} /></span>{t.evTitle}</a>
           <a className="press" href={`/${locale}/wallet/essentials${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span className="qi q1"><I icon={CloudOff} size={22} /></span>{t.ess.essentials}</a>
         </div>
         {/* Alertas só com viagem: sem destino, não mostra notícias do mundo inteiro. */}
@@ -376,8 +384,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
         </div>
         <button className="gs-fake press" onClick={() => setSearching(true)}><I icon={Search} size={18} /><span>{t.gsPlaceholder}</span></button>
         <div className="nv-cities">
-          <a className="nv-city ev" href={`/${locale}/wallet/agenda${myCities[0] ? `?city=${myCities[0]}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
-          {Object.entries(cities).sort((a, b) => Number(myCities.includes(b[0])) - Number(myCities.includes(a[0])) || a[1].localeCompare(b[1])).map(([id, n]) => (
+          <a className="nv-city ev" href={`/${locale}/wallet/agenda${(myCities[0] || recent) ? `?city=${myCities[0] || recent}` : ""}`}><span><I icon={CalendarDays} size={22} /></span><b>{t.evTitle}</b></a>
+          {cityOrder.map(([id, n]) => (
             <a key={id} className="nv-city" href={`#feed:${id}`}><span>{flag(countryOf[id] ?? "")}</span><b>{n}</b></a>
           ))}
         </div>
@@ -385,7 +393,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
         {!social && pending && <div className="pf-skel card" aria-hidden="true" />}
         {social && <FeedTab key={refreshKey} t={t} locale={locale} social={social} cities={cities} myCities={myCities} onEdit={() => setEditing(true)} />}
         {social?.profile && <button className="btn ghost press iv-open" onClick={() => setInviting(true)}>✉️ {t.ivTitle}</button>}
-        {social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : nudge}
+        {/* Sem perfil, o convite para criar perfil já aparece no feed: não repetir. */}
+        {social ? (social.profile && <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} />) : nudge}
       </>}
 
       {section === "people" && (social ? <PeopleTab t={t} locale={locale} social={social} cities={cities} onChange={refreshSocial} onEdit={() => setEditing(true)} /> : nudge)}

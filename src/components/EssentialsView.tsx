@@ -1,4 +1,5 @@
 "use client";
+import { lastCity } from "@/lib/last-city";
 import { useDict } from "@/i18n/client-dict";
 /**
  * Essenciais offline: tudo o que um viajante precisa sem internet num só ecrã — alojamento (e regresso),
@@ -36,7 +37,7 @@ export function EssentialsView({ t: tProp, locale, cities }: { t?: Dict; locale:
     try {
       const p = JSON.parse(localStorage.getItem("sgct:planned") ?? "null") as Planned | null;
       const a = JSON.parse(localStorage.getItem("sgct:arrive") ?? "null") as { city?: string } | null;
-      const c = new URLSearchParams(location.search).get("city") ?? p?.city ?? a?.city ?? cities.find((x) => localStorage.getItem(`sgct:home:${x.id}`))?.id ?? "lon";
+      const c = new URLSearchParams(location.search).get("city") || lastCity() || p?.city || a?.city || cities.find((x) => localStorage.getItem(`sgct:home:${x.id}`))?.id || "lon";
       setCityId(cities.some((x) => x.id === c) ? c : "lon");
       setPlan(p);
       setSaved(Number(localStorage.getItem(SAVED)) || null);

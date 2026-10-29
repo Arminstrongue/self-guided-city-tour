@@ -3928,3 +3928,7 @@ main .sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .tp-done{justify-self:stretch}
 .tp>.tp-row+.tp-row,.tp>.tp-row+.tp-sec,.tp>.tp-sec+.tp-row{margin-top:2px}
 .cr-lock{margin:2px 0}
+/* Página inicial: os 3 passos do único começo */
+.hs-steps{list-style:none;margin:2px 0 4px;padding:0;display:grid;gap:6px}
+.hs-steps li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.hs-steps b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);font-size:12.5px;flex:none}
