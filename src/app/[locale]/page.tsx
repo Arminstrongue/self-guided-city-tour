@@ -141,7 +141,7 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
               const badge = k === "city" ? t.pr.popular : k === "all" ? t.pr.best : null;
               return (
                 <div key={k} className={`prx-card prx-${k}${k === "all" ? " hot" : ""}`}>
-                  {badge && <span className="prx-badge">{badge}</span>}
+                  {badge ? <span className="prx-badge">{badge}</span> : <span className="prx-badge" aria-hidden="true" style={{ visibility: "hidden" }}>·</span>}
                   <span className="prx-name">{t.pr[k][0]}</span>
                   <div className="prx-price"><b className="num">{m.main}</b>{m.local && <small className="num">{m.local}</small>}</div>
                   <span className="prx-day num">{fmt(t.pr.perDay, { p: perDay })}</span>
