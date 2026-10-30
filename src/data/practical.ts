@@ -69,6 +69,15 @@ const DE_SAFETY = (pt: string, en: string): Tip => ({ k: "safety", pt: `Cidade s
 const DE_TOILET: Tip = { k: "toilet", pt: "Casas de banho em estações (muitas vezes a 0,50–1 €), centros comerciais e museus.", en: "Toilets in stations (often €0.50–1), shopping centres and museums." };
 const DE_SUNDAY: Tip = { k: "bag", pt: "Ao domingo quase todas as lojas fecham; as das estações e do aeroporto ficam abertas.", en: "Almost all shops close on Sundays; those in stations and at the airport stay open." };
 
+/* ---------- Suíça ---------- */
+const CH_SIM: Tip = { k: "sim", pt: "A Suíça não faz parte do roaming da UE: muitos tarifários europeus cobram dados à parte. Confirme o seu ou use um eSIM; Wi‑Fi grátis no aeroporto e em muitos cafés.", en: "Switzerland is outside EU roaming: many European plans charge extra for data. Check yours or use an eSIM; free Wi‑Fi at the airport and many cafés." };
+const CH_PAY: Tip = { k: "pay", pt: "A moeda é o franco suíço (CHF), não o euro. Cartão e contactless são aceites quase em todo o lado, incluindo as máquinas de bilhetes; onde aceitam euros, o câmbio é pior e o troco vem em francos.", en: "The currency is the Swiss franc (CHF), not the euro. Cards and contactless work almost everywhere, including ticket machines; where euros are taken, the rate is worse and change comes in francs." };
+const CH_TIP: Tip = { k: "tip", pt: "O serviço já está incluído no preço. Arredondar ou deixar 5–10% por um bom serviço é simpático, mas não obrigatório.", en: "Service is already included in the price. Rounding up or leaving 5–10% for good service is appreciated but not expected." };
+const PLUG_CH: Tip = { k: "plug", pt: "Tomadas tipo J, 230 V: as fichas finas tipo C (Europlug) entram, mas as tipo F (Schuko) não — leve adaptador.", en: "Type J sockets, 230 V: slim Type C (Europlug) plugs fit, but Type F (Schuko) plugs don't — bring an adapter." };
+const CH_TOILET: Tip = { k: "toilet", pt: "Casas de banho em estações (algumas pagas), centros comerciais e museus; num café, peça uma bebida.", en: "Toilets in stations (some paid), shopping centres and museums; in a café, buy a drink first." };
+const CH_SUNDAY: Tip = { k: "bag", pt: "Ao domingo quase todas as lojas fecham; as das estações e do aeroporto ficam abertas.", en: "Almost all shops close on Sundays; those in stations and at the airport stay open." };
+const chSafety = (pt: string, en: string): Tip => ({ k: "safety", pt: `Cidade muito segura. Compre o bilhete antes de entrar (máquina na paragem ou online): viajar sem bilhete dá multa. Fique fora das ciclovias. ${pt}`, en: `A very safe city. Buy your ticket before boarding (machine at the stop or online): riding without one means a fine. Keep out of bike lanes. ${en}` });
+
 export const PRACTICAL: Record<string, Practical> = {
   ist: { emergency: "112", tips: [
     { k: "bag", pt: `${BAG.pt} Voa com a Turkish Airlines? Pergunte no balcão Touristanbul do aeroporto se a visita gratuita para passageiros em trânsito cabe no seu horário.`, en: `${BAG.en} Flying Turkish Airlines? Ask at the airport's Touristanbul desk whether the free transit tour fits your schedule.` },
@@ -342,6 +351,120 @@ export const PRACTICAL: Record<string, Practical> = {
       { n: "Laksa", p: 6, pt: "Sopa picante de leite de coco com massa e marisco.", en: "Spicy coconut-milk noodle soup with seafood." },
       { n: "Chilli crab", p: 90, pt: "Caranguejo em molho picante e doce, para partilhar (preço por quilo).", en: "Crab in a sweet-spicy sauce, for sharing (priced per kilo)." },
       { n: "Kaya toast", p: 4, pt: "Torrada com doce de coco e manteiga, com ovos moles e kopi.", en: "Toast with coconut jam and butter, with soft eggs and kopi." }
+    ] },
+  zrh: { emergency: "112 / 117 / 144", tips: [BAG, CH_SIM, CH_PAY, CH_TIP,
+    { k: "water", pt: "A água das mais de 1200 fontes da cidade é água potável de qualidade: encha a garrafa à vontade.", en: "The water in the city's more than 1,200 fountains is top-quality drinking water: refill your bottle freely." },
+    chSafety("Atenção a carteiristas na estação central e nos elétricos cheios.", "Watch for pickpockets at the main station and on crowded trams."),
+    PLUG_CH, CH_TOILET, CH_SUNDAY],
+    food: [
+      { n: "Zürcher Geschnetzeltes", p: 40, pt: "Tiras de vitela em molho de natas e cogumelos, com rösti: o prato da cidade.", en: "Sliced veal in a cream and mushroom sauce with rösti: the city's signature dish." },
+      { n: "Rösti", p: 18, pt: "Batata ralada frita em disco estaladiço, como prato ou acompanhamento.", en: "Grated potato fried into a crisp cake, as a side or a meal." },
+      { n: "Birchermüesli", p: 9, pt: "Flocos de aveia demolhados com maçã ralada, inventado em Zurique pelo médico Bircher-Benner.", en: "Soaked oats with grated apple, invented in Zurich by the doctor Bircher-Benner." },
+      { n: "Bratwurst", p: 8, pt: "Salsicha grelhada com pão e mostarda, de uma banca de rua.", en: "Grilled sausage with bread and mustard, from a street stand." }
+    ] },
+  brn: { emergency: "112 / 117 / 144", tips: [BAG, CH_SIM, CH_PAY, CH_TIP,
+    { k: "water", pt: "Mais de 100 fontes medievais da cidade velha dão água potável: encha a garrafa.", en: "More than 100 medieval fountains in the Old Town give clean drinking water: refill your bottle." },
+    chSafety("No verão, nadar no Aare é tradição local, mas a corrente é forte: só onde os locais entram e saem.", "In summer, swimming in the Aare is a local tradition, but the current is strong: only where locals get in and out."),
+    PLUG_CH, CH_TOILET, CH_SUNDAY],
+    food: [
+      { n: "Berner Platte", p: 40, pt: "Travessa de carnes e salsichas fumadas com chucrute, feijão e batatas.", en: "A platter of smoked meats and sausages with sauerkraut, beans and potatoes." },
+      { n: "Rösti", p: 18, pt: "Batata ralada frita em disco estaladiço; em Berna, muitas vezes com bacon e ovo.", en: "Grated potato fried into a crisp cake; in Bern often with bacon and egg." },
+      { n: "Berner Haselnusslebkuchen", p: 6, pt: "Bolo de especiarias de avelã, muitas vezes decorado com um urso.", en: "Hazelnut spice cake, often decorated with a bear." },
+      { n: "Zibelechueche", p: 7, pt: "Tarte de cebola, a especialidade do mercado da cebola (Zibelemärit) de novembro.", en: "Onion tart, the speciality of the November onion market (Zibelemärit)." }
+    ] },
+  ath: { emergency: "112 / 100", tips: [BAG, EU_SIM,
+    { k: "pay", pt: "Cartão contactless aceite quase em todo o lado, incluindo metro e autocarros (paga-se a tarifa diretamente no torniquete); tenha algum dinheiro para quiosques e bancas.", en: "Contactless cards work almost everywhere, including the metro and buses (tap at the gate to pay the fare); keep some cash for kiosks and stalls." },
+    { k: "tip", pt: "Gorjeta opcional: arredonde ou deixe 5–10% na mesa se o serviço foi bom.", en: "Tipping is optional: round up or leave 5–10% on the table if the service was good." },
+    { k: "water", pt: "A água da torneira em Atenas é potável; leve sempre uma garrafa, sobretudo na Acrópole, onde há pouca sombra.", en: "Tap water in Athens is safe to drink; always carry a bottle, especially on the Acropolis, where there is little shade." },
+    { k: "safety", pt: "Carteiristas na linha 1 do metro, em Monastiraki e em Omonia. No verão, visite a Acrópole cedo: em ondas de calor pode fechar à tarde. Valide o bilhete: a multa é de 100 €.", en: "Pickpockets on metro line 1, at Monastiraki and Omonia. In summer, visit the Acropolis early: in heatwaves it may close in the afternoon. Validate your ticket: the fine is €100." },
+    PLUG_EU,
+    { k: "toilet", pt: "Casas de banho em museus, sítios arqueológicos e cafés. Em muitos sítios o papel vai para o cesto, não para a sanita: siga o aviso.", en: "Toilets in museums, archaeological sites and cafés. In many places paper goes in the bin, not the bowl: follow the sign." },
+    { k: "dress", pt: "Nas igrejas ortodoxas cubra ombros e joelhos. Na Acrópole use sapatos com boa aderência: o mármore escorrega.", en: "In Orthodox churches cover shoulders and knees. On the Acropolis wear shoes with good grip: the marble is slippery." }],
+    food: [
+      { n: "Souvlaki / gyros pita", p: 4.5, pt: "Carne grelhada em pão pita com tomate, cebola e tzatziki, ao balcão.", en: "Grilled meat in pita with tomato, onion and tzatziki, eaten at the counter." },
+      { n: "Koulouri", p: 1, pt: "Rosca de pão com sésamo, vendida nas bancas de rua de manhã.", en: "Sesame bread ring sold from street carts in the morning." },
+      { n: "Freddo espresso", p: 3.5, pt: "O café gelado batido que os atenienses bebem todo o ano.", en: "The shaken iced espresso Athenians drink all year round." },
+      { n: "Loukoumades", p: 5, pt: "Bolinhos fritos com mel e canela.", en: "Fried dough balls with honey and cinnamon." }
+    ] },
+  fnc: { emergency: "112", tips: [BAG, EU_SIM,
+    { k: "pay", pt: "Cartão contactless aceite quase em todo o lado; leve algum dinheiro para os autocarros (bilhete a bordo) e bancas do mercado.", en: "Contactless cards work almost everywhere; carry some cash for buses (tickets on board) and market stalls." },
+    { k: "tip", pt: "Gorjeta opcional: arredondar ou 5–10% à mesa. O couvert (pão, manteiga de alho, azeitonas) é pago se lhe tocar.", en: "Tipping is optional: round up or 5–10% at table. The couvert (bread, garlic butter, olives) is charged if you eat it." },
+    { k: "water", pt: "A água da torneira é potável.", en: "Tap water is safe to drink." },
+    { k: "safety", pt: "Cidade muito segura. As ruas são íngremes e a calçada escorrega com chuva; no mar, respeite as bandeiras: a ondulação do Atlântico é forte.", en: "A very safe city. Streets are steep and the cobbles are slippery when wet; at the sea, respect the flags: the Atlantic swell is strong." },
+    PLUG_EU, TOILET],
+    food: [
+      { n: "Bolo do caco", p: 3, pt: "Pão achatado de batata-doce, quente, com manteiga de alho.", en: "Warm sweet-potato flatbread with garlic butter." },
+      { n: "Espetada", p: 16, pt: "Carne de vaca no espeto de louro, servida pendurada à mesa.", en: "Beef on a bay-laurel skewer, served hanging at the table." },
+      { n: "Peixe-espada-preto", p: 14, pt: "O peixe das profundezas da Madeira, tradicionalmente com banana.", en: "Madeira's deep-sea black scabbardfish, traditionally served with banana." },
+      { n: "Poncha", p: 3, pt: "Aguardente de cana, mel e limão, batidos com o caralhinho de madeira.", en: "Sugarcane spirit, honey and lemon, stirred with a wooden muddler." }
+    ] },
+  dub: { emergency: "112 / 999", tips: [BAG, EU_SIM,
+    { k: "pay", pt: "Cartão e contactless aceites quase em todo o lado. Nos autocarros Dublin Bus só se paga com moedas (sem troco) ou cartão TFI Leap.", en: "Cards and contactless work almost everywhere. On Dublin Bus you can only pay in coins (no change given) or with a TFI Leap card." },
+    { k: "tip", pt: "A gorjeta não é obrigatória; no táxi, se quiser, 10–15%. Nos pubs pede-se e paga-se ao balcão.", en: "Tipping isn't required; in taxis, if you like, 10–15%. In pubs you order and pay at the bar." },
+    { k: "water", pt: "A água da torneira é potável: mais de 99,8% das análises da rede pública cumprem as normas.", en: "Tap water is safe: over 99.8% of public-supply samples meet the standards." },
+    { k: "safety", pt: "Cidade geralmente segura. Trânsito pela esquerda: olhe para a direita ao atravessar. Atenção aos carteiristas em Temple Bar e na O'Connell Street.", en: "A generally safe city. Traffic drives on the left: look right when crossing. Watch for pickpockets in Temple Bar and on O'Connell Street." },
+    { k: "plug", pt: "Tomadas tipo G (três pinos), 230 V: precisa de adaptador.", en: "Type G (three-pin) sockets, 230 V: you need an adapter." }, TOILET],
+    food: [
+      { n: "Irish stew", p: 20, pt: "Guisado de borrego com batata e cenoura, num pub.", en: "Lamb stew with potato and carrot, in a pub." },
+      { n: "Pint de Guinness", p: 7, pt: "A stout servida em dois tempos; prove-a perto da fábrica, em St James's Gate.", en: "The stout poured in two stages; try it near the brewery at St James's Gate." },
+      { n: "Full Irish breakfast", p: 15, pt: "Ovos, bacon, salsichas, black e white pudding, feijão e torradas.", en: "Eggs, bacon, sausages, black and white pudding, beans and toast." },
+      { n: "Fish and chips", p: 14, pt: "Bacalhau ou abrótea panados com batatas fritas, para levar.", en: "Battered cod or haddock with chips, to take away." }
+    ] },
+  dar: af("112", AF_CASH, tip("Gorjeta de 10% nos restaurantes; muitos preços para turistas aparecem em dólares, mas pagar em xelins sai mais barato.", "Tip 10% in restaurants; many tourist prices are quoted in dollars, but paying in shillings is cheaper."), afSafety("Trânsito pela esquerda. A Uber saiu da Tanzânia em janeiro de 2026: use Bolt, inDrive ou o táxi do hotel.", "Traffic drives on the left. Uber left Tanzania in January 2026: use Bolt, inDrive or a hotel taxi."), plug("Tomadas tipo G (e D), 230 V: leve adaptador.", "Type G (and D) sockets, 230 V: bring an adapter."), [
+    { n: "Chipsi mayai", p: 3000, pt: "Omelete com batatas fritas lá dentro, a comida de rua mais popular da cidade.", en: "An omelette with chips cooked inside, the city's favourite street food." },
+    { n: "Mishkaki", p: 2000, pt: "Espetadas de carne marinada grelhadas na brasa, ao fim da tarde.", en: "Skewers of marinated meat grilled over charcoal, in the early evening." },
+    { n: "Peixe frito de Kivukoni", p: 8000, pt: "Peixe ou polvo frito na hora no mercado de peixe, com limão e piripíri.", en: "Fish or octopus fried to order at the fish market, with lime and chilli." },
+    { n: "Café com kashata", p: 1000, pt: "Café forte de rua servido em chávenas pequenas, com doce de coco ou amendoim.", en: "Strong street coffee in small cups, with a coconut or peanut sweet." }
+  ], [{ k: "dress", pt: "Cidade costeira com muitos muçulmanos: roupa discreta no centro e nos mercados (ombros e joelhos cobertos); fato de banho só na praia.", en: "A coastal city with many Muslims: modest dress downtown and in markets (cover shoulders and knees); swimwear only on the beach." }]),
+  hkg: { emergency: "999", tips: [
+    meBag("No aeroporto, o depósito de bagagem fica no piso 5 do Terminal 1: HK$14 por hora ou HK$165 por dia, por volume.", "At the airport, left luggage is on Level 5 of Terminal 1: HK$14 per hour or HK$165 per day, per item."),
+    ME_SIM,
+    { k: "pay", pt: "O cartão Octopus serve para MTR, autocarros, elétricos e Star Ferry; nas barreiras do MTR também pode passar Visa, Mastercard ou UnionPay contactless. Nos elétricos, quem paga em dinheiro não recebe troco.", en: "The Octopus card works on the MTR, buses, trams and the Star Ferry; at MTR gates you can also tap a contactless Visa, Mastercard or UnionPay card. On trams, cash payers get no change." },
+    { k: "tip", pt: "Muitos restaurantes juntam 10% de serviço à conta; fora disso a gorjeta não é esperada. No táxi, arredonde.", en: "Many restaurants add a 10% service charge; beyond that tipping isn't expected. In taxis, round up." },
+    { k: "water", pt: "A água da torneira é tratada, mas a maioria das pessoas ferve-a ou bebe engarrafada. Ande com uma garrafa: o calor húmido cansa depressa.", en: "Tap water is treated, but most people boil it or drink bottled. Carry a bottle: the humid heat tires you quickly." },
+    { k: "safety", pt: "Trânsito pela esquerda: olhe para a direita ao atravessar. Cidade muito segura; atenção aos carteiristas nos mercados de Mong Kok. Com sinal de tufão ou aviso de chuva forte, o espetáculo de luzes e alguns serviços são cancelados.", en: "Traffic drives on the left: look right when crossing. A very safe city; watch for pickpockets in Mong Kok's markets. With a typhoon signal or heavy-rain warning, the light show and some services are cancelled." },
+    { k: "plug", pt: "Tomadas tipo G (britânicas), 220 V: leve adaptador.", en: "Type G (British) sockets, 220 V: bring an adapter." },
+    { k: "toilet", pt: "Casas de banho gratuitas e limpas nos centros comerciais, parques e terminais de ferry.", en: "Free, clean toilets in malls, parks and ferry terminals." }],
+    food: [
+      { n: "Dim sum (har gow, siu mai)", p: 40, pt: "Cestos de bambu com pastéis de camarão e de porco, com chá, numa casa de chá cantonesa.", en: "Bamboo baskets of shrimp and pork dumplings, with tea, in a Cantonese teahouse." },
+      { n: "Wonton noodles", p: 45, pt: "Massa fina de ovo em caldo, com raviolis de camarão.", en: "Thin egg noodles in broth with shrimp wontons." },
+      { n: "Pineapple bun", p: 15, pt: "O «bolo bao», pão doce com crosta estaladiça, muitas vezes com uma fatia de manteiga.", en: "The «bolo bao», a sweet bun with a crackly crust, often with a slab of butter." },
+      { n: "Hong Kong milk tea", p: 25, pt: "Chá preto forte com leite evaporado, nos cafés cha chaan teng.", en: "Strong black tea with evaporated milk, in cha chaan teng cafés." },
+      { n: "Egg waffle", p: 25, pt: "O «gai daan zai», waffle de bolhas vendido na rua.", en: "The «gai daan zai», a bubble waffle sold on the street." }
+    ] },
+  bkk: { emergency: "191 / 1669", tips: [
+    BAG,
+    LAT_SIM,
+    { k: "pay", pt: "Leve bahts em dinheiro para bancas de rua, barcos e táxis; cartões nos centros comerciais, hotéis e restaurantes maiores. Os multibancos costumam cobrar uma taxa a cartões estrangeiros.", en: "Carry baht in cash for street stalls, boats and taxis; cards work in malls, hotels and bigger restaurants. ATMs usually charge foreign cards a fee." },
+    { k: "tip", pt: "A gorjeta não é obrigatória; muitos restaurantes juntam 10% de serviço e 7% de IVA. Arredondar o táxi ou deixar umas moedas é simpático.", en: "Tipping isn't required; many restaurants add 10% service and 7% VAT. Rounding up a taxi fare or leaving some coins is appreciated." },
+    { k: "water", pt: "Não beba água da torneira: compre engarrafada, barata em qualquer loja de conveniência. O gelo em cubos dos restaurantes é normalmente de fábrica.", en: "Don't drink tap water: buy bottled, cheap in any convenience store. Restaurant ice cubes are usually factory-made." },
+    { k: "safety", pt: "Desconfie de quem diga que o Grande Palácio ou um museu «está fechado hoje» e ofereça um tuk-tuk barato: acaba numa loja de joias. Use o taxímetro ou uma app, e lembre-se de que o trânsito é pela esquerda.", en: "Be wary of anyone saying the Grand Palace or a museum «is closed today» and offering a cheap tuk-tuk: it ends at a gem shop. Use the meter or an app, and remember traffic drives on the left." },
+    { k: "plug", pt: "Tomadas mistas (tipos A, B, C e O), 220 V: as fichas europeias finas costumam entrar, mas leve adaptador universal.", en: "Mixed sockets (types A, B, C and O), 220 V: slim European plugs usually fit, but bring a universal adapter." },
+    { k: "toilet", pt: "Casas de banho em centros comerciais, estações e templos; algumas públicas cobram poucos bahts. Ao lado da sanita há muitas vezes uma mangueira.", en: "Toilets in malls, stations and temples; some public ones charge a few baht. There's often a hose next to the toilet." },
+    { k: "dress", pt: "No Grande Palácio e nos templos, ombros e joelhos cobertos (no palácio, calças compridas ou saia abaixo do joelho), nada transparente nem justo, e descalce-se antes de entrar nos salões.", en: "At the Grand Palace and temples, cover shoulders and knees (at the palace, long trousers or a skirt below the knee), nothing see-through or tight, and take shoes off before entering the halls." }],
+    food: [
+      { n: "Pad thai", p: 80, pt: "Massa de arroz salteada com ovo, tamarindo, amendoim e camarão.", en: "Stir-fried rice noodles with egg, tamarind, peanuts and shrimp." },
+      { n: "Tom yum goong", p: 150, pt: "Sopa picante e ácida de camarão com capim-limão e lima kaffir.", en: "Hot and sour shrimp soup with lemongrass and kaffir lime." },
+      { n: "Som tam", p: 60, pt: "Salada de papaia verde pisada no almofariz, picante e fresca.", en: "Green papaya salad pounded in a mortar, spicy and fresh." },
+      { n: "Khao man gai", p: 60, pt: "Frango escalfado com arroz cozido no caldo e molho de gengibre.", en: "Poached chicken with rice cooked in its stock and a ginger sauce." },
+      { n: "Mango sticky rice", p: 100, pt: "Arroz glutinoso com leite de coco e manga madura.", en: "Sticky rice with coconut milk and ripe mango." }
+    ] },
+  dps: { emergency: "112 · 110 (polícia) · 118 (ambulância) · 113 (bombeiros)", tips: [
+    meBag("Na Floresta dos Macacos há cacifos na entrada: não leve comida nem sacos de plástico.", "At the Monkey Forest there are lockers in the lobby: bring no food or plastic bags."),
+    LAT_SIM,
+    { k: "pay", pt: "Pague em rupias (IDR); o QRIS e os cartões são muito usados. Troque dinheiro só em casas de câmbio licenciadas, com o número de licença e o logótipo QR do Bank Indonesia.", en: "Pay in rupiah (IDR); QRIS and cards are widely used. Change money only at licensed money changers showing their licence number and the Bank Indonesia QR logo." },
+    { k: "pay", pt: "Taxa turística de Bali: 150 000 IDR por pessoa, paga uma vez por viagem, sem dinheiro vivo, online em lovebali.baliprov.go.id ou nos balcões do aeroporto. Guarde o voucher com código QR enviado por email.", en: "Bali tourist levy: IDR 150,000 per person, paid once per trip, cashless, online at lovebali.baliprov.go.id or at the airport counters. Keep the QR-code voucher sent by email." },
+    { k: "tip", pt: "Muitos restaurantes somam imposto e serviço à conta (os «++» da ementa); confirme antes de deixar gorjeta. Arredondar é bem recebido.", en: "Many restaurants add tax and service to the bill (the «++» on menus); check before tipping. Rounding up is appreciated." },
+    { k: "water", pt: "Não beba água da torneira: use água engarrafada ou filtrada. As regras de Bali pedem aos turistas que não usem plásticos de uso único: leve uma garrafa reutilizável.", en: "Don't drink tap water: use bottled or filtered water. Bali's rules ask visitors not to use single-use plastics: carry a reusable bottle." },
+    { k: "safety", pt: "Trânsito pela esquerda e muitas motas; em Ubud os passeios são estreitos. Não pise as pequenas oferendas no chão. As drogas são punidas com penas muito pesadas.", en: "Traffic drives on the left and there are many motorbikes; Ubud's pavements are narrow. Don't step on the small offerings on the ground. Drug offences carry very heavy penalties." },
+    plug("Tomadas tipo C/F, 230 V.", "Type C/F sockets, 230 V."),
+    LAT_TOILET,
+    { k: "dress", pt: "Para entrar num templo use sarongue e faixa à cintura (muitos emprestam à entrada) e ombros cobertos. Os pátios interiores são só para quem reza, e as mulheres com menstruação não entram.", en: "To enter a temple wear a sarong and waist sash (many lend them at the entrance) and cover your shoulders. Inner courtyards are for worshippers only, and menstruating women may not enter." }],
+    food: [
+      { n: "Nasi campur", p: 35000, pt: "Arroz com várias porções pequenas: legumes, sate, ovo e sambal.", en: "Rice with several small portions: vegetables, satay, egg and sambal." },
+      { n: "Babi guling", p: 60000, pt: "Leitão assado no espeto com especiarias, a especialidade de Bali.", en: "Spit-roasted suckling pig with spices, Bali's speciality." },
+      { n: "Bebek betutu", p: 150000, pt: "Pato recheado com especiarias e cozinhado lentamente em folha de bananeira.", en: "Duck stuffed with spices and slow-cooked in banana leaf." },
+      { n: "Kelapa muda", p: 25000, pt: "Coco verde fresco, bebido pela palhinha.", en: "Fresh young coconut, drunk straight from the shell." }
     ] },
   nyc: us(usSafety("O metro funciona 24 horas; à noite escolha a carruagem do condutor (ao meio do comboio).", "The subway runs 24 hours; at night ride in the conductor's car (middle of the train)."), [
     { n: "Pizza slice", p: 4, pt: "Uma fatia de pizza nova-iorquina, dobrada ao meio.", en: "A New York slice, folded in half." },

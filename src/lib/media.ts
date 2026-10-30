@@ -81,7 +81,7 @@ export const CITY_COVER: Record<string, string> = {
   bir: "Library of Birmingham", ist: "Hagia Sophia",
   dxb: "Burj Khalifa", auh: "Sheikh Zayed Grand Mosque", doh: "Museum of Islamic Art, Doha", ruh: "Kingdom Centre",
   jed: "Al-Balad, Jeddah", cai: "Giza pyramid complex", amm: "Amman Citadel", mct: "Sultan Qaboos Grand Mosque",
-  fra: "Römerberg", ber: "Brandenburg Gate", muc: "Marienplatz", vie: "Schönbrunn Palace", prg: "Charles Bridge", sin: "Gardens by the Bay",
+  fra: "Römerberg", ber: "Brandenburg Gate", muc: "Marienplatz", vie: "Schönbrunn Palace", prg: "Charles Bridge", sin: "Gardens by the Bay", dps: "Ubud Palace", bkk: "Wat Arun", hkg: "Victoria Harbour", dar: "Askari Monument", dub: "Ha'penny Bridge", fnc: "Cathedral of Funchal", ath: "Parthenon", brn: "Zytglogge", zrh: "Grossmünster",
   nyc: "Lower Manhattan", was: "United States Capitol", sfo: "Golden Gate Bridge", chi: "Cloud Gate", bos: "Boston Common", mia: "Ocean Drive",
   lax: "Griffith Observatory", las: "Las Vegas Strip", msy: "Jackson Square (New Orleans)", mco: "Lake Eola Park", yyz: "CN Tower",
   mex: "Palacio de Bellas Artes", rio: "Christ the Redeemer (statue)", bue: "Caminito",

@@ -75,6 +75,104 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
       s("Comboio até Tanah Merah; troque na mesma plataforma para City Hall / Raffles Place.", "Train to Tanah Merah; change across the platform for City Hall / Raffles Place.", "EW → Tuas Link", 35)
     ] }
   ])],
+  zrh: [ap("zrh-ap", "Zurich Airport", "ZRH", 47.4647, 8.5492, [
+    { id: "zrh-train", name: "Comboio (S-Bahn / IC)", min: 12, fare: "≈ CHF 7.20", to: { name: "Zürich HB", lat: 47.3779, lng: 8.5403 },
+      note: { pt: "A Zürich Card inclui o trajeto aeroporto ↔ cidade.", en: "The Zürich Card includes the airport ↔ city trip." }, steps: [
+      s("Siga as placas dos comboios até à estação subterrânea, por baixo do Airport Centre.", "Follow the train signs to the underground station beneath the Airport Centre.", "Bahnhof · Train", 5),
+      card("Compre na máquina um bilhete ZVV de 3 zonas (aeroporto 121 + cidade 110), válido 1 hora.", "Buy a 3-zone ZVV ticket at the machine (airport 121 + city 110), valid for 1 hour.", "ZVV"),
+      s("Todos os comboios para sul param em Zürich HB (cerca de 13 por hora, 9–13 min).", "Every southbound train stops at Zürich HB (about 13 an hour, 9–13 min).", "Zürich HB", 12)
+    ] }
+  ])],
+  brn: [
+    { id: "brn-hb", kind: "station", name: "Bern (estação central)", lat: 46.9490, lng: 7.4391, options: [
+      { id: "brn-hb-walk", name: "A pé", min: 5, fare: "", to: { name: "Bundesplatz", lat: 46.9466, lng: 7.4441 },
+        note: { pt: "Do aeroporto de Zurique há comboios diretos para Berna de 30 em 30 min (cerca de 1h15).", en: "From Zurich Airport, direct trains to Bern run every 30 min (about 1 h 15)." }, steps: [
+        s("Saia para a Bahnhofplatz; a Informação Turística fica no n.º 10a e vende bilhetes de transporte.", "Exit onto Bahnhofplatz; Tourist Information is at no. 10a and sells transport tickets.", "Bahnhofplatz", 2),
+        s("Siga para a Bundesplatz, ou pelas arcadas da Spitalgasse e Marktgasse até ao Zytglogge.", "Walk to Bundesplatz, or along the arcades of Spitalgasse and Marktgasse to the Zytglogge.", "Bundesplatz · Spitalgasse", 5)
+      ] }
+    ] },
+    ap("brn-ap", "Bern Airport", "BRN", 46.9141, 7.4997, [
+      { id: "brn-ap-bus", name: "Autocarro 160 + S-Bahn", min: 35, fare: "Libero", to: { name: "Bern Bahnhof", lat: 46.9490, lng: 7.4391 },
+        note: { pt: "Quem dorme em Berna tem o Bern-Ticket: inclui este trajeto no dia de chegada e de partida.", en: "Overnight guests in Bern get the Bern-Ticket: it covers this trip on arrival and departure days." }, steps: [
+        s("No aeroporto, apanhe o autocarro 160 da BERNMOBIL até à estação de Belp.", "At the airport, take BERNMOBIL bus 160 to Belp station.", "Bus 160 → Belp", 5),
+        card("Compre um bilhete Libero até Berna na máquina ou online.", "Buy a Libero ticket to Bern at the machine or online.", "Libero"),
+        s("Em Belp, apanhe o S-Bahn S3, S4, S31 ou S44 até Bern.", "At Belp, take S-Bahn S3, S4, S31 or S44 to Bern.", "S3 · S4 · S31 · S44 → Bern", 30)
+      ] }
+    ])
+  ],
+  ath: [ap("ath-ap", "Athens International Airport", "ATH", 37.9364, 23.9445, [
+    { id: "ath-metro", name: "Metro (linha 3)", min: 40, fare: "≈ €9", to: { name: "Syntagma", lat: 37.9755, lng: 23.7348 },
+      note: { pt: "O bilhete de aeroporto vale 90 min e inclui mudanças para outras linhas; ida e volta custa €16.", en: "The airport ticket is valid for 90 minutes, including changes to other lines; a return costs €16." }, steps: [
+      s("Siga as placas «Metro» até à estação do aeroporto.", "Follow the “Metro” signs to the airport station.", "Metro · Line 3", 7),
+      card("Compre o bilhete de aeroporto (€9) na máquina ou na bilheteira, ou passe o cartão contactless no torniquete; valide à entrada e à saída.", "Buy an airport ticket (€9) at the machine or ticket office, or tap a contactless card at the gate; validate when you enter and when you exit.", "OASA · ATH.ENA"),
+      s("Linha 3 (azul) até Syntagma, no centro; os comboios do aeroporto passam de 36 em 36 minutos.", "Line 3 (blue) to Syntagma, in the centre; airport trains run every 36 minutes.", "Line 3 → Dimotiko Theatro", 40)
+    ] },
+    { id: "ath-x95", name: "Autocarro X95", min: 60, fare: "≈ €5.50", to: { name: "Syntagma", lat: 37.9755, lng: 23.7348 },
+      note: { pt: "Funciona 24 horas por dia; mais barato, mas o trânsito pode atrasar.", en: "Runs 24 hours a day; cheaper, but traffic can make it slow." }, steps: [
+      s("À saída das chegadas, siga as placas «Bus» até à paragem do X95.", "Outside arrivals, follow the “Bus” signs to the X95 stop.", "Bus X95 · Syntagma", 3),
+      card("Compre o bilhete de autocarro expresso (€5.50) ou pague com cartão contactless; valide na máquina azul ao entrar.", "Buy an express bus ticket (€5.50) or pay with a contactless card; validate at the blue machine when you board.", "OASA"),
+      s("Até à Praça Syntagma (metro linhas 2 e 3), fim da linha.", "To Syntagma Square (metro lines 2 and 3), the end of the line.", "Syntagma", 60)
+    ] },
+    taxi("ath-taxi", "FREENOW · Uber", 40, "", { name: "Syntagma", lat: 37.9755, lng: 23.7348 })
+  ])],
+  fnc: [ap("fnc-ap", "Madeira Airport Cristiano Ronaldo", "FNC", 32.6979, -16.7745, [
+    { id: "fnc-aerobus", name: "Aerobus", min: 45, fare: "≈ €5.55", to: { name: "Avenida do Mar", lat: 32.6468, lng: -16.908 },
+      note: { pt: "Não circula a 25 de dezembro; horários em siga.madeira.gov.pt.", en: "Does not run on 25 December; timetables at siga.madeira.gov.pt." }, steps: [
+      s("À saída das chegadas, siga as placas «Bus» até à paragem do Aerobus.", "Outside arrivals, follow the “Bus” signs to the Aerobus stop.", "Bus · Aerobus", 3),
+      card("Compre o bilhete Aerobus (cerca de €5.55).", "Buy the Aerobus ticket (about €5.55).", "Aerobus"),
+      s("Saia na Avenida do Mar, no centro do Funchal, junto à marina.", "Get off at Avenida do Mar, in central Funchal, by the marina.", "Avenida do Mar", 45)
+    ] },
+    taxi("fnc-taxi", "Bolt · Uber", 25, "", { name: "Avenida do Mar", lat: 32.6468, lng: -16.908 })
+  ])],
+  dub: [ap("dub-ap", "Dublin Airport", "DUB", 53.4213, -6.2701, [
+    { id: "dub-16", name: "Dublin Bus 16 / 41", min: 40, fare: "≈ €2.60", to: { name: "O'Connell Street", lat: 53.3493, lng: -6.2611 },
+      note: { pt: "O 41 circula 24 horas por dia.", en: "Route 41 runs around the clock." }, steps: [
+      s("Siga as placas «Transport Zones»: os autocarros 16 e 41 saem da Zona 15, à porta do Terminal 1.", "Follow the “Transport Zones” signs: buses 16 and 41 leave from Zone 15 outside Terminal 1.", "Zone 15 · 16 · 41", 5),
+      card("Pague ao motorista €2,60 só em moedas (sem notas nem cartões) ou passe um cartão TFI Leap (€2). O Leap Visitor Card vende-se nas chegadas do T1 e do T2.", "Pay the driver €2.60 in coins only (no notes or cards) or tap a TFI Leap card (€2). Leap Visitor Cards are sold in T1 and T2 arrivals.", "TFI Leap"),
+      s("O 16 passa pela O'Connell Street (cerca de 40 min); o 41 termina na Lower Abbey Street, mesmo ao lado.", "Route 16 runs via O'Connell Street (about 40 min); route 41 ends at Lower Abbey Street, right next to it.", "O'Connell St", 40)
+    ] },
+    { id: "dub-express", name: "Dublin Express 782 / 784", min: 30, fare: "≈ €8", to: { name: "O'Connell Street", lat: 53.3493, lng: -6.2611 }, steps: [
+      s("Siga as placas até à Zona 1 (Terminal 1) ou à Zona 21 (Terminal 2).", "Follow the signs to Zone 1 (Terminal 1) or Zone 21 (Terminal 2).", "Dublin Express · Zone 1 / 21", 5),
+      card("Compre online por €8 (no aeroporto ou a bordo custa €10 e só com cartão).", "Buy online for €8 (at the airport or on board it's €10, card only).", "782 · 784"),
+      s("Saia na paragem do centro mais perto: O'Connell Street, Temple Bar e Trinity College estão entre elas.", "Get off at the nearest city stop: O'Connell Street, Temple Bar and Trinity College are among them.", "City Centre", 25)
+    ] },
+    { id: "dub-aircoach", name: "Aircoach 700", min: 35, fare: "≈ €8", to: { name: "O'Connell Street", lat: 53.3493, lng: -6.2611 }, steps: [
+      s("Siga as placas até à Zona 2 (Terminal 1) ou à Zona 20 (Terminal 2).", "Follow the signs to Zone 2 (Terminal 1) or Zone 20 (Terminal 2).", "Aircoach 700 · Zone 2 / 20", 5),
+      card("Bilhete de €8 até ao centro, online ou a bordo com contactless, Apple Pay ou Google Pay.", "€8 ticket to the city centre, online or on board with contactless, Apple Pay or Google Pay.", "Aircoach"),
+      s("Saia em O'Connell Street, O'Connell Bridge/Westmoreland Street ou St Stephen's Green.", "Get off at O'Connell Street, O'Connell Bridge/Westmoreland Street or St Stephen's Green.", "O'Connell St", 35)
+    ] },
+    taxi("dub-taxi", "FreeNow · Uber", 30, "≈ €30–45", { name: "O'Connell Street", lat: 53.3493, lng: -6.2611 },
+      s("O táxi usa taxímetro: cerca de €1,32/km de segunda a sábado das 8h às 20h; mais caro à noite e ao domingo.", "Taxis are metered: about €1.32/km Monday to Saturday 8 am–8 pm; more at night and on Sundays."))
+  ])],
+  dar: [ap("dar-ap", "Julius Nyerere International (Dar es Salaam)", "DAR", -6.8781, 39.2026, [
+    taxi("dar-taxi", "Bolt · inDrive · táxi do aeroporto", 40, "", { name: "City Centre · Askari Monument", lat: -6.8166, lng: 39.2896 },
+      s("A paragem de autocarro pública fica fora do portão principal, a 9 minutos a pé do Terminal 3; com bagagem, o táxi é mais simples.", "The public bus stop is outside the main gate, a 9-minute walk from Terminal 3; with luggage, a taxi is easier."))
+  ])],
+  hkg: [ap("hkg-ap", "Hong Kong International", "HKG", 22.308, 113.9185, [
+    { id: "hkg-ael", name: "Airport Express", min: 24, fare: "≈ HK$120", to: { name: "Hong Kong (Central)", lat: 22.285, lng: 114.1583 },
+      note: { pt: "O mais rápido para o centro; o regresso ao aeroporto sai da mesma estação.", en: "The fastest way into town; the trip back to the airport leaves from the same station." }, steps: [
+      s("Depois da alfândega, siga as placas do Airport Express: a estação fica junto aos halls de chegada, sem mudar de piso.", "After customs, follow the Airport Express signs: the station is beside the arrivals halls, with no change of level.", "Airport Express", 3),
+      s("Passe nas barreiras um cartão Octopus ou um cartão contactless Visa, Mastercard ou UnionPay (HK$120); o bilhete simples custa HK$130.", "Tap an Octopus card or a contactless Visa, Mastercard or UnionPay card at the gates (HK$120); a single ticket costs HK$130.", "Octopus · Contactless"),
+      s("Comboios a cada 10 minutos até à estação Hong Kong, em Central, das 5h54 às 0h48.", "Trains every 10 minutes to Hong Kong station in Central, from 05:54 to 00:48.", "Hong Kong", 24)
+    ] },
+    taxi("hkg-taxi", "Uber", 40, "≈ HK$350", { name: "Central", lat: 22.2808, lng: 114.1597 },
+      s("Na praça de táxis, use a fila dos táxis vermelhos (urbanos), que servem a Ilha de Hong Kong e Kowloon. Cada mala na bagageira paga HK$6.", "At the taxi rank, use the queue for red (urban) taxis, which serve Hong Kong Island and Kowloon. Each bag in the boot costs HK$6.", "Urban Taxi"))
+  ])],
+  bkk: [ap("bkk-ap", "Suvarnabhumi", "BKK", 13.69, 100.7501, [
+    { id: "bkk-arl", name: "Airport Rail Link + MRT", min: 60, fare: "≈ THB 35 + MRT", to: { name: "MRT Sanam Chai", lat: 13.744, lng: 100.4942 },
+      note: { pt: "Sem trânsito: o caminho mais previsível até à cidade velha, das 5h30 à meia-noite.", en: "Traffic-free: the most predictable way to the old town, from 05:30 to midnight." }, steps: [
+      s("A estação do Airport Rail Link fica no piso B1 do terminal principal.", "The Airport Rail Link station is on Level B1 of the main terminal.", "Airport Rail Link · B1", 5),
+      s("Compre o bilhete na máquina ou na bilheteira: até Makkasan custa 35 THB (15–45 THB conforme a distância).", "Buy a ticket at the machine or ticket office: Makkasan costs THB 35 (THB 15–45 by distance).", "Makkasan"),
+      s("Saia em Makkasan e siga a ligação para a estação Phetchaburi do MRT (linha Azul).", "Get off at Makkasan and follow the link to MRT Phetchaburi station (Blue Line).", "MRT Phetchaburi", 20),
+      s("Apanhe a linha Azul sentido Lak Song e saia em Sanam Chai, junto a Wat Pho e ao Grande Palácio.", "Take the Blue Line towards Lak Song and get off at Sanam Chai, next to Wat Pho and the Grand Palace.", "MRT Blue Line → Lak Song", 30)
+    ] },
+    taxi("bkk-taxi", "Grab · Bolt", 50, "", { name: "Grand Palace", lat: 13.75, lng: 100.4913 },
+      s("A praça de táxis públicos fica no piso 1, entre as portas 4 e 7; ao taxímetro soma-se uma taxa de aeroporto de 50 THB, paga ao motorista.", "The public taxi rank is on Level 1 between Gates 4 and 7; a THB 50 airport surcharge is added to the meter, paid to the driver.", "Public Taxi · Level 1"))
+  ])],
+  dps: [ap("dps-ap", "Bali I Gusti Ngurah Rai", "DPS", -8.7482, 115.1672, [
+    taxi("dps-taxi", "Grab · táxi do aeroporto", 90, "", { name: "Ubud (Puri Saren Agung)", lat: -8.5067, lng: 115.2626 },
+      s("Para a Grab, siga as indicações da app até ao GrabCar Lounge, nas chegadas internacionais. Até Ubud conte com cerca de 1h30, conforme o trânsito.", "For Grab, follow the in-app directions to the GrabCar Lounge in international arrivals. Allow about 1.5 hours to Ubud, depending on traffic.", "GrabCar Lounge"))
+  ])],
   dxb: [ap("dxb-ap", "Dubai International", "DXB", 25.2532, 55.3657, [
     { id: "dxb-metro", name: "Metro (linha Vermelha)", min: 30, fare: "≈ AED 6", to: { name: "BurJuman", lat: 25.2549, lng: 55.3042 }, steps: [
       s("Nos terminais 1 e 3 siga as placas Metro (passagem coberta).", "At terminals 1 and 3 follow the Metro signs (covered walkway).", "Metro · Red Line", 8),

@@ -35,7 +35,7 @@ test("todas as cidades têm roteiro válido e custos positivos", () => {
   for (const c of CITIES) for (const ext of [false, true]) {
     const p = planRoute(c, ext);
     assert.ok(p.stops.length >= 5, c.id);
-    assert.ok(p.transport > 0, c.id);
+    assert.ok(p.transport > 0 || p.unpriced > 0, c.id); // táxi/Grab sem tarifa oficial: "preço no local"
     assert.ok(p.minutesTour > 60 && p.minutesTour < 8 * 60, `${c.id} ${p.minutesTour}`);
   }
 });

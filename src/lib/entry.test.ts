@@ -156,3 +156,109 @@ test("EUA: nacionalidades com vistos suspensos (2026) e Gana sem visto para afri
   assert.equal(checkEntry(acc, "EG").verdict, "free-pass");
   assert.equal(checkEntry(acc, "PT").verdict, "visa");
 });
+
+test("novas cidades: Suíça, Grécia e Madeira são Schengen; Dublin (EUR) tem zona própria", async () => {
+  const { zoneOf } = await import("../data/city-meta");
+  const city = (id: string, cur: string) => ({ id, cur } as never);
+  for (const [id, cur] of [["zrh", "CHF"], ["brn", "CHF"], ["ath", "EUR"], ["fnc", "EUR"]]) {
+    assert.equal(zoneOf(city(id, cur)), "schengen", id);
+    assert.equal(checkEntry(city(id, cur), "CH").verdict, "free", id);
+    assert.equal(checkEntry(city(id, cur), "AO").verdict, "visa", id);
+  }
+  assert.equal(checkEntry(city("zrh", "CHF"), "US").verdict === "free-ees" || checkEntry(city("zrh", "CHF"), "US").verdict === "etias", true);
+  assert.equal(zoneOf(city("dub", "EUR")), "ie");
+  assert.equal(zoneOf({ cur: "EUR" }), "schengen"); // sem id: continua pela moeda
+  for (const id of ["lis", "par", "rom", "ams", "vie"]) assert.equal(zoneOf(getCity(id)!), "schengen", id);
+  assert.equal(zoneOf(city("hkg", "HKD")), "hk");
+  assert.equal(zoneOf(city("bkk", "THB")), "th");
+  assert.equal(zoneOf(city("dps", "IDR")), "id");
+  assert.equal(zoneOf(city("dar", "TZS")), "tz");
+});
+
+test("Irlanda: fora de Schengen, Área Comum de Viagem, visto de trânsito", () => {
+  const dub = { id: "dub", cur: "EUR" } as never;
+  assert.equal(checkEntry(dub, "IE").verdict, "free");
+  assert.equal(checkEntry(dub, "PT").verdict, "free");   // UE: passaporte ou cartão de cidadão
+  assert.equal(checkEntry(dub, "CH").verdict, "free");
+  assert.equal(checkEntry(dub, "GB").verdict, "free");   // Área Comum de Viagem
+  assert.equal(checkEntry(dub, "US").verdict, "free-pass");
+  assert.equal(checkEntry(dub, "BR").verdict, "free-pass");
+  assert.equal(checkEntry(dub, "UA").verdict, "free-pass");
+  assert.equal(checkEntry(dub, "LC").verdict, "visa");    // visto exigido desde 15/06/2026 (S.I. 242/2026)
+  assert.equal(checkEntry(dub, "IN").verdict, "visa");
+  assert.equal(checkEntry(dub, "IN").hint, "ie-uk");
+  assert.equal(checkEntry(dub, "IN").transitVisa, false);
+  assert.equal(checkEntry(dub, "NG").transitVisa, true);
+  assert.equal(checkEntry(dub, "NG", true).verdict, "free");
+  assert.equal(checkEntry(dub, "NG", true).transitVisa, false);
+  assert.equal(checkEntry(dub, "US").hint, undefined);
+  assert.equal(checkEntry(dub, "US").transitVisa, false);
+});
+
+test("Hong Kong: sem visto (7 a 180 dias), PAR para a Índia, vistos e trânsito", () => {
+  const hkg = { id: "hkg", cur: "HKD" } as never;
+  assert.equal(checkEntry(hkg, "HK").verdict, "free");
+  assert.equal(checkEntry(hkg, "PT").verdict, "free-pass");
+  assert.equal(checkEntry(hkg, "GB").verdict, "free-pass");
+  assert.equal(checkEntry(hkg, "BR").verdict, "free-pass");
+  assert.equal(checkEntry(hkg, "MZ").verdict, "free-pass"); // 14 dias
+  assert.equal(checkEntry(hkg, "BJ").verdict, "free-pass");
+  assert.equal(checkEntry(hkg, "IN").verdict, "auth");
+  assert.equal(checkEntry(hkg, "IN").hint, "hk-par");
+  assert.equal(checkEntry(hkg, "IN").site, "immd.gov.hk");
+  assert.equal(checkEntry(hkg, "AO").verdict, "visa");
+  assert.equal(checkEntry(hkg, "AO").transitVisa, true);
+  assert.equal(checkEntry(hkg, "VN").verdict, "visa");
+  assert.equal(checkEntry(hkg, "VN").transitVisa, false);
+  assert.equal(checkEntry(hkg, "NG").transitVisa, true);
+  assert.equal(checkEntry(hkg, "CN").verdict, "unknown"); // residentes do continente: autorização própria
+  assert.equal(checkEntry(hkg, "PT").hint, undefined);
+});
+
+test("Tailândia (regras de 15/09/2026): 30 dias, acordos bilaterais, visto à chegada, TDAC", () => {
+  const bkk = { id: "bkk", cur: "THB" } as never;
+  assert.equal(checkEntry(bkk, "TH").verdict, "free");
+  assert.equal(checkEntry(bkk, "TH").hint, undefined);
+  const pt = checkEntry(bkk, "PT");
+  assert.equal(pt.verdict, "free-pass");
+  assert.equal(pt.hint, "th-tdac");
+  assert.equal(checkEntry(bkk, "BR").verdict, "free-pass"); // acordo bilateral
+  assert.equal(checkEntry(bkk, "CN").verdict, "free-pass");
+  assert.equal(checkEntry(bkk, "MU").verdict, "free-pass"); // 15 dias
+  assert.equal(checkEntry(bkk, "RS").verdict, "voa");
+  assert.equal(checkEntry(bkk, "RS").fee, "2000 THB");
+  assert.equal(checkEntry(bkk, "MX").verdict, "visa");     // perdeu a isenção de 60 dias
+  assert.equal(checkEntry(bkk, "AO").verdict, "visa");
+  assert.equal(checkEntry(bkk, "AO", true).verdict, "free");
+});
+
+test("Indonésia (Bali): ASEAN sem visto, e-VoA para 97 países, taxa turística de Bali", () => {
+  const dps = { id: "dps", cur: "IDR" } as never;
+  assert.equal(checkEntry(dps, "ID").verdict, "free");
+  assert.equal(checkEntry(dps, "SG").verdict, "free-pass");
+  const pt = checkEntry(dps, "PT");
+  assert.equal(pt.verdict, "voa");
+  assert.equal(pt.fee, "500 000 IDR");
+  assert.equal(pt.site, "evisa.imigrasi.go.id");
+  assert.equal(pt.hint, "bali");
+  assert.equal(checkEntry(dps, "TL").verdict, "voa");
+  assert.equal(checkEntry(dps, "AO").verdict, "unknown");
+  assert.equal(checkEntry({ id: "jkt", cur: "IDR" } as never, "PT").hint, undefined); // a taxa é só de Bali
+});
+
+test("Tanzânia: a dica de Zanzibar não aparece em Dar es Salaam", () => {
+  assert.equal(checkEntry({ id: "zan", cur: "TZS" } as never, "PT").hint, "zan");
+  assert.equal(checkEntry({ id: "dar", cur: "TZS" } as never, "PT").hint, undefined);
+  assert.equal(checkEntry({ id: "dar", cur: "TZS" } as never, "PT").verdict, "evisa-me");
+});
+
+test("novas listas sem contradições", () => {
+  const both = (a: string[], b: string[]) => a.filter((x) => b.includes(x));
+  assert.deepEqual(both(_lists.IE_FREE, _lists.IE_VISA), []);
+  assert.deepEqual(both(_lists.IE_ATV, _lists.IE_VISA), _lists.IE_ATV);
+  assert.deepEqual(both(_lists.HK_FREE, _lists.HK_VISA), []);
+  assert.deepEqual(both(_lists.HK_ATV, _lists.HK_VISA), _lists.HK_ATV);
+  assert.deepEqual(both(_lists.TH_FREE, _lists.TH_VOA), []);
+  assert.deepEqual(both(_lists.ID_FREE, _lists.ID_VOA), []);
+  assert.equal(_lists.ID_FREE.length + _lists.ID_VOA.length, 97);
+});

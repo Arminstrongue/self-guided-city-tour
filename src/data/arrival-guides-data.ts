@@ -271,6 +271,229 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
    "en": "You need an ABC ticket (the airport is in zone C). Buy at the machines in the terminals and station or in the VBB, BVG or S-Bahn app. Validate paper tickets before boarding."
   }
  },
+ "zrh-train": {
+  "sources": [
+   "https://www.zuerich.com/en/inform-plan/getting-there-and-mobility-on-location/getting-around-in-zurich/public-transport",
+   "https://zvv.ch/en/abos-und-tickets/tickets/einzelbillette.html",
+   "https://www.flughafen-zuerich.ch/en/zrh-staff/mobility-and-safety/mobility/public-transport"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Há máquinas de bilhetes no aeroporto. O trajeto até Zürich HB pede um bilhete ZVV de 3 zonas (a zona 110 da cidade conta como duas), CHF 7.20, válido 1 hora. A Zürich Card inclui o aeroporto.",
+   "en": "Ticket machines are at the airport. The trip to Zürich HB needs a 3-zone ZVV ticket (city zone 110 counts as two), CHF 7.20, valid for 1 hour. The Zürich Card includes the airport."
+  },
+  "platforms": {
+   "pt": "S-Bahn e comboios de longo curso ligam o aeroporto à estação central; a viagem dura menos de 15 minutos. Também há comboios diretos para Berna, Basileia, Lucerna e St. Gallen.",
+   "en": "S-Bahn and long-distance trains link the airport with the main station; the ride takes under 15 minutes. There are also direct trains to Bern, Basel, Lucerne and St. Gallen."
+  }
+ },
+ "brn-ap-bus": {
+  "sources": [
+   "https://www.bernairport.ch/en/besuchen/parkieren-transport/oeffentlicher-verkehr",
+   "https://bern.com/en/inform/bern-ticket/bern-ticket-for-overnight-guests"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Quem pernoita em Berna recebe o Bern-Ticket, válido no troço Kehrsatz – Belp – Bern Airport nos dias de chegada e partida; ative-o no site da Bern Welcome.",
+   "en": "Overnight guests in Bern receive the Bern-Ticket, valid on the Kehrsatz – Belp – Bern Airport route on arrival and departure days; activate it on the Bern Welcome website."
+  },
+  "platforms": {
+   "pt": "O autocarro 160 liga o aeroporto às estações de Belp e Rubigen. Em Belp param os S-Bahn S3, S4, S31 e S44; em Rubigen, o S1. Aeroporto–Bern demora cerca de 35 min.",
+   "en": "Bus 160 links the airport with Belp and Rubigen stations. Belp is served by S-Bahn S3, S4, S31 and S44; Rubigen by the S1. Airport to Bern takes about 35 min."
+  }
+ },
+ "brn-hb-walk": {
+  "sources": [
+   "https://bern.com/en/inform/arrival/travelling-to-bern",
+   "https://bern.com/en/detail/traveling-by-plane"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Na Informação Turística da estação de Berna vendem-se bilhetes de transporte. O centro histórico, Património da UNESCO, faz-se quase todo a pé.",
+   "en": "Public transport tickets are sold at the Tourist Information in Bern station. The UNESCO-listed Old Town is easy to explore almost entirely on foot."
+  },
+  "platforms": {
+   "pt": "Do aeroporto de Zurique há comboios diretos para Berna de 30 em 30 minutos, em cerca de 1h15; de Genebra, em pouco menos de 2 horas.",
+   "en": "Direct trains from Zurich Airport to Bern run every 30 minutes and take about 1 h 15; from Geneva Airport, just under 2 hours."
+  }
+ },
+ "ath-metro": {
+  "sources": [
+   "https://www.oasa.gr/en/visit-athens/",
+   "https://www.oasa.gr/en/tickets/prices-of-products/",
+   "https://www.stasy.gr/en/contact/faq/"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "O bilhete de aeroporto custa €9 (ida e volta €16) e vale 90 minutos em metro, elétrico, troleicarro e autocarro, mas não nos autocarros expresso do aeroporto. Também pode pagar €9 passando um cartão bancário contactless ou o telemóvel. Valide nos torniquetes à entrada e à saída da estação.",
+   "en": "The airport ticket costs €9 (return €16) and is valid for 90 minutes on metro, tram, trolleybus and bus, but not on the airport express buses. You can also pay €9 by tapping a contactless bank card or phone. Validate at the gates when you enter and when you leave the station."
+  },
+  "platforms": {
+   "pt": "Os comboios do aeroporto passam de 36 em 36 minutos, todos os dias; os horários detalhados estão afixados em todas as estações da linha 3.",
+   "en": "Airport trains run every 36 minutes, every day; detailed times are posted at every Line 3 station."
+  }
+ },
+ "ath-x95": {
+  "sources": [
+   "https://www.oasa.gr/en/visit-athens/airport-express-bus-lines/",
+   "https://www.oasa.gr/en/tickets/prices-of-products/"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "O bilhete de autocarro expresso custa €5.50; também aceita cartão contactless. Valide na máquina azul cada vez que entra. Os bilhetes de metro do aeroporto não valem nos autocarros expresso.",
+   "en": "The express bus ticket costs €5.50; contactless cards are also accepted. Validate at the blue machine each time you board. Airport metro tickets are not valid on the express buses."
+  },
+  "platforms": {
+   "pt": "O X95 funciona 24 horas por dia; a viagem até Syntagma demora cerca de 60 minutos, conforme o trânsito.",
+   "en": "The X95 runs 24 hours a day; the trip to Syntagma takes about 60 minutes, depending on traffic."
+  }
+ },
+ "fnc-aerobus": {
+  "sources": [
+   "https://www.horariosdofunchal.pt/images/pdf/tarifas-2026.pdf",
+   "https://siga.madeira.gov.pt/aerobus"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "O bilhete Aerobus pré-comprado custa €5.55 (criança €2.75). Os bilhetes e passes urbanos do Funchal não incluem o Aerobus.",
+   "en": "The pre-purchased Aerobus ticket costs €5.55 (child €2.75). Funchal city-bus tickets and passes do not include the Aerobus."
+  },
+  "platforms": {
+   "pt": "Horário em vigor desde 1 de abril de 2026; sem serviço a 25 de dezembro. Consulte as partidas em siga.madeira.gov.pt.",
+   "en": "Timetable in force since 1 April 2026; no service on 25 December. Check departures at siga.madeira.gov.pt."
+  }
+ },
+ "dub-16": {
+  "sources": [
+   "https://www.dublinbus.ie/journey-information/dublin-airport-hub",
+   "https://www.dublinairport.com/to-from-the-airport/by-bus",
+   "https://tcd.ie/study/international/arriving-in-ireland/airport"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Depois das chegadas do T1 ou do T2, siga as placas para as «Transport Zones». Há um ponto de informação de transportes públicos para todos os operadores.",
+   "en": "After arrivals at T1 or T2, follow the signs to the Transport Zones. A Public Transportation Information Point covers all bus operators."
+  },
+  "tickets": {
+   "pt": "A bordo só se paga em moedas (€2,60, sem troco): sem notas, cartões nem telemóvel. O bilhete Travel 90 (€2,60) vende-se no Wright's Food Fayre, junto às Transport Zones, e aí aceita cartão, telemóvel e notas. O TFI Leap Visitor Card (24 h, €8) vende-se na T1 Convenience Store e no WHSmith das chegadas do T1 e no SPAR das chegadas do T2.",
+   "en": "On board you can only pay in coins (€2.60, no change): no notes, cards or phones. The Travel 90 ticket (€2.60) is sold at Wright's Food Fayre near the Transport Zones, where cards, phones and notes are accepted. The TFI Leap Visitor Card (24 h, €8) is sold at the T1 Convenience Store and WHSmith in T1 Arrivals and at SPAR in T2 Arrivals."
+  },
+  "platforms": {
+   "pt": "O 16 sai de 10 em 10 a 15 em 15 minutos e passa pela O'Connell Street a caminho do sul da cidade. O 41 circula 24 horas e termina na Lower Abbey Street. Valide o bilhete no leitor à direita da porta até ouvir o sinal.",
+   "en": "Route 16 runs every 10–15 minutes via O'Connell Street to the south side. Route 41 runs around the clock and ends at Lower Abbey Street. Validate your ticket on the reader to the right inside the door until it beeps."
+  }
+ },
+ "dub-express": {
+  "sources": [
+   "https://www.dublinexpress.ie/dublin-express-old/airport-to-city",
+   "https://www.dublinairport.com/to-from-the-airport/by-bus/dublin-buses"
+  ],
+  "checked": "2026-10",
+  "follow": {
+   "pt": "A Dublin Express parte da Zona 1 no Terminal 1 e da Zona 21 no Terminal 2.",
+   "en": "Dublin Express leaves from Zone 1 at Terminal 1 and Zone 21 at Terminal 2.",
+   "label": "Zone 1 · Zone 21"
+  },
+  "tickets": {
+   "pt": "Online: €8 ida, €10 ida e volta, para qualquer paragem do centro. No aeroporto ou a bordo: €10 ida, €14 ida e volta, só com cartão e com lugares limitados.",
+   "en": "Online: €8 single, €10 return, to any city stop. At the airport or on board: €10 single, €14 return, card only and subject to availability."
+  },
+  "platforms": {
+   "pt": "Primeiro autocarro do T1 às 03h05, último às 00h35. A viagem mais rápida até à cidade demora 14 minutos.",
+   "en": "First coach from T1 at 03:05, last at 00:35. The fastest journey to the city takes 14 minutes."
+  }
+ },
+ "dub-aircoach": {
+  "sources": [
+   "https://www.aircoach.ie/fares/route-700-dublin-airport-dublin-city-centre",
+   "https://www.dublinairport.com/to-from-the-airport/by-bus/dublin-buses",
+   "https://tcd.ie/study/international/arriving-in-ireland/airport"
+  ],
+  "checked": "2026-10",
+  "follow": {
+   "pt": "A Aircoach parte da Zona 2 no Terminal 1 e da Zona 20 no Terminal 2.",
+   "en": "Aircoach leaves from Zone 2 at Terminal 1 and Zone 20 at Terminal 2.",
+   "label": "Zone 2 · Zone 20"
+  },
+  "tickets": {
+   "pt": "€8 ida e €12 ida e volta até O'Connell Street, O'Connell Bridge/Westmoreland Street ou Kildare Street/St Stephen's Green. Compre online (melhor preço) ou a bordo com contactless, Apple Pay ou Google Pay.",
+   "en": "€8 single and €12 return to O'Connell Street, O'Connell Bridge/Westmoreland Street or Kildare Street/St Stephen's Green. Buy online (best value) or on board with contactless, Apple Pay or Google Pay."
+  }
+ },
+ "dub-taxi": {
+  "sources": [
+   "https://www.dublinairport.com/to-from-the-airport/by-taxi",
+   "https://www.ireland.com/en-ca/plan-your-trip/travel/taxis-in-ireland/"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Os táxis esperam à porta dos dois terminais, com despachantes na praça.",
+   "en": "Taxis wait outside both terminals, with dispatchers at the rank."
+  },
+  "tickets": {
+   "pt": "O aeroporto estima €30–45 até ao centro: €1,32/km de segunda a sábado das 8h às 20h e €1,81–2,20/km no resto do tempo. A gorjeta não é obrigatória.",
+   "en": "The airport estimates €30–45 to the city: €1.32/km Monday to Saturday 8 am–8 pm and €1.81–2.20/km at other times. Tipping isn't required."
+  }
+ },
+ "hkg-ael": {
+  "sources": [
+   "https://hkairport.com/en/transport/to-from-airport/airport-express.page",
+   "https://www.mtr.com.hk/en/customer/tickets/tf_index.html",
+   "https://www.hongkongairport.com/en/passenger-guide/arrivals/special-needs-access.page"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Saia dos halls de chegada para a passagem que leva à estação do Airport Express: não é preciso mudar de piso.",
+   "en": "Leave the arrivals halls by the walkway to the Airport Express station: no change of level is needed."
+  },
+  "tickets": {
+   "pt": "Cartão Octopus, cartão contactless Visa, Mastercard ou UnionPay (débito UnionPay excluído) ou código QR nas barreiras: HK$120 até Hong Kong. O bilhete simples custa HK$130.",
+   "en": "Octopus, a contactless Visa, Mastercard or UnionPay card (UnionPay debit excluded) or QR code at the gates: HK$120 to Hong Kong. A single ticket costs HK$130."
+  },
+  "platforms": {
+   "pt": "Comboios a cada 10 minutos, das 5h54 às 0h48. Kowloon fica a caminho (HK$105); a viagem até Hong Kong dura 24 minutos.",
+   "en": "Trains every 10 minutes, 05:54–00:48. Kowloon is on the way (HK$105); the ride to Hong Kong takes 24 minutes."
+  }
+ },
+ "bkk-arl": {
+  "sources": [
+   "https://suvarnabhumi.airportthai.co.th/service/airport-guide/detail/Transportation_BKK",
+   "https://www.thailand.go.th/public/guide-book-detail/001_01_107-2"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "A estação do Airport Rail Link fica no piso B1 do terminal principal, por baixo das chegadas.",
+   "en": "The Airport Rail Link station is on Level B1 of the main terminal, below Arrivals."
+  },
+  "tickets": {
+   "pt": "Tarifa de 15 a 45 THB, mais 5 THB por estação: Makkasan custa 35 THB e Phaya Thai, o terminal, 45 THB.",
+   "en": "Fares run from THB 15 to 45, rising THB 5 per station: Makkasan costs THB 35 and Phaya Thai, the terminus, THB 45."
+  },
+  "platforms": {
+   "pt": "Comboios das 5h30 à meia-noite. Em Makkasan muda para o MRT (linha Azul, estação Phetchaburi); em Phaya Thai, para o BTS (linha Sukhumvit).",
+   "en": "Trains run 05:30–midnight. At Makkasan change to the MRT (Blue Line, Phetchaburi station); at Phaya Thai, to the BTS (Sukhumvit Line)."
+  }
+ },
+ "dps-taxi": {
+  "sources": [
+   "https://www.grab.com/global/airport-rides/i-gusti-ngurah-rai-international-airport/",
+   "https://lovebali.baliprov.go.id/faq"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "Na zona das chegadas internacionais, a Grab recolhe os passageiros no GrabCar Lounge; a app mostra o caminho.",
+   "en": "In the international arrivals area, Grab picks passengers up at the GrabCar Lounge; the app shows you the way."
+  },
+  "follow": {
+   "pt": "Siga as indicações da app até ao GrabCar Lounge e use o chat da app, que traduz automaticamente, para falar com o motorista.",
+   "en": "Follow the in-app directions to the GrabCar Lounge and use the in-app chat, which auto-translates, to contact your driver.",
+   "label": "GrabCar Lounge"
+  },
+  "tickets": {
+   "pt": "Na Grab o preço aparece antes de reservar. A GrabBike não faz recolhas no aeroporto. A taxa turística de Bali (150 000 IDR) pode pagar-se online antes da viagem ou nos balcões do aeroporto.",
+   "en": "Grab shows the fare before you book. GrabBike doesn't do airport pickups. Bali's tourist levy (IDR 150,000) can be paid online before travel or at the airport counters."
+  }
+ },
  "sin-mrt": {
   "sources": [
    "https://www.changiairport.com/en/airport-guide/transport/leaving-the-airport.html",

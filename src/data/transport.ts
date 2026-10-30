@@ -167,6 +167,51 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("stp", "🎫", "Singapore Tourist Pass 1 dia", "Singapore Tourist Pass, 1 day", 17, "day"), T("grab", "🚗", "Grab/Gojek no centro", "Grab/Gojek in the centre", 15, "ride"),
     T("taxi", "🚕", "Táxi do aeroporto para o centro", "Taxi from the airport to the centre", 30, "ride"), T("bumboat", "⛵", "Barco no rio Singapura", "Singapore River boat", 28, "trip")
   ],
+  zrh: [
+    T("single", "🚋", "Elétrico / autocarro / S-Bahn, 1 h (zona 110, cidade)", "Tram / bus / S-Bahn, 1 h (zone 110, city)", 4.7, "trip"), T("short", "🎫", "Bilhete percurso curto (Kurzstrecke, 30 min)", "Short-hop ticket (Kurzstrecke, 30 min)", 2.8, "trip"),
+    T("day", "🎫", "Bilhete 24 h zona 110 (cidade)", "24-hour ticket, zone 110 (city)", 9.4, "day"), T("air", "✈", "Aeroporto ↔ Zürich HB (3 zonas, 1 h)", "Airport ↔ Zürich HB (3 zones, 1 h)", 7.2, "trip"),
+    T("airday", "🎫", "Bilhete 24 h com aeroporto (3 zonas)", "24-hour ticket incl. airport (3 zones)", 14.4, "day"), T("card", "🎫", "Zürich Card 24 h (transportes, aeroporto, barcos e museus)", "Zürich Card 24 h (transport, airport, boats and museums)", 29, "day"),
+    T("poly", "🚠", "Polybahn (funicular Central → ETH)", "Polybahn (funicular Central → ETH)", 1.2, "trip")
+  ],
+  brn: [
+    T("single", "🚋", "Elétrico / autocarro, 1 h (zonas 100/101, Libero)", "Tram / bus, 1 h (zones 100/101, Libero)", 5.2, "trip"), T("day", "🎫", "Tageskarte Libero zonas 100/101 (até às 5h do dia seguinte)", "Libero day ticket, zones 100/101 (until 05:00 next day)", 10.4, "day"),
+    T("bernticket", "🏨", "Bern-Ticket: grátis para quem dorme em Berna (zonas 100/101, Gurten e Marzilibahn)", "Bern-Ticket: free for overnight guests in Bern (zones 100/101, Gurten and Marzili funiculars)", 0, "day")
+  ],
+  ath: [
+    T("single", "🚇", "Bilhete 90 min (metro/elétrico/autocarro)", "90-minute ticket (metro/tram/bus)", 1.2, "trip"), T("airmetro", "✈", "Metro aeroporto (linha 3, só ida)", "Airport metro (line 3, one way)", 9.0, "trip"),
+    T("airreturn", "✈", "Metro aeroporto ida e volta", "Airport metro return", 16.0, "trip"), T("x95", "🚌", "Autocarro expresso X95 aeroporto ↔ Syntagma (24 h)", "X95 express bus airport ↔ Syntagma (24 h)", 5.5, "trip"),
+    T("day", "🎫", "Bilhete 24 h (sem aeroporto)", "24-hour ticket (excl. airport)", 4.1, "day"), T("tram", "🚋", "Elétrico Syntagma → litoral (bilhete 90 min)", "Tram Syntagma → coast (90-minute ticket)", 1.2, "trip")
+  ],
+  fnc: [
+    T("single", "🚌", "Autocarro urbano (bilhete a bordo)", "City bus (ticket on board)", 2.05, "trip"), T("giro", "🎫", "Viagem pré-paga no cartão GIRO (cartão 0,50 €)", "Prepaid trip on a GIRO card (card €0.50)", 1.45, "trip"),
+    T("day", "🎫", "Passe 1 dia (municipal)", "1-day pass (municipal)", 4.95, "day"), T("aerobus", "✈", "Aerobus aeroporto ↔ Funchal (pré-comprado)", "Aerobus airport ↔ Funchal (pre-purchased)", 5.55, "trip"),
+    T("cable", "🚠", "Teleférico Funchal → Monte (só ida, online)", "Funchal → Monte cable car (one way, online)", 14.5, "trip")
+  ],
+  dub: [
+    T("bus", "🚌", "Autocarro Dublin Bus (dinheiro, só moedas)", "Dublin Bus (cash, coins only)", 2.6, "trip"), T("leap", "💳", "Autocarro / Luas / DART com TFI Leap (90 min)", "Bus / Luas / DART on TFI Leap (90 min)", 2.0, "trip"),
+    T("luas", "🚋", "Luas (bilhete simples, zona 1)", "Luas (single ticket, zone 1)", 2.0, "trip"), T("visitor", "🎫", "TFI Leap Visitor Card 24 h", "TFI Leap Visitor Card 24 h", 8.0, "day"),
+    T("express", "✈", "Dublin Express aeroporto ↔ cidade (online)", "Dublin Express airport ↔ city (online)", 8.0, "trip"), T("aircoach", "✈", "Aircoach 700 aeroporto ↔ centro", "Aircoach 700 airport ↔ centre", 8.0, "trip"),
+    T("taxi", "🚕", "Táxi aeroporto → centro (taxímetro)", "Taxi airport → centre (metered)", 30, "ride")
+  ],
+  dar: [
+    T("brt", "🚌", "Autocarro rápido DART (mwendokasi)", "DART rapid bus (mwendokasi)", 1000, "trip"), T("bolt", "🚗", "Bolt/inDrive no centro", "Bolt/inDrive in the centre", 5000, "ride"),
+    T("taxi", "🚕", "Bolt/táxi aeroporto → centro", "Bolt/taxi airport → centre", 20000, "ride"), T("ferry", "⛴", "Ferry rápido para Zanzibar", "Fast ferry to Zanzibar", 90000, "trip")
+  ],
+  hkg: [
+    T("mtr", "🚇", "MTR (Octopus ou contactless, conforme a distância)", "MTR (Octopus or contactless, by distance)", 12, "trip"), T("ael", "✈", "Airport Express aeroporto → Hong Kong (Octopus/contactless)", "Airport Express airport → Hong Kong (Octopus/contactless)", 120, "trip"),
+    T("tdp", "🎫", "MTR Tourist Day Pass (24 h, sem Airport Express)", "MTR Tourist Day Pass (24 h, excl. Airport Express)", 75, "day"), T("tram", "🚋", "Elétrico «Ding Ding» da Ilha de Hong Kong", "Hong Kong Island «Ding Ding» tram", 3.3, "trip"),
+    T("ferry", "⛴", "Star Ferry Central ↔ Tsim Sha Tsui (convés superior, dia útil)", "Star Ferry Central ↔ Tsim Sha Tsui (upper deck, weekday)", 5, "trip"), T("peak", "🚠", "Peak Tram (ida e volta)", "Peak Tram (return)", 116, "trip"),
+    T("taxi", "🚕", "Táxi vermelho do aeroporto para Central (taxímetro, mais portagens e bagagem)", "Red taxi from the airport to Central (meter, plus tolls and luggage)", 350, "ride")
+  ],
+  bkk: [
+    T("mrt", "🚇", "MRT linha Azul (conforme a distância, 17–44 THB)", "MRT Blue Line (by distance, THB 17–44)", 25, "trip"), T("bts", "🚝", "BTS Skytrain (conforme a distância)", "BTS Skytrain (by distance)", 30, "trip"),
+    T("arl", "✈", "Airport Rail Link aeroporto → Phaya Thai", "Airport Rail Link airport → Phaya Thai", 45, "trip"), T("boat", "⛴", "Barco expresso do Chao Phraya (bandeira laranja, preço único)", "Chao Phraya Express Boat (orange flag, flat fare)", 19, "trip"),
+    T("taxi", "🚕", "Táxi com taxímetro (bandeirada; mais 50 THB desde o aeroporto)", "Metered taxi (flag fall; THB 50 extra from the airport)", 35, "ride")
+  ],
+  dps: [
+    T("grab", "🚗", "Grab aeroporto → Denpasar (13 km, desde)", "Grab airport → Denpasar (13 km, from)", 90000, "ride"),
+    T("kura", "🚌", "Kura-Kura Bus Kuta/Sanur ⇄ Ubud (só ida)", "Kura-Kura Bus Kuta/Sanur ⇄ Ubud (one way)", 100000, "trip")
+  ],
   nyc: [
     T("subway", "🚇", "Metro/autocarro (OMNY contactless)", "Subway/bus (OMNY contactless)", 3.0, "trip"), T("airtrain", "✈", "AirTrain JFK (mais o metro)", "AirTrain JFK (plus subway)", 8.5, "trip"),
     T("lirr", "🚆", "Comboio LIRR Jamaica → Penn Station", "LIRR train Jamaica → Penn Station", 7.0, "trip"), T("ferry", "⛴", "Staten Island Ferry", "Staten Island Ferry", 0, "trip"),
