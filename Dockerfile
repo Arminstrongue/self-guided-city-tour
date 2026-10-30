@@ -21,6 +21,8 @@ ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
 RUN apk add --no-cache ffmpeg && addgroup -S app && adduser -S app -G app && mkdir -p /data/media && chown app:app /data/media
 ENV MEDIA_DIR=/data/media
 COPY --from=builder /app/public ./public
+# Fotografias próprias só para quem tem passe (servidas por /api/own-photo, nunca como ficheiros públicos)
+COPY --from=builder --chown=app:app /app/private ./private
 COPY --from=builder --chown=app:app /app/.next/standalone ./
 COPY --from=builder --chown=app:app /app/.next/static ./.next/static
 USER app

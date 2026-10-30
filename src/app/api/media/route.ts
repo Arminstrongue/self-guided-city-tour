@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { OWN_CREDIT, OWN_STOP_PHOTOS, ownSrc } from "@/data/own-photos";
 import { hasCityAccess } from "@/lib/city-access";
 import { loadCity } from "@/lib/content";
 import { rateLimit } from "@/lib/rate-limit";
@@ -14,6 +15,11 @@ export const dynamic = "force-dynamic";
  * GET /api/media?covers=lis,lon — capas de várias cidades de uma vez.
  * GET /api/media?city=lis[&cover=1] — capa da cidade e uma foto por paragem (para cartões e galerias).
  */
+/** Fotografias próprias da VOYBU de uma paragem, no formato das outras fotografias. */
+function ownPhotos(city: string, stop: string): Photo[] {
+  return (OWN_STOP_PHOTOS[city]?.[stop] ?? []).map((p) => ({ url: ownSrc(city, p.file), thumb: ownSrc(city, p.file, true), w: p.w, h: p.h, credit: OWN_CREDIT, license: "", source: "voybu" as const }));
+}
+
 export async function GET(req: Request) {
   if (!rateLimit(req, "media", 120)) return NextResponse.json({ error: "rate" }, { status: 429 });
   const q = new URL(req.url).searchParams;
@@ -40,6 +46,8 @@ export async function GET(req: Request) {
       const s = city.stops.find((x) => x.id === sid);
       if (!s || (!open && !teaser.has(s.id))) return NextResponse.json({ error: s ? "locked" : "invalid" }, { status: s ? 402 : 400 });
       const m = await stopMedia({ names: searchNames(stopName(s, "en")), city: cityEn, lat: s.lat, lng: s.lng, lang });
+      // Fotografias próprias da VOYBU primeiro.
+      if (open) m.photos = [...ownPhotos(city.id, s.id), ...m.photos].slice(0, 16);
       // Com dados da Google (avaliações, fotos): sem cache partilhada nem cópia no aparelho (termos da Google).
       const google = m.reviews.length > 0 || m.photos.some((x) => x.source === "google");
       return NextResponse.json(m, { headers: { "Cache-Control": google ? "private, no-store" : "public, max-age=3600, stale-while-revalidate=86400" } });
@@ -50,11 +58,15 @@ export async function GET(req: Request) {
     // Uma foto por paragem; a capa junta o monumento emblemático e as paragens mais famosas.
     const ordered = [...city.stops].filter((x) => open || teaser.has(x.id)).sort((a, b) => Number(Boolean(b.top)) - Number(Boolean(a.top)));
     const res = await Promise.all(ordered.map(async (s) => {
+      const own = open ? ownPhotos(city.id, s.id)[0] : undefined;
+      if (own) return [s.id, own] as const;
       const w = await wikiPhotos(searchNames(stopName(s, "en")), cityEn).catch(() => ({ photos: [] as Photo[] }));
       return [s.id, w.photos[0] ?? null] as const;
     }));
     const stops = Object.fromEntries(res);
-    const cover = [...coverPhotos.slice(0, 2), ...res.map(([, p]) => p).filter((p): p is Photo => Boolean(p))].slice(0, 6);
+    // Com capas nossas, a capa é só nossa (não mistura fotografias de outros autores).
+    const ownCover = coverPhotos.some((p) => p.source === "voybu");
+    const cover = ownCover ? coverPhotos : [...coverPhotos.slice(0, 2), ...res.map(([, p]) => p).filter((p): p is Photo => Boolean(p))].slice(0, 6);
     return NextResponse.json({ cover, stops }, { headers: { "Cache-Control": cover.length ? "private, max-age=3600" : "no-store" } });
   } catch (e) {
     console.error("media", e);
