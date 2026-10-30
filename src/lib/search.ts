@@ -2,6 +2,8 @@
  * Pesquisa global da app: cidades, paragens dos roteiros, pessoas, #hashtags e guias — numa só caixa.
  * Ignora acentos e maiúsculas ("sao jorge" encontra "Castelo de São Jorge").
  */
+import { openCities } from "./city-access";
+import { isFreeCity } from "./pricing";
 import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
 import { db, schema } from "./db";
 import { loadCities } from "./content";
@@ -32,7 +34,9 @@ export async function globalSearch(me: string | null, raw: string, locale: strin
     out.cities = cities.filter((c) => c.id === q || LOCALES.some((l) => fold(cityName(c, l)).includes(q)) || fold(COUNTRY[c.id] ?? "") === q)
       .slice(0, 6).map((c) => ({ id: c.id, name: cityName(c, locale), country: COUNTRY[c.id] ?? "" }));
     const stops: SearchResult["stops"] = [];
-    for (const c of cities) for (const s of c.stops) {
+    // Os nomes das paragens são conteúdo pago: só aparecem nas cidades que este viajante pode abrir (Manchester é grátis).
+    const open = await openCities().catch(() => (id: string) => isFreeCity(id));
+    for (const c of cities) if (open(c.id)) for (const s of c.stops) {
       if (fold(stopName(s, locale)).includes(q)) stops.push({ city: c.id, cityName: nameOf.get(c.id)!, id: s.id, name: stopName(s, locale), top: Boolean(s.top) });
     }
     stops.sort((a, b) => Number(fold(b.name).startsWith(q)) - Number(fold(a.name).startsWith(q)) || Number(b.top) - Number(a.top));
