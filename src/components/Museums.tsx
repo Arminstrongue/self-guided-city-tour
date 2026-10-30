@@ -6,6 +6,7 @@ import { openNow } from "@/data/museums";
 import type { Dict } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import { ExtLink } from "./ExtLink";
+import { OWN_CREDIT, OWN_MUSEUM_PHOTOS, ownSrc } from "@/data/own-photos";
 
 /** Museus com horário de hoje, estado (aberto/fechado), preço e reserva. */
 export function MuseumsTab({ city, museums, t, money, onMap, locale }: {
@@ -32,6 +33,17 @@ export function MuseumsTab({ city, museums, t, money, onMap, locale }: {
                 {st.today && ` · ${fmt(t.todayHours, { o: st.today[0], c: st.today[1] })}`}
               </p>
             )}
+            {(OWN_MUSEUM_PHOTOS[m.id] ?? []).length > 0 && (
+              <div className="mu-photos" role="list">
+                {OWN_MUSEUM_PHOTOS[m.id].map((p) => (
+                  <a key={p.file} role="listitem" href={ownSrc(city.id, p.file)} target="_blank" rel="noopener noreferrer" title={locale === "pt" ? p.pt : p.en}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={ownSrc(city.id, p.file, true)} alt={locale === "pt" ? p.pt : p.en} loading="lazy" decoding="async" />
+                  </a>
+                ))}
+              </div>
+            )}
+            {(OWN_MUSEUM_PHOTOS[m.id] ?? []).length > 0 && <small className="mu-credit">📷 {OWN_CREDIT}</small>}
             <p className="hint">{tx(m)}{m.book ? ` · ${t.book}` : ""}</p>
             <div className="acts">
               <button type="button" onClick={() => onMap(m)}>{t.map}</button>

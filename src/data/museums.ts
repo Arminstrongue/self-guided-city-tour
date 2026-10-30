@@ -48,6 +48,8 @@ export const MUSEUMS: Record<string, Museum[]> = {
   lon: [
     { id: "british", n: "British Museum", lat: 51.5194, lng: -0.127, price: 0, h: [[[0, 1, 2, 3, 4, 6], "10:00", "17:00"], [[5], "10:00", "20:30"]], url: "https://www.britishmuseum.org", pt: "Gratuito; exposições temporárias pagas.", en: "Free; temporary exhibitions are paid." },
     { id: "ng", n: "National Gallery", lat: 51.5089, lng: -0.1283, price: 0, h: [[[0, 1, 2, 3, 4, 6], "10:00", "18:00"], [[5], "10:00", "21:00"]], url: "https://www.nationalgallery.org.uk", pt: "Gratuito, na Trafalgar Square.", en: "Free, on Trafalgar Square." },
+    // Fonte: Visit London (visitlondon.com), consultado em outubro de 2026.
+    { id: "science", n: "Science Museum", lat: 51.4978, lng: -0.1745, price: 0, h: [[ALL, "10:00", "18:00"]], book: true, url: "https://www.sciencemuseum.org.uk", pt: "Gratuito, mas é preciso reservar a entrada online. Última entrada às 17:15. O IMAX, os simuladores e algumas exposições são pagos.", en: "Free, but entry must be booked online. Last entry 17:15. The IMAX, simulators and some exhibitions are paid." },
     { id: "nhm", n: "Natural History Museum", lat: 51.4967, lng: -0.1764, price: 0, h: [[ALL, "10:00", "17:50"]], url: "https://www.nhm.ac.uk", pt: "Gratuito; reserve uma hora de entrada nas férias escolares.", en: "Free; book a time slot in school holidays." },
     { id: "tower", n: "Tower of London", lat: 51.5081, lng: -0.0759, price: 35, h: [[ALL, "09:00", "17:30"]], book: true, url: "https://www.hrp.org.uk/tower-of-london", pt: "As joias da coroa; mais barato online.", en: "The Crown Jewels; cheaper online." }
   ],

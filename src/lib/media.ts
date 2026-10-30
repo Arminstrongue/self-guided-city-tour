@@ -8,11 +8,12 @@
  *
  * Tudo corre no servidor (a chave da Google nunca chega ao navegador) e fica em cache em memória.
  */
+import { OWN_COVERS, OWN_CREDIT, coverSrc } from "@/data/own-photos";
 import { takeGoogle } from "./gbudget";
 import { placesEnabled } from "./places";
 import { env } from "./env";
 
-export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google"; page?: string };
+export type Photo = { url: string; thumb: string; w: number; h: number; credit: string; license: string; source: "wikimedia" | "google" | "voybu"; page?: string };
 export type Review = { author: string; avatar: string | null; rating: number; text: string; when: string; url: string | null; at?: number; translated?: boolean };
 /** Só mostramos avaliações da Google com menos de um mês. */
 export const REVIEW_MAX_AGE_MS = 31 * 86400_000;
@@ -192,6 +193,9 @@ export async function wikiPhotos(names: string[], city: string, max = 10, exactT
 
 /** Capa da cidade (página inicial e herói da cidade). */
 export async function cityCover(cityId: string, cityEn: string): Promise<Photo[]> {
+  // Fotografias nossas primeiro: substituem as de outros autores.
+  const own = OWN_COVERS[cityId];
+  if (own?.length) return own.map((p) => ({ url: coverSrc(cityId, p.file), thumb: coverSrc(cityId, p.file, true), w: p.w, h: p.h, credit: OWN_CREDIT, license: "", source: "voybu" as const }));
   const t = CITY_COVER[cityId];
   if (!t) return [];
   const exact = (await wikiPhotos([t], cityEn, 4, t).catch(() => ({ photos: [] as Photo[] }))).photos;
