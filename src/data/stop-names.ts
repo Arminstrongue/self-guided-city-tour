@@ -66,7 +66,18 @@ const EN: Record<string, string> = {
   marienplatz: "Marienplatz & Glockenspiel", residenz: "Residenz & Odeonsplatz", "englischer-garten": "English Garden & Eisbach", olympiapark: "Olympic Park & BMW Welt",
   stephansdom: "St Stephen's Cathedral", graben: "Graben & Kohlmarkt", hofburg: "Hofburg & Michaelerplatz", oper: "State Opera & Albertina", schoenbrunn: "Schönbrunn Palace",
   hrad: "Prague Castle & St Vitus", "karluv-most": "Charles Bridge", staromestske: "Old Town Square & Astronomical Clock", josefov: "Jewish Quarter (Josefov)", vaclavske: "Wenceslas Square",
-  padang: "National Gallery & Padang", mbs: "Helix Bridge & Marina Bay Sands", chinatown: "Chinatown & Buddha Tooth Relic Temple", "kampong-glam": "Kampong Glam & Sultan Mosque"
+  padang: "National Gallery & Padang", mbs: "Helix Bridge & Marina Bay Sands", chinatown: "Chinatown & Buddha Tooth Relic Temple", "kampong-glam": "Kampong Glam & Sultan Mosque",
+  "dps-palace": "Ubud Palace (Puri Saren Agung)", "dps-market": "Ubud Art Market", "dps-monkey": "Sacred Monkey Forest Sanctuary", "dps-saraswati": "Taman Saraswati Temple", "dps-lukisan": "Puri Lukisan Museum", "dps-campuhan": "Campuhan Ridge Walk", "dps-tegallalang": "Tegallalang Rice Terraces",
+  "bkk-grand-palace": "Grand Palace & Wat Phra Kaew", "bkk-wat-pho": "Wat Pho (Reclining Buddha)", "bkk-wat-arun": "Wat Arun (Temple of Dawn)", "bkk-wat-traimit": "Wat Traimit (Golden Buddha)", "bkk-lumphini": "Lumphini Park", "bkk-jim-thompson": "Jim Thompson House",
+  "hkg-statue-square": "Statue Square & Court of Final Appeal", "hkg-man-mo": "Man Mo Temple", "hkg-tst": "Star Ferry & Clock Tower", "hkg-temple-street": "Temple Street Night Market",
+  "dar-museum": "National Museum & Botanical Garden", "dar-askari": "Askari Monument", "dar-stjoseph": "St Joseph's Cathedral", "dar-azania": "Azania Front Lutheran Church", "dar-fish": "Kivukoni Fish Market", "dar-kariakoo": "Kariakoo Market",
+  "dub-gpo": "General Post Office & O'Connell Street", "dub-hapenny": "Ha'penny Bridge & Temple Bar", "dub-trinity": "Trinity College & Book of Kells", "dub-stpatricks": "St Patrick's Cathedral", "dub-christchurch": "Christ Church Cathedral", "dub-kilmainham": "Kilmainham Gaol",
+  "fnc-se": "Funchal Cathedral", "fnc-municipio": "Municipal Square & Colégio Church", "fnc-lavradores": "Farmers' Market (Mercado dos Lavradores)", "fnc-santa-maria": "Old Town & Rua de Santa Maria", "fnc-sao-tiago": "São Tiago Fort", "fnc-monte": "Monte: church & wicker toboggans", "fnc-botanico": "Madeira Botanical Garden",
+  "ath-syntagma": "Syntagma Square & Parliament", "ath-plaka": "Plaka & Anafiotika", "ath-museum": "Acropolis Museum", "ath-acropolis": "Acropolis & Parthenon", "ath-agora": "Ancient Agora & Temple of Hephaestus", "ath-monastiraki": "Monastiraki", "ath-lycabettus": "Mount Lycabettus",
+  "brn-bundeshaus": "Federal Palace (Bundeshaus)", "brn-zytglogge": "Zytglogge Clock Tower", "brn-einsteinhaus": "Einstein House", "brn-muenster": "Bern Minster",
+  "brn-baerenpark": "BärenPark (Bear Park)", "brn-rosengarten": "Rose Garden (Rosengarten)", "brn-paulklee": "Zentrum Paul Klee",
+  "zrh-bahnhofstrasse": "Bahnhofstrasse", "zrh-lindenhof": "Lindenhof", "zrh-stpeter": "St Peter's Church", "zrh-fraumuenster": "Fraumünster (Chagall windows)",
+  "zrh-buerkliplatz": "Bürkliplatz & Lake Zurich", "zrh-grossmuenster": "Grossmünster", "zrh-niederdorf": "Niederdorf", "zrh-polyterrasse": "Polyterrasse & ETH"
 };
 
 export function stopName(s: { id: string; n: string }, locale: string): string {

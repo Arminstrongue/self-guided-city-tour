@@ -5,6 +5,7 @@ export type RoutePlan = {
   stops: Stop[];
   ret: Leg;
   rides: number;          // viagens pagas com a tarifa da cidade
+  unpriced: number;       // ligações de carro/táxi sem tarifa oficial (preço combinado no local)
   fixed: number;          // bilhetes fixos (aeroporto)
   entries: number;        // entradas/compras incluídas
   minutesTotal: number;   // aeroporto → aeroporto
@@ -29,7 +30,8 @@ export function planRoute(city: City, withExtension: boolean, maxStops?: number)
   const ret = withExtension && hasExtension(city) ? city.ret.extra : city.ret.core;
   const legs: Leg[] = [city.air, ...stops.slice(1).map((s) => s.leg), ret];
   let minutes = 0, rides = 0, fixed = 0, entries = 0;
-  for (const l of legs) { minutes += l.min; rides += l.r ?? 0; fixed += l.f ?? 0; }
+  let unpriced = 0;
+  for (const l of legs) { minutes += l.min; rides += l.r ?? 0; fixed += l.f ?? 0; if (l.m !== "walk" && !l.f && !l.r) unpriced++; }
   for (const s of stops) { minutes += s.v; entries += s.c ?? 0; }
   // a primeira paragem tem leg de 0 min (já está no fim da ligação ao aeroporto)
   minutes += stops[0]?.leg.min ?? 0;
@@ -43,7 +45,7 @@ export function planRoute(city: City, withExtension: boolean, maxStops?: number)
   if (a?.type === "cap") alt = Math.min(rides * city.single, a.price) + fixed;
   const best = alt === null || singles <= alt ? "singles" : "alt";
   return {
-    stops, ret, rides, fixed, entries,
+    stops, ret, rides, unpriced, fixed, entries,
     minutesTotal: minutes,
     minutesTour: minutes - city.air.min - ret.min,
     singles: round2(singles), alt: alt === null ? null : round2(alt), best,

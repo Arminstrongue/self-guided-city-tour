@@ -8,6 +8,11 @@
  *  - Emirados: https://u.ae (ICP/GDRFA) · Catar: https://visitqatar.com · Arábia Saudita: https://visa.visitsaudi.com
  *  - Egito: https://visa2egypt.gov.eg · Jordânia: https://www.jordanpass.jo · Omã: https://evisa.rop.gov.om
  *  - Singapura: https://www.ica.gov.sg/enter-transit-depart/entering-singapore (e SG Arrival Card obrigatório)
+ *  - Irlanda: https://www.irishimmigration.ie/at-the-border/transit-including-transfer-visa-advice/ e
+ *    https://www.irishimmigration.ie/coming-to-visit-ireland/short-stay-visa-waiver-programme/ (S.I. 242/2026 em irishstatutebook.ie)
+ *  - Hong Kong: https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html
+ *  - Tailândia (regras de 15/09/2026): https://image.mfa.go.th/mfa/0/TkZZJfspCP/Visa_Exemption_Scheme/PR-eng.pdf e https://tdac.immigration.go.th
+ *  - Indonésia: https://www.imigrasi.go.id/faq/visa?lang=en-US e https://evisa.imigrasi.go.id · Bali: https://lovebali.baliprov.go.id
  * As regras mudam: a app mostra sempre a ligação oficial para confirmar.
  * Médio Oriente (revisto em outubro de 2026): só marcamos as nacionalidades com regra confirmada; as outras ficam "unknown".
  */
@@ -91,6 +96,50 @@ const SG_FREE = [...EU, ...EEA_CH, "GB", "US", "CA", "AU", "NZ", "JP", "KR", "MY
 /** Singapura: precisam de visto (pedido antes de viajar). */
 const SG_VISA = ["IN", "PK", "BD", "NG", "EG", "AF", "IR", "IQ", "SY", "YE", "SO", "SD", "SS", "LY", "DZ", "JO", "LB", "TN", "MA", "ML", "KP"];
 
+/* ---------- Irlanda, Hong Kong, Tailândia e Indonésia (revisto em outubro de 2026; fontes oficiais no topo do ficheiro) ---------- */
+/** Irlanda (fora de Schengen; Área Comum de Viagem com o Reino Unido): sem visto (anexo 1 do S.I. 473/2014, alterado pelo S.I. 242/2026). */
+const IE_FREE = ["AD", "AG", "AR", "AU", "BS", "BB", "BZ", "BR", "BN", "CA", "CL", "CR", "SV", "FJ", "GD", "HK", "IL", "JP", "KI", "MY", "MV", "MX",
+  "MC", "NZ", "PA", "PY", "VC", "WS", "SM", "SC", "SG", "SB", "KR", "TW", "TO", "TV", "UA", "AE", "US", "UY", "VA"];
+/** Irlanda: precisam de visto irlandês (um visto Schengen não serve; um visto do Reino Unido só serve nos programas BIVS/SSVWP). */
+const IE_VISA = ["AF", "AL", "DZ", "AO", "AM", "AZ", "BH", "BD", "BY", "BJ", "BO", "BA", "BW", "BF", "KH", "CM", "CV", "CN", "CO", "CU", "CD", "DM",
+  "DO", "EC", "EG", "ER", "SZ", "ET", "GE", "GH", "GN", "GW", "GT", "GY", "HN", "IN", "ID", "IR", "IQ", "CI", "JM", "JO", "KZ", "KE", "XK", "KW", "LA",
+  "LB", "LS", "LY", "MW", "ML", "MD", "MN", "ME", "MA", "MZ", "MM", "NA", "NR", "NP", "NI", "NE", "NG", "MK", "OM", "PK", "PE", "PH", "QA", "RU", "RW",
+  "KN", "LC", "ST", "SA", "SN", "RS", "SO", "ZA", "LK", "SD", "SY", "TZ", "TH", "TT", "TN", "TR", "UG", "UZ", "VU", "VE", "VN", "YE", "ZM", "ZW"];
+/** Irlanda: visto de trânsito mesmo sem passar a fronteira (lista do ISD, atualizada a 24/07/2026). */
+const IE_ATV = ["AF", "AL", "BO", "BW", "CU", "CD", "DM", "ER", "SZ", "ET", "GE", "GH", "HN", "IR", "IQ", "LB", "LS", "MD", "NR", "NI", "NG", "KN", "LC",
+  "SO", "ZA", "LK", "TT", "VU", "ZW"];
+/** Hong Kong: sem visto 180 dias (GB), 90, 30 ou 14 dias. As outras nacionalidades estrangeiras não listadas têm 7 dias sem visto. */
+const HK_FREE = ["GB",
+  "AD", "AG", "AR", "AU", "AT", "BS", "BB", "BE", "BZ", "BW", "BR", "BN", "BG", "CA", "CL", "CO", "HR", "CY", "CZ", "DK", "DM", "EC", "EG", "EE", "FJ",
+  "FI", "FR", "DE", "GR", "GD", "GY", "HU", "IS", "IE", "IL", "IT", "JM", "JP", "KE", "KI", "KR", "LV", "LI", "LT", "LU", "MW", "MY", "MV", "MT", "MU",
+  "MX", "MC", "NA", "NR", "NL", "NZ", "NO", "PG", "PL", "PT", "RO", "SM", "SA", "SC", "SG", "SK", "SI", "ES", "KN", "LC", "VC", "SE", "CH", "TZ", "TO",
+  "TT", "TR", "TV", "UY", "US", "VU", "VE", "ZM", "ZW",
+  "AM", "BH", "BY", "BO", "CV", "CR", "DO", "SV", "GE", "GT", "HN", "ID", "JO", "KW", "MA", "NI", "OM", "PA", "PY", "PE", "QA", "WS", "SB", "ZA", "TH",
+  "TN", "UG", "AE",
+  "AL", "DZ", "BJ", "BT", "BA", "BF", "TD", "KM", "DJ", "GQ", "GA", "GN", "HT", "KZ", "LS", "MG", "ML", "MH", "MR", "FM", "MN", "ME", "MZ", "NE", "MK",
+  "PW", "PH", "RU", "ST", "SR", "UA", "VA"];
+/** Hong Kong: precisam de visto. */
+const HK_VISA = ["AF", "AO", "AZ", "BD", "BI", "KH", "CM", "CF", "CD", "CG", "CI", "CU", "ER", "SZ", "ET", "GM", "GH", "GW", "IR", "IQ", "KP", "KG", "LA",
+  "LB", "LR", "LY", "MD", "MM", "NP", "NG", "PK", "PS", "RW", "SN", "SL", "SO", "SS", "LK", "SD", "SY", "TJ", "TG", "TM", "UZ", "VN", "YE"];
+/** Hong Kong: precisam de visto mesmo em trânsito sem sair da zona internacional (notas *, ^ e ※ do ImmD). */
+const HK_ATV = ["AF", "CF", "CD", "CI", "ER", "SZ", "GM", "GW", "IR", "IQ", "KP", "LR", "LY", "NG", "SL", "SO", "SS", "SD", "SY", "YE",
+  "AO", "BD", "BI", "CM", "CG", "ET", "GH", "RW", "LK", "TG", "PK"];
+/** Tailândia (desde 15/09/2026): isenção de 30 dias (60 países), 15 dias (SC, MU) e acordos bilaterais. Os outros pedem e-Visa antes de viajar. */
+const TH_FREE = ["AU", "AT", "BH", "BE", "BG", "BT", "BN", "CA", "HR", "CY", "CZ", "DK", "EE", "FJ", "FI", "FR", "GE", "DE", "GR", "HU", "IS", "ID", "IN",
+  "IE", "IL", "IT", "JP", "JO", "KW", "KG", "LV", "LI", "LT", "LU", "MT", "MY", "MV", "NL", "NZ", "NO", "OM", "PH", "PL", "PT", "QA", "RO", "SA", "SG",
+  "SK", "SI", "ZA", "ES", "SE", "CH", "TW", "TR", "UA", "AE", "GB", "US",
+  "SC", "MU",
+  "AR", "PE", "BR", "KR", "CL", "CN", "HK", "KZ", "LA", "MO", "MN", "RU", "TL", "VN", "KH", "MM"];
+/** Tailândia: visto à chegada (2000 THB). */
+const TH_VOA = ["AZ", "BY", "RS"];
+/** Indonésia: isenção de visto para cidadãos da ASEAN. */
+const ID_FREE = ["BN", "KH", "LA", "MY", "MM", "PH", "SG", "TH", "VN"];
+/** Indonésia: e-VoA (online) ou visto à chegada, 500 000 IDR, 30 dias prorrogáveis uma vez (97 países; os da ASEAN já estão em ID_FREE). */
+const ID_VOA = ["ZA", "AL", "US", "AD", "SA", "AR", "AM", "AU", "AT", "BH", "NL", "BY", "BE", "BR", "BA", "BG", "CZ", "CL", "DK", "EC", "EE", "FI", "GT",
+  "HK", "HU", "IN", "GB", "IE", "IT", "IS", "JP", "DE", "CA", "KZ", "KE", "CO", "KR", "HR", "KW", "LV", "LI", "LT", "LU", "MO", "MV", "MT", "MA", "MX",
+  "EG", "MC", "MN", "MZ", "NO", "OM", "PS", "PG", "FR", "PE", "PL", "PT", "QA", "RO", "RU", "RW", "SM", "NZ", "RS", "SC", "CY", "SK", "SI", "ES", "SR",
+  "SE", "CH", "TW", "TZ", "TL", "CN", "TN", "TR", "AE", "UZ", "UA", "VA", "VE", "JO", "GR"];
+
 /* ---------- Américas e África (revisto em outubro de 2026; só nacionalidades com regra confirmada) ---------- */
 const AFRICA = ["DZ", "AO", "BJ", "BW", "BF", "BI", "CV", "CM", "CF", "TD", "KM", "CG", "CD", "CI", "DJ", "EG", "GQ", "ER", "SZ", "ET", "GA", "GM", "GH",
   "GN", "GW", "KE", "LS", "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD",
@@ -164,8 +213,19 @@ const SN_FREE = [...EU, ...EEA_CH, ...MICRO, "GB", "US", "CA", "JP", "KR", "BR",
 type ZoneRule = {
   local: string; free: string[]; auth?: string[] | "all"; evisa?: string[] | "all"; voa?: string[] | "all"; visa?: string[];
   url: string; site?: string; fee?: string; authFee?: string; hint?: EntryHint;
+  /** Saem com passaporte OU cartão de cidadão (veredicto "free"), ex.: UE/EEE/Suíça e Reino Unido na Irlanda. */
+  idOk?: string[];
+  /** Precisam de visto de trânsito aeroportuário mesmo sem sair. */
+  atv?: string[];
+  /** Veredicto para as nacionalidades que não estão em nenhuma lista (ex.: Hong Kong dá 7 dias sem visto a todos os outros). */
+  rest?: "free-pass" | "visa";
+  /** Nacionalidades fora de `rest` (ficam "unknown"). */
+  restExcept?: string[];
+  /** A dica só aparece nestas cidades (id) ou com estes veredictos. */
+  hintCities?: string[]; hintOn?: EntryVerdict[];
 };
-export type EntryHint = "usban" | "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br";
+export type EntryHint = "usban" | "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br"
+  | "ie-uk" | "hk-par" | "th-tdac" | "bali";
 const ZONES: Partial<Record<Zone, ZoneRule>> = {
   us: { local: "US", free: ["CA"], auth: US_VWP, visa: US_VISA, url: "https://esta.cbp.dhs.gov", site: "esta.cbp.dhs.gov", authFee: "40 USD", hint: "us" },
   ca: { local: "CA", free: ["US"], auth: CA_ETA, visa: CA_VISA, url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html", site: "canada.ca/eta", authFee: "7 CAD", hint: "ca" },
@@ -174,14 +234,20 @@ const ZONES: Partial<Record<Zone, ZoneRule>> = {
   ar: { local: "AR", free: AR_FREE, visa: AR_VISA, url: "https://www.argentina.gob.ar/interior/migraciones" },
   ma: { local: "MA", free: MA_FREE, visa: MA_VISA, url: "https://www.acces-maroc.ma" },
   za: { local: "ZA", free: ZA_FREE, visa: ZA_VISA, url: "https://www.dha.gov.za/index.php/immigration-services/exempt-countries" },
-  tz: { local: "TZ", free: TZ_FREE, evisa: TZ_EVISA, url: "https://visa.immigration.go.tz", site: "visa.immigration.go.tz", hint: "zan" },
+  tz: { local: "TZ", free: TZ_FREE, evisa: TZ_EVISA, url: "https://visa.immigration.go.tz", site: "visa.immigration.go.tz", hint: "zan", hintCities: ["zan"] },
   tn: { local: "TN", free: TN_FREE, visa: TN_VISA, url: "https://www.diplomatie.gov.tn" },
   et: { local: "ET", free: ["KE", "DJ"], evisa: "all", url: "https://www.evisa.gov.et", site: "evisa.gov.et", hint: "et" },
   ke: { local: "KE", free: KE_FREE, auth: "all", url: "https://www.etakenya.go.ke", site: "etakenya.go.ke", authFee: "30 USD", hint: "ke" },
   ao: { local: "AO", free: AO_FREE, url: "https://www.smevisa.gov.ao", hint: "ao" },
   gh: { local: "GH", free: GH_FREE, visa: GH_VISA, url: "https://www.gis.gov.gh" },
   rw: { local: "RW", free: RW_FREE, voa: "all", url: "https://irembo.gov.rw", fee: "50 USD" },
-  sn: { local: "SN", free: SN_FREE, url: "https://www.dakaraeroport.com" }
+  sn: { local: "SN", free: SN_FREE, url: "https://www.dakaraeroport.com" },
+  ie: { local: "IE", free: IE_FREE, idOk: [...EU, ...EEA_CH, "GB"], visa: IE_VISA, atv: IE_ATV,
+    url: "https://www.irishimmigration.ie/coming-to-visit-ireland/visit-ireland-travel-path/", hint: "ie-uk", hintOn: ["visa"] },
+  hk: { local: "HK", free: HK_FREE, auth: ["IN"], visa: HK_VISA, atv: HK_ATV, rest: "free-pass", restExcept: ["CN", "TW", "MO", "XK"],
+    url: "https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html", site: "immd.gov.hk", authFee: "0 HKD", hint: "hk-par", hintOn: ["auth"] },
+  th: { local: "TH", free: TH_FREE, voa: TH_VOA, rest: "visa", url: "https://image.mfa.go.th/mfa/0/TkZZJfspCP/Visa_Exemption_Scheme/PR-eng.pdf", site: "tdac.immigration.go.th", fee: "2000 THB", hint: "th-tdac" },
+  id: { local: "ID", free: ID_FREE, voa: ID_VOA, url: "https://www.imigrasi.go.id/faq/visa?lang=en-US", site: "evisa.imigrasi.go.id", fee: "500 000 IDR", hint: "bali", hintCities: ["dps"] }
 };
 
 type MeRule = { free: string[]; voa?: string[]; evisa?: string[]; restricted?: string[]; permitVoa?: string[]; url: string; fee?: string; site?: string };
@@ -257,18 +323,22 @@ export function checkEntry(city: City, nationality: string, hasPermit = false): 
     const local = n === zr.local;
     const inList = (l: string[] | "all" | undefined) => l === "all" ? true : Boolean(l?.includes(n));
     let verdict: EntryVerdict;
-    if (local || hasPermit || zr.free.includes(n)) verdict = local || hasPermit ? "free" : "free-pass";
+    if (local || hasPermit || zr.idOk?.includes(n)) verdict = "free";
+    else if (zr.free.includes(n)) verdict = "free-pass";
     else if (zr.visa?.includes(n)) verdict = "visa";
     else if (inList(zr.auth)) verdict = "auth";
     else if (inList(zr.evisa)) verdict = "evisa-me";
     else if (inList(zr.voa)) verdict = "voa";
+    else if (zr.rest && !zr.restExcept?.includes(n)) verdict = zr.rest;
     else verdict = "unknown";
     // EUA: nacionalidades com emissão de vistos suspensa — só entra quem já tem visto válido (aviso próprio).
     const usBan = zone === "us" && !local && !hasPermit && (US_BAN_FULL.includes(n) || US_BAN_B.includes(n));
     if (usBan) verdict = "visa";
     const fee = verdict === "auth" ? zr.authFee : verdict === "voa" ? zr.fee : undefined;
-    return { verdict, zone, transitVisa: false, officialUrl: zr.url, exitMin: local ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check,
-      ...(fee ? { fee } : {}), ...(zr.site ? { site: zr.site } : {}), ...(usBan ? { hint: "usban" as const } : zr.hint && !local ? { hint: zr.hint } : {}) };
+    const hintOk = zr.hint && !local && (!zr.hintCities || zr.hintCities.includes(city.id)) && (!zr.hintOn || zr.hintOn.includes(verdict));
+    const transitVisa = !local && !hasPermit && Boolean(zr.atv?.includes(n));
+    return { verdict, zone, transitVisa, officialUrl: zr.url, exitMin: local ? EXIT_AIRPORT_MIN.free : EXIT_AIRPORT_MIN.check,
+      ...(fee ? { fee } : {}), ...(zr.site ? { site: zr.site } : {}), ...(usBan ? { hint: "usban" as const } : hintOk ? { hint: zr.hint } : {}) };
   }
   if (zone === "tr") {
     const verdict: EntryVerdict = hasPermit || TR_FREE.includes(n) || n === "TR" ? "free" : TR_EVISA.includes(n) ? "evisa" : TR_VISA.includes(n) ? "visa" : "unknown";
@@ -311,7 +381,8 @@ export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, 
   .filter((c) => c !== "GF").sort();
 
 /** Só para testes. */
-export const _lists = { ZONES, EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA };
+export const _lists = { ZONES, EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA,
+  IE_FREE, IE_VISA, IE_ATV, HK_FREE, HK_VISA, HK_ATV, TH_FREE, TH_VOA, ID_FREE, ID_VOA };
 
 /** Mês em que as regras de entrada e trânsito foram verificadas (AAAA-MM). */
 export const ENTRY_CHECKED = "2026-10";

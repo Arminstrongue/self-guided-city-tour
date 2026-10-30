@@ -303,13 +303,7 @@ export const CITIES: City[] = [
 ];
 
 /** Próximas cidades (nome por idioma; outros idiomas usam o inglês). */
-export const SOON: Record<string, string>[] = [
-  { pt: "Atenas", en: "Athens", es: "Atenas", fr: "Athènes", de: "Athen", it: "Atene", zh: "雅典", ar: "أثينا", ja: "アテネ", tr: "Atina", ru: "Афины", ko: "아테네" },
-  { pt: "Dublin", en: "Dublin", es: "Dublín", fr: "Dublin", de: "Dublin", it: "Dublino", zh: "都柏林", ar: "دبلن", ja: "ダブリン", tr: "Dublin", ru: "Дублин", ko: "더블린" },
-  { pt: "Zurique", en: "Zurich", es: "Zúrich", fr: "Zurich", de: "Zürich", it: "Zurigo", zh: "苏黎世", ar: "زيورخ", ja: "チューリッヒ", tr: "Zürih", ru: "Цюрих", ko: "취리히" },
-  { pt: "Hong Kong", en: "Hong Kong", es: "Hong Kong", fr: "Hong Kong", de: "Hongkong", it: "Hong Kong", zh: "香港", ar: "هونغ كونغ", ja: "香港", tr: "Hong Kong", ru: "Гонконг", ko: "홍콩" },
-  { pt: "Banguecoque", en: "Bangkok", es: "Bangkok", fr: "Bangkok", de: "Bangkok", it: "Bangkok", zh: "曼谷", ar: "بانكوك", ja: "バンコク", tr: "Bangkok", ru: "Бангкок", ko: "방콕" }
-];
+export const SOON: Record<string, string>[] = [];
 
 export function getCity(id: string): City | undefined {
   return CITIES.find((c) => c.id === id);
@@ -374,7 +368,7 @@ export type Region = "europe" | "americas" | "africa" | "asia";
 const REGION_OF: Record<string, Region> = {
   US: "americas", CA: "americas", MX: "americas", BR: "americas", AR: "americas",
   EG: "africa", MA: "africa", ZA: "africa", TZ: "africa", TN: "africa", ET: "africa", KE: "africa", AO: "africa", GH: "africa", RW: "africa", SN: "africa",
-  SG: "asia", AE: "asia", QA: "asia", SA: "asia", JO: "asia", OM: "asia"
+  SG: "asia", HK: "asia", TH: "asia", ID: "asia", AE: "asia", QA: "asia", SA: "asia", JO: "asia", OM: "asia"
 };
 export const regionOf = (id: string): Region => REGION_OF[COUNTRY_OF[id] ?? ""] ?? "europe";
 

@@ -12,7 +12,7 @@ export const WIKI_TITLE: Record<string, string> = {
   lis: "Lisbon", opo: "Porto", mad: "Madrid", bcn: "Barcelona", par: "Paris", lon: "London", rom: "Rome", ams: "Amsterdam",
   edi: "Edinburgh", man: "Manchester", gla: "Glasgow", liv: "Liverpool", bir: "Birmingham", ist: "Istanbul",
   dxb: "Dubai", auh: "Abu Dhabi", doh: "Doha", ruh: "Riyadh", jed: "Jeddah", cai: "Cairo", amm: "Amman", mct: "Muscat",
-  fra: "Frankfurt", ber: "Berlin", muc: "Munich", vie: "Vienna", prg: "Prague", sin: "Singapore",
+  fra: "Frankfurt", ber: "Berlin", muc: "Munich", vie: "Vienna", prg: "Prague", sin: "Singapore", dps: "Ubud", bkk: "Bangkok", hkg: "Hong Kong", dar: "Dar es Salaam", dub: "Dublin", fnc: "Funchal", ath: "Athens", brn: "Bern", zrh: "Zürich",
   nyc: "New York City", was: "Washington, D.C.", sfo: "San Francisco", chi: "Chicago", bos: "Boston", mia: "Miami", lax: "Los Angeles",
   las: "Las Vegas", msy: "New Orleans", mco: "Orlando, Florida", yyz: "Toronto", mex: "Mexico City", rio: "Rio de Janeiro", bue: "Buenos Aires",
   rak: "Marrakesh", cpt: "Cape Town", zan: "Stone Town", tun: "Tunis", add: "Addis Ababa", nbo: "Nairobi", cas: "Casablanca", lad: "Luanda",

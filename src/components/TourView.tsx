@@ -200,7 +200,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
       <div className="leg">
         {l.m === "walk"
           ? <span className="chip walk">{t.walk} · {t.free.toLowerCase()}</span>
-          : <span className="chip paid num">{t[l.m]} · {money(cost)}</span>}
+          : <span className="chip paid num">{t[l.m]} · {cost > 0 ? money(cost) : t.priceOnSite}</span>}
         <span>{l.line ? `${lineText(l.line, locale)} · ` : ""}<span className="num">{l.min} min</span></span>
       </div>
     );
@@ -550,6 +550,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             {(accessPlan === "trip" || accessPlan === "all" || !flightDate) && (
               <DayPlan core={city.stops.filter((s) => !s.x)} extra={extras} museums={museums} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")} />
             )}
+            {plan.unpriced > 0 && <p className="hint">{t.unpricedNote}</p>}
             <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
             <MuseumsTab city={city} museums={museums} t={t} money={both} locale={locale}
               onMap={(m) => showOnMap({ lat: m.lat, lng: m.lng, name: m.n, walk: false })} />
@@ -573,8 +574,8 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
               ) : <div className="opt"><span className="tag n">—</span><small>{t.only}</small></div>}
             </div>
             <div className="card rows" style={{ paddingBlock: 6 }}>
-              <div><span>{t.fixedLeg}: {lineText(city.air.line, locale)}</span><span className="num">{money(plan.fixed)}</span></div>
-              <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>
+              <div><span>{t.fixedLeg}: {lineText(city.air.line, locale)}</span><span className="num">{plan.fixed > 0 || !plan.unpriced ? money(plan.fixed) : t.priceOnSite}</span></div>
+              {plan.rides > 0 && <div><span>{t.route}: {plan.rides} × {money(city.single)}</span><span className="num">{money(plan.rides * city.single)}</span></div>}
               <div><span>{t.paidEntries}</span><span className="num">{money(plan.entries)}</span></div>
             </div>
             <p className="hint">{fmt(t.pcChecked, { d: new Intl.DateTimeFormat(INTL_LOCALE[locale], { month: "long", year: "numeric" }).format(new Date(`${PRICES_CHECKED}-15`)) })}</p>
