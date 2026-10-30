@@ -1951,7 +1951,7 @@
 },
 "at": {
 "title": "Journal automatique",
-"sub": "Détecte villes, lieux, km et pas tant que l'app est ouverte. Demande toujours confirmation.",
+"sub": "Détecte villes, lieux, km et pas tant que l'app est ouverte. Le parcours de chaque jour s'enregistre tout seul ; villes et lieux demandent toujours confirmation.",
 "bgNote": "Écran verrouillé ou app fermée : le navigateur ne permet pas d'enregistrer la position.",
 "privacy": "Votre parcours reste sur votre téléphone jusqu'à confirmation.",
 "today": "Aujourd'hui : {km} km · ≈ {s} pas · {n} lieux",

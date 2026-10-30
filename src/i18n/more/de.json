@@ -1955,7 +1955,7 @@
 },
 "at": {
 "title": "Automatisches Tagebuch",
-"sub": "Erkennt Städte, Orte, km und Schritte, solange die App offen ist. Fragt immer nach Bestätigung.",
+"sub": "Erkennt Städte, Orte, km und Schritte, solange die App offen ist. Die Route jedes Tages wird automatisch gespeichert; Städte und Orte fragen immer nach.",
 "bgNote": "Bei gesperrtem Bildschirm oder geschlossener App erlaubt der Browser keine Standortaufzeichnung.",
 "privacy": "Ihre Route bleibt auf Ihrem Handy, bis Sie sie bestätigen.",
 "today": "Heute: {km} km · ≈ {s} Schritte · {n} Orte",

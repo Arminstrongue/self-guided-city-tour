@@ -64,8 +64,19 @@ export function AutoTrack({ locale }: { locale: string }) {
     return () => { live = false; navigator.geolocation.clearWatch(id); window.removeEventListener("devicemotion", motion); };
   }, [on, locale, a.denied]);
 
-  // Nome do sítio onde parou (morada) antes de perguntar.
-  const cur = pending[0];
+  // O percurso de cada dia guarda-se sozinho (sem perguntar): os totais de km e passos atualizam-se automaticamente.
+  const saving = useRef(false);
+  useEffect(() => {
+    const j = pending.find((p) => p.k === "journey");
+    if (!j || j.k !== "journey" || saving.current) return;
+    saving.current = true;
+    void fetch("/api/me/journeys", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ day: j.day, city: j.city, cityName: j.cityName, km: j.km, steps: j.steps, places: j.places, path: j.path }) })
+      .then((r) => { if (r.ok) { answer(j.key, true); window.dispatchEvent(new Event("sgct:points")); } })
+      .catch(() => null).finally(() => { saving.current = false; });
+  }, [pending]);
+
+  // Nome do sítio onde parou (morada) antes de perguntar. As perguntas de percurso já não aparecem (guardam-se sozinhas).
+  const cur = (pending.filter((p) => p.k !== "journey") as Pending[])[0] as Pending | undefined;
   useEffect(() => {
     if (!cur || cur.k !== "place" || cur.name) return;
     void fetch(`/api/revgeo?lat=${cur.lat}&lng=${cur.lng}&lang=${locale}`).then((r) => (r.ok ? r.json() : null)).then((j: { name?: string } | null) => {
