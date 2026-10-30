@@ -9,7 +9,7 @@
  * Cada fotografia tem a versão grande (1600 px) e a pequena (-480).
  */
 export type OwnPhoto = { file: string; w: number; h: number; pt: string; en: string };
-export const OWN_CREDIT = "VOYBU · Arminstrongue Huambo";
+export const OWN_CREDIT = "VOYBU";
 
 /** Por cidade e paragem, pela ordem do roteiro (ids de src/data/cities.ts). */
 export const OWN_STOP_PHOTOS: Record<string, Record<string, OwnPhoto[]>> = {

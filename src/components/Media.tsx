@@ -63,7 +63,7 @@ function wikiSrcSet(src: string): string | undefined {
 export function Credit({ p }: { p?: Photo | null }) {
   if (!p) return null;
   const pd = /public domain|^pd\b|cc0/i.test(p.license);
-  return <span className="ph-credit" title={`${p.credit} · ${p.license}`}>{pd ? "" : "© "}{p.credit}{p.license ? ` · ${p.license}` : ""}</span>;
+  return <span className="ph-credit" title={p.license ? `${p.credit} · ${p.license}` : p.credit}>{pd || p.source === "voybu" ? "" : "© "}{p.credit}{p.license ? ` · ${p.license}` : ""}</span>;
 }
 
 export function Img({ src, alt = "", className = "", eager = false }: { src?: string | null; alt?: string; className?: string; eager?: boolean }) {
@@ -96,7 +96,7 @@ export function Slides({ photos, interval = 5200 }: { photos: Photo[]; interval?
           <img key={p.url} src={p.url} alt="" className={k === i ? "on" : ""} loading={k === 0 ? "eager" : "lazy"} referrerPolicy="no-referrer" />
         ))}
       </div>
-      {cur && <span className="credit">{cur.credit} · {cur.license}</span>}
+      {cur && <span className="credit">{cur.credit}{cur.license ? ` · ${cur.license}` : ""}</span>}
       {photos.length > 1 && <div className="dots" aria-hidden="true">{photos.map((p, k) => <i key={p.url} className={k === i ? "on" : ""} />)}</div>}
     </>
   );
@@ -158,7 +158,7 @@ export function Lightbox({ title, photos, start = null, onClose, t }: { title: s
                 <button className="lb-arrow r" onClick={() => go(cur + 1)} disabled={cur === photos.length - 1} aria-label="›">›</button>
               </>}
             </div>
-            <p className="lb-cap">{p ? (p.page ? <a href={p.page} target="_blank" rel="noreferrer">{p.credit} · {p.license}</a> : `${p.credit} · ${p.license}`) : null}</p>
+            <p className="lb-cap">{p ? (p.page ? <a href={p.page} target="_blank" rel="noreferrer">{p.credit}{p.license ? ` · ${p.license}` : ""}</a> : `${p.credit}${p.license ? ` · ${p.license}` : ""}`) : null}</p>
             {photos.length > 1 && (
               <div className="lb-thumbs" ref={thumbs}>
                 {photos.map((ph, k) => <button key={ph.url} className={k === cur ? "on" : ""} onClick={() => go(k)} aria-label={`${t.photos} ${k + 1}`}><Img src={ph.thumb} alt="" /></button>)}

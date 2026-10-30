@@ -43,7 +43,7 @@ export function MuseumsTab({ city, museums, t, money, onMap, locale }: {
                 ))}
               </div>
             )}
-            {(OWN_MUSEUM_PHOTOS[m.id] ?? []).length > 0 && <small className="mu-credit">📷 {OWN_CREDIT}</small>}
+            {(OWN_MUSEUM_PHOTOS[m.id] ?? []).length > 0 && <small className="mu-credit">{OWN_CREDIT}</small>}
             <p className="hint">{tx(m)}{m.book ? ` · ${t.book}` : ""}</p>
             <div className="acts">
               <button type="button" onClick={() => onMap(m)}>{t.map}</button>
