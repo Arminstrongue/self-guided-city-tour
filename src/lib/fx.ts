@@ -14,9 +14,9 @@ export const FALLBACK_RATES: Rates = {
   SEK: 10.9, NOK: 11.7, DKK: 7.46, ISK: 143, PLN: 4.25, CZK: 24.4, HUF: 390, RON: 5.08,
   AED: 4.26, QAR: 4.22, SAR: 4.35, OMR: 0.446, JOD: 0.822, EGP: 57.5,
   // Valores de referência (só usados se a fonte diária falhar; o peso argentino muda depressa).
-  ARS: 1650, MAD: 10.7, TZS: 3000, TND: 3.45, ETB: 165, KES: 150, AOA: 1070, GHS: 12.5, RWF: 1680, XOF: 655.957
+  ARS: 1650, MAD: 10.7, TZS: 3000, TND: 3.45, ETB: 165, KES: 150, AOA: 1070, GHS: 12.5, RWF: 1680, XOF: 655.957, CVE: 110.265, NAD: 20.3
 };
-/** Moedas que o BCE não publica: vêm de open.er-api.com (diário, sem chave). O franco CFA é fixo face ao euro. */
+/** Moedas que o BCE não publica: vêm de open.er-api.com (diário, sem chave). O franco CFA e o escudo cabo-verdiano são fixos face ao euro (655,957 e 110,265); o dólar namibiano está ao par com o rand. */
 const EXTRA = ["ARS", "MAD", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF"] as const;
 const EXTRA_URL = "https://open.er-api.com/v6/latest/EUR";
 async function extraRates(): Promise<Partial<Rates>> {
@@ -56,7 +56,7 @@ export async function getRates(): Promise<{ rates: Rates; date: string }> {
     const { rates, date } = parseEcbXml(await res.text());
     if (Object.keys(rates).length < 10) throw new Error("poucas taxas");
     const extra = await extraRates();
-    cache = { at: Date.now(), rates: withPegs({ ...FALLBACK_RATES, ...rates, ...extra, XOF: 655.957 }), date: date ?? new Date().toISOString().slice(0, 10) };
+    cache = { at: Date.now(), rates: withPegs({ ...FALLBACK_RATES, ...rates, ...extra, XOF: 655.957, CVE: 110.265, NAD: (rates as Partial<Rates>).ZAR ?? FALLBACK_RATES.ZAR }), date: date ?? new Date().toISOString().slice(0, 10) };
   } catch {
     // Tenta outra vez dentro de 10 minutos.
     cache = { at: Date.now() - TTL_MS + 10 * 60e3, rates: cache?.rates ?? FALLBACK_RATES, date: cache?.date ?? FALLBACK_DATE };

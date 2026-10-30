@@ -10,7 +10,7 @@ export const CURRENCIES = [
   "IDR", "MYR", "PHP", "THB", "ILS", "TRY", "ZAR", "SEK", "NOK", "DKK", "ISK", "PLN", "CZK", "HUF", "RON",
   "AED", "QAR", "SAR", "OMR", "JOD", "EGP",
   // Moedas das cidades das Américas e de África sem taxa do BCE (taxa diária de open.er-api.com; franco CFA indexado ao euro).
-  "ARS", "MAD", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF", "XOF"
+  "ARS", "MAD", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF", "XOF", "CVE", "NAD"
 ] as const;
 export type Currency = (typeof CURRENCIES)[number];
 export const isCurrency = (v: unknown): v is Currency => typeof v === "string" && (CURRENCIES as readonly string[]).includes(v);
@@ -68,7 +68,7 @@ export function convert(amount: number, from: string, to: string, rates: Partial
 }
 
 /** Moedas sem casas decimais na prática do dia a dia. */
-const NO_DECIMALS = new Set(["JPY", "KRW", "IDR", "HUF", "ISK", "ARS", "TZS", "KES", "AOA", "RWF", "XOF"]);
+const NO_DECIMALS = new Set(["JPY", "KRW", "IDR", "HUF", "ISK", "ARS", "TZS", "KES", "AOA", "RWF", "XOF", "CVE"]);
 
 export function formatMoney(amount: number, currency: string, intlLocale: string, opts?: { approx?: boolean }): string {
   const digits = NO_DECIMALS.has(currency) ? 0 : 2;

@@ -30,7 +30,7 @@ export type City = {
 };
 export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR" | "CZK" | "SGD"
   | "USD" | "CAD" | "MXN" | "BRL" | "ARS" | "MAD" | "ZAR" | "TZS" | "TND" | "ETB" | "KES" | "AOA" | "GHS" | "RWF" | "XOF"
-  | "CHF" | "HKD" | "THB" | "IDR";
+  | "CHF" | "HKD" | "THB" | "IDR" | "CVE" | "NAD" | "JPY";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
 export { zoneOf, COUNTRY, type Zone } from "./city-meta";
@@ -368,7 +368,7 @@ export type Region = "europe" | "americas" | "africa" | "asia";
 const REGION_OF: Record<string, Region> = {
   US: "americas", CA: "americas", MX: "americas", BR: "americas", AR: "americas",
   EG: "africa", MA: "africa", ZA: "africa", TZ: "africa", TN: "africa", ET: "africa", KE: "africa", AO: "africa", GH: "africa", RW: "africa", SN: "africa",
-  SG: "asia", HK: "asia", TH: "asia", ID: "asia", AE: "asia", QA: "asia", SA: "asia", JO: "asia", OM: "asia"
+  SG: "asia", HK: "asia", TH: "asia", ID: "asia", JP: "asia", CV: "africa", NA: "africa", AE: "asia", QA: "asia", SA: "asia", JO: "asia", OM: "asia"
 };
 export const regionOf = (id: string): Region => REGION_OF[COUNTRY_OF[id] ?? ""] ?? "europe";
 
