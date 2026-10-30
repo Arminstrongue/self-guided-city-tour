@@ -20,7 +20,9 @@ test("pesquisa global e quem viu a história", async () => {
   const r = await globalSearch("b@x.com", "lisb", "en");
   assert.ok(r.cities.some((c) => c.id === "lis"), "cidade pelo nome noutra língua");
   assert.deepEqual(r.tags.map((x) => x.tag).sort(), ["lisboa", "lisbonlife"], "só hashtags de perfis públicos");
-  assert.ok((await globalSearch("b@x.com", "praca do comercio", "pt")).stops.some((x) => x.city === "lis"), "paragem sem acentos");
+  // Paragens sem acentos, na cidade grátis (Manchester); as das cidades pagas só aparecem a quem tem passe.
+  assert.ok((await globalSearch("b@x.com", "albert sq", "en")).stops.some((x) => x.city === "man"), "paragem sem acentos");
+  assert.ok(!(await globalSearch("b@x.com", "praca do comercio", "pt")).stops.some((x) => x.city === "lis"), "paragens pagas escondidas sem passe");
   assert.deepEqual((await globalSearch("b@x.com", "@ana", "en")).people.map((x) => x.handle), ["ana"]);
   assert.equal((await globalSearch("b@x.com", "#lis", "en")).people.length, 0);
   assert.equal((await globalSearch(null, "a", "en")).cities.length, 0, "termo curto");
