@@ -212,6 +212,44 @@ export const TRANSPORT: Record<string, Transport[]> = {
     T("grab", "🚗", "Grab aeroporto → Denpasar (13 km, desde)", "Grab airport → Denpasar (13 km, from)", 90000, "ride"),
     T("kura", "🚌", "Kura-Kura Bus Kuta/Sanur ⇄ Ubud (só ida)", "Kura-Kura Bus Kuta/Sanur ⇄ Ubud (one way)", 100000, "trip")
   ],
+  rai: [
+    T("aluguer", "🚐", "Hiace / aluguer (transporte informal, mínimo)", "Hiace / aluguer shared van (informal, minimum)", 100, "trip")
+  ],
+  vxe: [
+    T("aluguer", "🚐", "Hiace / aluguer (transporte informal, mínimo)", "Hiace / aluguer shared van (informal, minimum)", 100, "trip")
+  ],
+  sid: [
+    T("aluguer", "🚐", "Hiace / aluguer (transporte informal, mínimo)", "Hiace / aluguer shared van (informal, minimum)", 100, "trip")
+  ],
+  wdh: [
+    T("taxi", "🚕", "Táxi partilhado na cidade (por pessoa)", "Shared city taxi (per person)", 15, "trip"), T("bus", "🚌", "Autocarro municipal (cartão smartcard)", "City bus (smartcard)", 8.5, "trip"),
+    T("coach", "🚐", "Autocarro Windhoek ↔ Swakopmund", "Bus Windhoek ↔ Swakopmund", 230, "trip")
+  ],
+  swp: [
+    T("coach", "🚐", "Autocarro Swakopmund ↔ Windhoek", "Bus Swakopmund ↔ Windhoek", 230, "trip")
+  ],
+  tyo: [
+    T("metro", "🚇", "Tokyo Metro (bilhete, conforme a distância; ¥178 com cartão IC)", "Tokyo Metro (ticket, by distance; ¥178 with an IC card)", 180, "trip"), T("metro24", "🎫", "Tokyo Metro 24-hour Ticket (só linhas Tokyo Metro)", "Tokyo Metro 24-hour Ticket (Tokyo Metro lines only)", 700, "day"),
+    T("tst", "🎫", "Tokyo Subway Ticket 24 h (Metro + Toei, para visitantes; sem JR)", "Tokyo Subway Ticket 24 h (Metro + Toei, for visitors; excl. JR)", 1000, "day"), T("common", "🎫", "Bilhete de 1 dia Metro + Toei", "Metro + Toei one-day ticket", 1100, "day"),
+    T("keikyu", "✈", "Keikyu Haneda T3 → Asakusa (direto pela linha Toei Asakusa)", "Keikyu Haneda T3 → Asakusa (through on the Toei Asakusa Line)", 610, "trip"), T("monorail", "✈", "Tokyo Monorail Haneda T3 → Hamamatsucho (¥519 com IC)", "Tokyo Monorail Haneda T3 → Hamamatsucho (¥519 with IC)", 520, "trip")
+  ],
+  hij: [
+    T("tram", "🚋", "Elétrico Hiroden (tarifa única, paga-se à saída; também até Miyajima-guchi)", "Hiroden streetcar (flat fare, pay when you get off; also to Miyajima-guchi)", 240, "trip"), T("limo", "✈", "Autocarro limousine aeroporto ↔ Hiroshima Station / Bus Center", "Airport limousine bus ↔ Hiroshima Station / Bus Center", 1500, "trip"),
+    T("jr", "🚆", "JR Hiroshima → Miyajimaguchi", "JR Hiroshima → Miyajimaguchi", 420, "trip"), T("ferry", "⛴", "Ferry JR Miyajimaguchi → Miyajima (aceita IC)", "JR ferry Miyajimaguchi → Miyajima (IC accepted)", 180, "trip"),
+    T("tax", "🏝", "Taxa de visitante de Miyajima", "Miyajima visitor tax", 100, "trip")
+  ],
+  kyo: [
+    T("bus", "🚌", "Autocarro municipal (tarifa única na zona central; cartão IC ou dinheiro)", "City bus (flat fare in the central area; IC card or cash)", 230, "trip"), T("subway", "🚇", "Metro de Quioto (1.º escalão, até 3 km; aceita contactless)", "Kyoto subway (first band, up to 3 km; contactless accepted)", 220, "trip"),
+    T("pass", "🎫", "Bilhete de 1 dia metro e autocarro", "Subway & Bus 1-Day Pass", 1100, "day"), T("ex100", "🚌", "Autocarro expresso EX100 Estação de Kyoto → Gojozaka (fins de semana e feriados)", "EX100 express bus Kyoto Station → Gojozaka (weekends and holidays)", 500, "trip"),
+    T("inari", "🚆", "JR linha Nara Kyoto → Inari", "JR Nara Line Kyoto → Inari", 150, "trip"), T("haruka", "✈", "JR Haruka aeroporto KIX → Kyoto (lugar livre)", "JR Haruka KIX → Kyoto (non-reserved seat)", 3060, "trip"),
+    T("harukaone", "🎫", "HARUKA One-way Ticket KIX → Kyoto (visitantes estrangeiros, comprado antes da viagem)", "HARUKA One-way Ticket KIX → Kyoto (foreign visitors, bought before travel)", 2700, "trip"), T("limo", "🚌", "Autocarro limusine KIX → Estação de Kyoto", "Airport limousine bus KIX → Kyoto Station", 2800, "trip")
+  ],
+  osa: [
+    T("metro", "🚇", "Metro de Osaka (zona 1, até 3 km; cartão IC ou contactless)", "Osaka Metro (zone 1, up to 3 km; IC card or contactless)", 190, "trip"), T("eco", "🎫", "Enjoy Eco Card: 1 dia de metro e autocarro (dias úteis)", "Enjoy Eco Card: 1 day of metro and bus (weekdays)", 820, "day"),
+    T("ecowe", "🎫", "Enjoy Eco Card ao sábado, domingo e feriados", "Enjoy Eco Card on Saturdays, Sundays and holidays", 620, "day"), T("nankai", "✈", "Nankai Airport Express aeroporto KIX → Namba", "Nankai Airport Express KIX → Namba", 970, "trip"),
+    T("jr", "✈", "JR Kansai Airport Rapid KIX → Tennoji", "JR Kansai Airport Rapid KIX → Tennoji", 1060, "trip"), T("jrosaka", "✈", "JR Kansai Airport Rapid KIX → Osaka (Umeda)", "JR Kansai Airport Rapid KIX → Osaka (Umeda)", 1180, "trip"),
+    T("haruka", "🎫", "HARUKA One-way Ticket KIX → Tennoji (visitantes estrangeiros, comprado antes da viagem)", "HARUKA One-way Ticket KIX → Tennoji (foreign visitors, bought before travel)", 1600, "trip")
+  ],
   nyc: [
     T("subway", "🚇", "Metro/autocarro (OMNY contactless)", "Subway/bus (OMNY contactless)", 3.0, "trip"), T("airtrain", "✈", "AirTrain JFK (mais o metro)", "AirTrain JFK (plus subway)", 8.5, "trip"),
     T("lirr", "🚆", "Comboio LIRR Jamaica → Penn Station", "LIRR train Jamaica → Penn Station", 7.0, "trip"), T("ferry", "⛴", "Staten Island Ferry", "Staten Island Ferry", 0, "trip"),

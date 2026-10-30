@@ -314,5 +314,19 @@
  "bkk-arl.platforms": "Züge von 05:30 Uhr bis Mitternacht. In Makkasan Umstieg zur MRT (Blaue Linie, Station Phetchaburi), in Phaya Thai zum BTS (Sukhumvit-Linie).",
  "dps-taxi.fromBaggage": "Im internationalen Ankunftsbereich holt Grab die Fahrgäste an der GrabCar Lounge ab; die App zeigt den Weg.",
  "dps-taxi.follow": "Folgen Sie den Hinweisen in der App zur GrabCar Lounge und nutzen Sie den App-Chat, der automatisch übersetzt, um den Fahrer zu kontaktieren.",
- "dps-taxi.tickets": "Bei Grab sehen Sie den Preis vor der Buchung. GrabBike holt am Flughafen nicht ab. Die Touristenabgabe Balis (150.000 IDR) kann vor der Reise online oder an den Schaltern am Flughafen bezahlt werden."
+ "dps-taxi.tickets": "Bei Grab sehen Sie den Preis vor der Buchung. GrabBike holt am Flughafen nicht ab. Die Touristenabgabe Balis (150.000 IDR) kann vor der Reise online oder an den Schaltern am Flughafen bezahlt werden.",
+ "rai-taxi.tickets": "An den meisten Flughäfen Kap Verdes warten bei der Ankunft Taxis. Die Preise sind von Insel zu Insel verschieden (Cabo Verde Airports empfiehlt, sie bei der Gemeindeverwaltung zu erfragen); informelle Verkehrsmittel (Hiace-Kleinbusse) kosten ab etwa 100 CVE pro Fahrt.",
+ "vxe-taxi.tickets": "An den meisten Flughäfen Kap Verdes warten bei der Ankunft Taxis. Die Preise sind von Insel zu Insel verschieden (Cabo Verde Airports empfiehlt, sie bei der Gemeindeverwaltung zu erfragen); informelle Verkehrsmittel (Hiace-Kleinbusse) kosten ab etwa 100 CVE pro Fahrt.",
+ "sid-taxi.tickets": "An den meisten Flughäfen Kap Verdes warten bei der Ankunft Taxis. Die Preise sind von Insel zu Insel verschieden (Cabo Verde Airports empfiehlt, sie bei der Gemeindeverwaltung zu erfragen); informelle Verkehrsmittel (Hiace-Kleinbusse) kosten ab etwa 100 CVE pro Fahrt.",
+ "tyo-keikyu.fromBaggage": "Im Terminal 3 liegen die Keikyu-Sperren ins Zentrum von Tokio und nach Yokohama auf 2F in der Ankunftshalle; die auf B2F bedienen nur die Terminals 1 und 2. In den Terminals 1 und 2 liegt der Bahnhof auf B1F.",
+ "tyo-keikyu.tickets": "Halten Sie eine IC-Karte (Suica oder PASMO) an die Sperre oder kaufen Sie ein Ticket am Automaten. Bis Asakusa: 610 ¥ mit Ticket, 599 ¥ mit IC.",
+ "tyo-keikyu.platforms": "Die Züge fahren nach Shinagawa, Higashi-ginza oder Asakusa; die nach Higashi-ginza und Asakusa fahren nach Sengakuji auf der Toei-Asakusa-Linie weiter. Etwa 40 Minuten bis Asakusa.",
+ "kyo-haruka.fromBaggage": "Der Flughafenbahnhof liegt im 2. Stock und ist direkt mit Terminal 1 verbunden. Von Terminal 2 braucht der kostenlose Shuttlebus zu Terminal 1 (Aeroplaza) 7–9 Minuten.",
+ "kyo-haruka.follow": "Gehen Sie in den 2. Stock und über die Brücke zum Bahnhof. Drinnen ist JR-West blau und Nankai rot gekennzeichnet.",
+ "kyo-haruka.tickets": "Haruka nach Kyoto: 3.060 ¥ auf einem nicht reservierten Platz (1.860 ¥ Fahrpreis und 1.200 ¥ Expresszuschlag). Kauf am grünen Automaten oder am Schalter (5:30–23 Uhr). Eine ICOCA-Karte deckt nur den Grundfahrpreis, nicht den Zuschlag.",
+ "osa-nankai.fromBaggage": "Der Flughafenbahnhof liegt im 2. Stock und ist direkt mit Terminal 1 verbunden. Von Terminal 2 braucht der kostenlose Shuttlebus zu Terminal 1 (Aeroplaza) 7–9 Minuten.",
+ "osa-nankai.follow": "Im Bahnhof ist Nankai rot und JR-West blau gekennzeichnet.",
+ "osa-nankai.tickets": "Nach Namba: 970 ¥, gleich mit IC-Karte oder Ticket. Der Airport Express braucht etwa 45 Minuten; für den Rapi:t (34 Minuten, reservierte Plätze) fällt ein Zuschlag an.",
+ "osa-jr.tickets": "Kansai Airport Rapid: 1.060 ¥ bis Tennoji und 1.180 ¥ bis Osaka, mit IC-Karte oder Ticket aus den normalen Automaten (ohne Zuschlag). ICOCA-Karten gibt es an den Automaten, aber nicht gegen Kreditkarte.",
+ "osa-jr.platforms": "Der Zug wird in Hineno geteilt: Richtung Flughafen fahren Sie in einem der ersten vier Wagen."
 }

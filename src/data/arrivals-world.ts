@@ -173,6 +173,79 @@ export const ARRIVALS_WORLD: Record<string, ArrivalPoint[]> = {
     taxi("dps-taxi", "Grab · táxi do aeroporto", 90, "", { name: "Ubud (Puri Saren Agung)", lat: -8.5067, lng: 115.2626 },
       s("Para a Grab, siga as indicações da app até ao GrabCar Lounge, nas chegadas internacionais. Até Ubud conte com cerca de 1h30, conforme o trânsito.", "For Grab, follow the in-app directions to the GrabCar Lounge in international arrivals. Allow about 1.5 hours to Ubud, depending on traffic.", "GrabCar Lounge"))
   ])],
+  rai: [ap("rai-ap", "Nelson Mandela International (Praia)", "RAI", 14.9242, -23.4939, [
+    taxi("rai-taxi", "táxi do aeroporto", 15, "", { name: "Plateau · Praça Alexandre Albuquerque", lat: 14.9177, lng: -23.5091 },
+      s("O aeroporto fica a cerca de 3 km do centro. Também há hiaces (aluguer) informais desde cerca de 100 CVE, mas sem horário nem paragem fixa.", "The airport is about 3 km from the centre. Informal Hiace vans (aluguer) also run from about CVE 100, but with no timetable or fixed stop."))
+  ])],
+  vxe: [ap("vxe-ap", "Cesária Évora International (Mindelo)", "VXE", 16.8331, -25.0569, [
+    taxi("vxe-taxi", "táxi do aeroporto", 15, "", { name: "Praça Nova · Praça Amílcar Cabral", lat: 16.8897, lng: -24.988 },
+      s("O aeroporto fica em São Pedro, a sudoeste do Mindelo; as tarifas de táxi variam por ilha, por isso combine o preço antes de partir.", "The airport is at São Pedro, south-west of Mindelo; taxi fares vary by island, so agree the price before you set off."))
+  ])],
+  sid: [ap("sid-ap", "Amílcar Cabral International (Sal)", "SID", 16.7425, -22.9481, [
+    taxi("sid-taxi", "táxi do aeroporto", 25, "", { name: "Santa Maria · Praça Marcelo Leitão", lat: 16.599, lng: -22.904 },
+      s("O aeroporto fica junto a Espargos, a cerca de 16 km de Santa Maria, pela estrada que atravessa a ilha para sul.", "The airport is next to Espargos, about 16 km from Santa Maria, along the road that runs south across the island."))
+  ])],
+  wdh: [ap("wdh-ap", "Hosea Kutako International (Windhoek)", "WDH", -22.4831, 17.4667, [
+    taxi("wdh-taxi", "shuttle · táxi", 45, "", { name: "City Centre · Independence Memorial Museum", lat: -22.5688, lng: 17.0881 },
+      s("O aeroporto fica 45 km a leste de Windhoek e é servido por shuttles: reserve o seu antes de voar.", "The airport is 45 km east of Windhoek and is served by airport shuttles: book yours before you fly."))
+  ])],
+  swp: [ap("swp-ap", "Walvis Bay International", "WVB", -22.9793, 14.6471, [
+    taxi("swp-taxi", "transfer · táxi", 40, "", { name: "Swakopmund · Woermannhaus", lat: -22.6792, lng: 14.524 })
+  ])],
+  tyo: [ap("tyo-ap", "Tokyo Haneda", "HND", 35.5494, 139.7798, [
+    { id: "tyo-keikyu", name: "Keikyu", min: 40, fare: "≈ ¥610", to: { name: "Asakusa", lat: 35.7106, lng: 139.7966 },
+      note: { pt: "Os comboios para Asakusa seguem pela linha Toei Asakusa sem mudança; se o seu terminar em Shinagawa, mude lá.", en: "Trains bound for Asakusa run through onto the Toei Asakusa Line with no change; if yours ends at Shinagawa, change there." }, steps: [
+      s("No Terminal 3, as barreiras do Keikyu para o centro de Tóquio ficam no piso 2, no hall de chegadas (as do piso B2 vão para os terminais 1 e 2).", "At Terminal 3, the Keikyu gates for central Tokyo are on 2F in the arrivals lobby (the B2F gates go to Terminals 1 and 2).", "Keikyu Line", 3),
+      s("Passe um cartão IC (Suica, PASMO) nas barreiras ou compre bilhete na máquina: ¥610 até Asakusa (¥599 com IC).", "Tap an IC card (Suica, PASMO) at the gates or buy a ticket at the machine: ¥610 to Asakusa (¥599 with IC).", "IC · Suica · PASMO"),
+      s("Apanhe um comboio com destino Asakusa: cerca de 40 minutos até à estação Asakusa, a 5 minutos a pé do Senso-ji.", "Take a train bound for Asakusa: about 40 minutes to Asakusa station, a 5-minute walk from Senso-ji.", "Asakusa", 40)
+    ] },
+    { id: "tyo-monorail", name: "Tokyo Monorail", min: 20, fare: "≈ ¥520", to: { name: "Hamamatsucho", lat: 35.6555, lng: 139.757 }, steps: [
+      s("No Terminal 3, as barreiras do monorail ficam no piso 2 (chegadas) e no piso 3 (partidas).", "At Terminal 3, the monorail gates are on 2F (arrivals) and 3F (departures).", "Tokyo Monorail", 3),
+      s("Passe um cartão IC (¥519) ou compre bilhete (¥520) até Hamamatsucho.", "Tap an IC card (¥519) or buy a ticket (¥520) to Hamamatsucho.", "IC · Suica · PASMO"),
+      s("Cerca de 20 minutos até Hamamatsucho; aí mude para a JR Yamanote ou para o metro em Daimon.", "About 20 minutes to Hamamatsucho; change there for the JR Yamanote Line or the subway at Daimon.", "Hamamatsucho", 20)
+    ] },
+    taxi("tyo-taxi", "GO · Uber", 30, "", { name: "Ginza", lat: 35.6717, lng: 139.765 })
+  ])],
+  hij: [ap("hij-ap", "Hiroshima Airport", "HIJ", 34.4361, 132.9194, [
+    { id: "hij-limo", name: "Limousine bus", min: 50, fare: "≈ ¥1500", to: { name: "Hiroshima Station", lat: 34.3976, lng: 132.4753 },
+      note: { pt: "Há também autocarros para o Hiroshima Bus Center (cerca de 55 minutos, mesmo preço), perto do Parque da Paz; o regresso ao aeroporto sai dos mesmos sítios.", en: "There are also buses to Hiroshima Bus Center (about 55 minutes, same fare), near the Peace Park; buses back to the airport leave from the same places." }, steps: [
+      s("Depois das chegadas, siga as placas dos autocarros até à paragem do limousine para Hiroshima Station.", "After arrivals, follow the bus signs to the limousine stop for Hiroshima Station.", "Bus · Hiroshima Station", 3),
+      s("Bilhete de ¥1,500; também pode pagar com cartão IC.", "The fare is ¥1,500; you can also pay with an IC card.", "IC"),
+      s("Cerca de 50 minutos até à saída Shinkansen da estação de Hiroshima; o trânsito pode atrasar a chegada.", "About 50 minutes to the Shinkansen exit of Hiroshima Station; traffic can delay arrival.", "Hiroshima Station", 50)
+    ] },
+    { id: "hij-shiraichi", name: "Autocarro + JR (Shiraichi)", min: 65, fare: "", to: { name: "Hiroshima Station", lat: 34.3976, lng: 132.4753 }, steps: [
+      s("Apanhe o autocarro da Geiyo Bus até à estação JR de Shiraichi: cerca de 15 minutos, ¥490.", "Take the Geiyo Bus route bus to JR Shiraichi station: about 15 minutes, ¥490.", "Shiraichi", 15),
+      s("Na estação de Shiraichi, apanhe a linha JR Sanyo até Hiroshima: cerca de 45 minutos.", "At Shiraichi, take the JR Sanyo Line to Hiroshima: about 45 minutes.", "JR Sanyo Line → Hiroshima", 45)
+    ] }
+  ])],
+  kyo: [ap("kyo-ap", "Kansai International", "KIX", 34.4342, 135.2328, [
+    { id: "kyo-haruka", name: "JR Haruka", min: 80, fare: "≈ ¥3060", to: { name: "Kyoto Station", lat: 34.9858, lng: 135.7588 },
+      note: { pt: "Visitantes estrangeiros pagam menos com o HARUKA One-way Ticket, comprado antes de chegar ao Japão (2700 ienes desde 1 de novembro de 2026).", en: "Foreign visitors pay less with the HARUKA One-way Ticket, bought before arriving in Japan (¥2,700 from 1 November 2026)." }, steps: [
+      s("Nas chegadas do Terminal 1, suba ao 2.º piso e atravesse a ponte para a estação; do Terminal 2, apanhe primeiro o autocarro gratuito para o Terminal 1.", "From Terminal 1 arrivals, go up to the 2nd floor and cross the bridge to the station; from Terminal 2, first take the free shuttle bus to Terminal 1.", "Railways · 2F", 8),
+      s("Na estação, siga o azul da JR-West (o vermelho é a Nankai) e compre o bilhete Haruka na máquina verde ou na bilheteira (aberta das 5h30 às 23h).", "In the station, follow JR-West blue (red is Nankai) and buy a Haruka ticket at a green machine or the ticket office (open 05:30–23:00).", "JR · Haruka"),
+      s("Haruka direto até Kyoto em cerca de 80 minutos; o lugar livre custa 3060 ienes (bilhete mais suplemento).", "The Haruka runs direct to Kyoto in about 80 minutes; a non-reserved seat costs ¥3,060 (fare plus express charge).", "Haruka → Kyoto", 80)
+    ] },
+    { id: "kyo-bus", name: "Autocarro limusine", min: 90, fare: "≈ ¥2800", to: { name: "Kyoto Station (Hachijo-guchi)", lat: 34.9844, lng: 135.759 },
+      note: { pt: "Sem mudanças e com lugar para as malas; com trânsito pode demorar mais do que o comboio.", en: "No changes and room for bags; in traffic it can take longer than the train." }, steps: [
+      s("O autocarro para Kyoto para primeiro no Terminal 2 e depois no Terminal 1; tenha o valor certo em dinheiro (2800 ienes) ou compre o bilhete antes de embarcar.", "The bus to Kyoto stops first at Terminal 2, then at Terminal 1; have the exact fare in cash (¥2,800) or buy a ticket before boarding.", "Kyoto Station"),
+      s("Durante o dia sai cerca de 20 em 20 minutos, do Terminal 1 entre as 6h45 e cerca das 23h20.", "In the daytime it leaves about every 20 minutes, from Terminal 1 between 06:45 and about 23:20."),
+      s("Saia na Estação de Kyoto, lado Hachijo-guchi, ao fim de cerca de 1h30.", "Get off at Kyoto Station, Hachijo-guchi side, after about 1 h 30.", "Hachijo-guchi", 90)
+    ] }
+  ])],
+  osa: [ap("osa-ap", "Kansai International", "KIX", 34.4342, 135.2328, [
+    { id: "osa-nankai", name: "Nankai Airport Express", min: 45, fare: "≈ ¥970", to: { name: "Nankai Namba", lat: 34.6624, lng: 135.5013 },
+      note: { pt: "O Rapi:t faz o percurso em 34 minutos, só com lugares marcados e suplemento de comboio expresso.", en: "The Rapi:t does the trip in 34 minutes, with reserved seats only and a limited-express charge." }, steps: [
+      s("Nas chegadas do Terminal 1, suba ao 2.º piso e atravesse a ponte para a estação; do Terminal 2, apanhe primeiro o autocarro gratuito para o Terminal 1.", "From Terminal 1 arrivals, go up to the 2nd floor and cross the bridge to the station; from Terminal 2, first take the free shuttle bus to Terminal 1.", "Railways · 2F", 8),
+      s("Na estação, siga o vermelho da Nankai e passe um cartão IC (ICOCA, Suica) nas barreiras ou compre o bilhete até Namba (970 ienes) na máquina.", "In the station, follow Nankai red and tap an IC card (ICOCA, Suica) at the gates or buy a ticket to Namba (¥970) at the machine.", "Nankai · IC"),
+      s("Airport Express até Namba, o terminal, em cerca de 45 minutos; Dotonbori fica a 5 minutos a pé.", "The Airport Express runs to Namba, the terminus, in about 45 minutes; Dotonbori is a 5-minute walk.", "Namba", 45)
+    ] },
+    { id: "osa-jr", name: "JR Kansai Airport Rapid", min: 51, fare: "≈ ¥1060", to: { name: "Tennoji", lat: 34.6466, lng: 135.5139 },
+      note: { pt: "Sem mudanças até Tennoji (51 min) e Osaka/Umeda (cerca de 65 min).", en: "No changes to Tennoji (51 min) and Osaka/Umeda (about 65 min)." }, steps: [
+      s("Nas chegadas do Terminal 1, suba ao 2.º piso e atravesse a ponte para a estação; do Terminal 2, apanhe primeiro o autocarro gratuito para o Terminal 1.", "From Terminal 1 arrivals, go up to the 2nd floor and cross the bridge to the station; from Terminal 2, first take the free shuttle bus to Terminal 1.", "Railways · 2F", 8),
+      s("Siga o azul da JR-West e passe um cartão IC nas barreiras, ou compre o bilhete na máquina: 1060 ienes até Tennoji, 1180 até Osaka.", "Follow JR-West blue and tap an IC card at the gates, or buy a ticket at the machine: ¥1,060 to Tennoji, ¥1,180 to Osaka.", "JR · Kansai Airport Rapid"),
+      s("Kansai Airport Rapid até Tennoji em 51 minutos. No regresso ao aeroporto, viaje numa das quatro primeiras carruagens: o comboio divide-se em Hineno.", "The Kansai Airport Rapid reaches Tennoji in 51 minutes. On the way back to the airport, ride in one of the first four cars: the train splits at Hineno.", "Tennoji", 51)
+    ] }
+  ])],
   dxb: [ap("dxb-ap", "Dubai International", "DXB", 25.2532, 55.3657, [
     { id: "dxb-metro", name: "Metro (linha Vermelha)", min: 30, fare: "≈ AED 6", to: { name: "BurJuman", lat: 25.2549, lng: 55.3042 }, steps: [
       s("Nos terminais 1 e 3 siga as placas Metro (passagem coberta).", "At terminals 1 and 3 follow the Metro signs (covered walkway).", "Metro · Red Line", 8),

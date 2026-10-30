@@ -494,6 +494,116 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
    "en": "Grab shows the fare before you book. GrabBike doesn't do airport pickups. Bali's tourist levy (IDR 150,000) can be paid online before travel or at the airport counters."
   }
  },
+ "rai-taxi": {
+  "sources": [
+   "https://www.caboverde-airports.cv/en/parking-and-accesses/public-transportation/"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Há táxis à chegada na maioria dos aeroportos de Cabo Verde. As tarifas variam de ilha para ilha (a Cabo Verde Airports sugere confirmá-las com a Câmara Municipal); o transporte informal (hiace) custa a partir de cerca de 100 CVE por viagem.",
+   "en": "Taxis wait at arrivals at most Cabo Verde airports. Fares vary from island to island (Cabo Verde Airports suggests checking them with the local Municipal Chamber); informal transport (Hiace vans) costs from about CVE 100 per trip."
+  }
+ },
+ "vxe-taxi": {
+  "sources": [
+   "https://www.caboverde-airports.cv/en/parking-and-accesses/public-transportation/"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Há táxis à chegada na maioria dos aeroportos de Cabo Verde. As tarifas variam de ilha para ilha (a Cabo Verde Airports sugere confirmá-las com a Câmara Municipal); o transporte informal (hiace) custa a partir de cerca de 100 CVE por viagem.",
+   "en": "Taxis wait at arrivals at most Cabo Verde airports. Fares vary from island to island (Cabo Verde Airports suggests checking them with the local Municipal Chamber); informal transport (Hiace vans) costs from about CVE 100 per trip."
+  }
+ },
+ "sid-taxi": {
+  "sources": [
+   "https://www.caboverde-airports.cv/en/parking-and-accesses/public-transportation/"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Há táxis à chegada na maioria dos aeroportos de Cabo Verde. As tarifas variam de ilha para ilha (a Cabo Verde Airports sugere confirmá-las com a Câmara Municipal); o transporte informal (hiace) custa a partir de cerca de 100 CVE por viagem.",
+   "en": "Taxis wait at arrivals at most Cabo Verde airports. Fares vary from island to island (Cabo Verde Airports suggests checking them with the local Municipal Chamber); informal transport (Hiace vans) costs from about CVE 100 per trip."
+  }
+ },
+ "tyo-keikyu": {
+  "sources": [
+   "https://tokyo-haneda.com/en/access/train",
+   "https://www.kotsu.metro.tokyo.jp/eng/guides/airportaccess/"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "No Terminal 3, as barreiras do Keikyu para o centro de Tóquio e Yokohama ficam no piso 2, no hall de chegadas; as do piso B2 servem só os terminais 1 e 2. Nos terminais 1 e 2, a estação fica no piso B1.",
+   "en": "At Terminal 3, the Keikyu gates for central Tokyo and Yokohama are on 2F in the arrivals lobby; the B2F gates only serve Terminals 1 and 2. At Terminals 1 and 2, the station is on B1F."
+  },
+  "tickets": {
+   "pt": "Passe um cartão IC (Suica ou PASMO) nas barreiras ou compre bilhete na máquina. Até Asakusa: ¥610 com bilhete, ¥599 com IC.",
+   "en": "Tap an IC card (Suica or PASMO) at the gates or buy a ticket at the machine. To Asakusa: ¥610 by ticket, ¥599 by IC."
+  },
+  "platforms": {
+   "pt": "Os comboios vão para Shinagawa, Higashi-ginza ou Asakusa; os de Higashi-ginza e Asakusa continuam pela linha Toei Asakusa depois de Sengakuji. Cerca de 40 minutos até Asakusa.",
+   "en": "Trains run to Shinagawa, Higashi-ginza or Asakusa; those to Higashi-ginza and Asakusa continue onto the Toei Asakusa Line after Sengakuji. About 40 minutes to Asakusa."
+  }
+ },
+ "kyo-haruka": {
+  "sources": [
+   "https://www.kansai-airport.or.jp/en/access/from-airport/train",
+   "https://www.westjr.co.jp/travel-information/en/train-usage-guide/howto/guide/",
+   "https://www.westjr.co.jp/travel-information/en/tickets-passes/oneway/haruka/",
+   "https://ekitan.com/transit/fare/sf-5130/st-5198"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "A estação do aeroporto fica no 2.º piso, ligada diretamente ao Terminal 1. Do Terminal 2, o autocarro gratuito até ao Terminal 1 (Aeroplaza) demora 7 a 9 minutos.",
+   "en": "The airport station is on the 2nd floor, directly connected to Terminal 1. From Terminal 2, the free shuttle bus to Terminal 1 (Aeroplaza) takes 7–9 minutes."
+  },
+  "follow": {
+   "pt": "Suba ao 2.º piso e atravesse a ponte para a estação. Lá dentro, a JR-West está assinalada a azul e a Nankai a vermelho.",
+   "en": "Go up to the 2nd floor and cross the bridge to the station. Inside, JR-West is marked in blue and Nankai in red.",
+   "label": "JR-West"
+  },
+  "tickets": {
+   "pt": "Haruka até Kyoto: 3060 ienes em lugar livre (1860 de bilhete e 1200 de suplemento). Compre na máquina verde ou na bilheteira (5h30–23h). O cartão ICOCA só paga o bilhete base, não o suplemento.",
+   "en": "Haruka to Kyoto: ¥3,060 in a non-reserved seat (¥1,860 fare plus ¥1,200 express charge). Buy at a green machine or the ticket office (05:30–23:00). An ICOCA card only covers the base fare, not the express charge."
+  }
+ },
+ "osa-nankai": {
+  "sources": [
+   "https://www.kansai-airport.or.jp/en/access/from-airport/train",
+   "https://www.westjr.co.jp/travel-information/en/train-usage-guide/howto/guide/",
+   "https://www.nankai.co.jp/en_railway/access-fromkix",
+   "https://ekitan.com/transit/fare/sf-5130/st-5728"
+  ],
+  "checked": "2026-10",
+  "fromBaggage": {
+   "pt": "A estação do aeroporto fica no 2.º piso, ligada diretamente ao Terminal 1. Do Terminal 2, o autocarro gratuito até ao Terminal 1 (Aeroplaza) demora 7 a 9 minutos.",
+   "en": "The airport station is on the 2nd floor, directly connected to Terminal 1. From Terminal 2, the free shuttle bus to Terminal 1 (Aeroplaza) takes 7–9 minutes."
+  },
+  "follow": {
+   "pt": "Dentro da estação, a Nankai está assinalada a vermelho e a JR-West a azul.",
+   "en": "Inside the station, Nankai is marked in red and JR-West in blue.",
+   "label": "Nankai"
+  },
+  "tickets": {
+   "pt": "Até Namba: 970 ienes, o mesmo com cartão IC ou bilhete. O Airport Express demora cerca de 45 minutos; o Rapi:t (34 minutos, lugares marcados) paga suplemento.",
+   "en": "To Namba: ¥970, the same with an IC card or a ticket. The Airport Express takes about 45 minutes; the Rapi:t (34 minutes, reserved seats) carries a supplement."
+  }
+ },
+ "osa-jr": {
+  "sources": [
+   "https://www.westjr.co.jp/travel-information/en/train-usage-guide/howto/guide/",
+   "https://www.kansai-airport.or.jp/en/access/from-airport/train",
+   "https://ekitan.com/transit/fare/sf-5130/st-5638",
+   "https://ekitan.com/transit/fare/sf-5006/st-5130"
+  ],
+  "checked": "2026-10",
+  "tickets": {
+   "pt": "Kansai Airport Rapid: 1060 ienes até Tennoji e 1180 até Osaka, com cartão IC ou bilhete das máquinas normais (sem suplemento). Os cartões ICOCA compram-se nas máquinas, mas não com cartão de crédito.",
+   "en": "Kansai Airport Rapid: ¥1,060 to Tennoji and ¥1,180 to Osaka, by IC card or a ticket from the regular machines (no supplement). ICOCA cards are sold at the machines, but can't be bought with a credit card."
+  },
+  "platforms": {
+   "pt": "O comboio divide-se em Hineno: no sentido do aeroporto, viaje numa das quatro primeiras carruagens.",
+   "en": "The train splits at Hineno: towards the airport, ride in one of the first four cars."
+  }
+ },
  "sin-mrt": {
   "sources": [
    "https://www.changiairport.com/en/airport-guide/transport/leaving-the-airport.html",

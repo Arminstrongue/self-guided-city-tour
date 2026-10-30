@@ -67,6 +67,17 @@ const EN: Record<string, string> = {
   stephansdom: "St Stephen's Cathedral", graben: "Graben & Kohlmarkt", hofburg: "Hofburg & Michaelerplatz", oper: "State Opera & Albertina", schoenbrunn: "Schönbrunn Palace",
   hrad: "Prague Castle & St Vitus", "karluv-most": "Charles Bridge", staromestske: "Old Town Square & Astronomical Clock", josefov: "Jewish Quarter (Josefov)", vaclavske: "Wenceslas Square",
   padang: "National Gallery & Padang", mbs: "Helix Bridge & Marina Bay Sands", chinatown: "Chinatown & Buddha Tooth Relic Temple", "kampong-glam": "Kampong Glam & Sultan Mosque",
+  "osa-dotonbori": "Dotonbori & Ebisubashi", "osa-hozenji": "Hozenji Yokocho", "osa-kuromon": "Kuromon Market", "osa-shinsekai": "Shinsekai & Tsutenkaku",
+  "osa-shitennoji": "Shitennoji Temple", "osa-castle": "Osaka Castle", "osa-umeda": "Umeda Sky Building",
+  "kyo-inari": "Fushimi Inari Taisha", "kyo-kiyomizu": "Kiyomizu-dera Temple", "kyo-sannenzaka": "Sannenzaka, Ninenzaka & Yasaka Pagoda", "kyo-yasaka": "Yasaka Shrine",
+  "kyo-hanamikoji": "Gion & Hanamikoji", "kyo-shirakawa": "Shirakawa Canal", "kyo-nishiki": "Nishiki Market", "kyo-nijo": "Nijo Castle",
+  "hij-shukkeien": "Shukkeien Garden", "hij-castle": "Hiroshima Castle", "hij-dome": "Atomic Bomb Dome", "hij-peace-park": "Peace Memorial Park", "hij-museum": "Peace Memorial Museum", "hij-hondori": "Hondori Shopping Arcade", "hij-miyajima": "Miyajima & Itsukushima Shrine",
+  "tyo-sensoji": "Senso-ji Temple & Kaminarimon", "tyo-kokyo": "Imperial Palace Outer Garden & Nijubashi", "tyo-marunouchi": "Tokyo Station (Marunouchi Building)", "tyo-meiji": "Meiji Jingu Shrine", "tyo-shibuya": "Shibuya Crossing & Hachiko", "tyo-tocho": "Tokyo Metropolitan Government Building Observatories",
+  "swp-woermann": "Woermannhaus & Damara Tower", "swp-jetty": "The Jetty", "swp-lighthouse": "Lighthouse, State House & Marine Memorial", "swp-museum": "Swakopmund Museum", "swp-mole": "The Mole", "swp-station": "Old railway station", "swp-dune7": "Dune 7",
+  "wdh-museum": "Independence Memorial Museum", "wdh-tintenpalast": "Tintenpalast (Parliament)", "wdh-meteorites": "Post Street Mall & Gibeon meteorites", "wdh-station": "Railway station & TransNamib Museum",
+  "sid-praca": "Marcelo Leitão Square", "sid-salinas": "Santa Maria Salt Pans", "sid-pontao": "Santa Maria Pier", "sid-sino": "Ponta do Sinó", "sid-pontapreta": "Ponta Preta", "sid-pedralume": "Pedra de Lume Salt Crater",
+  "vxe-pracanova": "Praça Nova (Amílcar Cabral Square)", "vxe-cultural": "Mindelo Cultural Centre", "vxe-ruadelisboa": "Rua de Lisboa & Municipal Market", "vxe-palacio": "People's Palace (Palácio do Povo)", "vxe-luz": "Church of Our Lady of the Light", "vxe-torre": "Belém Tower replica & Fish Market", "vxe-laginha": "Laginha Beach",
+  "rai-albuquerque": "Alexandre Albuquerque Square", "rai-etnografico": "Ethnographic Museum of Praia", "rai-presidencial": "Presidential Palace", "rai-diogogomes": "Diogo Gomes Monument", "rai-quebracanela": "Quebra Canela Beach", "rai-cidadevelha": "Cidade Velha (Ribeira Grande)",
   "dps-palace": "Ubud Palace (Puri Saren Agung)", "dps-market": "Ubud Art Market", "dps-monkey": "Sacred Monkey Forest Sanctuary", "dps-saraswati": "Taman Saraswati Temple", "dps-lukisan": "Puri Lukisan Museum", "dps-campuhan": "Campuhan Ridge Walk", "dps-tegallalang": "Tegallalang Rice Terraces",
   "bkk-grand-palace": "Grand Palace & Wat Phra Kaew", "bkk-wat-pho": "Wat Pho (Reclining Buddha)", "bkk-wat-arun": "Wat Arun (Temple of Dawn)", "bkk-wat-traimit": "Wat Traimit (Golden Buddha)", "bkk-lumphini": "Lumphini Park", "bkk-jim-thompson": "Jim Thompson House",
   "hkg-statue-square": "Statue Square & Court of Final Appeal", "hkg-man-mo": "Man Mo Temple", "hkg-tst": "Star Ferry & Clock Tower", "hkg-temple-street": "Temple Street Night Market",
@@ -87,6 +98,9 @@ export function stopName(s: { id: string; n: string }, locale: string): string {
 
 /** Indicações de linhas e percursos (escritas em português em cities.ts) em inglês para os outros idiomas. */
 const LINE_EN: [RegExp, string][] = [
+  [/A pé até ao /g, "Walk to "], [/aeroporto ([A-Z]{3})/g, "$1 airport"], [/Museu da Independência/g, "Independence Museum"], [/Estação →/g, "Station →"],
+  [/\(direto pela linha Toei Asakusa\)/g, "(through-running on the Toei Asakusa line)"], [/Estação ([A-Z][\w-]+)/g, "$1 Station"], [/saída oeste/g, "west exit"], [/saída Shinkansen/g, "Shinkansen exit"], [/saída /g, "exit "],
+  [/Ponte (Aioi|Motoyasu|Shijo)/g, "$1 Bridge"], [/JR linha Nara/g, "JR Nara Line"], [/zona de Kodai-ji/g, "the Kodai-ji area"], [/\(linha Loop\)/g, "(Loop Line)"], [/praia de Santa Maria/g, "Santa Maria beach"],
   [/Paragem /g, "Stop "], [/Pelos souks/g, "Through the souks"], [/Pelas ruelas/g, "Through the lanes"], [/Pelo boulevard/g, "Along the boulevard"], [/Pela rua /g, "Along "],
   [/ e Darling/g, " and Darling"], [/Barco desde a praia de/g, "Boat from the beach at"], [/Barco para/g, "Boat to"], [/ para o aeroporto/g, " to the airport"], [/táxi para/g, "taxi to"],
   [/Chaloupe de regresso → a pé/g, "Ferry back → on foot"], [/Chaloupe do porto de Dakar/g, "Ferry from Dakar port"], [/Mota-táxi ou táxi/g, "Moto taxi or taxi"], [/Metro ligeiro/g, "Light rail"],

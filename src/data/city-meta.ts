@@ -1,15 +1,15 @@
 /** Dados pequenos das cidades usados no browser (sem carregar todos os roteiros). */
 export type Zone = "uk" | "schengen" | "tr" | "ae" | "qa" | "sa" | "eg" | "jo" | "om" | "sg"
   | "us" | "ca" | "mx" | "br" | "ar" | "ma" | "za" | "tz" | "tn" | "et" | "ke" | "ao" | "gh" | "rw" | "sn"
-  | "ie" | "hk" | "th" | "id";
+  | "ie" | "hk" | "th" | "id" | "cv" | "na" | "jp";
 const CUR_ZONE: Record<string, Zone> = { GBP: "uk", TRY: "tr", AED: "ae", QAR: "qa", SAR: "sa", EGP: "eg", JOD: "jo", OMR: "om", SGD: "sg",
   USD: "us", CAD: "ca", MXN: "mx", BRL: "br", ARS: "ar", MAD: "ma", ZAR: "za", TZS: "tz", TND: "tn", ETB: "et", KES: "ke", AOA: "ao", GHS: "gh", RWF: "rw", XOF: "sn",
-  CHF: "schengen", HKD: "hk", THB: "th", IDR: "id" };
+  CHF: "schengen", HKD: "hk", THB: "th", IDR: "id", CVE: "cv", NAD: "na", JPY: "jp" };
 /** Países com regras próprias que usam uma moeda partilhada (ex.: Irlanda usa EUR mas não é Schengen). Tem prioridade sobre CUR_ZONE. */
 const COUNTRY_ZONE: Partial<Record<string, Zone>> = { IE: "ie" };
 /** País de cada zona de fronteira fora da Europa (nome mostrado com Intl.DisplayNames). */
 export const ZONE_COUNTRY: Partial<Record<Zone, string>> = { us: "US", ca: "CA", mx: "MX", br: "BR", ar: "AR", ma: "MA", za: "ZA", tz: "TZ", tn: "TN", et: "ET", ke: "KE", ao: "AO", gh: "GH", rw: "RW", sn: "SN",
-  ie: "IE", hk: "HK", th: "TH", id: "ID" };
+  ie: "IE", hk: "HK", th: "TH", id: "ID", cv: "CV", na: "NA", jp: "JP" };
 /**
  * Zona de fronteira: primeiro o país da cidade (COUNTRY_ZONE, ex.: Dublin → "ie"), depois a moeda (CUR_ZONE); o resto é espaço Schengen.
  * Suíça (CHF), Grécia e Madeira (EUR) são Schengen.
@@ -25,5 +25,6 @@ export const COUNTRY: Record<string, string> = {
   nyc: "US", was: "US", sfo: "US", chi: "US", bos: "US", mia: "US", lax: "US", las: "US", msy: "US", mco: "US",
   yyz: "CA", mex: "MX", rio: "BR", bue: "AR",
   rak: "MA", cas: "MA", cpt: "ZA", zan: "TZ", tun: "TN", add: "ET", nbo: "KE", lad: "AO", acc: "GH", kgl: "RW", dkr: "SN",
-  zrh: "CH", brn: "CH", ath: "GR", fnc: "PT", dub: "IE", hkg: "HK", bkk: "TH", dps: "ID", dar: "TZ"
+  zrh: "CH", brn: "CH", ath: "GR", fnc: "PT", dub: "IE", hkg: "HK", bkk: "TH", dps: "ID", dar: "TZ",
+  rai: "CV", vxe: "CV", sid: "CV", wdh: "NA", swp: "NA", tyo: "JP", kyo: "JP", osa: "JP", hij: "JP"
 };

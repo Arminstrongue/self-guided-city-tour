@@ -42,7 +42,7 @@ O que encontra na app:
 • Diário de viagem, memórias com fotos e estatísticas das suas viagens
 • Comunidade de viajantes e guias locais (opcional)
 
-62 cidades em todos os continentes, informação com fonte e data, e privacidade por defeito: a localização é sempre opcional.
+71 cidades em todos os continentes, informação com fonte e data, e privacidade por defeito: a localização é sempre opcional.
 
 Já tem um passe VOYBU? Entre com o seu email e o roteiro abre logo.
 
@@ -70,7 +70,7 @@ In the app:
 • Travel diary, photo memories and your travel stats
 • Traveller community and local guides (optional)
 
-62 cities on every continent, information with its source and date, and privacy by default: location is always optional.
+71 cities on every continent, information with its source and date, and privacy by default: location is always optional.
 
 Already have a VOYBU pass? Sign in with your email and your route opens straight away.
 
