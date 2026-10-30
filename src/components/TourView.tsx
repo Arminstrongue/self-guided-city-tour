@@ -79,7 +79,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   // Nomes das paragens no idioma do viajante (os dados estão em português).
   const city = useMemo(() => ({ ...cityIn, stops: cityIn.stops.map((s) => ({ ...s, n: stopName(s, locale) })) }), [cityIn, locale]);
   const [lvl, setLvl] = useLocalState<string>(`sgct:lvl:${city.id}`, "");
-  const [fo, setFo] = useLocalState<FlightOverride | null>("sgct:flight", null);
+  const [fo, setFo] = useLocalState<FlightOverride | null>(`sgct:flight:${city.id}`, null);
   const [done, setDone] = useLocalState<Record<string, boolean>>(`sgct:done:${city.id}`, {});
   // Paragens saltadas ("o plano mudou") e hora a que o viajante tem de voltar (sem voo).
   const [skip, setSkip] = useLocalState<Record<string, boolean>>(`sgct:skip:${city.id}`, {});
@@ -120,7 +120,10 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
 
   // Partida: o voo alterado neste dispositivo, o da compra ou a hora indicada no planeador (comboio, navio, voltar até).
-  const flightIso = fo?.at ?? flightAt ?? (trip.deadline ? zonedToDate(trip.deadline, tz).toISOString() : null);
+  // O voo alterado só vale para esta cidade e enquanto não passou; um comboio/navio do planeador vale mais do que o voo da compra.
+  const foAt = fo?.at && Date.parse(fo.at) > now - 6 * 3600_000 ? fo.at : null;
+  const planDep = trip.deadline ? zonedToDate(trip.deadline, tz).toISOString() : null;
+  const flightIso = foAt ?? (trip.mode !== "plane" && planDep ? planDep : flightAt ?? planDep);
   const flightNoEff = fo?.no ?? flightNo ?? "";
   const flightDate = useMemo(() => (flightIso ? new Date(flightIso) : null), [flightIso]);
   const options = useMemo(() => routeOptions(city), [city]);
@@ -168,8 +171,10 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const closedToday = (s: Stop) => Boolean(s.cl?.includes(today));
   const nextStop = plan.stops.find((s) => !done[s.id]) ?? null;
   // Tempo até sair da última paragem; antes de começar, desconta a ida até à 1.ª paragem.
-  const avail = leave ? Math.round((leave.getTime() - now) / 60000) - (Object.keys(done).length ? 0 : bd.to) : null;
-  const fits = avail === null || avail >= plan.minutesTour;
+  const anyDone = Object.values(done).some(Boolean);
+  const avail = leave ? Math.round((leave.getTime() - now) / 60000) - (anyDone ? 0 : bd.to) : null;
+  // Depois de começar, compara com o que falta (não com o roteiro inteiro).
+  const fits = avail === null || avail >= (anyDone ? minutesLeft(plan, bp, done) : plan.minutesTour);
   const extras = city.stops.filter((s) => s.x);
   const extraMin = extras.reduce((a, s) => a + s.v + s.leg.min, 0) + (city.ret.extra.min - city.ret.core.min);
   const doneN = plan.stops.filter((s) => done[s.id]).length;
@@ -219,7 +224,10 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
     fetch(`/api/comments?city=${city.id}&counts=1`).then((r) => (r.ok ? r.json() : null)).then((j) => j && setCmCounts(j.counts)).catch(() => null);
     fetch(`/api/me/checkin?city=${city.id}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j: { checkins?: { stop: string }[] } | null) => {
       const srv = (j?.checkins ?? []).filter((c) => c.stop).map((c) => c.stop);
-      if (srv.some((x) => !done[x])) setDone({ ...done, ...Object.fromEntries(srv.map((x) => [x, true])) });
+      // Junta com o que está guardado neste telemóvel (lido agora, não do primeiro render): nunca apaga paragens marcadas offline.
+      let cur: Record<string, boolean> = {};
+      try { cur = JSON.parse(localStorage.getItem(`sgct:done:${city.id}`) ?? "{}") ?? {}; } catch { /* ignorar */ }
+      if (srv.some((x) => !cur[x])) setDone({ ...cur, ...Object.fromEntries(srv.map((x) => [x, true])) });
     }).catch(() => null);
   }, [city.id]); // eslint-disable-line react-hooks/exhaustive-deps
   async function syncCheckin(id: string, on: boolean) {

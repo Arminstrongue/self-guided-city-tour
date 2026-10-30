@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { currentTraveller } from "@/lib/wallet";
 import { RememberCity } from "@/components/RememberCity";
 import { alternates } from "@/lib/seo";
 import { notFound } from "next/navigation";
@@ -35,9 +36,9 @@ import { cityKnowledge, ensureKnowledge } from "@/lib/city-knowledge";
 import PageQR from "@/components/PageQR";
 import { RouteDetails } from "@/components/RouteDetails";
 import { accessCount } from "@/data/access";
-import { hasCityAccess } from "@/lib/city-access";
+import { hasCityAccess, travellerEmails } from "@/lib/city-access";
 import { liteCity } from "@/lib/city-lite";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 
 /** Página de entrada do QR: fotografias, destaques, plano, voo e pagamento. */
 export const dynamic = "force-dynamic";
@@ -75,6 +76,9 @@ export default async function CityEntry(
   const free = isFreeCity(city.id);
   // Sem passe: amostra (fotos, destaques, duração, preço); lugares, segurança e dicas abrem com o passe.
   const open = await hasCityAccess(city.id);
+  const signedIn = (await travellerEmails().catch(() => [])).length > 0;
+  // Sem passe: só os monumentos emblemáticos (os mesmos que /api/media mostra sem passe).
+  const teaser = new Set(city.stops.filter((x) => x.top).sort((a, b) => stopName(a, "en").localeCompare(stopName(b, "en"))).slice(0, 4).map((x) => x.id));
   // Principais primeiro, opcionais (extensão) no fim e identificadas.
   const stops = [...city.stops.filter((s) => !s.x), ...city.stops.filter((s) => s.x)].map((s) => ({ id: s.id, name: stopName(s, params.locale), area: s.a, minutes: s.v, top: Boolean(s.top), optional: Boolean(s.x) }));
   const [pulse, know] = await Promise.all([latestPulse(city.id).catch(() => null), cityKnowledge(city.id, params.locale).catch(() => ({ summary: null, history: null }))]);
@@ -91,8 +95,8 @@ export default async function CityEntry(
           <h1>{name}</h1>
           <p>{t.heroSub}</p>
           <div className="stats" tabIndex={0}><span className="num">{meta}</span><span><b>{LOCALES.length}</b> {t.statLangs}</span></div>
-          <div className="ctas">{free
-            ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.freeCta}</Link>
+          <div className="ctas">{free || open
+            ? <Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{free ? t.freeCta : t.openTour}</Link>
             : <><a className="btn tram press web-only" href="#book">{fmt(t.fromP, { p: p.local ?? p.main })} · {t.bookTitle}</a></>}</div>
           <Link className="hero-link" href={`/${params.locale}/start?city=${city.id}`}>{t.qsByTime} →</Link>
         </div>
@@ -104,10 +108,16 @@ export default async function CityEntry(
         <CityHub t={t} locale={params.locale} city={city} name={name} />
         <CityTabs tabs={[{ key: "route", label: t.route }, { key: "today", label: t.hbToday }, { key: "safety", label: t.qsEssSafety }, { key: "know", label: t.hbTips }]}>
           <>
-        <CityGallery cityId={city.id} cityName={name} stops={open ? stops : stops.filter((s) => s.top).sort((a, b) => a.name.localeCompare(b.name)).slice(0, 4).map((s) => ({ ...s, area: "", minutes: 0, optional: false }))} locale={params.locale} />
+        <CityGallery cityId={city.id} cityName={name} stops={open ? stops : stops.filter((s) => teaser.has(s.id)).map((s) => ({ ...s, area: "", minutes: 0, optional: false }))} locale={params.locale} />
         <RouteDetails t={t} meta={meta} free={free} accessN={accessCount(core.plan.stops.map((s) => s.id))}
           start={open && core.plan.stops[0] ? { name: stopName(core.plan.stops[0], params.locale), lat: core.plan.stops[0].lat, lng: core.plan.stops[0].lng } : null} />
-        {free ? (
+        {open && !free ? (
+          // Já tem passe para esta cidade: nada de "comprar", só abrir o roteiro.
+          <section className="sec book" id="book">
+            <div className="sec-h reveal"><div><h2>✓ {t.qsOpen}</h2></div></div>
+            <div className="book-card"><Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.openTour}</Link></div>
+          </section>
+        ) : free ? (
           <section className="sec book" id="book">
             <div className="sec-h reveal"><div><h2>{t.freeBadge}</h2><p>{t.freeSub}</p></div></div>
             <div className="book-card"><Link className="btn tram press" href={`/${params.locale}/tour/${city.id}`}>{t.freeCta}</Link></div>
@@ -124,10 +134,10 @@ export default async function CityEntry(
           </ChosenRoute>
           <ExitCheck city={open ? city : liteCity(city)} locale={params.locale} compact onlyPlane />
           <div className="book-card">
-            <WebOnly fallback={<div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>
+            <WebOnly fallback={signedIn ? <div className="stack"><p className="note">{t.appReaderIn}</p><a className="link-btn" href={`/${params.locale}/wallet?linkpass=1#passes`}>{t.lp.open}</a></div> : <div className="stack"><p className="note">{t.appReader}</p><a className="btn" href={`/${params.locale}/wallet?signin=1&city=${city.id}`}>{t.signIn}</a></div>}>
               <BuyForm
                 locale={params.locale} cityId={city.id} cityName={name} refCode={searchParams.ref ?? ""}
-                providers={enabledProviders()} sessionEmail={await sessionEmail()}
+                providers={enabledProviders()} sessionEmail={(await currentTraveller().catch(() => null)) ?? (await sessionEmail())}
                 prices={{ city: TOUR_PLANS.city.amount, trip: TOUR_PLANS.trip.amount, all: TOUR_PLANS.all.amount }} fx={fx} tz={city.tz ?? "UTC"}
               />
             </WebOnly>
@@ -140,9 +150,9 @@ export default async function CityEntry(
         </section>
           </>
           <>
-        {open ? <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} /> : <Locked t={t} locale={params.locale} city={city.id} cityName={name} what="info" />}
+        {open ? <CityToday t={t} locale={params.locale} city={city} name={name} pulse={pulse} /> : <LockedFor t={t} locale={params.locale} city={city.id} cityName={name} what="info" />}
         {open ? <LazyExplore cityId={city.id} cityName={name} locale={params.locale} {...exploreProps(city, params.locale)} />
-          : <Locked t={t} locale={params.locale} city={city.id} cityName={name} what="explore" />}
+          : <LockedFor t={t} locale={params.locale} city={city.id} cityName={name} what="explore" />}
         {guides.length > 0 && (
           <section className="sec" id="guides">
             <div className="sec-h reveal"><div><h2>{fmt(t.gdTitle, { city: name })}</h2><p>{t.gdSub}</p></div><Link href={`/${params.locale}/guides/${city.id}`}>{t.gdSeeAll}</Link></div>
@@ -158,16 +168,16 @@ export default async function CityEntry(
         <section className="sec" id="safety">
           <div className="sec-h reveal"><div><h2>{fmt(t.safetyTitle, { city: name })}</h2><p>{t.safetySub}</p></div></div>
           {open ? <LazySafety cityId={city.id} country={COUNTRY[city.id]} cityName={name} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} locale={params.locale} />
-            : <Locked t={t} locale={params.locale} city={city.id} cityName={name} what="safety" />}
+            : <LockedFor t={t} locale={params.locale} city={city.id} cityName={name} what="safety" />}
         </section>
           </>
           <>
-        {open ? <GoodToKnow t={t} locale={params.locale} city={city} name={name} /> : <Locked t={t} locale={params.locale} city={city.id} cityName={name} what="know" />}
+        {open ? <GoodToKnow t={t} locale={params.locale} city={city} name={name} /> : <LockedFor t={t} locale={params.locale} city={city.id} cityName={name} what="know" />}
         {open && <CityHistory t={t} name={name} k={know} />}
           </>
         </CityTabs>
       </div>
-      {!free && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}
+      {!free && !open && <WebOnly><StickyBook label={name} price={fmt(t.fromP, { p: p.local ?? p.main })} cta={t.bookTitle} /></WebOnly>}
     </main>
   );
 }

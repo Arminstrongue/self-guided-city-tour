@@ -39,7 +39,9 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
     // Com "Adaptive Pricing" o cliente paga na sua moeda; guardamos sempre o valor de origem (EUR).
     amountCents: session.currency_conversion?.amount_total ?? session.amount_total ?? TOUR_PLANS[plan].amount,
     currency: session.currency_conversion?.source_currency ?? session.currency ?? "eur",
-    stripeSessionId: session.id, refMerchantId: m.refMerchantId || null, locale: m.locale || null
+    stripeSessionId: session.id, refMerchantId: m.refMerchantId || null, locale: m.locale || null,
+    // Conta com sessão no momento da compra (definida no servidor, não pelo comprador): o passe segue essa conta.
+    accountEmail: m.account && m.account.toLowerCase() !== email ? m.account.toLowerCase() : null
   }).onConflictDoNothing().returning();
   const access = inserted[0];
   if (!access) {
@@ -68,17 +70,46 @@ export async function fulfilTourSession(session: Stripe.Checkout.Session): Promi
   return access;
 }
 
-/** Acesso válido mais recente de qualquer um dos emails para a cidade indicada. */
+/** Passes de uma conta: comprados com esse email ou ligados a ela (pagos com outro email). */
+const ownedBy = (list: string[]) => or(inArray(schema.accesses.email, list), inArray(schema.accesses.accountEmail, list));
+
+/** Liga a uma conta os passes comprados com outro email (depois de provar esse email com o código). */
+export async function linkPassesToAccount(paidEmail: string, account: string): Promise<number> {
+  const from = paidEmail.toLowerCase(), to = account.toLowerCase();
+  if (!from || !to || from === to) return 0;
+  const d = await db();
+  const rows = await d.update(schema.accesses).set({ accountEmail: to }).where(eq(schema.accesses.email, from)).returning({ id: schema.accesses.id });
+  return rows.length;
+}
+
+/** Liga um passe acabado de pagar à conta com sessão (quem pagou estava com sessão iniciada). */
+export async function linkAccessToAccount(accessId: string, account: string) {
+  const d = await db();
+  await d.update(schema.accesses).set({ accountEmail: account.toLowerCase() }).where(and(eq(schema.accesses.id, accessId), isNull(schema.accesses.accountEmail)));
+}
+
+/** Reembolso ou contestação no Stripe: o passe deixa de dar acesso. */
+export async function refundAccess(stripeSessionId: string): Promise<boolean> {
+  const d = await db();
+  const rows = await d.update(schema.accesses).set({ refundedAt: new Date(), expiresAt: new Date() })
+    .where(and(eq(schema.accesses.stripeSessionId, stripeSessionId), isNull(schema.accesses.refundedAt))).returning({ id: schema.accesses.id });
+  if (rows[0]) await d.delete(schema.commissions).where(eq(schema.commissions.accessId, rows[0].id)).catch(() => {});
+  return rows.length > 0;
+}
+
+/** Acesso válido de qualquer um dos emails (ou da conta) para a cidade indicada. */
 export async function findActiveAccess(emails: string[], cityId: string): Promise<schema.Access | null> {
   const list = [...new Set(emails.filter(Boolean).map((e) => e.toLowerCase()))];
   if (!list.length) return null;
   const d = await db();
   const rows = await d.select().from(schema.accesses).where(and(
-    inArray(schema.accesses.email, list),
+    ownedBy(list),
     gt(schema.accesses.expiresAt, new Date()),
+    isNull(schema.accesses.refundedAt),
     or(eq(schema.accesses.scope, "all"), eq(schema.accesses.city, cityId))
-  )).orderBy(desc(schema.accesses.createdAt)).limit(1);
-  return rows[0] ?? null;
+  )).orderBy(desc(schema.accesses.createdAt)).limit(20);
+  // Um passe já a contar primeiro (não gastar outro); senão o que acaba primeiro.
+  return rows.sort((a, b) => Number(Boolean(b.activatedAt)) - Number(Boolean(a.activatedAt)) || a.expiresAt.getTime() - b.expiresAt.getTime())[0] ?? null;
 }
 
 /** Cidades com passe ativo (uma só consulta para todas as cidades; "all" = todas). */
@@ -87,7 +118,7 @@ export async function activeCities(emails: string[]): Promise<{ all: boolean; ci
   if (!list.length) return { all: false, cities: new Set() };
   const d = await db();
   const rows = await d.select({ scope: schema.accesses.scope, city: schema.accesses.city }).from(schema.accesses)
-    .where(and(inArray(schema.accesses.email, list), gt(schema.accesses.expiresAt, new Date()))).limit(200);
+    .where(and(ownedBy(list), gt(schema.accesses.expiresAt, new Date()), isNull(schema.accesses.refundedAt))).limit(200);
   return { all: rows.some((r) => r.scope === "all"), cities: new Set(rows.map((r) => r.city).filter((c): c is string => Boolean(c))) };
 }
 

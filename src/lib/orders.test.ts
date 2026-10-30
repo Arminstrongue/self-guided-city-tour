@@ -50,3 +50,29 @@ test("pagamento regista acesso e comissão uma única vez", async () => {
   assert.equal(a3?.amountCents, 499);
   assert.equal(a3?.currency, "eur");
 });
+
+test("o passe segue a conta: pago com outro email, ligado à conta, e deixa de valer se reembolsado", async () => {
+  const { db } = await import("./db");
+  const { migrate } = await import("drizzle-orm/pglite/migrator");
+  const { fulfilTourSession, findActiveAccess, activeCities, linkPassesToAccount, refundAccess } = await import("./orders");
+  const d = await db();
+  await migrate(d as never, { migrationsFolder: "./drizzle" });
+  // Comprou com sessão iniciada (conta = apple-relay), mas escreveu outro email no pagamento.
+  const s1 = { id: "cs_test_acc1", mode: "payment", payment_status: "paid", amount_total: 999, currency: "eur",
+    customer_details: { email: "pessoal@gmail.com" }, metadata: { plan: "all", account: "relay@privaterelay.appleid.com", locale: "pt" } } as never;
+  const a1 = await fulfilTourSession(s1);
+  assert.equal(a1?.accountEmail, "relay@privaterelay.appleid.com");
+  assert.ok(await findActiveAccess(["relay@privaterelay.appleid.com"], "lon"), "a conta vê o passe");
+  assert.ok(await findActiveAccess(["pessoal@gmail.com"], "lon"), "o email do pagamento também");
+  // Passe antigo, comprado sem sessão: só aparece na conta depois de provar o email (linkPassesToAccount).
+  const s2 = { id: "cs_test_acc2", mode: "payment", payment_status: "paid", amount_total: 499, currency: "eur",
+    customer_details: { email: "outro@mail.com" }, metadata: { plan: "city", city: "par", locale: "pt" } } as never;
+  await fulfilTourSession(s2);
+  assert.equal(await findActiveAccess(["conta@mail.com"], "par"), null);
+  assert.equal(await linkPassesToAccount("outro@mail.com", "conta@mail.com"), 1);
+  assert.ok(await findActiveAccess(["conta@mail.com"], "par"));
+  assert.ok((await activeCities(["conta@mail.com"])).cities.has("par"));
+  // Reembolso: deixa de dar acesso.
+  assert.equal(await refundAccess("cs_test_acc2"), true);
+  assert.equal(await findActiveAccess(["conta@mail.com"], "par"), null);
+});

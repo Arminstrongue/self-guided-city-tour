@@ -7,16 +7,42 @@
  */
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { Compass, Home, Luggage, UserRound, Zap } from "lucide-react";
 import { useDict } from "@/i18n/client-dict";
 
+/**
+ * Um só mapa de páginas → separador (a mesma regra em todo o lado):
+ * - Minha viagem: planear e seguir a viagem (planeador, roteiro, planos dia a dia, rota partilhada, escala, pagamento concluído).
+ * - Agora: ajudas do momento (acabei de chegar, tempo livre).
+ * - Explorar: cidades, guias locais, encontros, eventos.
+ * - Perfil: perfis e diário.
+ */
+const TABS: [RegExp, "home" | "trip" | "now" | "explore" | "profile"][] = [
+  [/^\/[a-z]{2}\/(tour|plan|start|r|layover|success)(\/|$)/, "trip"],
+  [/^\/[a-z]{2}\/(arrive|free)(\/|$)/, "now"],
+  [/^\/[a-z]{2}\/guides\/join/, "home"],
+  [/^\/[a-z]{2}\/(c|guides|g|meet|eco)(\/|$)/, "explore"],
+  [/^\/[a-z]{2}\/(u|i|diary)(\/|$)/, "profile"]
+];
+export const tabFor = (path: string) => TABS.find(([re]) => re.test(path))?.[1] ?? "home";
+
 const HIDE = /^\/[a-z]{2}\/(wallet|admin|guides\/portal|merchants\/manage|agents\/portal|v\/)/;
+
+/** Renova a sessão uma vez por dia neste aparelho (não é preciso voltar a entrar). */
+function useKeepSignedIn() {
+  useEffect(() => {
+    try { const k = "sgct:renew"; const last = Number(localStorage.getItem(k) ?? 0); if (Date.now() - last < 12 * 3600_000) return; localStorage.setItem(k, String(Date.now())); } catch { /* ignorar */ }
+    void fetch("/api/me/renew", { method: "POST" }).catch(() => null);
+  }, []);
+}
 
 export function AppNav({ locale }: { locale: string }) {
   const t = useDict();
   const path = usePathname() ?? "";
+  useKeepSignedIn();
   if (HIDE.test(path)) return null;
-  const active = /^\/[a-z]{2}\/tour\//.test(path) ? "trip" : /^\/[a-z]{2}\/(arrive|free|plan|layover|start)/.test(path) ? "now" : /^\/[a-z]{2}\/(guides|meet|eco|c\/)/.test(path) ? "explore" : /^\/[a-z]{2}\/(u|i)\//.test(path) ? "profile" : "home";
+  const active = tabFor(path);
   const items = [
     { k: "home", href: `/${locale}`, icon: Home, label: t.nvHome },
     { k: "now", href: `/${locale}/wallet`, icon: Zap, label: t.nvNow },

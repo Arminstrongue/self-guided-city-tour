@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { ACCESS_COOKIE } from "./access-token";
 import { validAccessEmail } from "./session-revoke";
 import { sessionEmail } from "./auth";
-import { activeCities, findActiveAccess } from "./orders";
+import { activateAccess, activeCities, findActiveAccess } from "./orders";
 import { isFreeCity } from "./pricing";
 
 /**
@@ -15,12 +15,17 @@ export async function travellerEmails(): Promise<string[]> {
   return list.filter((e): e is string => Boolean(e));
 }
 
-/** Tem passe para esta cidade? (não ativa o passe: o tempo só começa a contar ao abrir o roteiro). */
-export async function hasCityAccess(cityId: string): Promise<boolean> {
+/**
+ * Tem passe para esta cidade? Por omissão não ativa o passe (ver a página da cidade antes da viagem não gasta tempo).
+ * Com `activate`, usar o conteúdo principal (roteiro dia a dia) começa a contagem, como abrir o roteiro.
+ */
+export async function hasCityAccess(cityId: string, o: { activate?: boolean } = {}): Promise<boolean> {
   if (isFreeCity(cityId)) return true;
   const emails = await travellerEmails();
   if (!emails.length) return false;
-  return Boolean(await findActiveAccess(emails, cityId).catch(() => null));
+  const a = await findActiveAccess(emails, cityId).catch(() => null);
+  if (a && o.activate && !a.activatedAt) await activateAccess(a).catch(() => null);
+  return Boolean(a);
 }
 
 /** Uma só consulta para várias cidades. */

@@ -35,16 +35,22 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
   const [del, setDel] = useState(false); // segundo toque confirma (sem diálogos do navegador)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Guarda na conta pouco depois de cada alteração.
+  // Guarda na conta pouco depois de cada alteração; ao sair da página, guarda logo o que estiver pendente.
+  const pending = useRef<Plan | null>(null);
+  const put = (p: Plan, keepalive = false) => fetch(`/api/me/plans/${p.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, keepalive,
+    body: JSON.stringify({ title: p.title, startDate: p.startDate, days: p.days, items: p.items }) }).catch(() => null);
   function save(next: Partial<Plan>) {
     const merged = { ...plan, ...next };
     setPlan(merged);
+    pending.current = merged;
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => {
-      void fetch(`/api/me/plans/${plan.id}`, { method: "PUT", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: merged.title, startDate: merged.startDate, days: merged.days, items: merged.items }) }).catch(() => null);
-    }, 500);
+    timer.current = setTimeout(() => { pending.current = null; void put(merged); }, 500);
   }
+  useEffect(() => {
+    const flush = () => { if (pending.current) { void put(pending.current, true); pending.current = null; } };
+    window.addEventListener("pagehide", flush);
+    return () => { window.removeEventListener("pagehide", flush); flush(); };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   async function loadPlaces(): Promise<Place[]> {
     if (places || !plan.city) return places ?? [];
     const r = await fetch(`/api/explore?city=${plan.city}&locale=${locale}`).catch(() => null);
@@ -205,7 +211,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
       {adding === "places" && (
         <div className="ex-modal" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) setAdding(null); }}>
           <div className="card stack ex-sheet" style={{ maxHeight: "85vh" }}>
-            <div className="row-between"><b>{t.plAddPlaces} · {fmt(t.plDay, { n: day })}</b><button className="link-btn" onClick={() => { setAdding(null); setQ(""); }}>✕</button></div>
+            <div className="row-between"><b>{t.plAddPlaces} · {fmt(t.plDay, { n: day })}</b><button className="link-btn" onClick={() => { setAdding(null); setQ(""); }} aria-label={t.close}>✕</button></div>
             <label className="pl-search"><span aria-hidden="true">🔍</span>
               <input type="text" inputMode="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.plSearch} aria-label={t.plSearch} autoComplete="off" enterKeyHint="search" />
               {q && <button type="button" className="link-btn" onClick={() => setQ("")} aria-label={t.close}>✕</button>}

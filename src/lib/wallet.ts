@@ -4,7 +4,7 @@
  * A sessão é o mesmo cookie assinado do acesso pago (sgct_access); entra-se por link no email.
  */
 import { cookies } from "next/headers";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql, or } from "drizzle-orm";
 import { db, schema } from "./db";
 import { ACCESS_COOKIE, createAccessToken, createSignInCode, readAccessTokenFull } from "./access-token";
 import { sessionEmail } from "./auth";
@@ -26,7 +26,7 @@ export const MAX_MEMORIES = 500;
 export async function walletFor(email: string) {
   const d = await db();
   const [accesses, bookings, memories, prefs, plans] = await Promise.all([
-    d.select().from(schema.accesses).where(eq(schema.accesses.email, email)).orderBy(desc(schema.accesses.createdAt)).limit(50),
+    d.select().from(schema.accesses).where(or(eq(schema.accesses.email, email), eq(schema.accesses.accountEmail, email))).orderBy(desc(schema.accesses.createdAt)).limit(50),
     d.select({ b: schema.guideBookings, guide: schema.guides.name, guidePhone: schema.guides.phone, meeting: schema.guides.meetingPoint })
       .from(schema.guideBookings).innerJoin(schema.guides, eq(schema.guides.id, schema.guideBookings.guideId))
       .where(and(eq(schema.guideBookings.email, email), inArray(schema.guideBookings.status, ["requested", "confirmed", "completed", "declined", "expired"])))

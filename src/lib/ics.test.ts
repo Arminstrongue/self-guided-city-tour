@@ -9,7 +9,7 @@ test("icsFile: evento com hora, lembretes, texto escapado e linhas dobradas", ()
   assert.match(s, /DTSTART:20261031T060700Z\r\n/);
   assert.match(s, /DTEND:20261031T092400Z\r\n/);
   assert.match(s, /LOCATION:Manchester Piccadilly\\, Platform 5/);
-  assert.match(s, /DESCRIPTION:06:07 Manchester Piccadilly\\n07:01 Crewe\; change/);
+  assert.match(s, /DESCRIPTION:06:07 Manchester Piccadilly\\n07:01 Crewe\\; change/);
   assert.equal((s.match(/BEGIN:VALARM/g) ?? []).length, 2);
   assert.match(s, /TRIGGER:-PT60M/);
   for (const line of s.split("\r\n")) assert.ok(new TextEncoder().encode(line).length <= 75, line);

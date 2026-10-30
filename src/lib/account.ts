@@ -94,6 +94,8 @@ export async function deleteAccount(email: string) {
   await d.update(schema.guideBookings).set({ name: "", phone: null, note: null }).where(and(eq(schema.guideBookings.email, email), lt(schema.guideBookings.startAt, new Date())));
   // Compras: só ficam os dados que a lei fiscal obriga a guardar (sem voo nem plano de viagem).
   await d.update(schema.accesses).set({ flightNo: null, flightAt: null, trip: null, userId: null }).where(eq(schema.accesses.email, email));
+  // Passes pagos com outro email e ligados a esta conta: desligam-se (ficam do email que pagou).
+  await d.update(schema.accesses).set({ accountEmail: null }).where(eq(schema.accesses.accountEmail, email));
   await d.delete(schema.users).where(eq(schema.users.email, email));
   // As sessões antigas deixam de valer (se o mesmo email voltar, começa do zero).
   await d.insert(schema.accountSettings).values({ email, sessionsAfter: new Date() })

@@ -125,10 +125,15 @@ export const accesses = pgTable("accesses", {
   stripeSessionId: text("stripe_session_id").notNull(),
   refMerchantId: uuid("ref_merchant_id").references(() => merchants.id),
   locale: text("locale"),
+  /** Conta (email com sessão) a que o passe pertence quando se pagou com outro email; o passe segue a conta. */
+  accountEmail: text("account_email"),
+  /** Reembolsado ou contestado: deixa de dar acesso. */
+  refundedAt: timestamp("refunded_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
 }, (t) => [
   uniqueIndex("accesses_session_idx").on(t.stripeSessionId),
-  index("accesses_email_idx").on(t.email)
+  index("accesses_email_idx").on(t.email),
+  index("accesses_account_idx").on(t.accountEmail)
 ]);
 
 export const commissions = pgTable("commissions", {

@@ -1,4 +1,6 @@
 "use client";
+import { zonedToDate } from "@/lib/zoned";
+import { cityNowLocal } from "@/lib/trip";
 import { lineText } from "@/data/stop-names";
 /** Peças do roteiro: escolher o roteiro pelo tempo, GPS e regresso, voo em direto, meteorologia, áudio e guia prático. */
 import { useEffect, useRef, useState } from "react";
@@ -240,9 +242,9 @@ export function FlightCard({ city, flightNo, flightAt, enabled, onUse, onEdit, t
 
   useEffect(() => {
     if (!flightAt) return;
-    const d = new Date(flightAt.getTime() - flightAt.getTimezoneOffset() * 60000);
-    setWhen(d.toISOString().slice(0, 16));
-  }, [flightAt]);
+    // Sempre na hora da cidade (não na do telemóvel), como no resto da app.
+    setWhen(cityNowLocal(city.tz ?? "UTC", 0, flightAt.getTime()));
+  }, [flightAt, city.tz]);
 
   const changed = s?.estimated && flightAt ? Math.round((Date.parse(s.estimated) - flightAt.getTime()) / 60000) : 0;
   const stLabel = s ? (t.fSt as Record<string, string>)[s.status.replace(/\s/g, "")] ?? s.status : "";
@@ -268,7 +270,7 @@ export function FlightCard({ city, flightNo, flightAt, enabled, onUse, onEdit, t
       {editing && (
         <form className="stack" style={{ gap: 8 }} onSubmit={(e) => {
           e.preventDefault();
-          const d = new Date(when);
+          const d = zonedToDate(when, city.tz ?? "UTC");
           if (isNaN(d.getTime())) return;
           onEdit({ at: d.toISOString(), no: no.toUpperCase().replace(/[^A-Z0-9]/g, "") });
           setEditing(false);

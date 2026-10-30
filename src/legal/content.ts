@@ -13,8 +13,8 @@ export function company() {
     nipc: v("COMPANY_NIPC", "[NIPC — a preencher]"),
     address: v("COMPANY_ADDRESS", "[sede — a preencher]"),
     email: v("COMPANY_EMAIL", env.contact),
-    updated: "28 de outubro de 2026",
-    updatedEn: "28 October 2026"
+    updated: "30 de outubro de 2026",
+    updatedEn: "30 October 2026"
   };
 }
 
@@ -26,10 +26,10 @@ export function legalPT(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Quem somos", p: [`A VOYBU é explorada por ${who}.`] },
       { h: "O serviço", p: [
-        "Usar a app VOYBU é gratuito: criar e planear roteiros, as ferramentas de viagem e a primeira paragem de cada cidade não têm custo.",
+        "Usar a app VOYBU é gratuito: planear o seu tempo, os números de emergência e a rota de demonstração de Manchester não têm custo. O resto do conteúdo de cada cidade (roteiro, paragens, mapa, áudio, planos dia a dia, informação local e eventos) só fica disponível com um passe pago.",
         "O que se paga é um serviço de informação: o acesso digital ao roteiro selecionado (ou, no Passe Todas as Cidades, aos roteiros de todas as cidades), com as paragens, o mapa, o áudio-guia, as indicações de transporte, os tempos e custos estimados e a contagem até à hora recomendada de regresso.",
         "A VOYBU não vende nem inclui bilhetes de transporte, entradas em museus ou monumentos, visitas guiadas, alojamento, reservas ou seguros, e não é agência de viagens nem operador turístico. Esses serviços são contratados e pagos à parte, diretamente a quem os presta.",
-        "O acesso a uma cidade é válido durante 48 horas; o passe de férias curtas (3 dias) é válido durante 72 horas nessa cidade; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa quando abre um roteiro pela primeira vez, o que tem de acontecer até 30 dias depois do pagamento; se não o abrir nesse prazo, o passe expira. Os passes incluem o roteiro, o áudio-guia e as ferramentas da app; as entradas em museus e monumentos e os bilhetes de transporte não estão incluídos, salvo indicação expressa."
+        "O acesso a uma cidade é válido durante 48 horas; o passe de férias curtas (3 dias) é válido durante 72 horas nessa cidade; o Passe Todas as Cidades é válido durante 30 dias em todas as cidades disponíveis. A contagem começa quando abre um roteiro ou um plano dia a dia pela primeira vez, o que tem de acontecer até 30 dias depois do pagamento; se não o abrir nesse prazo, o passe expira. Os passes incluem o roteiro, o áudio-guia e as ferramentas da app; as entradas em museus e monumentos e os bilhetes de transporte não estão incluídos, salvo indicação expressa."
       ] },
       { h: "Preços e pagamento", p: ["Os preços incluem IVA à taxa aplicável. O pagamento é processado pela Stripe; não guardamos dados de cartões."] },
       { h: "Direito de livre resolução", p: [
@@ -240,10 +240,10 @@ export function legalEN(doc: LegalDoc): { title: string; sections: Section[] } {
     sections: [
       { h: "Who we are", p: [`VOYBU is operated by ${who}.`] },
       { h: "The service", p: [
-        "Using the VOYBU app is free: creating and planning routes, the travel tools and the first stop of every city cost nothing.",
+        "Using the VOYBU app is free: planning your time, emergency numbers and the Manchester demo route cost nothing. The rest of each city's content (route, stops, map, audio, day-by-day plans, local information and events) is only available with a paid pass.",
         "What you pay for is an information service: digital access to the selected route (or, with the All-Cities Pass, to the routes of every city), with its stops, map, audio guide, transport directions, estimated times and costs, and the countdown to the recommended time to head back.",
         "VOYBU does not sell or include transport tickets, museum or monument entry, guided tours, accommodation, bookings or insurance, and is not a travel agency or tour operator. Those services are contracted and paid for separately, directly with whoever provides them.",
-        "City access lasts 48 hours; the short-break pass (3 days) lasts 72 hours in that city; the All-Cities Pass lasts 30 days in all available cities. Validity starts when you first open a route, which must happen within 30 days of payment; if you don't open it within that time, the pass expires. Passes include the route, the audio guide and the app tools; museum and monument entry and transport tickets are not included unless expressly stated."
+        "City access lasts 48 hours; the short-break pass (3 days) lasts 72 hours in that city; the All-Cities Pass lasts 30 days in all available cities. Validity starts when you first open a route or a day-by-day plan, which must happen within 30 days of payment; if you don't open it within that time, the pass expires. Passes include the route, the audio guide and the app tools; museum and monument entry and transport tickets are not included unless expressly stated."
       ] },
       { h: "Prices and payment", p: ["Prices include VAT at the applicable rate. Payments are processed by Stripe; we do not store card details."] },
       { h: "Right of withdrawal", p: [

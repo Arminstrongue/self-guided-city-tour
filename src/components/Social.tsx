@@ -141,7 +141,7 @@ export function PeopleTab({ t, locale, social, cities, onChange, onEdit }: { t: 
           <b>🔔 {fmt(t.scRequests, { n: social.requests.length })}</b>
           {social.requests.map((p) => <Row key={p.handle} t={t} locale={locale} p={p} right={<span className="row" style={{ gap: 6 }}>
             <button className="sc-follow on" onClick={async () => { await act(p.handle, "accept"); onChange(); }}>{t.scAccept}</button>
-            <button className="sc-follow" onClick={async () => { await act(p.handle, "decline"); onChange(); }}>✕</button></span>} />)}
+            <button className="sc-follow" aria-label={t.close} onClick={async () => { await act(p.handle, "decline"); onChange(); }}>✕</button></span>} />)}
         </div>
       )}
       <div className="ex-chips">

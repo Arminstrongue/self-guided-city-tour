@@ -102,7 +102,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
   const w = resWhen(r, locale);
   return (
     <Portal><div className="sheet-bg" onClick={onClose}>
-      <div className="sheet stack tk" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={r.title}>
+      <div className="sheet stack tk-sheet" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={r.title}>
         <SheetX onClose={onClose} label={t.close} />
         <b style={{ fontSize: 18 }}>{RES_ICON[r.kind]} {r.title}</b>
         <span className="hint">{w.day} · <b>{w.hm}</b> <span className="is-tag">{t.isYou}</span></span>

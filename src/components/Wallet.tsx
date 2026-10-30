@@ -1,4 +1,5 @@
 "use client";
+import { LinkPass } from "./LinkPass";
 import { lastCity } from "@/lib/last-city";
 import { EmailSignIn } from "./EmailSignIn";
 import { useDict } from "@/i18n/client-dict";
@@ -345,7 +346,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
         {loadErr ? <section className="card stack" role="alert" style={{ gap: 10 }}><b>⚠️ {t.esi.loadErr}</b><button className="btn press" onClick={() => void load()}>{t.esi.retry}</button></section>
           : w === null && <div className="wl-skel" aria-hidden="true"><i /><i /><i /></div>}
         {/* Agora: o próximo passo (reserva, visita com guia, roteiro em curso ou roteiro planeado) */}
-        <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned} hasPass={active.length > 0}
+        <NowPanel t={t} locale={locale} cities={cities} signed={Boolean(signed)} planned={planned ? { ...planned, open: planned.open || free.includes(planned.city) || active.some((p) => p.scope === "all" || p.city === planned.city) } : null} hasPass={active.length > 0}
           bookings={(signed?.bookings ?? []).map((b) => ({ id: b.id, guide: b.guide, guideId: b.guideId, startAt: b.startAt, city: b.city, status: b.status, meeting: "meeting" in b ? (b.meeting as string | null) : null }))} />
         <NeedNow t={t} locale={locale} city={planned?.city ?? myCities[0] ?? (recent || "lon")} compact />
         {w === "anon" && (
@@ -449,6 +450,7 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
           <section className="stack" style={{ gap: 10 }}>
             {passCards()}
             {signed && passes.length === 0 && <a className="btn ghost press" href={`/${locale}#cities`}>{t.wBuy}</a>}
+            {signed && <LinkPass t={t} locale={locale} />}
             {!signed && <button className="btn ghost press" onClick={goSignIn}>🔐 {t.wSignTitle}</button>}
           </section>
           {signed && signed.bookings.length > 0 && (
@@ -498,10 +500,10 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
       {/* ---------- Barra de baixo ---------- */}
       <Portal><nav className="nv" aria-label={t.wallet}>
         <Link href={`/${locale}`} prefetch aria-label={t.nvHome}><span><I icon={House} on={false} /></span><small>{t.nvHome}</small></Link>
-        <button className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
-        <button className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
-        <button className={section === "trip" ? "on" : ""} onClick={() => go("trip")} aria-label={t.wallet}><span><I icon={Luggage} on={section === "trip"} /></span><small>{t.nvTrip}</small></button>
-        <button className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
+        <button aria-current={section === "home" ? "page" : undefined} className={section === "home" ? "on" : ""} onClick={() => { if (section === "home") window.scrollTo({ top: 0, behavior: "smooth" }); go("home"); }} aria-label={t.nvNow}><span><I icon={Zap} on={section === "home"} /></span><small>{t.nvNow}</small></button>
+        <button aria-current={section === "explore" || section === "videos" ? "page" : undefined} className={section === "explore" || section === "videos" ? "on" : ""} onClick={() => go("explore")} aria-label={t.nvExplore}><span><I icon={Compass} on={section === "explore"} /></span><small>{t.nvExplore}</small></button>
+        <button aria-current={section === "trip" ? "page" : undefined} className={section === "trip" ? "on" : ""} onClick={() => go("trip")} aria-label={t.wallet}><span><I icon={Luggage} on={section === "trip"} /></span><small>{t.nvTrip}</small></button>
+        <button aria-current={section === "profile" ? "page" : undefined} className={section === "profile" ? "on" : ""} onClick={() => go("profile")} aria-label={t.nvProfile}>
           <span>{prof ? <Avatar p={prof} size={26} /> : <I icon={UserRound} on={section === "profile"} />}</span><small>{t.nvProfile}</small>
         </button>
       </nav></Portal>

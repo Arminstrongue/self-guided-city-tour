@@ -41,7 +41,8 @@ export default async function Start(
   if (!isLocale(params.locale)) notFound();
   const t = getDict(params.locale);
   const L = INTL_LOCALE[params.locale];
-  const list = await loadCities();
+  // Cidades sem paragens (acabadas de criar no admin) ficam de fora: não partem o planeador.
+  const list = (await loadCities()).filter((c) => c.stops.length > 0);
   const region = new Intl.DisplayNames([L], { type: "region" });
   const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail().catch(() => null)].filter((e): e is string => Boolean(e));
   // Uma só consulta (antes era uma por cidade).

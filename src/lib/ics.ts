@@ -10,7 +10,7 @@ export type IcsEvent = {
   alarms?: number[];            // minutos antes do início
 };
 
-const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 const utc = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
 /** Linhas com mais de 75 octetos dobram-se (continuação começa com um espaço), sem partir carateres. */
 function fold(line: string) {

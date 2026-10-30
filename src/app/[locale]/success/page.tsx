@@ -15,7 +15,7 @@ export async function generateMetadata(props: { params: Promise<{ locale: Locale
 }
 
 export default async function Success(
-  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; pending?: string }> }
+  props: { params: Promise<{ locale: Locale }>; searchParams: Promise<{ city?: string; pending?: string; paid?: string }> }
 ) {
   const searchParams = await props.searchParams;
   const params = await props.params;
@@ -32,8 +32,8 @@ export default async function Success(
         ) : !email ? (
           // Sem sessão (página aberta à mão ou noutro navegador): não afirmar que houve pagamento.
           <>
-            <h1 style={{ fontSize: 30 }}>{t.wallet}</h1>
-            <p>{t.acSignIn}</p>
+            <h1 style={{ fontSize: 30 }}>{searchParams.paid ? `✓ ${t.successTitle}` : t.wallet}</h1>
+            <p>{searchParams.paid ? t.paidSignIn : t.acSignIn}</p>
             <Link className="btn tram" href={`/${params.locale}/wallet?signin=1${city ? `&city=${city.id}` : ""}`}>{t.wSignIn}</Link>
           </>
         ) : (
