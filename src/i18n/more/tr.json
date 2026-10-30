@@ -2413,7 +2413,7 @@
 },
 "at": {
 "title": "Otomatik günlük",
-"sub": "Uygulama açıkken şehirleri, yerleri, km'yi ve adımları algılar. Her zaman onay ister.",
+"sub": "Uygulama açıkken şehirleri, yerleri, km'yi ve adımları algılar. Her günün rotası otomatik kaydedilir; şehirler ve yerler için her zaman onay istenir.",
 "bgNote": "Ekran kilitliyken veya uygulama kapalıyken tarayıcı konum kaydına izin vermez.",
 "privacy": "Rotanız onaylayana kadar yalnızca telefonunuzda kalır.",
 "today": "Bugün: {km} km · ≈ {s} adım · {n} yer",

@@ -1982,7 +1982,7 @@
 },
 "at": {
 "title": "Diario automatico",
-"sub": "Rileva città, luoghi, km e passi mentre l'app è aperta. Chiede sempre conferma.",
+"sub": "Rileva città, luoghi, km e passi mentre l'app è aperta. Il percorso di ogni giorno si salva da solo; città e luoghi chiedono sempre conferma.",
 "bgNote": "Con lo schermo bloccato o l'app chiusa, il browser non consente di registrare la posizione.",
 "privacy": "Il percorso resta sul tuo telefono finché non lo confermi.",
 "today": "Oggi: {km} km · ≈ {s} passi · {n} luoghi",

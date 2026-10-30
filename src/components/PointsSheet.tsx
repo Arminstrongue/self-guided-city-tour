@@ -78,8 +78,9 @@ export function PointsSheet({ t, locale, s, onClose }: { t: Dict; locale: Locale
           <div className="pt2-stats">
             <span><b className="num">{s.cities}</b><small>{fmt(t.ptCities, { n: s.cities }).replace(/^\S+\s*/, "")}</small></span>
             <span><b className="num">{s.countries}</b><small>🏳️</small></span>
-            <span><b className="num">{nf(s.km ?? 0)}</b><small>{a.km}</small></span>
-            <span><b className="num">{nf(s.steps ?? 0)}</b><small>👣</small></span>
+            {/* Inclui o dia de hoje em curso: atualiza-se sozinho enquanto caminha. */}
+            <span><b className="num">{nf(Math.round(((s.km ?? 0) + (auto ? today.km : 0)) * 10) / 10)}</b><small>{a.km}</small></span>
+            <span><b className="num">{nf((s.steps ?? 0) + (auto ? today.steps : 0))}</b><small>👣</small></span>
             <span><b className="num">{s.badges.length}</b><small>🏅</small></span>
           </div>
         </section>

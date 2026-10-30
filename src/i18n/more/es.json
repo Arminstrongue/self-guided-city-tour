@@ -1982,7 +1982,7 @@
 },
 "at": {
 "title": "Registro automático",
-"sub": "Detecta ciudades, lugares, km y pasos mientras la app está abierta. Siempre pide confirmación.",
+"sub": "Detecta ciudades, lugares, km y pasos mientras la app está abierta. La ruta de cada día se guarda sola; ciudades y lugares siempre piden confirmación.",
 "bgNote": "Con la pantalla bloqueada o la app cerrada, el navegador no permite registrar la ubicación.",
 "privacy": "La ruta queda solo en tu móvil hasta que la confirmes.",
 "today": "Hoy: {km} km · ≈ {s} pasos · {n} lugares",
