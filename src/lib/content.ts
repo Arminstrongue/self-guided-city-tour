@@ -30,7 +30,7 @@ const Alt = z.union([
 export const CitySchema = z.object({
   id: z.string().regex(/^[a-z]{2,5}$/),
   n: z.object({ pt: z.string().min(2), en: z.string().min(2), es: z.string().min(2), fr: z.string().min(2), de: z.string().min(2) }),
-  cur: z.enum(["EUR", "GBP", "TRY", "AED", "QAR", "SAR", "EGP", "JOD", "OMR", "CZK", "SGD", "USD", "CAD", "MXN", "BRL", "ARS", "MAD", "ZAR", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF", "XOF"]),
+  cur: z.enum(["EUR", "GBP", "TRY", "AED", "QAR", "SAR", "EGP", "JOD", "OMR", "CZK", "SGD", "USD", "CAD", "MXN", "BRL", "ARS", "MAD", "ZAR", "TZS", "TND", "ETB", "KES", "AOA", "GHS", "RWF", "XOF", "CHF", "HKD", "THB", "IDR"]),
   single: z.number().min(0).max(MONEY), card: z.number().min(0).max(MONEY), cardName: z.string().max(40),
   alt: Alt.nullable(),
   air: Leg, ret: z.object({ core: Leg, extra: Leg }),

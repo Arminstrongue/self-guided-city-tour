@@ -29,7 +29,8 @@ export type City = {
   tz?: string;        // fuso horário (IANA)
 };
 export type CityCur = "EUR" | "GBP" | "TRY" | "AED" | "QAR" | "SAR" | "EGP" | "JOD" | "OMR" | "CZK" | "SGD"
-  | "USD" | "CAD" | "MXN" | "BRL" | "ARS" | "MAD" | "ZAR" | "TZS" | "TND" | "ETB" | "KES" | "AOA" | "GHS" | "RWF" | "XOF";
+  | "USD" | "CAD" | "MXN" | "BRL" | "ARS" | "MAD" | "ZAR" | "TZS" | "TND" | "ETB" | "KES" | "AOA" | "GHS" | "RWF" | "XOF"
+  | "CHF" | "HKD" | "THB" | "IDR";
 export type Airport = { iata: string; name: string; lat: number; lng: number };
 /** Zona de fronteira: Reino Unido, Turquia e cada país do Médio Oriente têm regras de entrada próprias; o resto é espaço Schengen. */
 export { zoneOf, COUNTRY, type Zone } from "./city-meta";
