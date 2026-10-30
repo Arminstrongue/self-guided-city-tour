@@ -1,6 +1,6 @@
 # Google Play — ficha da app VOYBU (copiar e colar no Play Console)
 
-Atualizado: 26/10/2026. Antes de submeter, confirme com as regras em vigor do Google Play.
+Atualizado: 30/10/2026. Antes de submeter, confirme com as regras em vigor do Google Play.
 
 ## Regras que a app já cumpre
 - **Pagamentos:** dentro da app Android/iPhone não se vendem passes nem planos pagos e não se mostram preços nem ligações para comprar (regra de pagamentos do Google Play). Quem já tem um passe entra com o mesmo email e usa-o na app. As reservas de guias e de negócios (serviços físicos) podem usar a Stripe.
@@ -42,7 +42,7 @@ O que encontra na app:
 • Diário de viagem, memórias com fotos e estatísticas das suas viagens
 • Comunidade de viajantes e guias locais (opcional)
 
-53 cidades em todos os continentes, informação com fonte e data, e privacidade por defeito: a localização é sempre opcional.
+62 cidades em todos os continentes, informação com fonte e data, e privacidade por defeito: a localização é sempre opcional.
 
 Já tem um passe VOYBU? Entre com o seu email e o roteiro abre logo.
 
@@ -70,7 +70,7 @@ In the app:
 • Travel diary, photo memories and your travel stats
 • Traveller community and local guides (optional)
 
-53 cities on every continent, information with its source and date, and privacy by default: location is always optional.
+62 cities on every continent, information with its source and date, and privacy by default: location is always optional.
 
 Already have a VOYBU pass? Sign in with your email and your route opens straight away.
 
@@ -81,7 +81,7 @@ Already have a VOYBU pass? Sign in with your email and your route opens straight
 - **Texto da página de programador (140):** EN "VOYBU helps travellers explore cities on their own: walking routes that fit your time, audio guides in 12 languages and always back on time." · PT "A VOYBU ajuda viajantes a explorar cidades sozinhos: roteiros a pé à medida do seu tempo, áudio-guia em 12 idiomas e regresso a horas."
 - **Imagem de destaque 1024×500:** `store/feature-graphic.png`
 - **Capturas do telemóvel (1080×1920, 9:16):** `store/screenshots/pt/` e `store/screenshots/en/` (7 cada, já no modo app, sem preços):
-  1. Início · 2. Modo Escala · 3. Página da cidade · 4. Roteiro · 5. Acabei de chegar (passo a passo) · 6. Perfil e as minhas viagens · 7. Planeador de dias
+  1. Início · 2. Modo Escala · 3. Página da cidade (Lisboa) · 4. Roteiro de Lisboa · 5. Acabei de chegar · 6. Roteiro de Londres · 7. Planeador de dias
 - As imagens são ilustrativas (README das imagens): não as apresente como fotografias de serviços reais.
 
 ## Segurança dos dados (Data safety)
