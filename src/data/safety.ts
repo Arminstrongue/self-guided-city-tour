@@ -29,6 +29,7 @@ const HELP = {
   br: { lang: "pt-BR", text: "Socorro! Preciso de ajuda. Por favor, chame a polícia ou uma ambulância." },
   el: { lang: "el-GR", text: "Βοήθεια! Χρειάζομαι βοήθεια. Παρακαλώ, καλέστε την αστυνομία ή ένα ασθενοφόρο." },
   id: { lang: "id-ID", text: "Tolong! Saya butuh bantuan. Tolong panggil polisi atau ambulans." },
+  ja: { lang: "ja-JP", text: "助けてください！困っています。警察か救急車を呼んでください。" },
   cs: { lang: "cs-CZ", text: "Pomoc! Potřebuji pomoc. Zavolejte prosím policii nebo záchranku." }
 };
 
@@ -56,6 +57,9 @@ export const COUNTRY_SAFETY: Record<string, CountrySafety> = {
   HK: { nums: [{ k: "sos", n: "999" }], help: HELP.en, pharmacy: "Pharmacy · 藥房 (Watsons · Mannings)" },
   TH: { nums: [{ k: "police", n: "191" }, { k: "ambulance", n: "1669" }, { k: "fire", n: "199" }, { k: "nonurgent", n: "1155" }], help: HELP.en, pharmacy: "ร้านขายยา · Pharmacy" },
   ID: { nums: [{ k: "sos", n: "112" }, { k: "police", n: "110" }, { k: "ambulance", n: "118 / 119" }, { k: "fire", n: "113" }], help: HELP.id, pharmacy: "Apotek ✚" },
+  CV: { nums: [{ k: "police", n: "132" }, { k: "ambulance", n: "130" }, { k: "fire", n: "131" }], help: HELP.pt, pharmacy: "Farmácia ✚" },
+  NA: { nums: [{ k: "police", n: "10111" }, { k: "ambulance", n: "061 211111" }, { k: "fire", n: "061 211111" }], help: HELP.en, pharmacy: "Pharmacy ✚" },
+  JP: { nums: [{ k: "police", n: "110" }, { k: "fire", n: "119" }, { k: "ambulance", n: "119" }, { k: "nonurgent", n: "050-3816-2787" }], help: HELP.ja, pharmacy: "薬局 · Pharmacy (ドラッグストア)" },
   US: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }], help: HELP.en, pharmacy: "Pharmacy (CVS · Walgreens)" },
   CA: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "311" }, { k: "health", n: "811" }], help: HELP.en, pharmacy: "Pharmacy (Shoppers Drug Mart · Rexall)" },
   MX: { nums: [{ k: "sos", n: "911" }, { k: "nonurgent", n: "078" }], help: HELP.mx, pharmacy: "Farmacia (Farmacias del Ahorro · Guadalajara)" },
@@ -113,6 +117,15 @@ export const CITY_SAFETY: Record<string, CitySafety> = {
   hkg: { alerts: ["lefttraffic", "pickpocket", "heat"], hot: ["Mong Kok", "Temple Street", "Nathan Road", "Star Ferry (Tsim Sha Tsui)"], night: [], tp: "Polícia: 999" },
   bkk: { alerts: ["shop", "taxi", "bar", "pickpocket", "snatch", "heat", "lefttraffic"], hot: ["Grande Palácio (falsos «está fechado»)", "Wat Pho", "Khao San Road", "Yaowarat"], night: ["Patpong", "Nana / Soi Cowboy"], tp: "Polícia Turística: 1155" },
   dps: { alerts: ["lefttraffic", "taxi", "atm"], hot: ["Floresta dos Macacos (óculos, joias e comida)", "Mercado de Arte de Ubud", "Jalan Raya Ubud (motas e passeios estreitos)"], night: ["Estradas escuras sem passeio fora do centro"], tp: "Polícia: 110 · 112 · troque dinheiro só em casas de câmbio licenciadas (logótipo QR do Bank Indonesia)" },
+  rai: { alerts: ["pickpocket", "snatch", "taxi", "nightwalk"], hot: ["Mercado de Sucupira", "Plateau (Rua Pedonal)", "Paragens de hiace"], night: ["Andar a pé fora do Plateau", "Praias depois do anoitecer"], tp: "Polícia: 132 · à noite, ande de táxi" },
+  vxe: { alerts: ["pickpocket", "snatch", "taxi", "nightwalk"], hot: ["Avenida Marginal", "Mercado de peixe", "Rua de Lisboa"], night: ["Avenida Marginal de madrugada", "Laginha depois do anoitecer"], tp: "Polícia: 132 · à noite, ande de táxi" },
+  sid: { alerts: ["pickpocket", "shop", "heat", "taxi"], hot: ["Pontão de Santa Maria", "Praia de Santa Maria (pertences na areia)"], night: ["Praias depois do anoitecer", "Caminho a pé para Ponta Preta à noite"], tp: "Polícia: 132 · bombeiros: 131 · emergência médica: 130" },
+  wdh: { alerts: ["snatch", "pickpocket", "atm", "taxi", "lefttraffic", "nightwalk"], hot: ["Post Street Mall e Independence Avenue", "Multibancos de rua", "Carros estacionados com malas à vista"], night: ["Andar a pé no centro", "Zoo Park depois do anoitecer"], tp: "Polícia: 10111 · Proteção ao Turista (Nampol): 061 209 3456" },
+  swp: { alerts: ["snatch", "atm", "lefttraffic", "nightwalk"], hot: ["Carros estacionados junto à praia e ao Jetty", "Multibancos de rua"], night: ["Praias e o Mole depois do anoitecer", "Ruas vazias fora do centro"], tp: "Polícia: 10111 · não deixe nada à vista no carro" },
+  tyo: { alerts: ["bar", "heat"], hot: ["Kabukicho (angariadores de bares)", "Roppongi (angariadores de bares)", "Cruzamento de Shibuya (multidões)"], night: ["Kabukicho", "Roppongi"], tp: "Polícia: 110 · Japan Visitor Hotline (24 h): 050-3816-2787" },
+  hij: { alerts: ["heat"], hot: [], night: [], tp: "Polícia: 110 · Japan Visitor Hotline (24 h): 050-3816-2787" },
+  kyo: { alerts: ["lefttraffic", "heat", "taxi"], hot: ["Autocarros 206 e 100 (cheios)", "Sannenzaka e Ninenzaka", "Hanamikoji (Gion)", "Fushimi Inari (entrada)"], night: [], tp: "Polícia: 110 · Japan Visitor Hotline (24 h): 050-3816-2787" },
+  osa: { alerts: ["lefttraffic", "bar", "heat"], hot: ["Dotonbori (ponte Ebisubashi)", "Estação de Namba", "Mercado Kuromon"], night: ["Angariadores de bares em Minami (Namba e Shinsaibashi)"], tp: "Polícia: 110 · Japan Visitor Hotline (24 h): 050-3816-2787" },
   nyc: { alerts: ["pickpocket", "snatch", "photo", "shop", "nightwalk"], hot: ["Times Square", "Metro (linhas cheias)", "Ponte de Brooklyn", "Canal Street"], night: ["Parques depois do anoitecer", "Estações de metro vazias"] },
   was: { alerts: ["pickpocket", "nightwalk"], hot: ["Metro Center", "Gallery Place-Chinatown", "National Mall (eventos)"], night: ["Zonas fora do centro depois das 22h"] },
   sfo: { alerts: ["snatch", "pickpocket", "nightwalk"], hot: ["Union Square", "Market Street", "Fisherman's Wharf", "Cable cars"], night: ["Tenderloin", "Civic Center", "6th Street (SoMa)"] },

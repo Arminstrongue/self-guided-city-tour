@@ -262,3 +262,90 @@ test("novas listas sem contradições", () => {
   assert.deepEqual(both(_lists.ID_FREE, _lists.ID_VOA), []);
   assert.equal(_lists.ID_FREE.length + _lists.ID_VOA.length, 97);
 });
+
+test("novas cidades: Cabo Verde (CVE), Namíbia (NAD) e Japão (JPY) têm zona própria", async () => {
+  const { zoneOf } = await import("../data/city-meta");
+  const city = (id: string, cur: string) => ({ id, cur } as never);
+  for (const id of ["rai", "vxe", "sid"]) assert.equal(zoneOf(city(id, "CVE")), "cv", id);
+  for (const id of ["wdh", "swp"]) assert.equal(zoneOf(city(id, "NAD")), "na", id);
+  for (const id of ["tyo", "kyo", "osa", "hij"]) assert.equal(zoneOf(city(id, "JPY")), "jp", id);
+  assert.equal(zoneOf({ cur: "ZAR" }), "za"); // o rand continua a ser a África do Sul
+});
+
+test("Cabo Verde: UE e CEDEAO sem visto, EASE/TSA para todos, visto prévio (também em trânsito) para 89 nacionalidades", () => {
+  const rai = { id: "rai", cur: "CVE" } as never;
+  assert.equal(checkEntry(rai, "CV").verdict, "free");
+  assert.equal(checkEntry(rai, "CV").hint, undefined);
+  const pt = checkEntry(rai, "PT");
+  assert.equal(pt.verdict, "free-pass");
+  assert.equal(pt.hint, "cv-ease");
+  assert.equal(pt.site, "ease.gov.cv");
+  assert.equal(checkEntry(rai, "GB").verdict, "free-pass");
+  assert.equal(checkEntry(rai, "SN").verdict, "free-pass"); // CEDEAO
+  assert.equal(checkEntry(rai, "ML").verdict, "unknown");   // saiu da CEDEAO em 2025
+  assert.equal(checkEntry(rai, "US").verdict, "unknown");   // isenção só em notícias, sem fonte oficial
+  const mx = checkEntry(rai, "MX");
+  assert.equal(mx.verdict, "visa");
+  assert.equal(mx.transitVisa, true);
+  assert.equal(mx.hint, "cv-ease");
+  assert.equal(checkEntry(rai, "MX", true).verdict, "free"); // residência da UE, EUA, Brasil, Canadá…
+  assert.equal(checkEntry(rai, "MX", true).transitVisa, false);
+  assert.equal(checkEntry(rai, "TR").verdict, "unknown");   // saiu da lista em janeiro de 2026
+  assert.equal(checkEntry(rai, "IN").verdict, "unknown");
+  assert.equal(checkEntry({ id: "sid", cur: "CVE" } as never, "FR").hint, "cv-ease");
+});
+
+test("Namíbia (regras de 01/04/2025): isentos, visto à chegada, e-visa para os outros", () => {
+  const wdh = { id: "wdh", cur: "NAD" } as never;
+  assert.equal(checkEntry(wdh, "NA").verdict, "free");
+  assert.equal(checkEntry(wdh, "ZA").verdict, "free-pass");
+  assert.equal(checkEntry(wdh, "AO").verdict, "free-pass");
+  assert.equal(checkEntry(wdh, "BR").verdict, "free-pass");
+  assert.equal(checkEntry(wdh, "ZA").hint, undefined);
+  const pt = checkEntry(wdh, "PT");
+  assert.equal(pt.verdict, "voa");
+  assert.equal(pt.fee, "1200–1600 NAD");
+  assert.equal(pt.hint, "na-voa");
+  assert.equal(checkEntry(wdh, "US").verdict, "voa");
+  assert.equal(checkEntry(wdh, "GH").verdict, "voa");
+  const cn = checkEntry(wdh, "CN");
+  assert.equal(cn.verdict, "evisa-me");
+  assert.equal(cn.site, "eservices.mhaiss.gov.na");
+  assert.equal(cn.hint, "na-voa");
+  assert.equal(checkEntry(wdh, "SG").verdict, "unknown"); // nas duas listas oficiais
+  assert.equal(checkEntry(wdh, "MT").verdict, "unknown");
+  assert.equal(checkEntry(wdh, "CN", true).verdict, "free");
+  assert.equal(checkEntry({ id: "swp", cur: "NAD" } as never, "DE").verdict, "voa");
+});
+
+test("Japão: 74 países e regiões sem visto, Visit Japan Web, visto para os outros", () => {
+  const tyo = { id: "tyo", cur: "JPY" } as never;
+  assert.equal(checkEntry(tyo, "JP").verdict, "free");
+  assert.equal(checkEntry(tyo, "JP").hint, undefined);
+  const pt = checkEntry(tyo, "PT");
+  assert.equal(pt.verdict, "free-pass");
+  assert.equal(pt.hint, "jp-vjw");
+  for (const n of ["US", "GB", "BR", "TW", "HK", "MX", "TH", "AE", "RS"]) assert.equal(checkEntry(tyo, n).verdict, "free-pass", n);
+  assert.equal(checkEntry(tyo, "CN").verdict, "visa");
+  assert.equal(checkEntry(tyo, "IN").verdict, "visa");
+  assert.equal(checkEntry(tyo, "AO").verdict, "visa");
+  assert.equal(checkEntry(tyo, "AO").transitVisa, false);
+  assert.equal(checkEntry(tyo, "AO", true).verdict, "free");
+  assert.equal(checkEntry(tyo, "ID").verdict, "unknown"); // passaporte eletrónico registado
+  assert.equal(checkEntry(tyo, "QA").verdict, "unknown");
+  assert.equal(checkEntry(tyo, "CO").verdict, "unknown");
+  assert.equal(checkEntry({ id: "hij", cur: "JPY" } as never, "FR").verdict, "free-pass");
+});
+
+test("listas de Cabo Verde, Namíbia e Japão sem contradições", () => {
+  const both = (a: string[], b: string[]) => a.filter((x) => b.includes(x));
+  assert.deepEqual(both(_lists.CV_FREE, _lists.CV_VISA), []);
+  assert.equal(_lists.CV_VISA.length, 89); // 91 do despacho sem Porto Rico e Toquelau
+  assert.equal(new Set(_lists.CV_VISA).size, _lists.CV_VISA.length);
+  assert.deepEqual(both(_lists.NA_FREE, _lists.NA_VOA), []);
+  assert.deepEqual(both(_lists.NA_UNKNOWN, [..._lists.NA_FREE, ..._lists.NA_VOA]), []);
+  assert.equal(new Set(_lists.NA_VOA).size, _lists.NA_VOA.length);
+  assert.deepEqual(both(_lists.JP_FREE, _lists.JP_UNKNOWN), []);
+  assert.equal(new Set(_lists.JP_FREE).size, _lists.JP_FREE.length);
+  assert.equal(_lists.JP_FREE.length + 2, 74); // + Indonésia e Catar
+});

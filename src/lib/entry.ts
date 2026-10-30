@@ -13,6 +13,11 @@
  *  - Hong Kong: https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html
  *  - Tailândia (regras de 15/09/2026): https://image.mfa.go.th/mfa/0/TkZZJfspCP/Visa_Exemption_Scheme/PR-eng.pdf e https://tdac.immigration.go.th
  *  - Indonésia: https://www.imigrasi.go.id/faq/visa?lang=en-US e https://evisa.imigrasi.go.id · Bali: https://lovebali.baliprov.go.id
+ *  - Cabo Verde: https://www.gov.cv/en/paises-com-visto-obrigatorio-para-cabo-verde e https://www.ease.gov.cv/assets/lista_de_paises.pdf
+ *    (Despacho n.º 244/GMAI/2026, BO II Série n.º 14 de 23/01/2026, em vigor desde 01/01/2026; Decreto-Lei 13/2025) e https://www.ease.gov.cv
+ *  - Namíbia: https://eservices.mhaiss.gov.na/visaonarrival e https://eservices.mhaiss.gov.na/form/FactSheetVisaRequirementstoNamibia.pdf (versão 4, 28/05/2025)
+ *  - Japão: https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html (74 países e regiões, 01/09/2025) · Visit Japan Web: https://vjw-lp.digital.go.jp
+ *    JESTA: Lei n.º 32 de Reiwa 8 (promulgada a 05/06/2026), entra em vigor por decreto até 31/03/2029 — ainda não se aplica (https://www.moj.go.jp/isa/policies/bill/05_00001.html)
  * As regras mudam: a app mostra sempre a ligação oficial para confirmar.
  * Médio Oriente (revisto em outubro de 2026): só marcamos as nacionalidades com regra confirmada; as outras ficam "unknown".
  */
@@ -140,6 +145,35 @@ const ID_VOA = ["ZA", "AL", "US", "AD", "SA", "AR", "AM", "AU", "AT", "BH", "NL"
   "EG", "MC", "MN", "MZ", "NO", "OM", "PS", "PG", "FR", "PE", "PL", "PT", "QA", "RO", "RU", "RW", "SM", "NZ", "RS", "SC", "CY", "SK", "SI", "ES", "SR",
   "SE", "CH", "TW", "TZ", "TL", "CN", "TN", "TR", "AE", "UZ", "UA", "VA", "VE", "JO", "GR"];
 
+/* ---------- Cabo Verde, Namíbia e Japão (revisto em outubro de 2026; fontes oficiais no topo do ficheiro) ---------- */
+/** Cabo Verde: sem visto desde 01/01/2019 (UE, Reino Unido, Suíça, Liechtenstein, Noruega, Mónaco, São Marinho e Andorra, segundo a Delegação da UE)
+ *  e CEDEAO (protocolo de livre circulação). Burkina Faso, Mali e Níger saíram da CEDEAO em 2025: ficam "unknown". Todos pagam a TSA no EASE. */
+const CV_FREE = [...EU, "GB", "CH", "LI", "NO", "MC", "SM", "AD", ...["BJ", "CI", "GM", "GH", "GN", "GW", "LR", "NG", "SN", "SL", "TG"]];
+/** Cabo Verde: visto obrigatório antes de viajar, também para trânsito/escala no aeroporto (anexo do Despacho 244/GMAI/2026, 91 países;
+ *  sem visto online nem à chegada). Porto Rico e Toquelau constam da lista mas não emitem passaporte próprio: ficam de fora. */
+const CV_VISA = ["AF", "DZ", "AM", "AZ", "BH", "BD", "BY", "BO", "BW", "BN", "BI", "BT", "KH", "KZ", "TD", "CL", "CO", "KM", "CG", "KP", "CR", "DJ", "DM",
+  "EG", "SV", "EC", "ER", "SZ", "ET", "PH", "GA", "GT", "GY", "HT", "HN", "YE", "ID", "IR", "IQ", "JM", "JO", "KI", "LA", "LS", "LB", "LY", "MG", "MW", "MR",
+  "MX", "MN", "MM", "NA", "NR", "NP", "NI", "OM", "PS", "PW", "PA", "PG", "PK", "PY", "PE", "KG", "CF", "CD", "DO", "WS", "SY", "SO", "LK", "SD", "SS", "SR",
+  "TJ", "TZ", "TO", "TT", "TN", "TM", "TV", "UG", "UZ", "VU", "VE", "VN", "ZM", "ZW"];
+/** Namíbia (regras de 01/04/2025): sem visto para férias (fact sheet do Ministério, versão 4). Singapura aparece também na lista de visto à chegada: fica "unknown". */
+const NA_FREE = ["AO", "BW", "BR", "CU", "SZ", "HK", "ID", "JM", "KE", "LS", "MO", "MW", "MY", "MU", "MZ", "RU", "SC", "ZA", "TZ", "ZM", "ZW"];
+/** Namíbia: visto à chegada ou e-visa (lista do portal eservices.mhaiss.gov.na, com os 36 países juntados em setembro de 2025; territórios sem passaporte próprio ficam de fora). */
+const NA_VOA = ["BJ", "BF", "BI", "CV", "CM", "CF", "TD", "KM", "CI", "DJ", "GQ", "ER", "GA", "GM", "GH", "GN", "GW", "LR", "MG", "MR", "NE", "RW", "ST", "SL",
+  "TG", "TN", "UG",
+  "AR", "BG", "KH", "CL", "HR", "CZ", "EC", "EE", "GR", "HU", "IL", "LV", "LT", "MX", "NI", "PY", "PE", "PL", "RO", "SK", "KR", "VA", "VE", "VN", "TH", "TR",
+  "AE", "UY", "AM", "AU", "AT", "AZ", "BY", "BE", "CA", "DK", "FI", "FR", "DE", "IS", "IE", "IT", "JP", "KZ", "KG", "LI", "LU", "MD", "NL", "NZ", "NO", "PT",
+  "ES", "SE", "CH", "TJ", "TM", "UA", "GB", "US", "UZ", "AD", "AG", "BS", "BB", "MC", "MN", "ME", "PS", "PA", "SI", "BO", "BN", "CY", "GE", "GD", "HT", "KI",
+  "MV", "VC", "KN", "LC", "SR", "MK", "TO", "TT", "VU", "DO"];
+/** Namíbia: fontes oficiais em conflito ou ilegíveis (Malta e Samoa anunciadas em set. 2025 mas fora da lista do portal; Índia, Nigéria, Egito e RD Congo na fact sheet). */
+const NA_UNKNOWN = ["SG", "MT", "WS", "IN", "NG", "EG", "CD"];
+/** Japão: isenção de visto para estadias curtas (MOFA, 74 países e regiões). Indonésia e Catar só com passaporte eletrónico registado numa missão japonesa: ficam "unknown". */
+const JP_FREE = ["BN", "MY", "KR", "SG", "TH", "HK", "MO", "TW", "CA", "US", "AR", "BS", "CL", "CR", "DO", "SV", "GT", "HN", "SR", "BB", "BR", "PA", "PY", "PE",
+  "MX", "UY", "AU", "NZ", "IL", "TR", "AE", "LS", "MU", "TN",
+  "AD", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "GR", "HU", "IS", "IT", "LV", "LT", "LU", "MT", "MC", "NL", "MK", "NO", "PL", "PT", "RO", "SM",
+  "SK", "SI", "ES", "SE", "AT", "DE", "IE", "LI", "CH", "GB", "ME", "RS"];
+/** Japão: casos à parte (registo prévio do passaporte eletrónico, ou "aconselhados a pedir visto" como a Colômbia). Todos os outros precisam de visto. */
+const JP_UNKNOWN = ["ID", "QA", "CO"];
+
 /* ---------- Américas e África (revisto em outubro de 2026; só nacionalidades com regra confirmada) ---------- */
 const AFRICA = ["DZ", "AO", "BJ", "BW", "BF", "BI", "CV", "CM", "CF", "TD", "KM", "CG", "CD", "CI", "DJ", "EG", "GQ", "ER", "SZ", "ET", "GA", "GM", "GH",
   "GN", "GW", "KE", "LS", "LR", "LY", "MG", "MW", "ML", "MR", "MU", "MA", "MZ", "NA", "NE", "NG", "RW", "ST", "SN", "SC", "SL", "SO", "ZA", "SS", "SD",
@@ -217,15 +251,15 @@ type ZoneRule = {
   idOk?: string[];
   /** Precisam de visto de trânsito aeroportuário mesmo sem sair. */
   atv?: string[];
-  /** Veredicto para as nacionalidades que não estão em nenhuma lista (ex.: Hong Kong dá 7 dias sem visto a todos os outros). */
-  rest?: "free-pass" | "visa";
+  /** Veredicto para as nacionalidades que não estão em nenhuma lista (ex.: Hong Kong dá 7 dias sem visto a todos os outros; Namíbia pede e-visa aos outros). */
+  rest?: "free-pass" | "visa" | "evisa-me";
   /** Nacionalidades fora de `rest` (ficam "unknown"). */
   restExcept?: string[];
   /** A dica só aparece nestas cidades (id) ou com estes veredictos. */
   hintCities?: string[]; hintOn?: EntryVerdict[];
 };
 export type EntryHint = "usban" | "ae-permit" | "sa-visa" | "sa-stopover" | "jo-pass" | "sg-arrival" | "us" | "ca" | "mx" | "zan" | "ke" | "et" | "ao" | "br"
-  | "ie-uk" | "hk-par" | "th-tdac" | "bali";
+  | "ie-uk" | "hk-par" | "th-tdac" | "bali" | "cv-ease" | "na-voa" | "jp-vjw";
 const ZONES: Partial<Record<Zone, ZoneRule>> = {
   us: { local: "US", free: ["CA"], auth: US_VWP, visa: US_VISA, url: "https://esta.cbp.dhs.gov", site: "esta.cbp.dhs.gov", authFee: "40 USD", hint: "us" },
   ca: { local: "CA", free: ["US"], auth: CA_ETA, visa: CA_VISA, url: "https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada/eta.html", site: "canada.ca/eta", authFee: "7 CAD", hint: "ca" },
@@ -247,7 +281,11 @@ const ZONES: Partial<Record<Zone, ZoneRule>> = {
   hk: { local: "HK", free: HK_FREE, auth: ["IN"], visa: HK_VISA, atv: HK_ATV, rest: "free-pass", restExcept: ["CN", "TW", "MO", "XK"],
     url: "https://www.immd.gov.hk/eng/services/visas/visit-transit/visit-visa-entry-permit.html", site: "immd.gov.hk", authFee: "0 HKD", hint: "hk-par", hintOn: ["auth"] },
   th: { local: "TH", free: TH_FREE, voa: TH_VOA, rest: "visa", url: "https://image.mfa.go.th/mfa/0/TkZZJfspCP/Visa_Exemption_Scheme/PR-eng.pdf", site: "tdac.immigration.go.th", fee: "2000 THB", hint: "th-tdac" },
-  id: { local: "ID", free: ID_FREE, voa: ID_VOA, url: "https://www.imigrasi.go.id/faq/visa?lang=en-US", site: "evisa.imigrasi.go.id", fee: "500 000 IDR", hint: "bali", hintCities: ["dps"] }
+  id: { local: "ID", free: ID_FREE, voa: ID_VOA, url: "https://www.imigrasi.go.id/faq/visa?lang=en-US", site: "evisa.imigrasi.go.id", fee: "500 000 IDR", hint: "bali", hintCities: ["dps"] },
+  cv: { local: "CV", free: CV_FREE, visa: CV_VISA, atv: CV_VISA, url: "https://www.gov.cv/en/paises-com-visto-obrigatorio-para-cabo-verde", site: "ease.gov.cv", hint: "cv-ease" },
+  na: { local: "NA", free: NA_FREE, voa: NA_VOA, rest: "evisa-me", restExcept: NA_UNKNOWN,
+    url: "https://eservices.mhaiss.gov.na/visaonarrival", site: "eservices.mhaiss.gov.na", fee: "1200–1600 NAD", hint: "na-voa", hintOn: ["voa", "evisa-me"] },
+  jp: { local: "JP", free: JP_FREE, rest: "visa", restExcept: JP_UNKNOWN, url: "https://www.mofa.go.jp/j_info/visit/visa/short/novisa.html", site: "vjw-lp.digital.go.jp", hint: "jp-vjw" }
 };
 
 type MeRule = { free: string[]; voa?: string[]; evisa?: string[]; restricted?: string[]; permitVoa?: string[]; url: string; fee?: string; site?: string };
@@ -382,7 +420,7 @@ export const NATIONALITIES = [...new Set([...EU, ...EEA_CH, ...SCHENGEN_EXEMPT, 
 
 /** Só para testes. */
 export const _lists = { ZONES, EU, EEA_CH, SCHENGEN_EXEMPT, SCHENGEN_VISA, UK_ETA, UK_VISA, TR_FREE, TR_EVISA, TR_VISA, ME, SG_FREE, SG_VISA,
-  IE_FREE, IE_VISA, IE_ATV, HK_FREE, HK_VISA, HK_ATV, TH_FREE, TH_VOA, ID_FREE, ID_VOA };
+  IE_FREE, IE_VISA, IE_ATV, HK_FREE, HK_VISA, HK_ATV, TH_FREE, TH_VOA, ID_FREE, ID_VOA, CV_FREE, CV_VISA, NA_FREE, NA_VOA, NA_UNKNOWN, JP_FREE, JP_UNKNOWN };
 
 /** Mês em que as regras de entrada e trânsito foram verificadas (AAAA-MM). */
 export const ENTRY_CHECKED = "2026-10";

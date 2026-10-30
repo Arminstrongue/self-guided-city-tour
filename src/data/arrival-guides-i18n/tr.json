@@ -314,5 +314,19 @@
  "bkk-arl.platforms": "Trenler 05.30'dan gece yarısına kadar. Makkasan'da MRT'ye (Mavi Hat, Phetchaburi istasyonu), Phaya Thai'de BTS'ye (Sukhumvit Hattı) aktarma yapılır.",
  "dps-taxi.fromBaggage": "Dış hatlar gelen bölümünde Grab yolcuları GrabCar Lounge'dan alır; yolu uygulama gösterir.",
  "dps-taxi.follow": "Uygulamadaki yönlendirmeleri izleyerek GrabCar Lounge'a gidin ve sürücüyle otomatik çeviri yapan uygulama içi sohbetten iletişim kurun.",
- "dps-taxi.tickets": "Grab'de ücret rezervasyondan önce görünür. GrabBike havalimanından yolcu almaz. Bali turist vergisi (150.000 IDR) seyahatten önce internetten ya da havalimanındaki gişelerde ödenebilir."
+ "dps-taxi.tickets": "Grab'de ücret rezervasyondan önce görünür. GrabBike havalimanından yolcu almaz. Bali turist vergisi (150.000 IDR) seyahatten önce internetten ya da havalimanındaki gişelerde ödenebilir.",
+ "rai-taxi.tickets": "Yeşil Burun'daki havalimanlarının çoğunda varışta taksiler bekler. Ücretler adadan adaya değişir (Cabo Verde Airports bunları belediyeden teyit etmeyi önerir); kayıt dışı ulaşım (Hiace minibüsleri) yolculuk başına yaklaşık 100 CVE'den başlar.",
+ "vxe-taxi.tickets": "Yeşil Burun'daki havalimanlarının çoğunda varışta taksiler bekler. Ücretler adadan adaya değişir (Cabo Verde Airports bunları belediyeden teyit etmeyi önerir); kayıt dışı ulaşım (Hiace minibüsleri) yolculuk başına yaklaşık 100 CVE'den başlar.",
+ "sid-taxi.tickets": "Yeşil Burun'daki havalimanlarının çoğunda varışta taksiler bekler. Ücretler adadan adaya değişir (Cabo Verde Airports bunları belediyeden teyit etmeyi önerir); kayıt dışı ulaşım (Hiace minibüsleri) yolculuk başına yaklaşık 100 CVE'den başlar.",
+ "tyo-keikyu.fromBaggage": "Terminal 3'te Tokyo merkezine ve Yokohama'ya giden Keikyu turnikeleri 2F'deki varış salonundadır; B2F'deki turnikeler yalnızca Terminal 1 ve 2'ye hizmet verir. Terminal 1 ve 2'de istasyon B1F'dedir.",
+ "tyo-keikyu.tickets": "Turnikede bir IC kart (Suica veya PASMO) okutun ya da makineden bilet alın. Asakusa'ya: biletle 610 ¥, IC ile 599 ¥.",
+ "tyo-keikyu.platforms": "Trenler Shinagawa, Higashi-ginza ya da Asakusa'ya gider; Higashi-ginza ve Asakusa trenleri Sengakuji'den sonra Toei Asakusa hattına devam eder. Asakusa'ya yaklaşık 40 dakika.",
+ "kyo-haruka.fromBaggage": "Havalimanı istasyonu 2. kattadır ve Terminal 1'e doğrudan bağlıdır. Terminal 2'den Terminal 1'e (Aeroplaza) ücretsiz servis otobüsü 7–9 dakika sürer.",
+ "kyo-haruka.follow": "2. kata çıkın ve köprüden istasyona geçin. İçeride JR-West mavi, Nankai kırmızı renkle işaretlidir.",
+ "kyo-haruka.tickets": "Kyoto'ya Haruka: rezervasyonsuz koltuk 3.060 ¥ (1.860 ¥ bilet artı 1.200 ¥ ekspres ücreti). Yeşil makineden ya da bilet gişesinden (05:30–23:00) alın. ICOCA kart yalnızca temel bilet ücretini karşılar, ekspres ücretini değil.",
+ "osa-nankai.fromBaggage": "Havalimanı istasyonu 2. kattadır ve Terminal 1'e doğrudan bağlıdır. Terminal 2'den Terminal 1'e (Aeroplaza) ücretsiz servis otobüsü 7–9 dakika sürer.",
+ "osa-nankai.follow": "İstasyonda Nankai kırmızı, JR-West mavi renkle işaretlidir.",
+ "osa-nankai.tickets": "Namba'ya: 970 ¥, IC kartla da biletle de aynı. Airport Express yaklaşık 45 dakika sürer; Rapi:t (34 dakika, rezervasyonlu koltuk) için ek ücret alınır.",
+ "osa-jr.tickets": "Kansai Airport Rapid: Tennoji'ye 1.060 ¥, Osaka'ya 1.180 ¥; IC kartla ya da normal makinelerden alınan biletle (ek ücret yok). ICOCA kartlar makinelerde satılır ama kredi kartıyla alınamaz.",
+ "osa-jr.platforms": "Tren Hineno'da ikiye ayrılır: havalimanı yönünde ilk dört vagondan birine binin."
 }
