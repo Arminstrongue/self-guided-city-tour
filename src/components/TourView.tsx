@@ -19,6 +19,7 @@ import { stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Credit, Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
+import { AroundMe } from "./AroundMe";
 import { zonedToDate } from "@/lib/zoned";
 import { RouteSketch } from "./RouteSketch";
 import { SheetX } from "./WinNav";
@@ -117,13 +118,22 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
     up(); window.addEventListener("online", up); window.addEventListener("offline", up);
     return () => { window.removeEventListener("online", up); window.removeEventListener("offline", up); };
   }, []);
-  useEffect(() => { const i = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(i); }, []);
+  useEffect(() => {
+    // Também ao voltar ao separador/app: um ecrã aberto há dias não pode mostrar uma partida que já passou.
+    const tick = () => setNow(Date.now());
+    const i = setInterval(tick, 60_000);
+    const vis = () => { if (document.visibilityState === "visible") tick(); };
+    document.addEventListener("visibilitychange", vis); window.addEventListener("pageshow", tick); window.addEventListener("focus", tick);
+    return () => { clearInterval(i); document.removeEventListener("visibilitychange", vis); window.removeEventListener("pageshow", tick); window.removeEventListener("focus", tick); };
+  }, []);
 
   // Partida: o voo alterado neste dispositivo, o da compra ou a hora indicada no planeador (comboio, navio, voltar até).
   // O voo alterado só vale para esta cidade e enquanto não passou; um comboio/navio do planeador vale mais do que o voo da compra.
   const foAt = fo?.at && Date.parse(fo.at) > now - 6 * 3600_000 ? fo.at : null;
   const planDep = trip.deadline ? zonedToDate(trip.deadline, tz).toISOString() : null;
-  const flightIso = foAt ?? (trip.mode !== "plane" && planDep ? planDep : flightAt ?? planDep);
+  // Uma partida que já passou (viagem antiga guardada neste aparelho) não conta: sem prazo até a pessoa indicar a nova.
+  const notPast = (iso: string | null | undefined) => (iso && Date.parse(iso) > now - 3600_000 ? iso : null);
+  const flightIso = foAt ?? (trip.mode !== "plane" && notPast(planDep) ? planDep : notPast(flightAt) ?? notPast(planDep));
   const flightNoEff = fo?.no ?? flightNo ?? "";
   const flightDate = useMemo(() => (flightIso ? new Date(flightIso) : null), [flightIso]);
   const options = useMemo(() => routeOptions(city), [city]);
@@ -324,6 +334,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
+        {tab === "route" && !preview && <AroundMe t={t} locale={locale} cityId={city.id} tz={tz} pos={geo.pos} geoState={geo.state} onGeo={geo.start} museums={museums} updates={updates.list} onShow={showOnMap} />}
           <WalkTools t={t} locale={locale} cityId={city.id} slack={slack}
             places={plan.stops.filter((s) => !done[s.id]).map((s) => ({ id: s.id, name: stopName(s, locale), lat: s.lat, lng: s.lng }))} />
           <button type="button" className="ios-row press" onClick={() => setPlanOpen(!planOpen)} aria-expanded={planOpen}>
@@ -419,6 +430,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             onDone={(id) => toggleDone(id)}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
+        {tab === "route" && !preview && <AroundMe t={t} locale={locale} cityId={city.id} tz={tz} pos={geo.pos} geoState={geo.state} onGeo={geo.start} museums={museums} updates={updates.list} onShow={showOnMap} />}
         </>)}
 
         {tab === "route" && flightDate && trip.mode === "plane" && trip.end.kind === "airport" && (

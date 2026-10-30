@@ -1,3 +1,4 @@
+import { hasCityAccess } from "@/lib/city-access";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { currentTraveller } from "@/lib/wallet";
@@ -15,6 +16,8 @@ export async function GET(req: Request) {
   const u = new URL(req.url);
   const city = u.searchParams.get("city") ?? "", stop = u.searchParams.get("stop") ?? "";
   if (!/^[a-z]{2,12}$/.test(city) || !place.test(stop)) return NextResponse.json({ error: "invalid" }, { status: 400 });
+  // Comentários de um lugar do roteiro fazem parte do roteiro pago: sem passe da cidade, nada (Manchester é grátis).
+  if (stop && !(await hasCityAccess(city).catch(() => false))) return NextResponse.json({ error: "locked", items: [], total: 0, next: null, signed: false }, { status: 402 });
   if (u.searchParams.get("counts")) return NextResponse.json({ counts: await commentCounts(city) });
   const me = await currentTraveller().catch(() => null);
   return NextResponse.json({ ...(await listComments(me, city, stop, u.searchParams.get("before"))), signed: Boolean(me) }, { headers: { "Cache-Control": "no-store" } });
