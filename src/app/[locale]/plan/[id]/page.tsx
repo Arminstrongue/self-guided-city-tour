@@ -7,7 +7,7 @@ import { currentTraveller, getPlan } from "@/lib/wallet";
 import { exploreProps } from "@/lib/explore-props";
 import { getDict, type Locale } from "@/i18n/dictionaries";
 import { hasCityAccess } from "@/lib/city-access";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 
 export const dynamic = "force-dynamic";
 
@@ -19,11 +19,11 @@ export default async function PlanPage(props: { params: Promise<{ locale: Locale
   if (!plan) notFound();
   const city = plan.city ? await loadCity(plan.city) : null;
   // O plano dia a dia só abre com passe ativo da cidade.
-  if (city && !(await hasCityAccess(city.id))) return (
+  if (city && !(await hasCityAccess(city.id, { activate: true }))) return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <h1 className="arv-h" style={{ marginTop: 16 }}>{plan.title}</h1>
-      <Locked t={getDict(params.locale)} locale={params.locale} city={city.id} cityName={plan.cityName ?? city.id} what="plan" />
+      <LockedFor t={getDict(params.locale)} locale={params.locale} city={city.id} cityName={plan.cityName ?? city.id} what="plan" />
     </main>
   );
   const ex = city ? exploreProps(city, params.locale) : null;

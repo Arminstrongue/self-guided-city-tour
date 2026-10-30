@@ -11,5 +11,6 @@ export function WebOnly({ children, fallback }: { children: React.ReactNode; fal
     const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
     setNative(Boolean(cap?.isNativePlatform?.()));
   }, []);
-  return <>{native ? fallback ?? null : children}</>;
+  // Antes de o React arrancar, a classe web-only já esconde a compra nas apps (o atributo data-platform é posto antes de pintar).
+  return <>{native ? fallback ?? null : <div className="web-only" style={{ display: "contents" }}>{children}</div>}</>;
 }

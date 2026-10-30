@@ -3,7 +3,7 @@ import type Stripe from "stripe";
 import { releaseHold } from "@/lib/referrals";
 import { stripe } from "@/lib/stripe";
 import { env } from "@/lib/env";
-import { fulfilTourSession } from "@/lib/orders";
+import { fulfilTourSession, refundAccess } from "@/lib/orders";
 import { activateFromSession, syncSubscription } from "@/lib/merchants";
 import { commissionForInvoice, markLeadWon } from "@/lib/agents";
 import { onGuideCheckout } from "@/lib/guides";
@@ -33,6 +33,18 @@ export async function POST(req: Request) {
       case "checkout.session.expired":
         await releaseHold(event.data.object.metadata?.creditHold);
         break;
+      // Reembolso total ou contestação: o passe deixa de dar acesso (e a comissão do parceiro é anulada).
+      case "charge.refunded":
+      case "charge.dispute.created": {
+        const o = event.data.object as Stripe.Charge | Stripe.Dispute;
+        const charge = "amount_refunded" in o ? o : null;
+        if (charge && !charge.refunded) break; // reembolso parcial: mantém o passe
+        const pi = typeof o.payment_intent === "string" ? o.payment_intent : o.payment_intent?.id;
+        if (!pi) break;
+        const list = await stripe().checkout.sessions.list({ payment_intent: pi, limit: 1 });
+        if (list.data[0]) await refundAccess(list.data[0].id);
+        break;
+      }
       case "invoice.paid":
         await commissionForInvoice(event.data.object);
         break;

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
+import { currentTraveller } from "@/lib/wallet";
 import { stripe } from "@/lib/stripe";
-import { fulfilTourSession } from "@/lib/orders";
-import { ACCESS_COOKIE, ACCESS_TTL_S, createAccessToken } from "@/lib/access-token";
-import { env, isProd } from "@/lib/env";
+import { fulfilTourSession, linkAccessToAccount } from "@/lib/orders";
+import { env } from "@/lib/env";
 import { isLocale } from "@/i18n/core";
 
 export const runtime = "nodejs";
@@ -23,12 +23,12 @@ export async function GET(req: Request) {
   const access = await fulfilTourSession(session).catch((e) => { console.error("claim", e); return null; });
   if (!access) { dest.searchParams.set("pending", "1"); return NextResponse.redirect(dest); }
   if (access.city) dest.searchParams.set("city", access.city);
-  // O id da sessão Stripe fica no histórico do navegador: só abre sessão logo a seguir ao pagamento (2 h).
-  // Depois disso, entra-se pelo link enviado por email.
-  // Conta a partir do pagamento confirmado (registo do acesso), não de quando o Stripe abriu a página de pagamento.
-  const fresh = Date.now() - new Date(access.createdAt).getTime() < 2 * 3600_000;
-  const res = NextResponse.redirect(dest);
-  if (!fresh) return res;
-  res.cookies.set(ACCESS_COOKIE, createAccessToken(access.email), { httpOnly: true, sameSite: "lax", secure: isProd, maxAge: ACCESS_TTL_S, path: "/" });
-  return res;
+  // Segurança: pagar NUNCA inicia sessão numa conta. Quem paga pode escrever qualquer email no Stripe;
+  // se abrisse sessão com esse email, bastava comprar um passe com o email de outra pessoa para lhe entrar na conta.
+  // - Já com sessão: o passe fica ligado a essa conta (segue a conta, mesmo pago com outro email).
+  // - Sem sessão: entra-se com o link/código enviado para o email do pagamento (prova que o email é seu).
+  const me = await currentTraveller().catch(() => null);
+  if (me && me !== access.email && !access.accountEmail) await linkAccessToAccount(access.id, me).catch(() => {});
+  if (!me) dest.searchParams.set("paid", "1");
+  return NextResponse.redirect(dest);
 }

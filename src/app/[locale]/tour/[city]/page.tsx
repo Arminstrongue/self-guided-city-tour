@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { RememberCity } from "@/components/RememberCity";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
@@ -38,15 +38,15 @@ export default async function Tour(props: { params: Promise<{ locale: Locale; ci
   const t = getDict(params.locale);
   const emails = [await validAccessEmail((await cookies()).get(ACCESS_COOKIE)?.value), await sessionEmail()].filter((e): e is string => Boolean(e));
   const free = isFreeCity(city.id);
-  const found = await findActiveAccess(emails, city.id);
+  // Cidade de demonstração grátis: não procura nem ativa passes (abrir Manchester não gasta o passe de 30 dias).
+  const found = free ? null : await findActiveAccess(emails, city.id);
   // Primeira abertura: o passe começa a contar agora.
   const access = found ? await activateAccess(found).catch(() => found) : null;
 
-  // Sem acesso: amostra grátis — a 1.ª paragem completa (texto e áudio); as outras só com nome, sem texto.
+  // Sem passe (e fora da cidade de demonstração): só o cartão de desbloquear, nada do roteiro.
   const preview = !access && !free;
-  const first = city.stops.find((x) => !x.x) ?? city.stops[0];
-  const shown = preview ? { ...city, stops: city.stops.map((x) => (x.id === first.id ? x : { ...x, pt: "", en: "" })) } : city;
-  const keep = <T,>(o: Record<string, T>) => (preview ? Object.fromEntries(Object.entries(o).filter(([k]) => k === first.id)) : o);
+  const shown = city;
+  const keep = <T,>(o: Record<string, T>) => o;
   const fx = await fxContext();
   const price = dualMoney(TOUR_PLANS.city.amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
 
@@ -59,7 +59,7 @@ export default async function Tour(props: { params: Promise<{ locale: Locale; ci
       <RememberCity id={city.id} />
       <Header locale={params.locale} currency={(await requestCurrency())} />
       <h1 className="arv-h" style={{ marginTop: 16 }}>{cityName(city, params.locale)}</h1>
-      <Locked t={t} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="route" more={city.stops.length} />
+      <LockedFor t={t} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="route" more={city.stops.length} core={city.stops.filter((s) => !s.x).length} />
     </main>
   );
   return (

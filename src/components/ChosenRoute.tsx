@@ -6,7 +6,7 @@ import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { tripWindow, whenLabel, type Breakdown, type Trip } from "@/lib/trip";
 import { TimeBreakdown, endIcon, endLabel } from "./TripPicker";
 import { loadTrip } from "./trip-store";
-import { LockedMore } from "./Locked";
+import { LockedMore, stopsText } from "./Locked";
 
 type Planned = { city: string; key: string; n: number; h: string; names?: string[]; cost?: string; bd?: Breakdown };
 const hrs = (m: number) => `${Math.floor(m / 60)} h ${String(Math.round(m % 60)).padStart(2, "0")}`;
@@ -39,7 +39,7 @@ export function ChosenRoute({ t: tProp, locale, city, tz, coreN, extN, children 
       {p.bd && <TimeBreakdown b={p.bd} t={t} trip={trip} hrs={hrs} />}
       {p.cost && <span>{fmt(t.bkTransport, { c: p.cost })}</span>}
       {p.names && p.names.length > 0 && <ol className="cr-stops">{p.names.map((n, i) => <li key={n + i}>{n}</li>)}<LockedMore t={t} n={p.n - p.names.length} /></ol>}
-      {(!p.names || p.names.length === 0) && <p className="lk-more cr-lock">🔒 {fmt(t.lk.more, { n: p.n })}</p>}
+      {(!p.names || p.names.length === 0) && <p className="lk-more cr-lock">🔒 {stopsText(t, p.n, coreN)}</p>}
       <span className="hint">{fmt(t.tpVersions, { n: coreN })}{extN > 0 ? ` · ${fmt(t.tpExtVersion, { n: extN })}` : ""}</span>
       <p className="hint">{t.bkIncl}</p>
       <span className="hint">{t.crNote}</span>

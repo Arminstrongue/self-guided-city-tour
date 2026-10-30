@@ -126,29 +126,39 @@ export default async function Home(props: { params: Promise<{ locale: Locale }> 
       {/* Preços claros: o que é grátis, o que custa um passe (pagamento único) e os planos para empresas. */}
       {/* Nas apps das lojas não se mostram preços nem compras de conteúdo digital (regras do Google Play e da App Store). */}
       <section className="sec pr web-only" id="prices" aria-labelledby="pr-h" style={{ scrollMarginTop: 70 }}>
-        <div className="sec-h reveal"><div><h2 id="pr-h">{t.pr.title}</h2><p>{t.pr.sub}</p></div></div>
-        <div className="pr-grid">
-          <div className="pr-card pr-free reveal">
-            <span className="pr-name">{t.pr.freeName}</span>
-            <b className="pr-price num">{t.pr.free}</b>
-            <ul>{t.pr.freeItems.map((x) => <li key={x}><Check size={16} aria-hidden="true" />{x}</li>)}</ul>
-            <Link className="btn ghost press" href={`/${params.locale}/start`}>{t.pr.cta}</Link>
+        {/* Painel escuro "premium": passes com destaque (mais escolhido / melhor valor), preço por dia e o que inclui. */}
+        <div className="prx reveal">
+          <div className="prx-h">
+            <span className="prx-eyebrow">{t.pr.eyebrow}</span>
+            <h2 id="pr-h">{t.pr.title}</h2>
+            <p>{t.pr.sub}</p>
           </div>
-          {(["city", "trip", "all"] as const).map((k) => {
-            const m = dualMoney(TOUR_PLANS[k].amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
-            return (
-              <div key={k} className={`pr-card reveal ${k === "city" ? "pr-main" : ""}`}>
-                <span className="pr-name">{t.pr[k][0]}</span>
-                <b className="pr-price num">{m.main}</b>
-                {m.local && <small className="pr-local num">{m.local}</small>}
-                <p>{t.pr[k][1]}</p>
-                <small className="pr-once">{t.pr.oneTime}</small>
-              </div>
-            );
-          })}
+          <div className="prx-grid">
+            {(["city", "trip", "all"] as const).map((k) => {
+              const m = dualMoney(TOUR_PLANS[k].amount / 100, "EUR", fx, INTL_LOCALE[params.locale]);
+              const days = k === "city" ? 2 : k === "trip" ? 3 : 30;
+              const perDay = formatMoney(Math.ceil((TOUR_PLANS[k].amount / days)) / 100, "EUR", INTL_LOCALE[params.locale]);
+              const badge = k === "city" ? t.pr.popular : k === "all" ? t.pr.best : null;
+              return (
+                <div key={k} className={`prx-card prx-${k}${k === "all" ? " hot" : ""}`}>
+                  {badge && <span className="prx-badge">{badge}</span>}
+                  <span className="prx-name">{t.pr[k][0]}</span>
+                  <div className="prx-price"><b className="num">{m.main}</b>{m.local && <small className="num">{m.local}</small>}</div>
+                  <span className="prx-day num">{fmt(t.pr.perDay, { p: perDay })}</span>
+                  <p className="prx-for">{t.pr[k][1]}</p>
+                  <ul>{[k === "all" ? t.pr.featAll : k === "trip" ? t.pr.featTrip : t.pr.featCity, ...t.pr.feat].map((x) => <li key={x}><Check size={16} aria-hidden="true" />{x}</li>)}</ul>
+                  <Link className={`prx-go press${k === "all" ? " hot" : ""}`} href={`/${params.locale}/start`}>{t.pr.buy}</Link>
+                  <small className="prx-once">{t.pr.oneTime}</small>
+                </div>
+              );
+            })}
+          </div>
+          <div className="prx-free">
+            <div><b>{t.pr.freeName} · <span className="num">{t.pr.free}</span></b><small>{t.pr.freeItems.join(" · ")}</small></div>
+            <Link className="prx-free-go press" href={`/${params.locale}/tour/man`}>{t.wDemo} →</Link>
+          </div>
+          <p className="prx-note"><X size={14} aria-hidden="true" />{t.pr.notIncl}</p>
         </div>
-        <p className="pr-incl"><Check size={16} aria-hidden="true" />{t.pr.incl}</p>
-        <p className="pr-incl no"><X size={16} aria-hidden="true" />{t.pr.notIncl}</p>
         <div className="pr-biz reveal">
           <div><b>{t.pr.bizTitle}</b><small>{t.pr.bizNote}</small></div>
           <ul>

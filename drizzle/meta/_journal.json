@@ -288,6 +288,13 @@
       "when": 1795800000000,
       "tag": "0040_traveller_updates",
       "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1795900000000,
+      "tag": "0041_access_account",
+      "breakpoints": true
     }
   ]
 }

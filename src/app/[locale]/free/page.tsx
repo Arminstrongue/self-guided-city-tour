@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { hasCityAccess } from "@/lib/city-access";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { FreeTime } from "@/components/FreeTime";
@@ -37,7 +37,7 @@ export default async function Free(
   if (!(await hasCityAccess(city.id))) return (
     <main className="app">
       <Header locale={params.locale} currency={(await requestCurrency())} />
-      <Locked t={getDict(params.locale)} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="free" />
+      <LockedFor t={getDict(params.locale)} locale={params.locale} city={city.id} cityName={cityName(city, params.locale)} what="free" />
     </main>
   );
   return (

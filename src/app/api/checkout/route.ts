@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       customer_email: b.email,
       locale: b.locale === "ar" ? "auto" : b.locale,
       line_items: [{ quantity: 1, price_data: { currency: "eur", unit_amount: q.amount, product_data: { name: `VOYBU · ${label}` } } }],
-      metadata: { consentImmediate: new Date().toISOString(), termsAccepted: new Date().toISOString(), termsVersion: company().updated, plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: (await requestCurrency()), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), creditHold: creditHold ?? "", trip: tripMeta },
+      metadata: { account: (await currentTraveller().catch(() => null)) ?? "", consentImmediate: new Date().toISOString(), termsAccepted: new Date().toISOString(), termsVersion: company().updated, plan: b.plan, city: city.id, email: b.email, name: b.name, flightAt: b.flightAt ?? "", flightNo: b.flightNo, locale: b.locale, shownCurrency: (await requestCurrency()), refMerchantId: ref?.status === "active" ? ref.id : "", refInviter: q.inviter?.email ?? "", friendOff: String(q.friendOff), creditUsed: String(q.creditUsed), creditHold: creditHold ?? "", trip: tripMeta },
       success_url: `${env.appUrl}/api/access/claim?session_id={CHECKOUT_SESSION_ID}&locale=${b.locale}`,
       cancel_url: `${env.appUrl}/${b.locale}/c/${city.id}${b.ref ? `?ref=${encodeURIComponent(b.ref)}` : ""}`
     });

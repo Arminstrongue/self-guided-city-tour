@@ -1,4 +1,5 @@
 "use client";
+import { zonedToDate } from "@/lib/zoned";
 import { rememberCity } from "@/lib/last-city";
 import { useNative } from "@/lib/use-native";
 import { useDict } from "@/i18n/client-dict";
@@ -8,7 +9,7 @@ import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { availableMin, breakdownOf, cityNowLocal, defaultTrip, tripReady, tripWindow, whenLabel, type Trip } from "@/lib/trip";
 import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
-import { LockedMore } from "./Locked";
+import { LockedMore, stopsText } from "./Locked";
 import { loadTrip, saveTrip } from "./trip-store";
 import { BufferPicker } from "./BufferPicker";
 import { track } from "@/lib/track";
@@ -39,11 +40,17 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
   const when = (ms: number) => whenLabel(ms, tz, INTL_LOCALE[locale], words);
   // "Cerca de 3 horas" = tempo para passear (com ida e regresso), sem margem de partida; só "até à partida" soma a margem.
   const bd = (o: QsOption) => breakdownOf(o, time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip);
-  const pickCity = (id: string) => { rememberCity(id); setCityId(id); setQ(""); setTrip(loadTrip(id)); setLater(Boolean(loadTrip(id).startAt)); };
+  // Ao carregar um plano antigo: horas que já passaram não ficam pré-preenchidas.
+  const clean = (v: Trip, id: string): Trip => {
+    const z = cities.find((c) => c.id === id)?.tz ?? "UTC";
+    const past = (x: string) => Boolean(x) && zonedToDate(x, z).getTime() < Date.now() - 3600_000;
+    return { ...v, startAt: past(v.startAt) ? "" : v.startAt, deadline: past(v.deadline) ? "" : v.deadline };
+  };
+  const pickCity = (id: string) => { rememberCity(id); setCityId(id); setQ(""); const v = clean(loadTrip(id), id); setTrip(v); setLater(Boolean(v.startAt)); };
   const upd = (v: Trip) => { setTrip(v); setErr(""); };
   // O bilhete guardado pode definir a hora de início ("Começar o percurso às …").
   useEffect(() => { if (trip.startAt) setLater(true); }, [trip.startAt]);
-  useEffect(() => { if (pre) { const v = loadTrip(pre); setTrip(v); setLater(Boolean(v.startAt)); } }, [pre]);
+  useEffect(() => { if (pre) { const v = clean(loadTrip(pre), pre); setTrip(v); setLater(Boolean(v.startAt)); } }, [pre]);
 
   const list = useMemo(() => { const f = fold(q.trim()); return f ? cities.filter((c) => fold(`${c.name} ${c.country}`).includes(f)) : cities; }, [q, cities]);
   const TIMES: { k: string; label: string; min: number }[] = [
@@ -66,7 +73,8 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
     if (later && !trip.startAt) { setErr(t.tpNeedStart); return; }
     if (min === null) {
       const a = availableMin(trip, tz);
-      if (a === null) { setErr(t.errDep); return; }
+      // Partida no passado ou antes do início: diz isso (não "não cabe nenhum roteiro").
+      if (a === null || a <= 0) { setErr(t.errDep); return; }
       setTime({ k, min: a });
     } else setTime({ k, min });
     setErr("");
@@ -97,7 +105,7 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
   return (
     <section className="qs" aria-labelledby="qs-h">
       <div className="qs-head">
-        {step > 1 && <button className="qs-back press" onClick={back} aria-label="←"><ArrowLeft size={18} aria-hidden="true" /></button>}
+        {step > 1 && <button className="qs-back press" onClick={back} aria-label={t.navBack}><ArrowLeft size={18} aria-hidden="true" /></button>}
         <div>
           <span className="qs-kicker">{fmt(t.qsStep, { n: step })}</span>
           <h1 id="qs-h">{step === 1 ? t.qs1 : step === 2 ? fmt(t.qs2, { c: city?.name ?? "" }) : t.qs3}</h1>
@@ -179,8 +187,9 @@ export function QuickStart({ t: tProp, locale, cities, pre, from, top = [] }: { 
               </div>
               {time && time.k !== "dep" && <span className="hint">{fmt(t.tpDurFits, { h: hrs(time.min === Infinity ? bd(opt).total : time.min) })}</span>}
               <TimeBreakdown b={bd(opt)} t={t} trip={time && time.k !== "dep" ? { ...trip, mode: "stay" } : trip} hrs={hrs} />
+              {time && time.min !== Infinity && bd(opt).total > time.min && <p className="fit bad">{t.qsTooLong}</p>}
               {opt.acc > 0 && <p className="hint">♿ {fmt(t.acSum, { n: opt.acc })}</p>}
-              {opt.names.length > 0 ? <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt.n - opt.names.length} /></ol> : <p className="lk-more cr-lock">🔒 {fmt(t.lk.more, { n: opt.n })}</p>}
+              {opt.names.length > 0 ? <ol className="qs-stops">{opt.names.map((n, i) => <li key={n + i}><span className="num">{i + 1}</span>{n}</li>)}<LockedMore t={t} n={opt.n - opt.names.length} /></ol> : <p className="lk-more cr-lock">🔒 {stopsText(t, opt.n, city.options.find((o) => o.key === "core")?.n)}</p>}
               <div className="qs-adj">
                 <button className="link-btn" disabled={idx <= 0} onClick={() => setShift(shift - 1)}>− {t.qsShorter}</button>
                 <button className="link-btn" disabled={idx >= city.options.length - 1} onClick={() => setShift(shift + 1)}>{t.qsLonger} +</button>

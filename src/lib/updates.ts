@@ -132,8 +132,8 @@ export async function removeUpdate(id: string, who: string, admin = false) {
     .where(admin ? eq(schema.travellerUpdates.id, id) : and(eq(schema.travellerUpdates.id, id), eq(schema.travellerUpdates.author, who)));
 }
 
-export async function updatePhoto(id: string): Promise<string | null> {
+export async function updatePhoto(id: string): Promise<{ photo: string; city: string } | null> {
   const d = await db();
-  const [u] = await d.select({ photo: schema.travellerUpdates.photo, status: schema.travellerUpdates.status }).from(schema.travellerUpdates).where(eq(schema.travellerUpdates.id, id)).limit(1);
-  return u && u.status === "live" ? u.photo : null;
+  const [u] = await d.select({ photo: schema.travellerUpdates.photo, status: schema.travellerUpdates.status, city: schema.travellerUpdates.city }).from(schema.travellerUpdates).where(eq(schema.travellerUpdates.id, id)).limit(1);
+  return u && u.status === "live" && u.photo ? { photo: u.photo, city: u.city } : null;
 }

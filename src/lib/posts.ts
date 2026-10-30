@@ -87,7 +87,7 @@ async function hydrate(me: string, rows: Lite[], c: Circle, more = false, feed =
   ]) : [[], [], [], [], []];
   const byEmail = new Map(profs.map((p) => [p.email, p]));
   // Publicações com 3+ denúncias abertas ficam escondidas (exceto ao autor) até a equipa rever.
-  const flagged = ids.length ? new Set((await d.select({ id: schema.reports.postId, n: sql<number>`count(*)::int` }).from(schema.reports)
+  const flagged = ids.length ? new Set((await d.select({ id: schema.reports.postId, n: sql<number>`count(distinct ${schema.reports.reporter})::int` }).from(schema.reports)
     .where(and(inArray(schema.reports.postId, ids), eq(schema.reports.status, "open"))).groupBy(schema.reports.postId)).filter((r) => r.n >= 3).map((r) => r.id)) : new Set<string | null>();
   const authors: Record<string, PublicProfile> = {};
   const posts: PostItem[] = [];
@@ -484,6 +484,9 @@ export async function reportPost(me: string, id: string, reason: string, note: s
   const v = await visiblePost(me, id);
   if (!v || v.post.author === me) return;
   const d = await db();
+  // Uma denúncia por pessoa e publicação (repetir não conta mais).
+  const [dup] = await d.select({ id: schema.reports.id }).from(schema.reports).where(and(eq(schema.reports.reporter, me), eq(schema.reports.postId, id))).limit(1);
+  if (dup) return;
   await d.insert(schema.reports).values({ reporter: me, target: v.post.author, postId: id, reason, note });
 }
 

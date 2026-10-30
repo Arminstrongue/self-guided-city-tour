@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { hasCityAccess } from "@/lib/city-access";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/Header";
 import { WinNav } from "@/components/WinNav";
@@ -35,7 +35,7 @@ export default async function AgendaPage(
       <WinNav closeHref={`/${params.locale}/wallet`} labels={{ back: t.navBack, fwd: t.navFwd, close: t.close }} />
       {(await hasCityAccess(city.id))
         ? <AgendaView locale={params.locale} cityId={city.id} cities={cities} moments={moments} tz={tz} openId={searchParams.ev} />
-        : <Locked t={t} locale={params.locale} city={city.id} cityName={cities[city.id]} what="events" />}
+        : <LockedFor t={t} locale={params.locale} city={city.id} cityName={cities[city.id]} what="events" />}
     </main>
   );
 }

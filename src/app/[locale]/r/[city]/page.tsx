@@ -10,7 +10,7 @@ import { loadCity } from "@/lib/content";
 import { requestCurrency } from "@/lib/fx";
 import { sharedMapUrl, sharedMinutes, sharedStops } from "@/lib/route-share";
 import { hasCityAccess } from "@/lib/city-access";
-import { Locked } from "@/components/Locked";
+import { LockedFor } from "@/components/LockedFor";
 
 export const dynamic = "force-dynamic";
 type P = { params: Promise<{ locale: Locale; city: string }>; searchParams: Promise<Record<string, string | undefined>> };
@@ -67,7 +67,7 @@ export default async function SharedRoute(p: P) {
               ))}
             </ol>
           </section>}
-          {!open && <Locked t={t} locale={l} city={city.id} cityName={name} what="route" more={stops.length - shown.length} />}
+          {!open && <LockedFor t={t} locale={l} city={city.id} cityName={name} what="route" more={stops.length - shown.length} />}
           {open && <a className="btn tram press" href={sharedMapUrl(stops)} target="_blank" rel="noopener noreferrer">🗺️ {t.rs.openMap}</a>}
           <a className="ios-row press" href={`/${l}/c/${city.id}`}><span className="ios-tx"><b>{t.rs.doIt}</b><small>{t.rs.doItSub}</small></span><span aria-hidden="true">›</span></a>
           <ShareAgain label={t.rs.forward} title={t.rs.title} text={fmt(t.rs.msg, { n: stops.length, c: name, h: hrs(sharedMinutes(stops)) })} copied={t.rs.copied} />

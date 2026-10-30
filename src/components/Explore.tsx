@@ -473,7 +473,7 @@ function StreetView({ apiKey, place, t, onClose }: { apiKey: string; place: Plac
   return (
     <div className="ex-modal sv" role="dialog" aria-modal="true" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
       <div className="card ex-sv">
-        <div className="row-between" style={{ padding: "12px 14px" }}><b className="ad-ellip">👁 {place.name}</b><button className="link-btn" onClick={onClose}>✕</button></div>
+        <div className="row-between" style={{ padding: "12px 14px" }}><b className="ad-ellip">👁 {place.name}</b><button className="link-btn" onClick={onClose} aria-label={t.close}>✕</button></div>
         {none ? <p className="hint" style={{ padding: 16 }}>{t.exNoSv}</p> : <div ref={el} className="ex-sv-pano" />}
       </div>
     </div>
