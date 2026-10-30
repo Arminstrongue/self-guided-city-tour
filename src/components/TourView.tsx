@@ -470,7 +470,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                   <div className="stop locked">
                     <span className="pin num">{i + 1}</span>
                     <div className="body"><a className="head pv-lock" href={preview.buy}>
-                      <div style={{ minWidth: 0 }}><h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3><p className="meta">{s.a} · {s.v} {t.visit}</p></div>
+                      <div style={{ minWidth: 0 }}><h3>{s.n}{s.top && <span className="top-badge">{t.topStop}</span>}</h3><p className="meta">{s.a} · {s.v} {t.visit}</p></div>
                       <span aria-label={t.pvLocked}>🔒</span>
                     </a></div>
                   </div>
@@ -488,7 +488,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                       </button>
                       <button className="head" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? "" : s.id)}>
                         <div style={{ minWidth: 0 }}>
-                          <h3>{s.n}{s.top && <span className="top-badge">Top</span>}</h3>
+                          <h3>{s.n}{s.top && <span className="top-badge">{t.topStop}</span>}</h3>
                           <p className="meta">{s.a} · {s.v} {t.visit}{s.o ? ` · ${t.optPaid}` : ""}{here.length ? ` · ${here.length} ★` : ""}</p>
                           {closedToday(s) && <span className="closed-chip">{t.closedToday}</span>}
                           {(warn[s.id] ?? []).map((k) => <span key={k} className="ac-chip warn">⚠ {t.rpWarn[k as keyof Dict["rpWarn"]]}</span>)}
