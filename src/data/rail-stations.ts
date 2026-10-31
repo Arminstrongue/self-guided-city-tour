@@ -53,3 +53,7 @@ export function knownStations(): { n: string; lat: number; lng: number }[] {
 const titleCase = (k: string) => k.replace(/\b([a-z])/g, (m) => m.toUpperCase()).replace(/'S\b/g, "'s");
 /** Estações com coordenadas conhecidas (para encontrar a mais próxima de onde está). */
 export const STATIONS_WITH_COORDS: { n: string; lat: number; lng: number }[] = Object.entries(STATION_COORDS).map(([k, [lat, lng]]) => ({ n: titleCase(k), lat, lng }));
+
+/** Londres Euston: painel de partidas (foto própria da VOYBU, out. 2026, sem pessoas). */
+export const EUSTON_PHOTOS = { board: "/img/own/lon/station/euston-board" };
+export const touchesEuston = (texts: (string | undefined | null)[]) => texts.some((s) => /\beuston\b/i.test(s ?? ""));

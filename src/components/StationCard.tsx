@@ -5,7 +5,7 @@
  */
 import { useState } from "react";
 import type { Dict } from "@/i18n/dictionaries";
-import { PICCADILLY_PHOTOS } from "@/data/rail-stations";
+import { EUSTON_PHOTOS, PICCADILLY_PHOTOS } from "@/data/rail-stations";
 
 export function PiccadillyCard({ t }: { t: Dict }) {
   const p = t.pic;
@@ -38,6 +38,39 @@ export function PiccadillyCard({ t }: { t: Dict }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={big} alt="" />
           <button type="button" className="pic-x" aria-label={t.close} onClick={() => setBig(null)}>×</button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+/** Londres Euston: como ler os painéis (azul "Please wait" → verde "Boarding" com plataforma), comboios que se dividem e plataformas curtas. */
+export function EustonCard({ t }: { t: Dict }) {
+  const e = t.eus;
+  const [big, setBig] = useState(false);
+  return (
+    <section className="pic card" aria-label={e.title}>
+      <button type="button" className="pic-ph" onClick={() => setBig(true)} aria-label={e.photoAlt}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={`${EUSTON_PHOTOS.board}-480.webp`} srcSet={`${EUSTON_PHOTOS.board}-480.webp 480w, ${EUSTON_PHOTOS.board}.webp 1600w`} sizes="(max-width: 600px) 100vw, 560px" alt={e.photoAlt} loading="lazy" decoding="async" />
+        <span className="pic-credit">VOYBU</span>
+      </button>
+      <div className="pic-b">
+        <b className="pic-t">🚉 {e.title}</b>
+        <ol className="eus-steps">
+          <li><span className="eus-tag blue">{e.waitTag}</span>{e.wait}</li>
+          <li><span className="eus-tag green">{e.goTag}</span>{e.go}</li>
+          <li>🚃 {e.split}</li>
+          <li>⚠️ {e.short}</li>
+          <li>🚪 {e.doors}</li>
+        </ol>
+        <p className="pic-staff">🙋 {e.staff}</p>
+      </div>
+      {big && (
+        <div className="pic-zoom" role="dialog" aria-label={e.title} onClick={() => setBig(false)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${EUSTON_PHOTOS.board}.webp`} alt="" />
+          <button type="button" className="pic-x" aria-label={t.close} onClick={() => setBig(false)}>×</button>
         </div>
       )}
     </section>

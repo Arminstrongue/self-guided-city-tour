@@ -12,7 +12,7 @@ import { fmt } from "@/i18n/core";
 import type { Stop, Leg } from "@/data/cities";
 import type { Museum } from "@/data/museums";
 import type { GuideStep } from "@/lib/route-steps";
-import { lineText } from "@/data/stop-names";
+import { lineText, localName } from "@/data/stop-names";
 import Portal from "./Portal";
 import { ExtLink } from "./ExtLink";
 
@@ -42,6 +42,7 @@ export function NavSheet({ t, locale, stop, leg, next, from, stops, done, museum
   const [steps, setSteps] = useState<GuideStep[] | null>(null);
   const [fare, setFare] = useState("");
   const [arrived, setArrived] = useState(false);
+  const [help, setHelp] = useState(false);
   const startD = useRef<number | null>(null);
   const dest = useMemo(() => ({ lat: stop.lat, lng: stop.lng }), [stop.lat, stop.lng]);
 
@@ -154,6 +155,18 @@ export function NavSheet({ t, locale, stop, leg, next, from, stops, done, museum
           </section>
         )}
 
+        {/* Ecrã para mostrar a um funcionário ou a quem passa: o destino em letra grande (e no alfabeto local). */}
+        {help && (
+          <div className="nav-help" role="dialog" aria-label={n.help} onClick={() => setHelp(false)}>
+            <p className="nav-help-q">{n.helpAsk}</p>
+            <p className="nav-help-q en" lang="en">Excuse me, how do I get here?</p>
+            <b className="nav-help-n">{stop.n}</b>
+            {(() => { const ln = localName(stop.id); return ln ? <b className="nav-help-n" lang={ln.lang}>{ln.n}</b> : null; })()}
+            <span className="nav-help-a">{stop.a}</span>
+            <small>{n.helpClose}</small>
+          </div>
+        )}
+        <button type="button" className="btn ghost press nav-helpbtn" onClick={() => setHelp(true)}>🙋 {n.help}</button>
         <div className="nav-foot">
           <ExtLink className="link-btn" href={gm}>{n.gmaps}</ExtLink>
           <ExtLink className="link-btn" href={am}>{n.amaps}</ExtLink>

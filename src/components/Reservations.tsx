@@ -13,8 +13,8 @@ import Portal from "./Portal";
 import { SheetX } from "./WinNav";
 import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
-import { RAIL_STATIONS, touchesPiccadilly } from "@/data/rail-stations";
-import { PiccadillyCard } from "./StationCard";
+import { RAIL_STATIONS, touchesEuston, touchesPiccadilly } from "@/data/rail-stations";
+import { EustonCard, PiccadillyCard } from "./StationCard";
 import { JourneyFollow } from "./JourneyFollow";
 
 /** Fotos da reserva (as antigas só tinham `photo`). */
@@ -113,6 +113,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         {r.kind === "transport" && r.journey?.legs.length ? <button type="button" className="btn press jf-start" onClick={() => setFollow(true)}>▶ {t.jf.start}</button> : null}
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
         {r.kind === "transport" && touchesPiccadilly([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <PiccadillyCard t={t} />}
+        {r.kind === "transport" && touchesEuston([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <EustonCard t={t} />}
         {r.ref && <div className="tk-ref"><small>{t.rsRef}</small><b>{r.ref}</b></div>}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {photosOf(r).map((src, i, all) => <img key={i} className="tk-img" src={src} alt={all.length > 1 ? `${t.rsPhoto} ${i + 1}/${all.length}` : t.rsPhoto} />)}
