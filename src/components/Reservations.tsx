@@ -12,6 +12,8 @@ import Portal from "./Portal";
 import { SheetX } from "./WinNav";
 import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
+import { RAIL_STATIONS, touchesPiccadilly } from "@/data/rail-stations";
+import { PiccadillyCard } from "./StationCard";
 
 /** Fotos da reserva (as antigas só tinham `photo`). */
 export const photosOf = (r: { photo?: string; photos?: string[] }) => (r.photos?.length ? r.photos : r.photo ? [r.photo] : []);
@@ -112,6 +114,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         <span className="hint">{w.day} · <b>{w.hm}</b> <span className="is-tag">{t.isYou}</span></span>
         {r.journey?.legs.length ? <JourneyView j={r.journey} t={t} /> : null}
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
+        {r.kind === "transport" && touchesPiccadilly([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <PiccadillyCard t={t} />}
         {r.ref && <div className="tk-ref"><small>{t.rsRef}</small><b>{r.ref}</b></div>}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {photosOf(r).map((src, i, all) => <img key={i} className="tk-img" src={src} alt={all.length > 1 ? `${t.rsPhoto} ${i + 1}/${all.length}` : t.rsPhoto} />)}
@@ -212,9 +215,9 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
               <div key={i} className="jr-ed-leg">
                 {i > 0 && <p className="jr-ch">🔁 {l.from || "…"}{legs[i - 1].arr && l.dep ? ` · ${minsBetween(legs[i - 1].arr, l.dep)} min` : ""}</p>}
                 <div className="grid2">
-                  <div className="field"><label>{t.jr.from}</label><input value={l.from} maxLength={80} onChange={(e) => setLeg(i, { from: e.target.value })} /></div>
+                  <div className="field"><label>{t.jr.from}</label><input value={l.from} maxLength={80} list="rail-stations" autoComplete="off" onChange={(e) => setLeg(i, { from: e.target.value })} /></div>
                   <div className="field"><label>{t.jr.dep}</label><input type="time" value={l.dep} onChange={(e) => setLeg(i, { dep: e.target.value })} /></div>
-                  <div className="field"><label>{t.jr.to}</label><input value={l.to} maxLength={80} onChange={(e) => { setLeg(i, { to: e.target.value }); if (legs[i + 1] && (!legs[i + 1].from || legs[i + 1].from === l.to)) setLeg(i + 1, { from: e.target.value }); }} /></div>
+                  <div className="field"><label>{t.jr.to}</label><input value={l.to} maxLength={80} list="rail-stations" autoComplete="off" onChange={(e) => { setLeg(i, { to: e.target.value }); if (legs[i + 1] && (!legs[i + 1].from || legs[i + 1].from === l.to)) setLeg(i + 1, { from: e.target.value }); }} /></div>
                   <div className="field"><label>{t.jr.arr}</label><input type="time" value={l.arr} onChange={(e) => setLeg(i, { arr: e.target.value })} /></div>
                   <div className="field"><label>{t.jr.op} <small>({t.tpOptional})</small></label><input value={l.op ?? ""} maxLength={60} onChange={(e) => setLeg(i, { op: e.target.value })} /></div>
                   <div className="field"><label>{t.jr.pf} <small>({t.tpOptional})</small></label><input value={l.pf ?? ""} maxLength={5} autoCapitalize="characters" onChange={(e) => setLeg(i, { pf: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 5) })} /></div>
@@ -230,6 +233,7 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
             {f.city && <button type="button" className="btn ghost" onClick={() => void find()}>{t.bpSearch}</button>}</div></div>
         {hits && (hits.length ? <div className="bp-hits">{hits.map((h, i) => <button type="button" key={i} className="bp-hit" onClick={() => { set({ place: `${h.label}${h.sub ? `, ${h.sub}` : ""}`, lat: h.lat, lng: h.lng }); setHits(null); }}><b>{h.label}</b><small>{h.sub}</small></button>)}</div> : <p className="hint">{t.bpNone}</p>)}
         {f.lat !== null && <p className="bp-ok">✓ {t.rsPinned}</p>}
+        <datalist id="rail-stations">{RAIL_STATIONS.map((n) => <option key={n} value={n} />)}</datalist>
         <div className="field"><label htmlFor="rs-r">{t.rsRef}</label><input id="rs-r" value={f.ref} maxLength={80} onChange={(e) => set({ ref: e.target.value })} /></div>
         <label className="rs-paid"><input type="checkbox" checked={f.paid} onChange={(e) => set({ paid: e.target.checked })} /> <span>{t.rsPaid}</span></label>
         <div className="field"><label htmlFor="rs-ph">{t.rsPhoto}</label>

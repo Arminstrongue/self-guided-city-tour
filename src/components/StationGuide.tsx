@@ -40,7 +40,7 @@ export function StationGuide({ t, locale, optionId, open: openInit = true }: { t
             <figure className="sg-photo">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={g.photo.image} alt={g.follow?.label ?? t.stgTitle} loading="lazy" decoding="async" />
-              <figcaption><a href={g.photo.page} target="_blank" rel="noopener noreferrer">{g.photo.author}</a> · {g.photo.license} · Wikimedia Commons</figcaption>
+              <figcaption>{g.photo.license ? <><a href={g.photo.page} target="_blank" rel="noopener noreferrer">{g.photo.author}</a> · {g.photo.license} · Wikimedia Commons</> : g.photo.author}</figcaption>
             </figure>
           )}
           <ul className="sg-rows">
