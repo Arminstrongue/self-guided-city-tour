@@ -12,8 +12,8 @@ import type { Dict } from "@/i18n/dictionaries";
 import { fmt } from "@/i18n/core";
 import type { Reservation } from "@/lib/trip-local";
 import { legDates } from "@/lib/journey-time";
-import { callsBetween, type Call } from "@/data/rail-lines";
-import { stationCoords } from "@/data/rail-stations";
+import { callsBetween, coordsOf, type Call } from "@/data/rail-lines";
+
 import { notifId } from "@/lib/trip-export";
 import { ALL_MODES, saveTransit, useTransitPrefs, type RouteOpt } from "@/lib/transit-prefs";
 import Portal from "./Portal";
@@ -42,7 +42,7 @@ function stopsOf(r: Reservation): Stop[][] {
   return (r.journey?.legs ?? []).map((l) => {
     const c: Call[] | null = callsBetween(l.from, l.to, l.op);
     if (c) return c.map((x) => ({ n: x.n, lat: x.lat, lng: x.lng }));
-    return [l.from, l.to].map((n) => { const p = stationCoords(n); return { n, lat: p?.lat ?? null, lng: p?.lng ?? null }; });
+    return [l.from, l.to].map((n) => { const p = coordsOf(n); return { n, lat: p?.lat ?? null, lng: p?.lng ?? null }; });
   });
 }
 
@@ -74,8 +74,12 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   const j = t.jf;
   const legs = r.journey?.legs ?? [];
   // Atraso indicado pelo viajante (sem dados em tempo real): desloca todas as horas e os avisos.
-  const [delay, setDelay] = useState<number>(() => { try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as { id: string; delay?: number } | null; return x?.id === r.id ? x.delay ?? 0 : 0; } catch { return 0; } });
-  const ld = useMemo(() => legDates(r).map((d) => ({ dep: new Date(d.dep.getTime() + delay * 60_000), arr: new Date(d.arr.getTime() + delay * 60_000) })), [r, delay]);
+  const [manual, setDelay] = useState<number>(() => { try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as { id: string; delay?: number } | null; return x?.id === r.id ? x.delay ?? 0 : 0; } catch { return 0; } });
+  const base = useMemo(() => legDates(r), [r]);
+  // Atraso medido pela localização (onde está vs. onde o horário diz que devia estar). O botão manual tem prioridade.
+  const [auto, setAuto] = useState(0);
+  const delay = manual > 0 ? manual : auto;
+  const ld = useMemo(() => base.map((d) => ({ dep: new Date(d.dep.getTime() + delay * 60_000), arr: new Date(d.arr.getTime() + delay * 60_000) })), [base, delay]);
   const stops = useMemo(() => stopsOf(r), [r]);
   const prefs = useTransitPrefs();
   const [now, setNow] = useState(() => Date.now());
@@ -114,6 +118,40 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
       }
     })();
   }, [r.id, delay]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Atraso automático: projeta a posição na linha (paragens com coordenadas) e compara com a hora prevista nesse ponto.
+  useEffect(() => {
+    if (!pos) return;
+    const t0 = Date.now();
+    let late: number | null = null;
+    for (let i = 0; i < base.length && late === null; i++) {
+      const st = stops[i], dep = base[i].dep.getTime(), arr = base[i].arr.getTime();
+      if (t0 < dep - 10 * 60_000 || t0 > arr + 120 * 60_000 || st.some((x) => x.lat == null)) continue;
+      const pts = st.map((x) => ({ lat: x.lat!, lng: x.lng! }));
+      // Ainda na estação de partida depois da hora: o comboio não saiu.
+      if (dist(pos, pts[0]) < 400) { if (t0 > dep + 2 * 60_000) late = Math.round((t0 - dep) / 60_000); else late = 0; break; }
+      const kx = Math.cos(pos.lat * Math.PI / 180) * 111_320, ky = 110_540;
+      const P = (q: Pos) => ({ x: q.lng * kx, y: q.lat * ky });
+      const me = P(pos);
+      let total = 0, bestD = Infinity, at = 0;
+      const seg: number[] = [];
+      for (let x = 0; x + 1 < pts.length; x++) {
+        const a = P(pts[x]), b = P(pts[x + 1]), dx = b.x - a.x, dy = b.y - a.y, L = Math.hypot(dx, dy) || 1;
+        const u = Math.max(0, Math.min(1, ((me.x - a.x) * dx + (me.y - a.y) * dy) / (L * L)));
+        const d = Math.hypot(a.x + u * dx - me.x, a.y + u * dy - me.y);
+        if (d < bestD) { bestD = d; at = total + u * L; }
+        seg.push(L); total += L;
+      }
+      if (bestD > 3000 || total < 1) continue;          // longe desta linha: não é este troço
+      const f = at / total;
+      if (f < 0.03 || f > 0.97) continue;               // perto das pontas a estimativa engana (paragem, saída lenta)
+      const expected = dep + f * (arr - dep);
+      late = Math.round((t0 - expected) / 60_000);
+    }
+    if (late === null) return;
+    const v = Math.max(0, Math.min(180, late));
+    setAuto((cur) => (Math.abs(v - cur) >= 2 ? v : cur)); // só muda com diferença de 2+ min (evita saltos)
+  }, [pos, base, stops, now]);
 
   // Relógio (10 s) e localização.
   useEffect(() => {
@@ -198,7 +236,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   }, [ride?.getOff, ride?.i]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const end = async () => {
-    try { localStorage.removeItem(KEY); } catch { /* ignorar */ }
+    try { localStorage.removeItem(KEY); localStorage.removeItem("sgct:jf-adhoc"); } catch { /* ignorar */ }
     try {
       if (isNative()) {
         const { LocalNotifications } = await import("@capacitor/local-notifications");
@@ -235,7 +273,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
 
         {l && (
           <section className="jf-leg">
-            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{ld[legI] ? `${hm(ld[legI].dep, tz)} → ${hm(ld[legI].arr, tz)}` : `${l.dep} → ${l.arr}`}</span>{delay > 0 && <span className="chip paid num">{fmt(j.lateBy, { m: delay })}</span>}{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
+            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{ld[legI] ? `${hm(ld[legI].dep, tz)} → ${hm(ld[legI].arr, tz)}` : `${l.dep} → ${l.arr}`}</span>{delay > 0 && <span className="chip paid num">{fmt(manual > 0 ? j.lateBy : j.lateAuto, { m: delay })}</span>}{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
             <ol className="jf-stops">
               {st.map((s, x) => (
                 <li key={x} className={x <= k ? "past" : x === k + 1 ? "next" : ""}>
@@ -246,14 +284,15 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
               ))}
             </ol>
             {st.length === 2 && <p className="hint">{j.timesOnly}</p>}
+            {r.id.startsWith("adhoc-") && r.notes && <p className="hint">{r.notes}</p>}
           </section>
         )}
 
         {phase.k !== "done" && (
           <div className="jf-late" role="group" aria-label={j.late}>
             <span>⏱ {j.late}</span>
-            {[5, 10, 15].map((m) => <button key={m} type="button" className="chip press num" onClick={() => setDelay((d) => Math.min(180, d + m))}>+{m}</button>)}
-            {delay > 0 && <button type="button" className="link-btn" onClick={() => setDelay(0)}>{j.onTime}</button>}
+            {[5, 10, 15].map((m) => <button key={m} type="button" className="chip press num" onClick={() => setDelay((d) => Math.min(180, (d || auto) + m))}>+{m}</button>)}
+            {manual > 0 && <button type="button" className="link-btn" onClick={() => setDelay(0)}>{j.onTime}</button>}
           </div>
         )}
         <p className="jf-pf">⚠️ {j.pfCheck}</p>

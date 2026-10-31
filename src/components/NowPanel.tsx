@@ -10,6 +10,7 @@ import { loadTrip } from "./trip-store";
 import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
 import { TravellerAlerts } from "./TravellerUpdates";
 import { activeJourney, JourneyFollow } from "./JourneyFollow";
+import { loadAdhoc, QuickTrain } from "./QuickTrain";
 
 type LL = { lat: number; lng: number };
 export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number; started?: boolean };
@@ -41,8 +42,9 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   const [now, setNow] = useState(() => Date.now());
   const [show, setShow] = useState<Reservation | null>(null);
   const [follow, setFollow] = useState<Reservation | null>(null);
+  const [quick, setQuick] = useState(false);
   // Viagem a ser seguida (ecrã apagou ou a app fechou): volta a abrir sozinha.
-  useEffect(() => { const id = activeJourney(); if (!id || follow) return; const r = res.find((x) => x.id === id); if (r) setFollow(r); }, [res]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { const id = activeJourney(); if (!id || follow) return; const r = res.find((x) => x.id === id) ?? loadAdhoc(id); if (r) setFollow(r); }, [res]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Ao carregar, a lista vem da conta e guarda uma cópia local (que dispara "sgct:res").
     // O evento só relê essa cópia: voltar a pedir à conta criava um ciclo sem fim de pedidos.
@@ -145,8 +147,10 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
           ))}
         </div>
       )}
+      <button type="button" className="btn ghost press now-qt" onClick={() => setQuick(true)}>🚆 {t.jf.qtBtn}</button>
       {show && <TicketSheet r={show} t={t} locale={locale} onClose={() => setShow(null)} />}
       {follow && <JourneyFollow r={follow} t={t} onClose={() => setFollow(null)} />}
+      {quick && <QuickTrain t={t} onClose={() => setQuick(false)} onStart={(r) => { setQuick(false); setFollow(r); }} />}
     </section>
   );
 }

@@ -43,3 +43,13 @@ export function stationCoords(name: string | undefined | null): { lat: number; l
   const c = STATION_COORDS[k] ?? STATION_COORDS[k.replace(/ station$/, "")];
   return c ? { lat: c[0], lng: c[1] } : null;
 }
+
+/** Estações com coordenadas conhecidas (nome bonito + posição). */
+export function knownStations(): { n: string; lat: number; lng: number }[] {
+  const nice = new Map(RAIL_STATIONS.map((x) => [x.toLowerCase(), x]));
+  return Object.entries(STATION_COORDS).map(([k, [lat, lng]]) => ({ n: nice.get(k) ?? k.replace(/\b\w/g, (c) => c.toUpperCase()), lat, lng }));
+}
+
+const titleCase = (k: string) => k.replace(/\b([a-z])/g, (m) => m.toUpperCase()).replace(/'S\b/g, "'s");
+/** Estações com coordenadas conhecidas (para encontrar a mais próxima de onde está). */
+export const STATIONS_WITH_COORDS: { n: string; lat: number; lng: number }[] = Object.entries(STATION_COORDS).map(([k, [lat, lng]]) => ({ n: titleCase(k), lat, lng }));
