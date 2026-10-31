@@ -1,0 +1,467 @@
+{
+ "places": [
+  {
+   "id": "lon-british-museum",
+   "n": "British Museum",
+   "a": "Bloomsbury",
+   "lat": 51.5194,
+   "lng": -0.127,
+   "k": "museum",
+   "top": true,
+   "free": true,
+   "url": "https://www.britishmuseum.org",
+   "en": "Founded in 1753, it holds two million years of human history, including the Rosetta Stone and the Parthenon sculptures.",
+   "pt": "Fundado em 1753, reúne dois milhões de anos de história humana, incluindo a Pedra de Roseta e as esculturas do Pártenon."
+  },
+  {
+   "id": "lon-natural-history-museum",
+   "n": "Natural History Museum",
+   "a": "South Kensington",
+   "lat": 51.4967,
+   "lng": -0.1764,
+   "k": "museum",
+   "top": true,
+   "free": true,
+   "url": "https://www.nhm.ac.uk",
+   "en": "A grand Victorian building by Alfred Waterhouse, known for its dinosaur galleries and the blue whale skeleton in Hintze Hall.",
+   "pt": "Um grandioso edifício vitoriano de Alfred Waterhouse, conhecido pelas galerias de dinossauros e pelo esqueleto de baleia-azul no Hintze Hall."
+  },
+  {
+   "id": "lon-va",
+   "n": "Victoria and Albert Museum (V&A)",
+   "a": "South Kensington",
+   "lat": 51.4966,
+   "lng": -0.1722,
+   "k": "museum",
+   "top": true,
+   "free": true,
+   "url": "https://www.vam.ac.uk",
+   "en": "The world's leading museum of art and design, founded in 1852, with collections spanning fashion, sculpture, ceramics and furniture.",
+   "pt": "O principal museu de arte e design do mundo, fundado em 1852, com coleções de moda, escultura, cerâmica e mobiliário."
+  },
+  {
+   "id": "lon-science-museum",
+   "n": "Science Museum",
+   "a": "South Kensington",
+   "lat": 51.4978,
+   "lng": -0.1745,
+   "k": "museum",
+   "free": true,
+   "url": "https://www.sciencemuseum.org.uk",
+   "en": "Hands-on galleries on science, engineering and medicine, with icons such as Stephenson's Rocket and the Apollo 10 command module.",
+   "pt": "Galerias interativas sobre ciência, engenharia e medicina, com peças icónicas como a locomotiva Rocket de Stephenson e o módulo de comando da Apollo 10."
+  },
+  {
+   "id": "lon-tower-of-london",
+   "n": "Tower of London",
+   "a": "Tower Hill",
+   "lat": 51.5081,
+   "lng": -0.0759,
+   "k": "palace",
+   "top": true,
+   "url": "https://www.hrp.org.uk/tower-of-london/",
+   "en": "A royal fortress begun by William the Conqueror in the 11th century, home to the Crown Jewels and the Yeoman Warders. A UNESCO World Heritage Site.",
+   "pt": "Uma fortaleza real iniciada por Guilherme, o Conquistador, no século XI, onde se guardam as Joias da Coroa e vivem os Yeoman Warders. Património Mundial da UNESCO."
+  },
+  {
+   "id": "lon-hyde-park",
+   "n": "Hyde Park",
+   "a": "Westminster",
+   "lat": 51.5073,
+   "lng": -0.1657,
+   "k": "park",
+   "top": true,
+   "free": true,
+   "en": "One of London's largest Royal Parks, with the Serpentine lake, the Diana Memorial Fountain and Speakers' Corner.",
+   "pt": "Um dos maiores Parques Reais de Londres, com o lago Serpentine, a Fonte Memorial da Princesa Diana e o Speakers' Corner."
+  },
+  {
+   "id": "lon-kensington-palace",
+   "n": "Kensington Palace",
+   "a": "Kensington Gardens",
+   "lat": 51.5058,
+   "lng": -0.1877,
+   "k": "palace",
+   "url": "https://www.hrp.org.uk/kensington-palace/",
+   "en": "A royal residence since the 17th century and the birthplace of Queen Victoria in 1819, set in Kensington Gardens.",
+   "pt": "Residência real desde o século XVII e local de nascimento da Rainha Vitória em 1819, situada nos Kensington Gardens."
+  },
+  {
+   "id": "lon-borough-market",
+   "n": "Borough Market",
+   "a": "Southwark",
+   "lat": 51.5055,
+   "lng": -0.091,
+   "k": "market",
+   "top": true,
+   "free": true,
+   "url": "https://boroughmarket.org.uk",
+   "en": "One of London's oldest food markets, under Victorian iron roofs beside London Bridge, packed with produce stalls and street food.",
+   "pt": "Um dos mercados alimentares mais antigos de Londres, sob coberturas vitorianas de ferro junto à London Bridge, cheio de bancas de produtos e comida de rua."
+  },
+  {
+   "id": "lon-the-shard",
+   "n": "The Shard",
+   "a": "London Bridge",
+   "lat": 51.5045,
+   "lng": -0.0865,
+   "k": "view",
+   "url": "https://www.theviewfromtheshard.com",
+   "en": "Designed by Renzo Piano and about 310 m tall, it is the UK's tallest building, with viewing floors near the top.",
+   "pt": "Projetado por Renzo Piano e com cerca de 310 m de altura, é o edifício mais alto do Reino Unido, com miradouros perto do topo."
+  },
+  {
+   "id": "lon-london-eye",
+   "n": "London Eye",
+   "a": "South Bank",
+   "lat": 51.5033,
+   "lng": -0.1196,
+   "k": "view",
+   "top": true,
+   "url": "https://www.londoneye.com",
+   "en": "A 135 m observation wheel on the South Bank, opened in 2000, with views over Parliament and the Thames.",
+   "pt": "Uma roda panorâmica de 135 m na South Bank, inaugurada em 2000, com vista sobre o Parlamento e o Tamisa."
+  },
+  {
+   "id": "lon-tate-britain",
+   "n": "Tate Britain",
+   "a": "Millbank",
+   "lat": 51.4911,
+   "lng": -0.1275,
+   "k": "gallery",
+   "free": true,
+   "url": "https://www.tate.org.uk/visit/tate-britain",
+   "en": "British art from 1500 to today on the Thames at Millbank, including the world's largest collection of works by J.M.W. Turner.",
+   "pt": "Arte britânica de 1500 até hoje, junto ao Tamisa em Millbank, incluindo a maior coleção do mundo de obras de J.M.W. Turner."
+  },
+  {
+   "id": "lon-national-portrait-gallery",
+   "n": "National Portrait Gallery",
+   "a": "West End",
+   "lat": 51.5094,
+   "lng": -0.1281,
+   "k": "gallery",
+   "free": true,
+   "url": "https://www.npg.org.uk",
+   "en": "Founded in 1856, it holds portraits of famous Britons from the Tudors to today and reopened in 2023 after a major refurbishment.",
+   "pt": "Fundada em 1856, reúne retratos de britânicos célebres desde os Tudor até hoje e reabriu em 2023 após uma grande remodelação."
+  },
+  {
+   "id": "lon-camden-market",
+   "n": "Camden Market",
+   "a": "Camden Town",
+   "lat": 51.5415,
+   "lng": -0.1466,
+   "k": "market",
+   "free": true,
+   "url": "https://www.camdenmarket.com",
+   "en": "A sprawl of stalls, shops and street food around Camden Lock on the Regent's Canal, famous for its alternative scene.",
+   "pt": "Um conjunto de bancas, lojas e comida de rua em torno de Camden Lock, no Regent's Canal, famoso pela sua cena alternativa."
+  },
+  {
+   "id": "lon-regents-park",
+   "n": "Regent's Park",
+   "a": "Marylebone",
+   "lat": 51.5268,
+   "lng": -0.153,
+   "k": "park",
+   "free": true,
+   "en": "A Royal Park laid out by John Nash, with Queen Mary's Gardens and their rose collection, a boating lake and London Zoo on its northern edge.",
+   "pt": "Um Parque Real desenhado por John Nash, com os Queen Mary's Gardens e o seu roseiral, um lago para barcos e o Jardim Zoológico de Londres no limite norte."
+  },
+  {
+   "id": "lon-royal-observatory",
+   "n": "Royal Observatory Greenwich",
+   "a": "Greenwich",
+   "lat": 51.4769,
+   "lng": -0.0005,
+   "k": "sight",
+   "url": "https://www.rmg.co.uk",
+   "en": "Founded by Charles II in 1675, it is home to the Prime Meridian (longitude 0°) and overlooks Greenwich Park and the Thames.",
+   "pt": "Fundado por Carlos II em 1675, é a casa do Meridiano de Greenwich (longitude 0°) e tem vista sobre o Greenwich Park e o Tamisa."
+  },
+  {
+   "id": "lon-churchill-war-rooms",
+   "n": "Churchill War Rooms",
+   "a": "Westminster",
+   "lat": 51.5022,
+   "lng": -0.129,
+   "k": "museum",
+   "url": "https://www.iwm.org.uk",
+   "en": "The underground bunker from which Churchill and his government directed the Second World War, preserved as part of Imperial War Museums.",
+   "pt": "O abrigo subterrâneo a partir do qual Churchill e o seu governo dirigiram a Segunda Guerra Mundial, preservado como parte dos Imperial War Museums."
+  },
+  {
+   "id": "lon-sky-garden",
+   "n": "Sky Garden",
+   "a": "City of London",
+   "lat": 51.5113,
+   "lng": -0.0836,
+   "k": "view",
+   "url": "https://skygarden.london",
+   "en": "A landscaped garden and viewing space at the top of 20 Fenchurch Street (the 'Walkie-Talkie'); entry is free with an advance booking.",
+   "pt": "Um jardim e miradouro no topo do 20 Fenchurch Street (o 'Walkie-Talkie'); a entrada é gratuita com marcação prévia."
+  },
+  {
+   "id": "lon-shakespeares-globe",
+   "n": "Shakespeare's Globe",
+   "a": "Bankside",
+   "lat": 51.5081,
+   "lng": -0.0972,
+   "k": "sight",
+   "url": "https://www.shakespearesglobe.com",
+   "en": "A reconstruction of Shakespeare's open-air 1599 playhouse, opened in 1997 close to the site of the original.",
+   "pt": "Uma reconstrução do teatro ao ar livre de Shakespeare de 1599, inaugurada em 1997 perto do local do original."
+  },
+  {
+   "id": "lon-leadenhall-market",
+   "n": "Leadenhall Market",
+   "a": "City of London",
+   "lat": 51.5128,
+   "lng": -0.0834,
+   "k": "market",
+   "free": true,
+   "en": "A covered market with an ornate Victorian roof designed by Horace Jones, on a site that was once at the heart of Roman London.",
+   "pt": "Um mercado coberto com um ornamentado telhado vitoriano desenhado por Horace Jones, num local que já foi o centro da Londres romana."
+  },
+  {
+   "id": "lon-southwark-cathedral",
+   "n": "Southwark Cathedral",
+   "a": "Southwark",
+   "lat": 51.5061,
+   "lng": -0.0897,
+   "k": "church",
+   "free": true,
+   "en": "London's oldest Gothic church building, beside London Bridge, with a memorial to William Shakespeare.",
+   "pt": "O edifício gótico mais antigo de Londres, junto à London Bridge, com um memorial a William Shakespeare."
+  },
+  {
+   "id": "lon-st-james-park",
+   "n": "St James's Park",
+   "a": "Westminster",
+   "lat": 51.5025,
+   "lng": -0.1348,
+   "k": "park",
+   "free": true,
+   "en": "The oldest of the Royal Parks, with a lake that has been home to pelicans since the 17th century and views of Buckingham Palace.",
+   "pt": "O mais antigo dos Parques Reais, com um lago onde vivem pelicanos desde o século XVII e vista para o Palácio de Buckingham."
+  },
+  {
+   "id": "lon-kew-gardens",
+   "n": "Kew Gardens",
+   "a": "Richmond",
+   "lat": 51.4788,
+   "lng": -0.2954,
+   "k": "park",
+   "url": "https://www.kew.org",
+   "en": "The Royal Botanic Gardens, a UNESCO World Heritage Site, with the Victorian Palm House and one of the world's largest plant collections.",
+   "pt": "Os Jardins Botânicos Reais, Património Mundial da UNESCO, com a Palm House vitoriana e uma das maiores coleções de plantas do mundo."
+  },
+  {
+   "id": "lon-piccadilly-circus",
+   "n": "Piccadilly Circus",
+   "a": "West End",
+   "lat": 51.5101,
+   "lng": -0.1342,
+   "k": "landmark",
+   "en": "A busy West End junction known for its giant illuminated screens and the Shaftesbury Memorial Fountain, topped by a winged statue.",
+   "pt": "Um movimentado cruzamento do West End, conhecido pelos ecrãs luminosos gigantes e pela Shaftesbury Memorial Fountain, encimada por uma estátua alada."
+  }
+ ],
+ "streets": [
+  {
+   "id": "lon-oxford-st",
+   "n": "Oxford Street",
+   "a": "West End",
+   "lat": 51.5152,
+   "lng": -0.1419,
+   "en": "London's best-known shopping street, lined with flagship stores between Marble Arch and Tottenham Court Road.",
+   "pt": "A rua comercial mais conhecida de Londres, ladeada de grandes lojas entre Marble Arch e Tottenham Court Road."
+  },
+  {
+   "id": "lon-regent-st",
+   "n": "Regent Street",
+   "a": "West End",
+   "lat": 51.5113,
+   "lng": -0.1396,
+   "en": "An elegant curving street planned by John Nash in the early 19th century, home to Hamleys and Liberty nearby.",
+   "pt": "Uma rua elegante e curva planeada por John Nash no início do século XIX, com a Hamleys e, ao lado, a Liberty."
+  },
+  {
+   "id": "lon-carnaby-st",
+   "n": "Carnaby Street",
+   "a": "Soho",
+   "lat": 51.5133,
+   "lng": -0.1389,
+   "en": "A pedestrian street that was the heart of 1960s 'Swinging London' fashion, now full of independent and fashion shops.",
+   "pt": "Uma rua pedonal que foi o centro da moda da 'Swinging London' dos anos 60, hoje cheia de lojas de moda e independentes."
+  },
+  {
+   "id": "lon-soho",
+   "n": "Soho",
+   "a": "West End",
+   "lat": 51.5137,
+   "lng": -0.1337,
+   "en": "A lively grid of narrow streets packed with restaurants, bars and theatres, next to Chinatown.",
+   "pt": "Uma animada rede de ruas estreitas cheia de restaurantes, bares e teatros, junto a Chinatown."
+  },
+  {
+   "id": "lon-portobello-rd",
+   "n": "Portobello Road",
+   "a": "Notting Hill",
+   "lat": 51.5153,
+   "lng": -0.205,
+   "en": "Notting Hill's famous street of pastel houses and antiques, with its biggest market day on Saturdays.",
+   "pt": "A famosa rua de Notting Hill, com casas em tons pastel e antiguidades; o maior dia de mercado é ao sábado."
+  },
+  {
+   "id": "lon-brick-lane",
+   "n": "Brick Lane",
+   "a": "Shoreditch / Spitalfields",
+   "lat": 51.5216,
+   "lng": -0.0716,
+   "en": "East London street known for street art, vintage shops, curry houses and its famous bagel bakeries.",
+   "pt": "Rua do East London conhecida pela arte urbana, lojas vintage, restaurantes de caril e as suas famosas padarias de bagels."
+  }
+ ],
+ "walks": [
+  {
+   "id": "lon-southbank",
+   "en_n": "South Bank: Westminster to Tower Bridge",
+   "pt_n": "South Bank: de Westminster à Tower Bridge",
+   "km": 4.3,
+   "min": 65,
+   "en": "Follow the south bank of the Thames past the London Eye, the Southbank Centre, the Globe and Borough Market to Tower Bridge.",
+   "pt": "Siga a margem sul do Tamisa, passando pela London Eye, pelo Southbank Centre, pelo Globe e pelo Borough Market até à Tower Bridge.",
+   "pts": [
+    {
+     "n": "Westminster Bridge",
+     "lat": 51.5008,
+     "lng": -0.1219
+    },
+    {
+     "n": "London Eye",
+     "lat": 51.5033,
+     "lng": -0.1196
+    },
+    {
+     "n": "Southbank Centre",
+     "lat": 51.5063,
+     "lng": -0.1164
+    },
+    {
+     "n": "OXO Tower Wharf",
+     "lat": 51.5081,
+     "lng": -0.1088
+    },
+    {
+     "n": "Shakespeare's Globe",
+     "lat": 51.5081,
+     "lng": -0.0972
+    },
+    {
+     "n": "Southwark Cathedral",
+     "lat": 51.5061,
+     "lng": -0.0897
+    },
+    {
+     "n": "Borough Market",
+     "lat": 51.5055,
+     "lng": -0.091
+    },
+    {
+     "n": "Tower Bridge",
+     "lat": 51.5055,
+     "lng": -0.0754
+    }
+   ]
+  },
+  {
+   "id": "lon-royal-parks",
+   "en_n": "Royal Parks: St James's Park to Kensington Palace",
+   "pt_n": "Parques Reais: de St James's Park ao Palácio de Kensington",
+   "km": 4.8,
+   "min": 72,
+   "en": "A green walk through four Royal Parks, passing Buckingham Palace and Wellington Arch on the way to the Serpentine and Kensington Gardens.",
+   "pt": "Um passeio verde por quatro Parques Reais, passando pelo Palácio de Buckingham e pelo Wellington Arch a caminho do Serpentine e dos Kensington Gardens.",
+   "pts": [
+    {
+     "n": "Horse Guards Parade",
+     "lat": 51.504,
+     "lng": -0.129
+    },
+    {
+     "n": "St James's Park (Blue Bridge)",
+     "lat": 51.5025,
+     "lng": -0.134
+    },
+    {
+     "n": "Green Park",
+     "lat": 51.5047,
+     "lng": -0.142
+    },
+    {
+     "n": "Wellington Arch",
+     "lat": 51.5026,
+     "lng": -0.1508
+    },
+    {
+     "n": "Diana Memorial Fountain",
+     "lat": 51.5046,
+     "lng": -0.1715
+    },
+    {
+     "n": "Kensington Palace",
+     "lat": 51.5058,
+     "lng": -0.1877
+    }
+   ]
+  },
+  {
+   "id": "lon-city",
+   "en_n": "The City: Guildhall to the Tower",
+   "pt_n": "A City: do Guildhall à Torre de Londres",
+   "km": 2.2,
+   "min": 33,
+   "en": "Explore the historic financial district, from the Guildhall and Bank junction through Leadenhall Market and up to the Monument, ending at the Tower of London.",
+   "pt": "Explore o histórico bairro financeiro, do Guildhall e do cruzamento de Bank ao Leadenhall Market e ao Monument, terminando na Torre de Londres.",
+   "pts": [
+    {
+     "n": "Guildhall",
+     "lat": 51.5156,
+     "lng": -0.092
+    },
+    {
+     "n": "Bank junction",
+     "lat": 51.5133,
+     "lng": -0.089
+    },
+    {
+     "n": "Leadenhall Market",
+     "lat": 51.5128,
+     "lng": -0.0834
+    },
+    {
+     "n": "Sky Garden",
+     "lat": 51.5113,
+     "lng": -0.0836
+    },
+    {
+     "n": "The Monument",
+     "lat": 51.5101,
+     "lng": -0.086
+    },
+    {
+     "n": "St Dunstan-in-the-East",
+     "lat": 51.5097,
+     "lng": -0.0827
+    },
+    {
+     "n": "Tower of London",
+     "lat": 51.5081,
+     "lng": -0.0759
+    }
+   ]
+  }
+ ]
+}
