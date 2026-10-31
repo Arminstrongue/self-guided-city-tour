@@ -1,4 +1,5 @@
 "use client";
+import { signedStatus } from "@/lib/signed";
 import { useDict } from "@/i18n/client-dict";
 /** Plano de viagem: dias com lugares reais, criação automática pelos interesses, rota do dia e partilha. */
 import { toast } from "@/lib/toast";
@@ -84,7 +85,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
   async function auto() {
     setBusy(true);
     const p = await loadPlaces();
-    const prefs = await fetch("/api/me/prefs").then((r) => (r.ok ? r.json() : null)).catch(() => null);
+    const prefs = (await signedStatus()) === false ? null : await fetch("/api/me/prefs").then((r) => (r.ok ? r.json() : null)).catch(() => null);
     const hobbies = ((prefs?.hobbies ?? []) as string[]).filter((h): h is Hobby => (HOBBIES as readonly string[]).includes(h));
     const items = autoPlan(candidates(moments, p), hobbies, plan.days);
     save({ items: [...plan.items.filter((i) => i.kind === "custom"), ...items] });

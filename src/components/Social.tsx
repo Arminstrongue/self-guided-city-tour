@@ -1,4 +1,5 @@
 "use client";
+import { signedStatus } from "@/lib/signed";
 import { SheetX } from "@/components/WinNav";
 import { AvatarStudio } from "./AvatarStudio";
 import type { TravelPrefs } from "@/lib/db/schema";
@@ -19,6 +20,7 @@ export type Social = { profile: MyProfile | null; count: { followers: number; fo
 type Rel = "none" | "requested" | "following" | "self" | "blocked";
 
 export async function loadSocial(): Promise<Social | null> {
+  if ((await signedStatus()) === false) return null;
   const r = await fetch("/api/me/profile", { cache: "no-store" }).catch(() => null);
   if (!r?.ok) return null;
   const j = await r.json();
@@ -174,7 +176,7 @@ export function SettingsSheet({ t, locale, hobbies, social, cities, onHobbies, o
   const [adding, setAdding] = useState<"more" | "less" | null>(null);
   const [cq, setCq] = useState("");
   const [travel, setTravel] = useState<TravelPrefs>(() => { try { return JSON.parse(localStorage.getItem("sgct:travel") ?? "{}"); } catch { return {}; } });
-  useEffect(() => { fetch("/api/me/prefs", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j?.travel) setTravel(j.travel); }).catch(() => null); }, []);
+  useEffect(() => { void signedStatus().then((sg) => { if (sg === false) return; void fetch("/api/me/prefs", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j?.travel) setTravel(j.travel); }).catch(() => null); }); }, []);
   const toggleIn = <K extends "types" | "access">(k: K, v: NonNullable<TravelPrefs[K]>[number]) => setTravel((p) => { const cur = (p[k] ?? []) as string[]; return { ...p, [k]: cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v] }; });
   useEffect(() => { if (social?.profile?.lessOf?.length && !less.length) setLess(social.profile.lessOf as Hobby[]); }, [social]); // eslint-disable-line react-hooks/exhaustive-deps
   const setT = (th: Theme, ac: Accent) => { setTA({ theme: th, accent: ac }); applyTheme(th, ac); };

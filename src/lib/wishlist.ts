@@ -1,4 +1,5 @@
 "use client";
+import { signedStatus } from "./signed";
 /** Wishlist (❤️): lugares e momentos que o viajante quer visitar. Fica no dispositivo e, com sessão, na conta (prefs.saved). */
 export type Wish = { city: string; cityName?: string; title: string; lat: number; lng: number; icon?: string; at: number };
 const KEY = "sgct:wish";
@@ -13,6 +14,7 @@ let signed: boolean | null = null;
 /** Junta a lista do dispositivo com a da conta (e envia para a conta o que só estava no dispositivo). */
 export async function loadWish(): Promise<{ list: Wish[]; signed: boolean }> {
   const local = readLocal();
+  if ((await signedStatus()) === false) { signed = false; return { list: local, signed: false }; }
   const r = await fetch("/api/me/prefs", { cache: "no-store" }).catch(() => null);
   // Só 401 quer dizer "sem sessão"; sem rede ou erro do servidor, continua a tentar da próxima vez.
   if (!r?.ok) { if (r?.status === 401) signed = false; return { list: local, signed: false }; }

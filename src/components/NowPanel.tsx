@@ -1,4 +1,5 @@
 "use client";
+import { stationCoords } from "@/data/rail-stations";
 import { useNative } from "@/lib/use-native";
 import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
@@ -8,6 +9,7 @@ import { cachedReservations, loadReservations, type Reservation } from "@/lib/tr
 import { loadTrip } from "./trip-store";
 import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
 import { TravellerAlerts } from "./TravellerUpdates";
+import { activeJourney, JourneyFollow } from "./JourneyFollow";
 
 type LL = { lat: number; lng: number };
 export type Progress = { city: string; name: string; next: string; i: number; total: number; at: number; started?: boolean };
@@ -38,6 +40,9 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   const [pos, setPos] = useState<LL | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [show, setShow] = useState<Reservation | null>(null);
+  const [follow, setFollow] = useState<Reservation | null>(null);
+  // Viagem a ser seguida (ecrã apagou ou a app fechou): volta a abrir sozinha.
+  useEffect(() => { const id = activeJourney(); if (!id || follow) return; const r = res.find((x) => x.id === id); if (r) setFollow(r); }, [res]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Ao carregar, a lista vem da conta e guarda uma cópia local (que dispara "sgct:res").
     // O evento só relê essa cópia: voltar a pedir à conta criava um ciclo sem fim de pedidos.
@@ -65,7 +70,8 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   function resCard(r: Reservation) {
     const start = new Date(r.startsAt);
     const w = resWhen(r, locale);
-    const to = r.lat !== null && r.lng !== null ? { lat: r.lat, lng: r.lng } : null;
+    // Sem morada mas com a estação de partida conhecida (ex.: Manchester Piccadilly): usa a estação para a hora de sair.
+    const to = r.lat !== null && r.lng !== null ? { lat: r.lat, lng: r.lng } : r.kind === "transport" ? stationCoords(r.journey?.legs[0]?.from) : null;
     const from = to ? fromFor(r.city) : null;
     const h = to && from ? hop(from, to) : null;
     const leave = h ? new Date(start.getTime() - (h.min + MARGIN) * 60_000) : null;
@@ -82,6 +88,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
         {r.place && <p className="now-row">📍 {r.place}</p>}
         <p className="now-row">{r.photo || r.ref ? `🎟 ${t.nwNeedTicket}` : `ℹ️ ${t.nwNoTicket}`} · {r.paid ? t.rsPaid : t.rsToPay}</p>
         <div className="now-acts">
+          {r.kind === "transport" && r.journey?.legs.length ? <button className="btn press jf-start" onClick={() => setFollow(r)}>▶ {t.jf.start}</button> : null}
           {dir && <a className="btn tram press" href={dir} target="_blank" rel="noreferrer">{t.nwGo}</a>}
           <button className="btn ghost press" onClick={() => setShow(r)}>{r.photo || r.ref ? t.nwTicket : t.nwDetails}</button>
         </div>
@@ -139,6 +146,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
         </div>
       )}
       {show && <TicketSheet r={show} t={t} locale={locale} onClose={() => setShow(null)} />}
+      {follow && <JourneyFollow r={follow} t={t} onClose={() => setFollow(null)} />}
     </section>
   );
 }

@@ -252,7 +252,9 @@ export const travellerPrefs = pgTable("traveller_prefs", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow()
 });
 
-export type TravelPrefs = { types?: ("layover" | "business" | "family" | "leisure")[]; pace?: "calm" | "balanced" | "intense"; access?: ("steps" | "stroller" | "wheelchair")[] };
+export type TravelPrefs = { types?: ("layover" | "business" | "family" | "leisure")[]; pace?: "calm" | "balanced" | "intense"; access?: ("steps" | "stroller" | "wheelchair")[]; modes?: TransitMode[]; route?: RouteOpt };
+export type TransitMode = "metro" | "tram" | "bus" | "train" | "ferry";
+export type RouteOpt = "best" | "transfers" | "walk" | "wheel" | "cost";
 export type PlanItem = { id: string; day: number; time?: string; title: string; kind: "moment" | "place" | "stop" | "custom"; lat?: number; lng?: number; note?: string; icon?: string };
 export const travellerPlans = pgTable("traveller_plans", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -1,4 +1,6 @@
 "use client";
+import { useTransitPrefs, type TransitMode } from "@/lib/transit-prefs";
+import { signedStatus } from "@/lib/signed";
 import { useDict } from "@/i18n/client-dict";
 import { useEffect, useMemo, useState } from "react";
 import type { City, Leg, Stop } from "@/data/cities";
@@ -204,14 +206,24 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const night = startHour >= 19 || startHour < 7;
   const desc = (s: Stop) => (locale === "pt" ? s.pt : s.en);
 
-  const legView = (l: Leg) => {
+  const tp = useTransitPrefs();
+  // a/b: paragens antes e depois do troço (para propor ir a pé quando o viajante não quer este transporte ou quer poupar).
+  const legView = (l: Leg, a?: { lat: number; lng: number }, b?: { lat: number; lng: number }) => {
     const cost = (l.f ?? 0) + (l.r ?? 0) * city.single;
+    let walkAlt: string | null = null;
+    if (l.m !== "walk" && l.m !== "car" && a && b) {
+      const x = ((b.lng - a.lng) * Math.PI / 180) * Math.cos(((a.lat + b.lat) / 2) * Math.PI / 180), y = (b.lat - a.lat) * Math.PI / 180;
+      const wm = Math.max(1, Math.round((Math.sqrt(x * x + y * y) * 6371000 * 1.3) / 80));
+      if (!tp.modes.includes(l.m as TransitMode) && wm <= 35) walkAlt = fmt(t.jf.walkInstead, { m: wm });
+      else if (tp.route === "cost" && cost > 0 && wm <= 25) walkAlt = fmt(t.jf.walkSave, { p: money(cost), m: wm });
+    }
     return (
       <div className="leg">
         {l.m === "walk"
           ? <span className="chip walk">{t.walk} · {t.free.toLowerCase()}</span>
           : <span className="chip paid num">{t[l.m]} · {cost > 0 ? money(cost) : t.priceOnSite}</span>}
         <span>{l.line ? `${lineText(l.line, locale)} · ` : ""}<span className="num">{l.min} min</span></span>
+        {walkAlt && <span className="chip walk jf-walk">🚶 {walkAlt}</span>}
       </div>
     );
   };
@@ -232,7 +244,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   const [cmCounts, setCmCounts] = useState<Record<string, number>>({});
   useEffect(() => {
     fetch(`/api/comments?city=${city.id}&counts=1`).then((r) => (r.ok ? r.json() : null)).then((j) => j && setCmCounts(j.counts)).catch(() => null);
-    fetch(`/api/me/checkin?city=${city.id}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j: { checkins?: { stop: string }[] } | null) => {
+    void signedStatus().then((sg) => (sg === false ? null : fetch(`/api/me/checkin?city=${city.id}`, { cache: "no-store" }))).then((r) => (r?.ok ? r.json() : null)).then((j: { checkins?: { stop: string }[] } | null) => {
       const srv = (j?.checkins ?? []).filter((c) => c.stop).map((c) => c.stop);
       // Junta com o que está guardado neste telemóvel (lido agora, não do primeiro render): nunca apaga paragens marcadas offline.
       let cur: Record<string, boolean> = {};
@@ -490,7 +502,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
               );
               return (
                 <div key={s.id}>
-                  {i > 0 && legView(s.leg)}
+                  {i > 0 && legView(s.leg, planAll.stops[i - 1], s)}
                   <div id={`s-${s.id}`} className={`stop ${done[s.id] ? "done" : ""}`}>
                     <span className="pin num">{done[s.id] ? "✓" : i + 1}</span>
                     <div className="body">
