@@ -1347,6 +1347,7 @@ export const GUIDES_DATA: Record<string, StationGuide> = {
    "https://networkrail.co.uk/wp-content/uploads/2022/08/Manchester-Piccadilly-Station-Guide-Accessible.pdf",
    "https://en.wikipedia.org/wiki/Manchester_Piccadilly_station"
   ],
+  "photo": { "page": "https://voybu.com", "image": "/img/own/man/station/piccadilly-concourse-480.webp", "author": "VOYBU", "license": "" },
   "checked": "2026-10",
   "fromBaggage": {
    "pt": "Do átrio principal, saia pela entrada principal para a Approach Road, o percurso sem degraus até London Road. Piccadilly Gardens fica a cerca de 800 m.",
