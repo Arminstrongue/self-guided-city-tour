@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Camera, CreditCard, Eye, ExternalLink, Gift, Hand, Inbox, Languages, LogOut, Mail, Pause, Play, Plus, Trash2, X } from "lucide-react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
-import { MAX_OPTIONS, MAX_PHOTOS, PAYMENTS, bookKind, promoActive } from "@/lib/booking";
+import { MAX_OPTIONS, MAX_PHOTOS, PAYMENTS, bookKind, promoActive } from "@/lib/booking-core";
 import { LOCALES } from "@/i18n/core";
 import { langLabel } from "@/lib/lang-label";
 import { RatingLine, ReviewList, type MReview } from "./MerchantReviews";

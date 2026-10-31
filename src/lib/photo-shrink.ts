@@ -1,5 +1,5 @@
 "use client";
-import { MAX_PHOTO_CHARS } from "./booking";
+import { MAX_PHOTO_CHARS } from "./booking-core";
 
 /** Foto do negócio reduzida no telemóvel: lado maior ≤ 1280 px, JPEG ≤ ~350 KB. */
 export async function shrink(file: File): Promise<string> {

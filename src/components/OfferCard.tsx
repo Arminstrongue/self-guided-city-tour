@@ -6,7 +6,7 @@ import type { Offer } from "@/lib/merchants";
 import { fmt } from "@/i18n/core";
 import Portal from "./Portal";
 import { SheetX } from "./WinNav";
-import { promoActive } from "@/lib/booking";
+import { promoActive } from "@/lib/booking-core";
 import { INTL_LOCALE } from "@/i18n/core";
 import { langLabel } from "@/lib/lang-label";
 import { OfferReviews, RatingLine } from "./MerchantReviews";
