@@ -4193,3 +4193,8 @@ main section.sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .dc-pts{margin:2px 0 4px;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .dc-pts li{display:flex;gap:8px;align-items:center}
 .dc-pts .num{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--cobalt-soft);color:var(--cobalt);font-size:12px;font-weight:700}
+.dc-kind{flex:none;display:inline-flex;align-items:center;gap:4px;min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;white-space:nowrap;cursor:pointer}
+.dc-kind.on{background:var(--cobalt);color:var(--on-cobalt);border-color:var(--cobalt)}
+.dc-acts .btn{flex:1 1 0;width:auto;min-width:0}
+.dc-acts .link-btn{flex-basis:100%}
+.dcs-kinds,.dc-item,.dcs-body > p,.dcs-body > small{flex:none}

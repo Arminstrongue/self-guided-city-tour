@@ -91,8 +91,8 @@ function DiscoverSheet({ t, locale, d, cityName, pos, gmapsKey, onShow, onClose 
         <div className="dcs-body">
           {tab === "places" && <>
             <div className="dcs-kinds">
-              <button type="button" className={`chip press${!kind ? " on" : ""}`} onClick={() => setKind("")}>{c.all}</button>
-              {kinds.map((k) => <button key={k} type="button" className={`chip press${kind === k ? " on" : ""}`} onClick={() => setKind(k)}>{KIND_ICON[k] ?? "📍"} {c.k[k as keyof typeof c.k] ?? k}</button>)}
+              <button type="button" className={`dc-kind press${!kind ? " on" : ""}`} onClick={() => setKind("")}>{c.all}</button>
+              {kinds.map((k) => <button key={k} type="button" className={`dc-kind press${kind === k ? " on" : ""}`} onClick={() => setKind(k)}>{KIND_ICON[k] ?? "📍"} {c.k[k as keyof typeof c.k] ?? k}</button>)}
             </div>
             {pos && <p className="hint">📍 {c.byDist}</p>}
             {places.map(({ p, m }) => (
