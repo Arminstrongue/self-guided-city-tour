@@ -1,7 +1,7 @@
 "use client";
 import { stationCoords } from "@/data/rail-stations";
 import { useNative } from "@/lib/use-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { hop } from "@/lib/route-cost";
@@ -9,7 +9,7 @@ import { cachedReservations, loadReservations, type Reservation } from "@/lib/tr
 import { loadTrip } from "./trip-store";
 import { journeyLine, RES_ICON, resWhen, TicketSheet } from "./Reservations";
 import { TravellerAlerts } from "./TravellerUpdates";
-import { activeJourney, JourneyFollow } from "./JourneyFollow";
+import { activeJourney, askNotify, JourneyFollow } from "./JourneyFollow";
 import { loadAdhoc, QuickTrain } from "./QuickTrain";
 
 type LL = { lat: number; lng: number };
@@ -44,7 +44,8 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
   const [follow, setFollow] = useState<Reservation | null>(null);
   const [quick, setQuick] = useState(false);
   // Viagem a ser seguida (ecrã apagou ou a app fechou): volta a abrir sozinha.
-  useEffect(() => { const id = activeJourney(); if (!id || follow) return; const r = res.find((x) => x.id === id) ?? loadAdhoc(id); if (r) setFollow(r); }, [res]); // eslint-disable-line react-hooks/exhaustive-deps
+  const resumed = useRef(false);
+  useEffect(() => { const id = activeJourney(); if (!id || follow || resumed.current) return; const r = res.find((x) => x.id === id) ?? loadAdhoc(id); if (r) { resumed.current = true; setFollow(r); } }, [res]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Ao carregar, a lista vem da conta e guarda uma cópia local (que dispara "sgct:res").
     // O evento só relê essa cópia: voltar a pedir à conta criava um ciclo sem fim de pedidos.
@@ -90,7 +91,7 @@ export function NowPanel({ t, locale, cities, signed, bookings, planned, hasPass
         {r.place && <p className="now-row">📍 {r.place}</p>}
         <p className="now-row">{r.photo || r.ref ? `🎟 ${t.nwNeedTicket}` : `ℹ️ ${t.nwNoTicket}`} · {r.paid ? t.rsPaid : t.rsToPay}</p>
         <div className="now-acts">
-          {r.kind === "transport" && r.journey?.legs.length ? <button className="btn press jf-start" onClick={() => setFollow(r)}>▶ {t.jf.start}</button> : null}
+          {r.kind === "transport" && r.journey?.legs.length ? <button className="btn press jf-start" onClick={() => { askNotify(); setFollow(r); }}>▶ {t.jf.start}</button> : null}
           {dir && <a className="btn tram press" href={dir} target="_blank" rel="noreferrer">{t.nwGo}</a>}
           <button className="btn ghost press" onClick={() => setShow(r)}>{r.photo || r.ref ? t.nwTicket : t.nwDetails}</button>
         </div>

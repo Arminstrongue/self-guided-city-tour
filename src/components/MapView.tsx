@@ -38,6 +38,7 @@ export function MapView(p: MapProps) {
 function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail, extra = [], center, legend = true, boxClass = "", card = true }: MapProps & { onFail: () => void }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<G>(null);
+  const [ready, setReady] = useState(false);
   const objs = useRef<G[]>([]);
   const viewKey = useRef("");
   useEffect(() => {
@@ -46,14 +47,14 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
       if (off || !el.current) return;
       const c = stops[0] ?? center ?? extra[0] ?? { lat: 0, lng: 0 };
       map.current = new g.maps.Map(el.current, { center: { lat: c.lat, lng: c.lng }, zoom: 14, mapTypeControl: false, streetViewControl: true, fullscreenControl: true, gestureHandling: "greedy", clickableIcons: true });
-      draw(g);
+      setReady(true); // desenha com as props atuais (não as do primeiro render: posição/foco podem ter mudado enquanto carregava)
     }).catch(onFail);
     return () => { off = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   // Só redesenha quando o que se vê muda (não a cada renderização, p. ex. o relógio de 60 s).
   const sig = JSON.stringify([stops.map((s) => [s.id, s.lat, s.lng]), done, museums.length, extra.map((x) => [x.lat, x.lng, x.icon]), airport?.name, pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
-  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { const g = (window as unknown as { google?: G }).google; if (g?.maps && map.current) draw(g); }, [sig, ready]); // eslint-disable-line react-hooks/exhaustive-deps
   function draw(g: G) {
     objs.current.forEach((o) => o.setMap(null)); objs.current = [];
     const m = map.current, info = new g.maps.InfoWindow();
@@ -103,6 +104,7 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
 function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], center, legend = true, boxClass = "", card = true }: MapProps) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
+  const [ready, setReady] = useState(false);
   const layer = useRef<LayerGroup | null>(null);
   const viewKey = useRef("");
 
@@ -114,7 +116,7 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], cent
       L.tileLayer(tilesUrl(), { maxZoom: 19, attribution: tilesAttr() }).addTo(m);
       layer.current = L.layerGroup().addTo(m);
       map.current = m;
-      draw(L);
+      setReady(true);
     });
     return () => { cancelled = true; map.current?.remove(); map.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -122,7 +124,7 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], cent
 
   // Só redesenha quando o que se vê muda (não a cada renderização, p. ex. o relógio de 60 s).
   const sig = JSON.stringify([stops.map((s) => [s.id, s.lat, s.lng]), done, museums.length, extra.map((x) => [x.lat, x.lng, x.icon]), airport?.name, pos && [pos.lat.toFixed(5), pos.lng.toFixed(5)], focus && [focus.lat, focus.lng]]);
-  useEffect(() => { void import("leaflet").then((L) => draw(L)); }, [sig]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (ready) void import("leaflet").then((L) => draw(L)); }, [sig, ready]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function draw(L: typeof import("leaflet")) {
     const m = map.current, g = layer.current;

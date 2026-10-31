@@ -10,7 +10,7 @@ const cache = new Map<string, Discover | null>();
 const ID = /^[a-z]{2,4}$/;
 
 export async function discoverFor(city: string): Promise<Discover | null> {
-  if (!ID.test(city)) return null;
+  if (!ID.test(city) || !(city in DISCOVER_LOADERS)) return null; // só cidades com ficheiro: a memória não cresce com ids inventados
   if (cache.has(city)) return cache.get(city)!;
   let v: Discover | null = null;
   // Os ficheiros entram no build (import), para funcionarem no servidor em modo "standalone".

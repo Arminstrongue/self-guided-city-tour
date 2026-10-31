@@ -15,7 +15,7 @@ import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
 import { RAIL_STATIONS, touchesEuston, touchesPiccadilly } from "@/data/rail-stations";
 import { EustonCard, PiccadillyCard } from "./StationCard";
-import { JourneyFollow } from "./JourneyFollow";
+import { askNotify, JourneyFollow } from "./JourneyFollow";
 
 /** Fotos da reserva (as antigas só tinham `photo`). */
 export const photosOf = (r: { photo?: string; photos?: string[] }) => (r.photos?.length ? r.photos : r.photo ? [r.photo] : []);
@@ -110,7 +110,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         <b style={{ fontSize: 18 }}>{RES_ICON[r.kind]} {r.title}</b>
         <span className="hint">{w.day} · <b>{w.hm}</b> <span className="is-tag">{t.isYou}</span></span>
         {r.journey?.legs.length ? <JourneyView j={r.journey} t={t} /> : null}
-        {r.kind === "transport" && r.journey?.legs.length ? <button type="button" className="btn press jf-start" onClick={() => setFollow(true)}>▶ {t.jf.start}</button> : null}
+        {r.kind === "transport" && r.journey?.legs.length ? <button type="button" className="btn press jf-start" onClick={() => { askNotify(); setFollow(true); }}>▶ {t.jf.start}</button> : null}
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
         {r.kind === "transport" && touchesPiccadilly([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <PiccadillyCard t={t} />}
         {r.kind === "transport" && touchesEuston([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <EustonCard t={t} />}

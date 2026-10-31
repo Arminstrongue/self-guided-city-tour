@@ -51,11 +51,14 @@ export function NavSheet({ t, locale, stop, leg, next, from, stops, done, museum
     let wid: number | null = null;
     if ("geolocation" in navigator) wid = navigator.geolocation.watchPosition((p) => { setPos({ lat: p.coords.latitude, lng: p.coords.longitude }); setGeo("on"); }, () => setGeo("off"), { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
     else setGeo("off");
+    // Ecrã ligado: pede de novo ao voltar à app; se fechar antes de a resposta chegar, liberta logo.
     type WL = { release: () => Promise<void> };
-    let lock: WL | null = null;
+    let lock: WL | null = null, off = false;
     const wl = (navigator as unknown as { wakeLock?: { request: (k: "screen") => Promise<WL> } }).wakeLock;
-    void wl?.request("screen").then((l) => { lock = l; }).catch(() => null);
-    return () => { if (wid !== null) navigator.geolocation.clearWatch(wid); void lock?.release().catch(() => null); };
+    const get = () => { if (!wl || document.visibilityState !== "visible") return; void wl.request("screen").then((l) => { if (off) void l.release().catch(() => null); else lock = l; }).catch(() => null); };
+    const vis = () => { if (document.visibilityState === "visible") get(); };
+    get(); document.addEventListener("visibilitychange", vis);
+    return () => { off = true; document.removeEventListener("visibilitychange", vis); if (wid !== null) navigator.geolocation.clearWatch(wid); void lock?.release().catch(() => null); };
   }, []);
 
   // Passos (uma vez por destino, com a primeira posição conhecida; a pé quando é perto).
@@ -157,7 +160,7 @@ export function NavSheet({ t, locale, stop, leg, next, from, stops, done, museum
 
         {/* Ecrã para mostrar a um funcionário ou a quem passa: o destino em letra grande (e no alfabeto local). */}
         {help && (
-          <div className="nav-help" role="dialog" aria-label={n.help} onClick={() => setHelp(false)}>
+          <div className="nav-help" role="dialog" aria-modal="true" aria-label={n.help} tabIndex={-1} ref={(el) => el?.focus()} onClick={() => setHelp(false)} onKeyDown={(e) => { if (e.key === "Escape" || e.key === "Enter") setHelp(false); }}>
             <p className="nav-help-q">{n.helpAsk}</p>
             <p className="nav-help-q en" lang="en">Excuse me, how do I get here?</p>
             <b className="nav-help-n">{stop.n}</b>
