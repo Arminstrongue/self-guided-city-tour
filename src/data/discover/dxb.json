@@ -1,0 +1,372 @@
+{
+ "places": [
+  {
+   "id": "dxb-burj-al-arab",
+   "n": "Burj Al Arab",
+   "a": "Umm Suqeim",
+   "lat": 25.1412,
+   "lng": 55.1852,
+   "k": "landmark",
+   "top": true,
+   "en": "The sail-shaped luxury hotel that opened in 1999 on its own artificial island, linked to the shore by a private bridge. Without a booking, enjoy it from the nearby public beaches.",
+   "pt": "O hotel de luxo em forma de vela, inaugurado em 1999 numa ilha artificial própria, ligada à costa por uma ponte privada. Sem reserva, aprecie-o a partir das praias públicas próximas."
+  },
+  {
+   "id": "dxb-souk-madinat",
+   "n": "Souk Madinat Jumeirah",
+   "a": "Al Sufouh",
+   "lat": 25.1332,
+   "lng": 55.1862,
+   "k": "market",
+   "top": true,
+   "free": true,
+   "en": "An air-conditioned, Arabian-style souk with wooden arches and lantern-lit lanes, set among canals with views of Burj Al Arab. Good for crafts, cafés and waterside restaurants.",
+   "pt": "Um souk climatizado de estilo árabe, com arcos de madeira e corredores iluminados por lanternas, entre canais com vista para o Burj Al Arab. Bom para artesanato, cafés e restaurantes à beira da água."
+  },
+  {
+   "id": "dxb-umm-suqeim-beach",
+   "n": "Jumeirah Public Beach (Sunset Beach)",
+   "a": "Umm Suqeim",
+   "lat": 25.1483,
+   "lng": 55.1945,
+   "k": "view",
+   "en": "A free public beach with one of the classic close-up views of Burj Al Arab, especially popular around sunset.",
+   "pt": "Uma praia pública gratuita com uma das vistas clássicas e próximas do Burj Al Arab, especialmente concorrida ao pôr do sol."
+  },
+  {
+   "id": "dxb-jumeirah-mosque",
+   "n": "Jumeirah Mosque",
+   "a": "Jumeirah 1",
+   "lat": 25.2338,
+   "lng": 55.2655,
+   "k": "church",
+   "top": true,
+   "en": "A white stone mosque built in 1979 in the medieval Fatimid style, and one of the few mosques in Dubai open to non-Muslim visitors through guided tours run by the Sheikh Mohammed Centre for Cultural Understanding. Modest dress is required.",
+   "pt": "Uma mesquita de pedra branca construída em 1979 no estilo fatímida medieval e uma das poucas mesquitas do Dubai abertas a visitantes não muçulmanos, através de visitas guiadas do Sheikh Mohammed Centre for Cultural Understanding. É obrigatório vestuário recatado."
+  },
+  {
+   "id": "dxb-etihad-museum",
+   "n": "Etihad Museum",
+   "a": "Jumeirah 1",
+   "lat": 25.2413,
+   "lng": 55.2693,
+   "k": "museum",
+   "en": "Opened in 2017 beside Union House, where the rulers signed the agreement creating the United Arab Emirates on 2 December 1971. Its roof is shaped like an open manuscript and the exhibits tell the story of the federation.",
+   "pt": "Inaugurado em 2017 junto à Union House, onde os governantes assinaram o acordo que criou os Emirados Árabes Unidos a 2 de dezembro de 1971. O telhado tem a forma de um manuscrito aberto e as exposições contam a história da federação."
+  },
+  {
+   "id": "dxb-al-shindagha-museum",
+   "n": "Al Shindagha Museum",
+   "a": "Al Shindagha",
+   "lat": 25.2664,
+   "lng": 55.2894,
+   "k": "museum",
+   "top": true,
+   "en": "A museum spread across restored traditional houses in the historic Al Shindagha district at the mouth of Dubai Creek, telling the story of the creek and the city. It includes a Perfume House on Emirati fragrance traditions.",
+   "pt": "Um museu distribuído por casas tradicionais restauradas no histórico bairro de Al Shindagha, na foz do Dubai Creek, que conta a história do braço de mar e da cidade. Inclui uma Casa do Perfume dedicada às tradições olfativas emiradenses."
+  },
+  {
+   "id": "dxb-grand-mosque-bur-dubai",
+   "n": "Grand Bur Dubai Masjid",
+   "a": "Bur Dubai",
+   "lat": 25.2642,
+   "lng": 55.2967,
+   "k": "church",
+   "en": "One of Dubai's principal mosques, with sandy-coloured domes and a tall minaret rising over the creek-side old town. Non-Muslim visitors usually admire it from outside.",
+   "pt": "Uma das principais mesquitas do Dubai, com cúpulas cor de areia e um minarete alto que se ergue sobre o centro antigo junto ao creek. Os visitantes não muçulmanos costumam apreciá-la do exterior."
+  },
+  {
+   "id": "dxb-bur-dubai-souk",
+   "n": "Bur Dubai Souk",
+   "a": "Bur Dubai",
+   "lat": 25.2625,
+   "lng": 55.2942,
+   "k": "market",
+   "free": true,
+   "en": "A traditional market under a wooden-roofed arcade on the Bur Dubai side of the creek, known for textiles, pashminas and souvenirs. Bargaining is normal.",
+   "pt": "Um mercado tradicional sob uma galeria com telhado de madeira, do lado de Bur Dubai do creek, conhecido pelos tecidos, pashminas e lembranças. Regatear é habitual."
+  },
+  {
+   "id": "dxb-atlantis-the-palm",
+   "n": "Atlantis The Palm",
+   "a": "Palm Jumeirah",
+   "lat": 25.1304,
+   "lng": 55.1172,
+   "k": "landmark",
+   "en": "The huge pink resort that opened in 2008 at the outer crescent of Palm Jumeirah. It is home to the Aquaventure waterpark and The Lost Chambers aquarium.",
+   "pt": "O enorme resort cor-de-rosa inaugurado em 2008 no crescente exterior da Palm Jumeirah. Alberga o parque aquático Aquaventure e o aquário The Lost Chambers."
+  },
+  {
+   "id": "dxb-view-at-the-palm",
+   "n": "The View at The Palm",
+   "a": "Palm Jumeirah",
+   "lat": 25.1142,
+   "lng": 55.1394,
+   "k": "view",
+   "top": true,
+   "en": "An observation deck on the 52nd floor of The Palm Tower, about 240 m up, looking straight down the length of the palm-shaped island. Access is through Nakheel Mall.",
+   "pt": "Um miradouro no 52.º andar da The Palm Tower, a cerca de 240 m de altura, com vista ao longo de toda a ilha em forma de palmeira. O acesso faz-se pelo Nakheel Mall."
+  },
+  {
+   "id": "dxb-dubai-frame",
+   "n": "Dubai Frame",
+   "a": "Zabeel Park",
+   "lat": 25.2355,
+   "lng": 55.3003,
+   "k": "view",
+   "top": true,
+   "en": "A 150 m picture-frame-shaped tower in Zabeel Park, opened in 2018. A glass-floored bridge at the top looks north to old Dubai and south to the modern skyline.",
+   "pt": "Uma torre de 150 m em forma de moldura no Zabeel Park, inaugurada em 2018. No topo, uma ponte com chão de vidro olha a norte para o Dubai antigo e a sul para o horizonte moderno."
+  },
+  {
+   "id": "dxb-ski-dubai",
+   "n": "Ski Dubai (Mall of the Emirates)",
+   "a": "Al Barsha",
+   "lat": 25.1172,
+   "lng": 55.1983,
+   "k": "sight",
+   "en": "An indoor ski slope with real snow inside Mall of the Emirates, opened in 2005. It also has a snow park and resident penguins, and can be watched from the mall through large windows.",
+   "pt": "Uma pista de esqui coberta com neve verdadeira dentro do Mall of the Emirates, inaugurada em 2005. Tem também um parque de neve e pinguins residentes, e pode ser observada a partir do centro comercial através de grandes janelas."
+  },
+  {
+   "id": "dxb-miracle-garden",
+   "n": "Dubai Miracle Garden",
+   "a": "Al Barsha South",
+   "lat": 25.0598,
+   "lng": 55.2446,
+   "k": "park",
+   "url": "https://www.dubaimiraclegarden.com",
+   "en": "A seasonal flower garden, open in the cooler months, with millions of flowers shaped into arches, hearts and giant sculptures, including a full-size Emirates A380.",
+   "pt": "Um jardim de flores sazonal, aberto nos meses mais frescos, com milhões de flores dispostas em arcos, corações e esculturas gigantes, incluindo um Airbus A380 da Emirates em tamanho real."
+  },
+  {
+   "id": "dxb-global-village",
+   "n": "Global Village",
+   "a": "Wadi Al Safa",
+   "lat": 25.0717,
+   "lng": 55.3084,
+   "k": "market",
+   "url": "https://www.globalvillage.ae",
+   "en": "A large seasonal open-air park, open in the cooler months, with pavilions representing dozens of countries, street food, shopping and evening shows.",
+   "pt": "Um grande parque sazonal ao ar livre, aberto nos meses mais frescos, com pavilhões que representam dezenas de países, comida de rua, compras e espetáculos ao fim do dia."
+  },
+  {
+   "id": "dxb-expo-city",
+   "n": "Expo City Dubai",
+   "a": "Dubai South",
+   "lat": 24.961,
+   "lng": 55.1506,
+   "k": "district",
+   "url": "https://www.expocitydubai.com",
+   "en": "The former Expo 2020 Dubai site, turned into a new city district. Its centrepiece is Al Wasl Plaza, a giant trellis dome used for 360-degree projections, surrounded by legacy pavilions.",
+   "pt": "O antigo recinto da Expo 2020 Dubai, transformado num novo bairro da cidade. A peça central é a Al Wasl Plaza, uma gigantesca cúpula em treliça usada para projeções a 360 graus, rodeada pelos pavilhões que ficaram da exposição."
+  },
+  {
+   "id": "dxb-alserkal-avenue",
+   "n": "Alserkal Avenue",
+   "a": "Al Quoz",
+   "lat": 25.1431,
+   "lng": 55.2246,
+   "k": "gallery",
+   "url": "https://alserkal.online",
+   "en": "Dubai's main contemporary arts district, set in converted industrial warehouses in Al Quoz, with galleries, independent cinema, design studios and cafés.",
+   "pt": "O principal bairro de arte contemporânea do Dubai, instalado em antigos armazéns industriais em Al Quoz, com galerias, cinema independente, estúdios de design e cafés."
+  },
+  {
+   "id": "dxb-waterfront-market",
+   "n": "Waterfront Market",
+   "a": "Deira Corniche",
+   "lat": 25.2915,
+   "lng": 55.3235,
+   "k": "food",
+   "en": "A large, modern, air-conditioned market on the Deira waterfront, best known for its fish hall, where you can buy seafood and have it cooked nearby.",
+   "pt": "Um grande mercado moderno e climatizado na marginal de Deira, conhecido sobretudo pela nave do peixe, onde se pode comprar marisco e mandá-lo cozinhar ali perto."
+  },
+  {
+   "id": "dxb-creek-park",
+   "n": "Dubai Creek Park",
+   "a": "Umm Hurair",
+   "lat": 25.2354,
+   "lng": 55.3271,
+   "k": "park",
+   "en": "One of the city's oldest and largest parks, stretching along the bank of Dubai Creek with lawns, gardens, picnic areas and creek views.",
+   "pt": "Um dos parques mais antigos e maiores da cidade, ao longo da margem do Dubai Creek, com relvados, jardins, zonas de piquenique e vista para o creek."
+  },
+  {
+   "id": "dxb-safa-park",
+   "n": "Al Safa Park",
+   "a": "Al Safa",
+   "lat": 25.1852,
+   "lng": 55.2466,
+   "k": "park",
+   "en": "A large green park beside the Dubai Water Canal with lawns, lakes and jogging paths, and views of the Downtown skyline.",
+   "pt": "Um grande parque verde junto ao Dubai Water Canal, com relvados, lagos e percursos de corrida, e vista para o horizonte da Downtown."
+  },
+  {
+   "id": "dxb-al-mamzar-beach-park",
+   "n": "Al Mamzar Beach Park",
+   "a": "Al Mamzar",
+   "lat": 25.3184,
+   "lng": 55.3477,
+   "k": "park",
+   "en": "A large seaside park near the Sharjah border with several sheltered beaches, lawns and barbecue areas, popular with local families.",
+   "pt": "Um grande parque à beira-mar perto da fronteira com Sharjah, com várias praias abrigadas, relvados e zonas de churrasco, muito procurado pelas famílias locais."
+  }
+ ],
+ "streets": [
+  {
+   "id": "dxb-al-seef",
+   "n": "Al Seef",
+   "a": "Bur Dubai",
+   "lat": 25.2635,
+   "lng": 55.3047,
+   "en": "A creek-side promenade opened in 2017, part rebuilt in traditional coral-stone and wind-tower style, part modern, with shops, cafés and abra views.",
+   "pt": "Uma marginal junto ao creek inaugurada em 2017, em parte reconstruída no estilo tradicional de pedra de coral e torres de vento e em parte moderna, com lojas, cafés e vista para os abras."
+  },
+  {
+   "id": "dxb-city-walk",
+   "n": "City Walk",
+   "a": "Al Wasl",
+   "lat": 25.2075,
+   "lng": 55.2625,
+   "en": "An open-air shopping and dining district with tree-lined pedestrian streets, street art and shaded seating areas.",
+   "pt": "Uma zona comercial e de restauração ao ar livre, com ruas pedonais arborizadas, arte urbana e zonas de estar com sombra."
+  },
+  {
+   "id": "dxb-kite-beach",
+   "n": "Kite Beach",
+   "a": "Umm Suqeim 1",
+   "lat": 25.1648,
+   "lng": 55.2076,
+   "en": "A long public beach named after the kitesurfers who use it, with a running track, beach sports, food trucks and cafés, and views of Burj Al Arab.",
+   "pt": "Uma longa praia pública com o nome dos praticantes de kitesurf que a frequentam, com pista de corrida, desportos de praia, roulottes de comida e cafés, e vista para o Burj Al Arab."
+  },
+  {
+   "id": "dxb-water-canal",
+   "n": "Dubai Water Canal boardwalk",
+   "a": "Jumeirah 2 / Al Safa",
+   "lat": 25.1932,
+   "lng": 55.2412,
+   "en": "A promenade along the canal opened in 2016 to link Business Bay and Dubai Creek with the sea, with sculptural footbridges and evening skyline views.",
+   "pt": "Um passeio ao longo do canal inaugurado em 2016 para ligar Business Bay e o Dubai Creek ao mar, com pontes pedonais escultóricas e vista para o horizonte ao fim do dia."
+  },
+  {
+   "id": "dxb-creek-harbour",
+   "n": "Dubai Creek Harbour",
+   "a": "Al Jaddaf / Ras Al Khor",
+   "lat": 25.2061,
+   "lng": 55.3431,
+   "en": "A newer waterfront district at the upper end of Dubai Creek, with a marina promenade, restaurants and wide views across the water to the Downtown skyline.",
+   "pt": "Um bairro mais recente à beira da água, na parte alta do Dubai Creek, com uma marginal de marina, restaurantes e vistas amplas sobre a água até ao horizonte da Downtown."
+  },
+  {
+   "id": "dxb-al-karama",
+   "n": "Al Karama",
+   "a": "Bur Dubai",
+   "lat": 25.2489,
+   "lng": 55.3061,
+   "en": "One of Dubai's older residential neighbourhoods, known for inexpensive South Asian and Filipino restaurants and its bargain shopping market.",
+   "pt": "Um dos bairros residenciais mais antigos do Dubai, conhecido pelos restaurantes económicos do sul da Ásia e das Filipinas e pelo mercado de compras a bom preço."
+  }
+ ],
+ "walks": [
+  {
+   "id": "dxb-creekside-shindagha",
+   "en_n": "Creekside: Al Seef to Al Shindagha",
+   "pt_n": "Junto ao creek: de Al Seef a Al Shindagha",
+   "km": 2.2,
+   "min": 33,
+   "en": "A flat waterfront walk along the Bur Dubai bank of the creek, through the covered lanes of the old souk to the heritage houses of Al Shindagha. Best early or late in the day; the souk arcade gives shade midway.",
+   "pt": "Um passeio plano à beira da água pela margem de Bur Dubai, atravessando as galerias cobertas do antigo souk até às casas históricas de Al Shindagha. Melhor no início ou no fim do dia; a galeria do souk dá sombra a meio do percurso.",
+   "pts": [
+    {
+     "n": "Al Seef (heritage quarter)",
+     "lat": 25.2639,
+     "lng": 55.3051
+    },
+    {
+     "n": "Grand Bur Dubai Masjid",
+     "lat": 25.2642,
+     "lng": 55.2967
+    },
+    {
+     "n": "Bur Dubai Souk",
+     "lat": 25.2625,
+     "lng": 55.2942
+    },
+    {
+     "n": "Al Shindagha Museum",
+     "lat": 25.2664,
+     "lng": 55.2894
+    }
+   ]
+  },
+  {
+   "id": "dxb-sunset-beach-madinat",
+   "en_n": "Sunset Beach to Souk Madinat",
+   "pt_n": "Da Sunset Beach ao Souk Madinat",
+   "km": 2.1,
+   "min": 32,
+   "en": "A short seafront stroll from the public beach facing Burj Al Arab, past its entrance bridge and Wild Wadi, ending in the cool, shaded lanes of Souk Madinat Jumeirah. Go late afternoon for sunset over the sail.",
+   "pt": "Um curto passeio junto ao mar desde a praia pública em frente ao Burj Al Arab, passando pela ponte de acesso e pelo Wild Wadi, até às ruelas frescas e sombreadas do Souk Madinat Jumeirah. Vá ao fim da tarde para ver o pôr do sol atrás da vela.",
+   "pts": [
+    {
+     "n": "Jumeirah Public Beach (Sunset Beach)",
+     "lat": 25.1483,
+     "lng": 55.1945
+    },
+    {
+     "n": "Jumeirah Beach Hotel",
+     "lat": 25.1416,
+     "lng": 55.1913
+    },
+    {
+     "n": "Burj Al Arab bridge & Wild Wadi",
+     "lat": 25.1394,
+     "lng": 55.1888
+    },
+    {
+     "n": "Souk Madinat Jumeirah",
+     "lat": 25.1332,
+     "lng": 55.1862
+    }
+   ]
+  },
+  {
+   "id": "dxb-expo-city-loop",
+   "en_n": "Expo City: pavilions and Al Wasl Plaza",
+   "pt_n": "Expo City: pavilhões e Al Wasl Plaza",
+   "km": 1.5,
+   "min": 23,
+   "en": "A compact, pedestrian-only walk across the former Expo 2020 site, from the solar canopy of Terra past the Garden in the Sky tower and the Surreal waterfall to Al Wasl Plaza and the Alif pavilion. Paths are wide and partly shaded.",
+   "pt": "Um passeio curto e só para peões pelo antigo recinto da Expo 2020, desde a cobertura solar do Terra, passando pela torre Garden in the Sky e pela cascata Surreal, até à Al Wasl Plaza e ao pavilhão Alif. Os caminhos são largos e em parte sombreados.",
+   "pts": [
+    {
+     "n": "Terra (Sustainability Pavilion)",
+     "lat": 24.958,
+     "lng": 55.1545
+    },
+    {
+     "n": "Garden in the Sky",
+     "lat": 24.9579,
+     "lng": 55.1506
+    },
+    {
+     "n": "Surreal water feature",
+     "lat": 24.9589,
+     "lng": 55.151
+    },
+    {
+     "n": "Al Wasl Plaza",
+     "lat": 24.961,
+     "lng": 55.1506
+    },
+    {
+     "n": "Alif (Mobility Pavilion)",
+     "lat": 24.9576,
+     "lng": 55.1473
+    }
+   ]
+  }
+ ]
+}

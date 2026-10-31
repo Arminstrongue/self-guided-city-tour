@@ -1,0 +1,425 @@
+{
+ "places": [
+  {
+   "id": "nyc-statue-of-liberty",
+   "n": "Statue of Liberty",
+   "a": "Liberty Island",
+   "lat": 40.6892,
+   "lng": -74.0445,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.nps.gov/stli",
+   "en": "A gift from the people of France, dedicated in 1886 and designed by Frédéric Auguste Bartholdi with an iron framework by Gustave Eiffel. Liberty Island is reached by ferry from Battery Park.",
+   "pt": "Oferta do povo francês, inaugurada em 1886 e desenhada por Frédéric Auguste Bartholdi, com estrutura de ferro de Gustave Eiffel. Chega-se à Liberty Island de ferry a partir de Battery Park."
+  },
+  {
+   "id": "nyc-ellis-island",
+   "n": "Ellis Island National Museum of Immigration",
+   "a": "Ellis Island",
+   "lat": 40.699,
+   "lng": -74.0397,
+   "k": "museum",
+   "url": "https://www.nps.gov/elis",
+   "en": "From 1892 to 1954 this was the main immigration station of the United States, through which more than 12 million people passed. The restored main building tells their story.",
+   "pt": "Entre 1892 e 1954 foi a principal estação de imigração dos Estados Unidos, por onde passaram mais de 12 milhões de pessoas. O edifício principal restaurado conta a sua história."
+  },
+  {
+   "id": "nyc-empire-state-building",
+   "n": "Empire State Building",
+   "a": "Midtown",
+   "lat": 40.7484,
+   "lng": -73.9857,
+   "k": "view",
+   "top": true,
+   "url": "https://www.esbnyc.com",
+   "en": "The Art Deco skyscraper completed in 1931 was the world's tallest building for nearly 40 years. Its observatories on the 86th and 102nd floors look out over all of Manhattan.",
+   "pt": "Arranha-céus Art Déco concluído em 1931, foi o edifício mais alto do mundo durante quase 40 anos. Os miradouros dos pisos 86 e 102 abrem-se sobre toda a Manhattan."
+  },
+  {
+   "id": "nyc-the-met",
+   "n": "The Metropolitan Museum of Art",
+   "a": "Upper East Side",
+   "lat": 40.7794,
+   "lng": -73.9632,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.metmuseum.org",
+   "en": "Founded in 1870, the Met is the largest art museum in the United States, with collections spanning 5,000 years, from Egyptian antiquities to European paintings. Its main entrance is on Fifth Avenue at Central Park.",
+   "pt": "Fundado em 1870, o Met é o maior museu de arte dos Estados Unidos, com coleções que abrangem 5000 anos, das antiguidades egípcias à pintura europeia. A entrada principal fica na Quinta Avenida, junto ao Central Park."
+  },
+  {
+   "id": "nyc-moma",
+   "n": "Museum of Modern Art (MoMA)",
+   "a": "Midtown",
+   "lat": 40.7614,
+   "lng": -73.9776,
+   "k": "gallery",
+   "top": true,
+   "url": "https://www.moma.org",
+   "en": "Founded in 1929, MoMA holds one of the world's great collections of modern and contemporary art, including Van Gogh's The Starry Night.",
+   "pt": "Fundado em 1929, o MoMA tem uma das grandes coleções mundiais de arte moderna e contemporânea, incluindo A Noite Estrelada de Van Gogh."
+  },
+  {
+   "id": "nyc-amnh",
+   "n": "American Museum of Natural History",
+   "a": "Upper West Side",
+   "lat": 40.7813,
+   "lng": -73.974,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.amnh.org",
+   "en": "Founded in 1869 on the west side of Central Park, it is famous for its dinosaur fossils, the blue whale model in the Hall of Ocean Life and the Hayden Planetarium.",
+   "pt": "Fundado em 1869 no lado oeste do Central Park, é famoso pelos fósseis de dinossauros, pelo modelo de baleia-azul na Hall of Ocean Life e pelo Planetário Hayden."
+  },
+  {
+   "id": "nyc-guggenheim",
+   "n": "Solomon R. Guggenheim Museum",
+   "a": "Upper East Side",
+   "lat": 40.783,
+   "lng": -73.959,
+   "k": "gallery",
+   "url": "https://www.guggenheim.org",
+   "en": "Frank Lloyd Wright's spiral building on Fifth Avenue opened in 1959; visitors view modern art along a continuous ramp that winds up around a central rotunda.",
+   "pt": "O edifício em espiral de Frank Lloyd Wright na Quinta Avenida abriu em 1959; a arte moderna vê-se ao longo de uma rampa contínua que sobe em torno de uma rotunda central."
+  },
+  {
+   "id": "nyc-whitney",
+   "n": "Whitney Museum of American Art",
+   "a": "Meatpacking District",
+   "lat": 40.7396,
+   "lng": -74.0089,
+   "k": "gallery",
+   "url": "https://whitney.org",
+   "en": "Dedicated to 20th- and 21st-century American art, the Whitney moved in 2015 into a Renzo Piano building at the southern end of the High Line, with terraces overlooking the Hudson.",
+   "pt": "Dedicado à arte americana dos séculos XX e XXI, o Whitney mudou-se em 2015 para um edifício de Renzo Piano no extremo sul da High Line, com terraços virados para o rio Hudson."
+  },
+  {
+   "id": "nyc-grand-central",
+   "n": "Grand Central Terminal",
+   "a": "Midtown East",
+   "lat": 40.7527,
+   "lng": -73.9772,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.grandcentralterminal.com",
+   "en": "This Beaux-Arts railway terminal opened in 1913. Its Main Concourse, with the famous four-faced clock and the constellations painted on the ceiling, is one of the city's great interiors.",
+   "pt": "Este terminal ferroviário Beaux-Arts abriu em 1913. O átrio principal, com o famoso relógio de quatro faces e as constelações pintadas no teto, é um dos grandes interiores da cidade."
+  },
+  {
+   "id": "nyc-nypl",
+   "n": "New York Public Library (Stephen A. Schwarzman Building)",
+   "a": "Midtown",
+   "lat": 40.7532,
+   "lng": -73.9822,
+   "k": "landmark",
+   "url": "https://www.nypl.org",
+   "en": "Opened in 1911 on Fifth Avenue, the library's Beaux-Arts flagship is guarded by the marble lions Patience and Fortitude and houses the grand Rose Main Reading Room.",
+   "pt": "Inaugurado em 1911 na Quinta Avenida, o edifício Beaux-Arts da biblioteca é guardado pelos leões de mármore Patience e Fortitude e alberga a imponente sala de leitura Rose Main Reading Room."
+  },
+  {
+   "id": "nyc-bryant-park",
+   "n": "Bryant Park",
+   "a": "Midtown",
+   "lat": 40.7536,
+   "lng": -73.9832,
+   "k": "park",
+   "free": true,
+   "url": "https://bryantpark.org",
+   "en": "A green lawn behind the New York Public Library, ringed by plane trees and movable chairs, and surrounded by Midtown towers. In winter it hosts an ice rink and holiday market.",
+   "pt": "Um relvado atrás da Biblioteca Pública de Nova Iorque, rodeado de plátanos, cadeiras soltas e torres de Midtown. No inverno recebe um ringue de patinagem e um mercado de Natal."
+  },
+  {
+   "id": "nyc-chrysler-building",
+   "n": "Chrysler Building",
+   "a": "Midtown East",
+   "lat": 40.7516,
+   "lng": -73.9755,
+   "k": "landmark",
+   "en": "Completed in 1930, this Art Deco tower with its stainless-steel crown was briefly the tallest building in the world. It is best admired from the corner of Lexington Avenue and 42nd Street.",
+   "pt": "Concluída em 1930, esta torre Art Déco com coroa de aço inoxidável foi, por pouco tempo, o edifício mais alto do mundo. Admira-se melhor da esquina da Lexington Avenue com a 42nd Street."
+  },
+  {
+   "id": "nyc-flatiron-building",
+   "n": "Flatiron Building",
+   "a": "Flatiron District",
+   "lat": 40.7411,
+   "lng": -73.9897,
+   "k": "landmark",
+   "en": "Completed in 1902, the triangular Flatiron Building fills the wedge where Broadway crosses Fifth Avenue at Madison Square and gave its name to the surrounding district.",
+   "pt": "Concluído em 1902, o triangular Flatiron Building ocupa a cunha onde a Broadway cruza a Quinta Avenida, junto à Madison Square, e deu nome ao bairro à sua volta."
+  },
+  {
+   "id": "nyc-summit-one-vanderbilt",
+   "n": "SUMMIT One Vanderbilt",
+   "a": "Midtown East",
+   "lat": 40.7531,
+   "lng": -73.9787,
+   "k": "view",
+   "url": "https://summitov.com",
+   "en": "An observation experience at the top of the One Vanderbilt skyscraper, next to Grand Central, with mirrored rooms and glass ledges high above Midtown.",
+   "pt": "Um miradouro no topo do arranha-céus One Vanderbilt, ao lado da Grand Central, com salas espelhadas e varandas de vidro muito acima de Midtown."
+  },
+  {
+   "id": "nyc-edge",
+   "n": "Edge at Hudson Yards",
+   "a": "Hudson Yards",
+   "lat": 40.7537,
+   "lng": -74.0012,
+   "k": "view",
+   "url": "https://www.edgenyc.com",
+   "en": "An outdoor sky deck that juts out from the 100th floor of 30 Hudson Yards, about 335 m above the street, with a glass floor section and views over the Hudson River.",
+   "pt": "Um miradouro ao ar livre que se projeta do 100.º piso do 30 Hudson Yards, a cerca de 335 m da rua, com uma secção de chão de vidro e vista sobre o rio Hudson."
+  },
+  {
+   "id": "nyc-washington-square-park",
+   "n": "Washington Square Park",
+   "a": "Greenwich Village",
+   "lat": 40.7308,
+   "lng": -73.9973,
+   "k": "park",
+   "free": true,
+   "en": "The heart of Greenwich Village, framed by New York University buildings, with a marble arch designed by Stanford White, a central fountain and street musicians.",
+   "pt": "O coração de Greenwich Village, rodeado por edifícios da Universidade de Nova Iorque, com um arco de mármore desenhado por Stanford White, uma fonte central e músicos de rua."
+  },
+  {
+   "id": "nyc-staten-island-ferry",
+   "n": "Staten Island Ferry (Whitehall Terminal)",
+   "a": "Lower Manhattan",
+   "lat": 40.7014,
+   "lng": -74.0131,
+   "k": "view",
+   "en": "The commuter ferry between Lower Manhattan and Staten Island is free to ride and passes close to the Statue of Liberty, with wide views of the harbour and skyline.",
+   "pt": "O ferry entre Lower Manhattan e Staten Island é gratuito e passa perto da Estátua da Liberdade, com vistas amplas sobre o porto e o horizonte de arranha-céus."
+  },
+  {
+   "id": "nyc-dumbo",
+   "n": "DUMBO",
+   "a": "Brooklyn",
+   "lat": 40.7033,
+   "lng": -73.9894,
+   "k": "district",
+   "en": "Short for Down Under the Manhattan Bridge Overpass, this former warehouse district has cobbled streets and the classic view of the Manhattan Bridge from Washington Street.",
+   "pt": "Abreviatura de Down Under the Manhattan Bridge Overpass, este antigo bairro de armazéns tem ruas empedradas e a vista clássica da Manhattan Bridge a partir da Washington Street."
+  },
+  {
+   "id": "nyc-met-cloisters",
+   "n": "The Met Cloisters",
+   "a": "Fort Tryon Park",
+   "lat": 40.8649,
+   "lng": -73.9319,
+   "k": "museum",
+   "url": "https://www.metmuseum.org",
+   "en": "The Met's branch for medieval European art and architecture stands in Fort Tryon Park in northern Manhattan, built around reassembled cloisters; it is home to the Unicorn Tapestries.",
+   "pt": "O polo do Met dedicado à arte e arquitetura medievais europeias fica no Fort Tryon Park, no norte de Manhattan, construído em torno de claustros remontados; alberga as Tapeçarias do Unicórnio."
+  },
+  {
+   "id": "nyc-st-john-the-divine",
+   "n": "Cathedral of St. John the Divine",
+   "a": "Morningside Heights",
+   "lat": 40.8038,
+   "lng": -73.9619,
+   "k": "church",
+   "url": "https://www.stjohndivine.org",
+   "en": "Begun in 1892 and still unfinished, this Episcopal cathedral is one of the largest cathedrals in the world, mixing Romanesque and Gothic styles.",
+   "pt": "Iniciada em 1892 e ainda inacabada, esta catedral episcopal é uma das maiores do mundo e mistura os estilos românico e gótico."
+  },
+  {
+   "id": "nyc-apollo-theater",
+   "n": "Apollo Theater",
+   "a": "Harlem",
+   "lat": 40.81,
+   "lng": -73.9501,
+   "k": "landmark",
+   "url": "https://www.apollotheater.org",
+   "en": "Harlem's legendary music hall on 125th Street, where Amateur Night helped launch the careers of artists such as Ella Fitzgerald and many other stars of Black American music.",
+   "pt": "A lendária sala de espetáculos do Harlem, na 125th Street, onde a Amateur Night ajudou a lançar artistas como Ella Fitzgerald e muitas outras estrelas da música afro-americana."
+  },
+  {
+   "id": "nyc-katzs-delicatessen",
+   "n": "Katz's Delicatessen",
+   "a": "Lower East Side",
+   "lat": 40.7223,
+   "lng": -73.9874,
+   "k": "food",
+   "url": "https://katzsdelicatessen.com",
+   "en": "A Lower East Side deli dating from 1888, famous for hand-cut pastrami sandwiches and for a scene in the film When Harry Met Sally.",
+   "pt": "Uma charcutaria do Lower East Side que remonta a 1888, famosa pelas sanduíches de pastrami cortado à mão e por uma cena do filme When Harry Met Sally."
+  }
+ ],
+ "streets": [
+  {
+   "id": "nyc-fifth-avenue",
+   "n": "Fifth Avenue",
+   "a": "Midtown",
+   "lat": 40.7621,
+   "lng": -73.9746,
+   "en": "Manhattan's most famous shopping avenue, lined with flagship stores between the 40s and 59th Street, where it meets Central Park at Grand Army Plaza.",
+   "pt": "A avenida comercial mais famosa de Manhattan, com lojas emblemáticas entre as ruas 40 e a 59th Street, onde encontra o Central Park na Grand Army Plaza."
+  },
+  {
+   "id": "nyc-soho",
+   "n": "SoHo",
+   "a": "Lower Manhattan",
+   "lat": 40.7241,
+   "lng": -74.001,
+   "en": "South of Houston Street: cobbled streets, cast-iron buildings and fire escapes, now filled with boutiques and galleries around Prince, Spring and Greene Streets.",
+   "pt": "A sul da Houston Street: ruas empedradas, edifícios de ferro fundido e escadas de incêndio, hoje cheios de lojas e galerias em torno das ruas Prince, Spring e Greene."
+  },
+  {
+   "id": "nyc-greenwich-village",
+   "n": "Greenwich Village",
+   "a": "Lower Manhattan",
+   "lat": 40.7336,
+   "lng": -74.0027,
+   "en": "Tree-lined streets and townhouses that break the Manhattan grid, with Bleecker Street's cafés and the Stonewall Inn, birthplace of the modern LGBTQ rights movement.",
+   "pt": "Ruas arborizadas e casas antigas que quebram a quadrícula de Manhattan, com os cafés da Bleecker Street e o Stonewall Inn, berço do movimento moderno pelos direitos LGBTQ."
+  },
+  {
+   "id": "nyc-st-marks-place",
+   "n": "St. Marks Place",
+   "a": "East Village",
+   "lat": 40.7289,
+   "lng": -73.988,
+   "en": "The lively main street of the East Village, known for its counterculture history, small shops and cheap eats from around the world.",
+   "pt": "A animada rua principal do East Village, conhecida pela sua história de contracultura, pequenas lojas e comida barata de todo o mundo."
+  },
+  {
+   "id": "nyc-125th-street",
+   "n": "125th Street",
+   "a": "Harlem",
+   "lat": 40.8094,
+   "lng": -73.948,
+   "en": "Harlem's main commercial street, home to the Apollo Theater and the Studio Museum, and a centre of African American culture.",
+   "pt": "A principal rua comercial do Harlem, onde ficam o Apollo Theater e o Studio Museum, e um centro da cultura afro-americana."
+  },
+  {
+   "id": "nyc-bedford-avenue",
+   "n": "Bedford Avenue",
+   "a": "Williamsburg, Brooklyn",
+   "lat": 40.7173,
+   "lng": -73.9568,
+   "en": "The spine of Williamsburg, one stop from Manhattan on the L train, lined with cafés, vintage shops and bars, with waterfront parks a few blocks west.",
+   "pt": "O eixo de Williamsburg, a uma estação de Manhattan na linha L do metro, com cafés, lojas vintage e bares, e parques à beira-rio a poucos quarteirões a oeste."
+  }
+ ],
+ "walks": [
+  {
+   "id": "nyc-midtown-icons",
+   "en_n": "Midtown icons: Chrysler Building to Empire State",
+   "pt_n": "Ícones de Midtown: do Chrysler Building ao Empire State",
+   "km": 1.7,
+   "min": 26,
+   "en": "A short walk along 42nd Street past Grand Central and the Public Library, then down Fifth Avenue to the Empire State Building.",
+   "pt": "Um passeio curto pela 42nd Street, passando pela Grand Central e pela Biblioteca Pública, descendo depois a Quinta Avenida até ao Empire State Building.",
+   "pts": [
+    {
+     "n": "Chrysler Building",
+     "lat": 40.7516,
+     "lng": -73.9755
+    },
+    {
+     "n": "Grand Central Terminal",
+     "lat": 40.7527,
+     "lng": -73.9772
+    },
+    {
+     "n": "SUMMIT One Vanderbilt",
+     "lat": 40.7531,
+     "lng": -73.9787
+    },
+    {
+     "n": "New York Public Library",
+     "lat": 40.7532,
+     "lng": -73.9822
+    },
+    {
+     "n": "Bryant Park",
+     "lat": 40.7536,
+     "lng": -73.9832
+    },
+    {
+     "n": "Empire State Building",
+     "lat": 40.7484,
+     "lng": -73.9857
+    }
+   ]
+  },
+  {
+   "id": "nyc-village-soho",
+   "en_n": "Flatiron to SoHo through the Village",
+   "pt_n": "Do Flatiron ao SoHo, pelo Village",
+   "km": 2.9,
+   "min": 44,
+   "en": "From the Flatiron Building through Union Square to Washington Square Park, then along Bleecker Street and down into the cast-iron streets of SoHo.",
+   "pt": "Do Flatiron Building, pela Union Square, até ao Washington Square Park, seguindo pela Bleecker Street e descendo até às ruas de ferro fundido do SoHo.",
+   "pts": [
+    {
+     "n": "Flatiron Building",
+     "lat": 40.7411,
+     "lng": -73.9897
+    },
+    {
+     "n": "Union Square",
+     "lat": 40.7359,
+     "lng": -73.9906
+    },
+    {
+     "n": "Washington Square Arch",
+     "lat": 40.7312,
+     "lng": -73.9971
+    },
+    {
+     "n": "Bleecker Street & MacDougal Street",
+     "lat": 40.729,
+     "lng": -74.0003
+    },
+    {
+     "n": "Prince Street & Greene Street (SoHo)",
+     "lat": 40.725,
+     "lng": -74.0003
+    },
+    {
+     "n": "Prince Street & Broadway",
+     "lat": 40.7243,
+     "lng": -73.9978
+    }
+   ]
+  },
+  {
+   "id": "nyc-dumbo-heights",
+   "en_n": "DUMBO and Brooklyn Heights waterfront",
+   "pt_n": "DUMBO e a frente ribeirinha de Brooklyn Heights",
+   "km": 2.2,
+   "min": 33,
+   "en": "Cobbled DUMBO, the riverside lawns of Brooklyn Bridge Park and the Brooklyn Heights Promenade, with Manhattan's skyline across the East River.",
+   "pt": "O DUMBO empedrado, os relvados de Brooklyn Bridge Park à beira-rio e a Brooklyn Heights Promenade, com os arranha-céus de Manhattan do outro lado do East River.",
+   "pts": [
+    {
+     "n": "Washington Street (Manhattan Bridge view)",
+     "lat": 40.7033,
+     "lng": -73.9894
+    },
+    {
+     "n": "Jane's Carousel",
+     "lat": 40.7044,
+     "lng": -73.9924
+    },
+    {
+     "n": "Brooklyn Bridge Park, Pier 1",
+     "lat": 40.7015,
+     "lng": -73.9968
+    },
+    {
+     "n": "Brooklyn Heights Promenade",
+     "lat": 40.6963,
+     "lng": -73.9973
+    },
+    {
+     "n": "Montague Street",
+     "lat": 40.6946,
+     "lng": -73.9925
+    }
+   ]
+  }
+ ]
+}

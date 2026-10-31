@@ -1,0 +1,435 @@
+{
+ "places": [
+  {
+   "id": "ams-van-gogh-museum",
+   "n": "Van Gogh Museum",
+   "a": "Museumplein",
+   "lat": 52.3581,
+   "lng": 4.8812,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.vangoghmuseum.nl",
+   "en": "Home to the world's largest collection of works by Vincent van Gogh, including paintings, drawings and letters. It opened in 1973 and booking ahead is strongly advised.",
+   "pt": "Alberga a maior coleção do mundo de obras de Vincent van Gogh, incluindo pinturas, desenhos e cartas. Abriu em 1973 e é fortemente aconselhável reservar com antecedência."
+  },
+  {
+   "id": "ams-oude-kerk",
+   "n": "Oude Kerk",
+   "a": "De Wallen",
+   "lat": 52.3741,
+   "lng": 4.8982,
+   "k": "church",
+   "top": true,
+   "url": "https://oudekerk.nl",
+   "en": "Amsterdam's oldest building, a Gothic church consecrated in the early 14th century. Rembrandt's wife Saskia is buried here, and today it also hosts contemporary art.",
+   "pt": "O edifício mais antigo de Amesterdão, uma igreja gótica consagrada no início do século XIV. Saskia, a mulher de Rembrandt, está aqui sepultada, e hoje acolhe também arte contemporânea."
+  },
+  {
+   "id": "ams-ons-lieve-heer-op-solder",
+   "n": "Our Lord in the Attic (Ons' Lieve Heer op Solder)",
+   "a": "Oudezijds Voorburgwal",
+   "lat": 52.3751,
+   "lng": 4.8994,
+   "k": "museum",
+   "url": "https://opsolder.nl",
+   "en": "A 17th-century canal house with a complete Catholic church hidden in its attic, built when Catholics could not worship openly. The rooms below are preserved as they were.",
+   "pt": "Uma casa de canal do século XVII com uma igreja católica completa escondida no sótão, construída numa época em que os católicos não podiam praticar o culto abertamente. As divisões por baixo estão preservadas como eram."
+  },
+  {
+   "id": "ams-st-nicholas-basilica",
+   "n": "Basilica of St Nicholas",
+   "a": "Prins Hendrikkade",
+   "lat": 52.3766,
+   "lng": 4.9009,
+   "k": "church",
+   "en": "Amsterdam's main Catholic church, completed in 1887, with twin towers and a dome facing the old harbour front. It is dedicated to St Nicholas, patron saint of the city and of sailors.",
+   "pt": "A principal igreja católica de Amesterdão, concluída em 1887, com duas torres e uma cúpula virada para a antiga frente portuária. É dedicada a São Nicolau, padroeiro da cidade e dos marinheiros."
+  },
+  {
+   "id": "ams-waag",
+   "n": "De Waag",
+   "a": "Nieuwmarkt",
+   "lat": 52.3727,
+   "lng": 4.9004,
+   "k": "landmark",
+   "en": "A turreted 15th-century building on Nieuwmarkt that began as a city gate and later served as a weigh house and guild hall. It is one of the city's oldest surviving secular buildings.",
+   "pt": "Um edifício do século XV com torreões na Nieuwmarkt, que começou por ser uma porta da cidade e serviu depois como casa de pesagem e sede de corporações. É um dos edifícios civis mais antigos da cidade."
+  },
+  {
+   "id": "ams-schreierstoren",
+   "n": "Schreierstoren",
+   "a": "Prins Hendrikkade",
+   "lat": 52.3765,
+   "lng": 4.902,
+   "k": "landmark",
+   "en": "A late-15th-century defensive tower from the old city walls, on what was once the harbour front. A plaque recalls Henry Hudson's 1609 voyage, which set sail from Amsterdam.",
+   "pt": "Uma torre defensiva do final do século XV, das antigas muralhas, no que era a frente portuária. Uma placa recorda a viagem de Henry Hudson em 1609, que partiu de Amesterdão."
+  },
+  {
+   "id": "ams-rembrandthuis",
+   "n": "Rembrandt House Museum",
+   "a": "Jodenbreestraat",
+   "lat": 52.3694,
+   "lng": 4.9012,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.rembrandthuis.nl",
+   "en": "The house where Rembrandt lived and worked from 1639 to 1658, restored with period furniture, his studio and a large collection of his etchings.",
+   "pt": "A casa onde Rembrandt viveu e trabalhou entre 1639 e 1658, restaurada com mobiliário de época, o seu ateliê e uma grande coleção das suas gravuras."
+  },
+  {
+   "id": "ams-portuguese-synagogue",
+   "n": "Portuguese Synagogue",
+   "a": "Jewish Quarter",
+   "lat": 52.3676,
+   "lng": 4.9053,
+   "k": "church",
+   "en": "Inaugurated in 1675 by Amsterdam's Sephardic community, descendants of Jews from Portugal and Spain. The vast interior is still lit only by candles.",
+   "pt": "Inaugurada em 1675 pela comunidade sefardita de Amesterdão, descendente de judeus vindos de Portugal e de Espanha. O vasto interior continua a ser iluminado apenas por velas."
+  },
+  {
+   "id": "ams-waterlooplein-market",
+   "n": "Waterlooplein Market",
+   "a": "Waterlooplein",
+   "lat": 52.3683,
+   "lng": 4.9022,
+   "k": "market",
+   "free": true,
+   "en": "A long-running open-air flea market beside the city hall and opera house, with second-hand clothes, vintage finds, books and souvenirs.",
+   "pt": "Uma feira da ladra ao ar livre com muitos anos de história, junto à câmara municipal e à ópera, com roupa em segunda mão, peças vintage, livros e lembranças."
+  },
+  {
+   "id": "ams-magere-brug",
+   "n": "Magere Brug (Skinny Bridge)",
+   "a": "Amstel",
+   "lat": 52.3636,
+   "lng": 4.9024,
+   "k": "landmark",
+   "en": "A white wooden double drawbridge over the Amstel river, one of the city's most photographed bridges. It is lit up with hundreds of lights after dark.",
+   "pt": "Uma ponte levadiça dupla de madeira branca sobre o rio Amstel, uma das pontes mais fotografadas da cidade. À noite fica iluminada com centenas de lâmpadas."
+  },
+  {
+   "id": "ams-hortus-botanicus",
+   "n": "Hortus Botanicus",
+   "a": "Plantage",
+   "lat": 52.3669,
+   "lng": 4.9076,
+   "k": "park",
+   "url": "https://www.dehortus.nl",
+   "en": "Founded in 1638, it is one of the oldest botanical gardens in the world. Greenhouses hold tropical, subtropical and desert plants, plus a butterfly house.",
+   "pt": "Fundado em 1638, é um dos jardins botânicos mais antigos do mundo. As estufas têm plantas tropicais, subtropicais e do deserto, além de um borboletário."
+  },
+  {
+   "id": "ams-artis",
+   "n": "ARTIS Zoo",
+   "a": "Plantage",
+   "lat": 52.366,
+   "lng": 4.9165,
+   "k": "sight",
+   "url": "https://www.artis.nl",
+   "en": "Founded in 1838, it is the oldest zoo in the Netherlands, set among 19th-century buildings and gardens. It also includes an aquarium and a planetarium.",
+   "pt": "Fundado em 1838, é o jardim zoológico mais antigo dos Países Baixos, rodeado de edifícios e jardins do século XIX. Inclui também um aquário e um planetário."
+  },
+  {
+   "id": "ams-scheepvaartmuseum",
+   "n": "National Maritime Museum (Het Scheepvaartmuseum)",
+   "a": "Kattenburg",
+   "lat": 52.3716,
+   "lng": 4.9144,
+   "k": "museum",
+   "url": "https://www.hetscheepvaartmuseum.nl",
+   "en": "Dutch seafaring history in a former naval storehouse from 1656. A full-size replica of the East India Company ship Amsterdam is moored outside and can be boarded.",
+   "pt": "A história marítima neerlandesa num antigo armazém naval de 1656. Lá fora está atracada uma réplica em tamanho real do navio Amsterdam, da Companhia das Índias Orientais, que se pode visitar a bordo."
+  },
+  {
+   "id": "ams-nemo",
+   "n": "NEMO Science Museum",
+   "a": "Oosterdok",
+   "lat": 52.3742,
+   "lng": 4.9123,
+   "k": "museum",
+   "url": "https://www.nemosciencemuseum.nl",
+   "en": "A hands-on science museum in a green, ship-shaped building by Renzo Piano that opened in 1997. Its sloping rooftop terrace offers wide views over the old city and the docks.",
+   "pt": "Um museu de ciência interativo num edifício verde em forma de navio, da autoria de Renzo Piano, inaugurado em 1997. O terraço inclinado no telhado oferece vistas amplas sobre o centro histórico e as docas."
+  },
+  {
+   "id": "ams-adam-lookout",
+   "n": "A'DAM Lookout",
+   "a": "Amsterdam-Noord",
+   "lat": 52.384,
+   "lng": 4.9021,
+   "k": "view",
+   "top": true,
+   "url": "https://www.adamlookout.com",
+   "en": "An observation deck at the top of A'DAM Tower, the former Shell offices across the IJ, with 360-degree views and a swing over the edge. Free GVB ferries cross from behind Centraal Station.",
+   "pt": "Um miradouro no topo da A'DAM Tower, antigos escritórios da Shell do outro lado do IJ, com vista de 360 graus e um baloiço sobre o vazio. Os ferries gratuitos da GVB fazem a travessia a partir das traseiras da Estação Central."
+  },
+  {
+   "id": "ams-eye-filmmuseum",
+   "n": "Eye Filmmuseum",
+   "a": "Amsterdam-Noord",
+   "lat": 52.3843,
+   "lng": 4.9013,
+   "k": "museum",
+   "url": "https://www.eyefilm.nl",
+   "en": "The Netherlands' film museum and cinema, housed since 2012 in a striking white angular building on the north bank of the IJ, next to A'DAM Tower.",
+   "pt": "O museu do cinema e cinemateca dos Países Baixos, instalado desde 2012 num marcante edifício branco e anguloso na margem norte do IJ, ao lado da A'DAM Tower."
+  },
+  {
+   "id": "ams-heineken-experience",
+   "n": "Heineken Experience",
+   "a": "De Pijp",
+   "lat": 52.3578,
+   "lng": 4.8918,
+   "k": "sight",
+   "url": "https://www.heinekenexperience.com",
+   "en": "A self-guided tour of the brand's history inside the former Heineken brewery, where beer was brewed until 1988.",
+   "pt": "Uma visita autoguiada à história da marca no interior da antiga fábrica da Heineken, onde se produziu cerveja até 1988."
+  },
+  {
+   "id": "ams-albert-cuyp-market",
+   "n": "Albert Cuyp Market",
+   "a": "De Pijp",
+   "lat": 52.3557,
+   "lng": 4.894,
+   "k": "market",
+   "free": true,
+   "en": "The best-known street market in the Netherlands, running along Albert Cuypstraat since the early 20th century. Look for fresh stroopwafels, herring, cheese and fabrics.",
+   "pt": "O mercado de rua mais conhecido dos Países Baixos, ao longo da Albert Cuypstraat desde o início do século XX. Procure stroopwafels acabados de fazer, arenque, queijo e tecidos."
+  },
+  {
+   "id": "ams-concertgebouw",
+   "n": "Concertgebouw",
+   "a": "Museumkwartier",
+   "lat": 52.3563,
+   "lng": 4.879,
+   "k": "landmark",
+   "url": "https://www.concertgebouw.nl",
+   "en": "A concert hall opened in 1888, famous for the acoustics of its Main Hall and home to the Royal Concertgebouw Orchestra.",
+   "pt": "Uma sala de concertos inaugurada em 1888, famosa pela acústica da Grande Sala e sede da Orquestra Real do Concertgebouw."
+  },
+  {
+   "id": "ams-westerpark",
+   "n": "Westerpark & Westergasfabriek",
+   "a": "Westerpark",
+   "lat": 52.3865,
+   "lng": 4.8758,
+   "k": "park",
+   "free": true,
+   "en": "A large city park whose 19th-century gasworks buildings have been turned into a cultural venue with cafés, cinema and events.",
+   "pt": "Um grande parque urbano onde os edifícios da antiga fábrica de gás do século XIX foram convertidos num espaço cultural com cafés, cinema e eventos."
+  },
+  {
+   "id": "ams-noordermarkt",
+   "n": "Noordermarkt",
+   "a": "Jordaan",
+   "lat": 52.3799,
+   "lng": 4.8865,
+   "k": "market",
+   "free": true,
+   "en": "A square around the Noorderkerk, a church completed in 1623, that hosts weekly markets including an organic farmers' market and a flea market.",
+   "pt": "Uma praça em redor da Noorderkerk, igreja concluída em 1623, que acolhe mercados semanais, incluindo um mercado de produtos biológicos e uma feira da ladra."
+  }
+ ],
+ "streets": [
+  {
+   "id": "ams-jordaan",
+   "n": "Jordaan",
+   "a": "Jordaan",
+   "lat": 52.3775,
+   "lng": 4.883,
+   "en": "A former working-class district of narrow canals, small bridges and gabled houses, now full of galleries, brown cafés and independent shops.",
+   "pt": "Um antigo bairro operário de canais estreitos, pequenas pontes e casas com empena, hoje cheio de galerias, cafés tradicionais e lojas independentes."
+  },
+  {
+   "id": "ams-de-pijp",
+   "n": "De Pijp",
+   "a": "Oud-Zuid",
+   "lat": 52.3545,
+   "lng": 4.8935,
+   "en": "A lively 19th-century neighbourhood around the Albert Cuyp Market, known for its mix of cafés, restaurants from around the world and Sarphatipark.",
+   "pt": "Um bairro animado do século XIX em torno do mercado Albert Cuyp, conhecido pela mistura de cafés, restaurantes de todo o mundo e pelo Sarphatipark."
+  },
+  {
+   "id": "ams-de-wallen",
+   "n": "De Wallen",
+   "a": "Old Centre",
+   "lat": 52.3725,
+   "lng": 4.899,
+   "en": "The oldest part of the city, around the Oudezijds canals and the Oude Kerk, known worldwide as the red-light district. Please do not photograph the windows.",
+   "pt": "A zona mais antiga da cidade, em torno dos canais Oudezijds e da Oude Kerk, conhecida em todo o mundo como o bairro da luz vermelha. Por respeito, não fotografe as montras."
+  },
+  {
+   "id": "ams-haarlemmerstraat",
+   "n": "Haarlemmerstraat & Haarlemmerdijk",
+   "a": "Haarlemmerbuurt",
+   "lat": 52.3822,
+   "lng": 4.8875,
+   "en": "One long shopping street running west from near Centraal Station to the Haarlemmerpoort city gate, lined with delis, design shops and cafés.",
+   "pt": "Uma longa rua comercial que segue para oeste desde as imediações da Estação Central até à porta da cidade Haarlemmerpoort, com mercearias finas, lojas de design e cafés."
+  },
+  {
+   "id": "ams-leidseplein",
+   "n": "Leidseplein",
+   "a": "Canal Ring",
+   "lat": 52.3638,
+   "lng": 4.8823,
+   "en": "One of the city's busiest squares for nightlife, with theatres, music venues such as Paradiso and Melkweg nearby, and many bars and terraces.",
+   "pt": "Uma das praças mais movimentadas da cidade à noite, com teatros, salas de concertos como o Paradiso e o Melkweg nas proximidades e muitos bares e esplanadas."
+  },
+  {
+   "id": "ams-rembrandtplein",
+   "n": "Rembrandtplein",
+   "a": "Canal Ring",
+   "lat": 52.3661,
+   "lng": 4.8966,
+   "en": "A lively square named after the painter, with his 19th-century statue in a small central garden, surrounded by cafés, clubs and terraces.",
+   "pt": "Uma praça animada com o nome do pintor e a sua estátua do século XIX num pequeno jardim central, rodeada de cafés, discotecas e esplanadas."
+  }
+ ],
+ "walks": [
+  {
+   "id": "ams-old-centre",
+   "en_n": "Old Centre: St Nicholas to the Portuguese Synagogue",
+   "pt_n": "Centro Histórico: de São Nicolau à Sinagoga Portuguesa",
+   "km": 1.6,
+   "min": 24,
+   "en": "A compact walk through medieval Amsterdam, from the harbour-front basilica past hidden and historic churches, Nieuwmarkt and Rembrandt's house, ending in the old Jewish Quarter.",
+   "pt": "Um passeio curto pela Amesterdão medieval, desde a basílica junto à antiga frente portuária, passando por igrejas históricas e escondidas, pela Nieuwmarkt e pela casa de Rembrandt, terminando no antigo bairro judeu.",
+   "pts": [
+    {
+     "n": "Basilica of St Nicholas",
+     "lat": 52.3766,
+     "lng": 4.9009
+    },
+    {
+     "n": "Our Lord in the Attic",
+     "lat": 52.3751,
+     "lng": 4.8994
+    },
+    {
+     "n": "Oude Kerk",
+     "lat": 52.3741,
+     "lng": 4.8982
+    },
+    {
+     "n": "De Waag (Nieuwmarkt)",
+     "lat": 52.3727,
+     "lng": 4.9004
+    },
+    {
+     "n": "Zuiderkerk",
+     "lat": 52.3703,
+     "lng": 4.8998
+    },
+    {
+     "n": "Rembrandt House Museum",
+     "lat": 52.3694,
+     "lng": 4.9012
+    },
+    {
+     "n": "Waterlooplein Market",
+     "lat": 52.3683,
+     "lng": 4.9022
+    },
+    {
+     "n": "Portuguese Synagogue",
+     "lat": 52.3676,
+     "lng": 4.9053
+    }
+   ]
+  },
+  {
+   "id": "ams-docks-plantage",
+   "en_n": "Eastern Docks & Plantage",
+   "pt_n": "Docas Orientais e Plantage",
+   "km": 3.6,
+   "min": 54,
+   "en": "From the old harbour towers to the maritime docks, then through the leafy Plantage district with its zoo and botanical garden, finishing at the Skinny Bridge on the Amstel.",
+   "pt": "Das antigas torres do porto às docas marítimas, seguindo depois pelo arborizado bairro de Plantage, com o jardim zoológico e o jardim botânico, até à Magere Brug sobre o Amstel.",
+   "pts": [
+    {
+     "n": "Schreierstoren",
+     "lat": 52.3765,
+     "lng": 4.902
+    },
+    {
+     "n": "Montelbaanstoren",
+     "lat": 52.372,
+     "lng": 4.9056
+    },
+    {
+     "n": "NEMO Science Museum",
+     "lat": 52.3742,
+     "lng": 4.9123
+    },
+    {
+     "n": "National Maritime Museum",
+     "lat": 52.3716,
+     "lng": 4.9144
+    },
+    {
+     "n": "ARTIS Zoo",
+     "lat": 52.366,
+     "lng": 4.9165
+    },
+    {
+     "n": "Hortus Botanicus",
+     "lat": 52.3669,
+     "lng": 4.9076
+    },
+    {
+     "n": "Magere Brug",
+     "lat": 52.3636,
+     "lng": 4.9024
+    }
+   ]
+  },
+  {
+   "id": "ams-westerpark-jordaan",
+   "en_n": "Westerpark to the Jordaan canals",
+   "pt_n": "Do Westerpark aos canais do Jordaan",
+   "km": 2.5,
+   "min": 38,
+   "en": "Start in the converted gasworks of Westerpark, pass the Haarlemmerpoort gate and follow Brouwersgracht into the Jordaan's quiet canals and market square.",
+   "pt": "Comece na antiga fábrica de gás do Westerpark, passe pela porta Haarlemmerpoort e siga o Brouwersgracht até aos tranquilos canais e à praça do mercado do Jordaan.",
+   "pts": [
+    {
+     "n": "Westergasfabriek (Westerpark)",
+     "lat": 52.3867,
+     "lng": 4.8753
+    },
+    {
+     "n": "Haarlemmerpoort",
+     "lat": 52.385,
+     "lng": 4.8831
+    },
+    {
+     "n": "Brouwersgracht",
+     "lat": 52.3808,
+     "lng": 4.8883
+    },
+    {
+     "n": "Noordermarkt",
+     "lat": 52.3799,
+     "lng": 4.8865
+    },
+    {
+     "n": "Lindengracht",
+     "lat": 52.3801,
+     "lng": 4.8841
+    },
+    {
+     "n": "Egelantiersgracht",
+     "lat": 52.3758,
+     "lng": 4.8807
+    },
+    {
+     "n": "Bloemgracht",
+     "lat": 52.3743,
+     "lng": 4.8794
+    }
+   ]
+  }
+ ]
+}

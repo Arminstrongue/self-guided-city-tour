@@ -1,0 +1,446 @@
+{
+ "places": [
+  {
+   "id": "rom-roman-forum",
+   "n": "Roman Forum",
+   "a": "Centro Storico",
+   "lat": 41.8925,
+   "lng": 12.4853,
+   "k": "sight",
+   "top": true,
+   "url": "https://parcocolosseo.it",
+   "en": "The heart of public life in ancient Rome, a valley of temples, basilicas and triumphal arches along the Via Sacra. It is part of the Colosseum Archaeological Park.",
+   "pt": "O centro da vida pública da Roma Antiga, um vale de templos, basílicas e arcos triunfais ao longo da Via Sacra. Faz parte do Parque Arqueológico do Coliseu."
+  },
+  {
+   "id": "rom-palatine",
+   "n": "Palatine Hill",
+   "a": "Centro Storico",
+   "lat": 41.8892,
+   "lng": 12.4875,
+   "k": "sight",
+   "url": "https://parcocolosseo.it",
+   "en": "The hill where, according to legend, Romulus founded Rome, later covered by the emperors' palaces. It overlooks both the Roman Forum and the Circus Maximus.",
+   "pt": "A colina onde, segundo a lenda, Rómulo fundou Roma, mais tarde ocupada pelos palácios dos imperadores. Tem vista sobre o Fórum Romano e o Circo Máximo."
+  },
+  {
+   "id": "rom-vatican-museums",
+   "n": "Vatican Museums & Sistine Chapel",
+   "a": "Vatican City",
+   "lat": 41.9065,
+   "lng": 12.4536,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.museivaticani.va",
+   "en": "The papal art collections, begun by Pope Julius II in the early 16th century, ending in the Sistine Chapel with Michelangelo's ceiling and Last Judgment. The Raphael Rooms are another highlight.",
+   "pt": "As coleções de arte dos papas, iniciadas por Júlio II no início do século XVI, que culminam na Capela Sistina com o teto e o Juízo Final de Miguel Ângelo. As Salas de Rafael são outro ponto alto."
+  },
+  {
+   "id": "rom-castel-santangelo",
+   "n": "Castel Sant'Angelo",
+   "a": "Borgo",
+   "lat": 41.9031,
+   "lng": 12.4663,
+   "k": "museum",
+   "top": true,
+   "en": "Built as the mausoleum of Emperor Hadrian in the 2nd century, it later became a papal fortress linked to the Vatican by an elevated passage. Today it is a museum with a terrace over the Tiber.",
+   "pt": "Construído como mausoléu do imperador Adriano no século II, tornou-se depois uma fortaleza papal ligada ao Vaticano por uma passagem elevada. Hoje é um museu com terraço sobre o Tibre."
+  },
+  {
+   "id": "rom-galleria-borghese",
+   "n": "Galleria Borghese",
+   "a": "Villa Borghese",
+   "lat": 41.9142,
+   "lng": 12.4921,
+   "k": "gallery",
+   "top": true,
+   "url": "https://galleriaborghese.cultura.gov.it",
+   "en": "Cardinal Scipione Borghese's collection in his villa inside the park, with Bernini sculptures such as Apollo and Daphne and several paintings by Caravaggio. Advance booking is required.",
+   "pt": "A coleção do cardeal Scipione Borghese na sua villa dentro do parque, com esculturas de Bernini como Apolo e Dafne e várias pinturas de Caravaggio. É obrigatória a reserva antecipada."
+  },
+  {
+   "id": "rom-villa-borghese",
+   "n": "Villa Borghese Gardens",
+   "a": "Villa Borghese",
+   "lat": 41.913,
+   "lng": 12.485,
+   "k": "park",
+   "free": true,
+   "en": "One of Rome's largest central parks, laid out from the early 17th century for the Borghese family. It has a small lake with a temple, tree-lined avenues and several museums.",
+   "pt": "Um dos maiores parques do centro de Roma, criado a partir do início do século XVII para a família Borghese. Tem um pequeno lago com um templo, alamedas arborizadas e vários museus."
+  },
+  {
+   "id": "rom-pincio",
+   "n": "Pincio Terrace",
+   "a": "Villa Borghese",
+   "lat": 41.9114,
+   "lng": 12.4797,
+   "k": "view",
+   "en": "Terrace designed by Giuseppe Valadier in the early 19th century, above Piazza del Popolo. A classic spot for sunset over the domes, with St Peter's in the distance.",
+   "pt": "Terraço projetado por Giuseppe Valadier no início do século XIX, sobre a Piazza del Popolo. Um lugar clássico para ver o pôr do sol sobre as cúpulas, com São Pedro ao fundo."
+  },
+  {
+   "id": "rom-piazza-popolo",
+   "n": "Piazza del Popolo",
+   "a": "Tridente",
+   "lat": 41.9107,
+   "lng": 12.4763,
+   "k": "sight",
+   "en": "Large oval square at the old northern gate of the city, with an Egyptian obelisk and twin churches. The church of Santa Maria del Popolo holds two paintings by Caravaggio.",
+   "pt": "Grande praça oval junto à antiga porta norte da cidade, com um obelisco egípcio e duas igrejas gémeas. A igreja de Santa Maria del Popolo guarda duas pinturas de Caravaggio."
+  },
+  {
+   "id": "rom-campo-de-fiori",
+   "n": "Campo de' Fiori",
+   "a": "Parione",
+   "lat": 41.8957,
+   "lng": 12.4722,
+   "k": "market",
+   "en": "Lively square with a long-running market of fruit, vegetables and flowers. The hooded statue in the middle is the philosopher Giordano Bruno, burned here in 1600.",
+   "pt": "Praça animada com um mercado tradicional de fruta, legumes e flores. A estátua encapuzada ao centro é o filósofo Giordano Bruno, queimado aqui em 1600."
+  },
+  {
+   "id": "rom-santa-maria-trastevere",
+   "n": "Santa Maria in Trastevere",
+   "a": "Trastevere",
+   "lat": 41.8894,
+   "lng": 12.4697,
+   "k": "church",
+   "free": true,
+   "en": "One of the oldest churches in Rome, on Trastevere's main square, famous for its 12th-century golden mosaics inside and on the façade.",
+   "pt": "Uma das igrejas mais antigas de Roma, na praça principal de Trastevere, famosa pelos mosaicos dourados do século XII no interior e na fachada."
+  },
+  {
+   "id": "rom-santa-maria-maggiore",
+   "n": "Santa Maria Maggiore",
+   "a": "Esquilino",
+   "lat": 41.8976,
+   "lng": 12.4985,
+   "k": "church",
+   "top": true,
+   "free": true,
+   "en": "One of Rome's four papal basilicas, with 5th-century mosaics and a coffered ceiling. Pope Francis was buried here in 2025.",
+   "pt": "Uma das quatro basílicas papais de Roma, com mosaicos do século V e teto em caixotões. O Papa Francisco foi sepultado aqui em 2025."
+  },
+  {
+   "id": "rom-san-giovanni-laterano",
+   "n": "St John Lateran",
+   "a": "San Giovanni",
+   "lat": 41.8859,
+   "lng": 12.5057,
+   "k": "church",
+   "free": true,
+   "en": "The cathedral of Rome and seat of the Pope as Bishop of Rome, ranked above St Peter's. Across the square is the Scala Santa, the Holy Stairs.",
+   "pt": "A catedral de Roma e sede do Papa enquanto Bispo de Roma, com precedência sobre São Pedro. Do outro lado da praça fica a Scala Santa, a Escada Santa."
+  },
+  {
+   "id": "rom-capitoline-museums",
+   "n": "Capitoline Museums",
+   "a": "Campidoglio",
+   "lat": 41.893,
+   "lng": 12.4826,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.museicapitolini.org",
+   "en": "Founded in 1471 and often called the world's oldest public museum, set on Michelangelo's Piazza del Campidoglio. It holds the Capitoline Wolf and the original bronze statue of Marcus Aurelius.",
+   "pt": "Fundados em 1471 e muitas vezes considerados o museu público mais antigo do mundo, ficam na Piazza del Campidoglio desenhada por Miguel Ângelo. Guardam a Loba Capitolina e a estátua equestre original de Marco Aurélio."
+  },
+  {
+   "id": "rom-bocca-della-verita",
+   "n": "Mouth of Truth",
+   "a": "Ripa",
+   "lat": 41.8881,
+   "lng": 12.4816,
+   "k": "landmark",
+   "en": "Ancient marble mask in the portico of the church of Santa Maria in Cosmedin. Legend says it bites the hand of liars, a scene made famous by the film Roman Holiday.",
+   "pt": "Antiga máscara de mármore no pórtico da igreja de Santa Maria in Cosmedin. Diz a lenda que morde a mão de quem mente, cena tornada famosa pelo filme Férias em Roma."
+  },
+  {
+   "id": "rom-circus-maximus",
+   "n": "Circus Maximus",
+   "a": "Aventino",
+   "lat": 41.8861,
+   "lng": 12.4851,
+   "k": "sight",
+   "en": "The great chariot-racing stadium of ancient Rome, between the Palatine and Aventine hills. Today its long grassy track is a public park.",
+   "pt": "O grande estádio de corridas de quadrigas da Roma Antiga, entre o Palatino e o Aventino. Hoje a longa pista relvada é um parque público."
+  },
+  {
+   "id": "rom-baths-caracalla",
+   "n": "Baths of Caracalla",
+   "a": "Aventino",
+   "lat": 41.879,
+   "lng": 12.4924,
+   "k": "sight",
+   "en": "Vast public baths built in the early 3rd century under Emperor Caracalla, with towering brick walls and mosaic floors. The ruins are also used as a summer opera venue.",
+   "pt": "Enormes termas públicas construídas no início do século III, no tempo do imperador Caracala, com altas paredes de tijolo e pavimentos de mosaico. As ruínas também acolhem ópera no verão."
+  },
+  {
+   "id": "rom-giardino-aranci",
+   "n": "Orange Garden (Giardino degli Aranci)",
+   "a": "Aventino",
+   "lat": 41.8851,
+   "lng": 12.4804,
+   "k": "view",
+   "en": "Small park of orange trees on the Aventine Hill, officially Parco Savello. Its terrace looks across the Tiber to Trastevere and the dome of St Peter's.",
+   "pt": "Pequeno jardim de laranjeiras no Aventino, oficialmente Parco Savello. O terraço tem vista sobre o Tibre, Trastevere e a cúpula de São Pedro."
+  },
+  {
+   "id": "rom-aventine-keyhole",
+   "n": "Aventine Keyhole",
+   "a": "Aventino",
+   "lat": 41.8831,
+   "lng": 12.4779,
+   "k": "landmark",
+   "en": "The keyhole in the door of the Knights of Malta priory on Piazza dei Cavalieri di Malta, which frames a perfect view of St Peter's dome down a garden avenue.",
+   "pt": "A fechadura da porta do priorado dos Cavaleiros de Malta, na Piazza dei Cavalieri di Malta, que enquadra na perfeição a cúpula de São Pedro ao fundo de uma alameda."
+  },
+  {
+   "id": "rom-gianicolo",
+   "n": "Janiculum Terrace (Gianicolo)",
+   "a": "Gianicolo",
+   "lat": 41.8914,
+   "lng": 12.4611,
+   "k": "view",
+   "en": "Hilltop square above Trastevere around the equestrian monument to Giuseppe Garibaldi. It offers one of the broadest panoramas over Rome's rooftops and domes.",
+   "pt": "Praça no alto da colina sobre Trastevere, em torno do monumento equestre a Giuseppe Garibaldi. Oferece um dos panoramas mais amplos sobre os telhados e cúpulas de Roma."
+  },
+  {
+   "id": "rom-san-luigi-francesi",
+   "n": "San Luigi dei Francesi",
+   "a": "Sant'Eustachio",
+   "lat": 41.8994,
+   "lng": 12.4746,
+   "k": "church",
+   "free": true,
+   "en": "The French national church in Rome, known for Caravaggio's three paintings of the life of St Matthew in the Contarelli Chapel.",
+   "pt": "A igreja nacional francesa em Roma, conhecida pelas três pinturas de Caravaggio sobre a vida de São Mateus na Capela Contarelli."
+  },
+  {
+   "id": "rom-santa-maria-minerva",
+   "n": "Santa Maria sopra Minerva",
+   "a": "Pigna",
+   "lat": 41.898,
+   "lng": 12.4778,
+   "k": "church",
+   "free": true,
+   "en": "Rome's main Gothic church, with a blue starry vault, Michelangelo's statue of Christ and the tomb of St Catherine of Siena. Bernini's elephant carrying an obelisk stands in the square outside.",
+   "pt": "A principal igreja gótica de Roma, com abóbada azul estrelada, a estátua de Cristo de Miguel Ângelo e o túmulo de Santa Catarina de Siena. Na praça em frente está o elefante com obelisco de Bernini."
+  },
+  {
+   "id": "rom-largo-argentina",
+   "n": "Largo di Torre Argentina",
+   "a": "Pigna",
+   "lat": 41.8955,
+   "lng": 12.4768,
+   "k": "sight",
+   "en": "Sunken square with the remains of four temples from the Roman Republic, next to the site of the Curia of Pompey where Julius Caesar was assassinated. It is also home to a well-known cat sanctuary.",
+   "pt": "Praça rebaixada com os restos de quatro templos da República Romana, junto ao local da Cúria de Pompeu onde Júlio César foi assassinado. Acolhe também um conhecido santuário de gatos."
+  },
+  {
+   "id": "rom-palazzo-massimo",
+   "n": "Palazzo Massimo (National Roman Museum)",
+   "a": "Termini",
+   "lat": 41.9016,
+   "lng": 12.4985,
+   "k": "museum",
+   "en": "A seat of the National Roman Museum near Termini station, with outstanding ancient sculpture, mosaics and the painted garden frescoes from the Villa of Livia.",
+   "pt": "Uma das sedes do Museu Nacional Romano, perto da estação Termini, com escultura antiga notável, mosaicos e os frescos do jardim pintado da Villa de Lívia."
+  },
+  {
+   "id": "rom-mercato-testaccio",
+   "n": "Testaccio Market",
+   "a": "Testaccio",
+   "lat": 41.8767,
+   "lng": 12.4753,
+   "k": "food",
+   "en": "Covered neighbourhood market in the traditional Testaccio district, with fresh produce, butchers and street-food stalls. Roman remains found during its construction are visible inside.",
+   "pt": "Mercado coberto de bairro em Testaccio, zona tradicional de Roma, com frescos, talhos e bancas de comida de rua. No interior veem-se vestígios romanos encontrados durante a construção."
+  }
+ ],
+ "streets": [
+  {
+   "id": "rom-via-del-corso",
+   "n": "Via del Corso",
+   "a": "Centro Storico",
+   "lat": 41.901,
+   "lng": 12.4805,
+   "en": "Long straight shopping street running from Piazza del Popolo to Piazza Venezia, following the route of the ancient Via Flaminia into the city.",
+   "pt": "Longa rua comercial em linha reta entre a Piazza del Popolo e a Piazza Venezia, que segue o traçado da antiga Via Flamínia dentro da cidade."
+  },
+  {
+   "id": "rom-via-condotti",
+   "n": "Via dei Condotti",
+   "a": "Tridente",
+   "lat": 41.9055,
+   "lng": 12.4807,
+   "en": "Rome's most famous luxury-fashion street, leading to the Spanish Steps.",
+   "pt": "A rua de moda de luxo mais famosa de Roma, que conduz à Escadaria da Praça de Espanha."
+  },
+  {
+   "id": "rom-trastevere",
+   "n": "Trastevere",
+   "a": "Trastevere",
+   "lat": 41.889,
+   "lng": 12.471,
+   "en": "Neighbourhood across the Tiber with cobbled lanes, ivy-covered houses and many trattorias, especially lively in the evening.",
+   "pt": "Bairro do outro lado do Tibre, com ruelas empedradas, casas cobertas de hera e muitas trattorias, sobretudo animado ao fim do dia."
+  },
+  {
+   "id": "rom-monti",
+   "n": "Monti",
+   "a": "Monti",
+   "lat": 41.8954,
+   "lng": 12.492,
+   "en": "Rome's first rione (Rione I), covering the ancient Suburra, now a village-like area of vintage shops, wine bars and a small fountain square.",
+   "pt": "O primeiro rione de Roma (Rione I), que abrange a antiga Suburra, hoje uma zona com ar de aldeia, lojas vintage, bares de vinho e uma pequena praça com fonte."
+  },
+  {
+   "id": "rom-via-giulia",
+   "n": "Via Giulia",
+   "a": "Regola",
+   "lat": 41.896,
+   "lng": 12.4685,
+   "en": "Straight Renaissance street laid out by Bramante for Pope Julius II, lined with palaces, churches and antique shops parallel to the Tiber.",
+   "pt": "Rua renascentista em linha reta traçada por Bramante para o Papa Júlio II, ladeada por palácios, igrejas e antiquários, paralela ao Tibre."
+  },
+  {
+   "id": "rom-jewish-ghetto",
+   "n": "Jewish Ghetto",
+   "a": "Sant'Angelo",
+   "lat": 41.8925,
+   "lng": 12.4777,
+   "en": "Historic Jewish quarter, established as a ghetto in 1555, around the Portico of Octavia and the Great Synagogue. Known for Roman-Jewish dishes such as carciofi alla giudia.",
+   "pt": "Bairro judeu histórico, transformado em gueto em 1555, em torno do Pórtico de Octávia e da Grande Sinagoga. Conhecido por pratos judaico-romanos como os carciofi alla giudia."
+  },
+  {
+   "id": "rom-via-margutta",
+   "n": "Via Margutta",
+   "a": "Tridente",
+   "lat": 41.9085,
+   "lng": 12.4797,
+   "en": "Quiet, leafy street long associated with artists and galleries, where Gregory Peck's character lived in Roman Holiday.",
+   "pt": "Rua tranquila e verdejante, há muito associada a artistas e galerias, onde vivia a personagem de Gregory Peck em Férias em Roma."
+  }
+ ],
+ "walks": [
+  {
+   "id": "rom-capitol-aventine",
+   "en_n": "Capitoline Hill to the Aventine",
+   "pt_n": "Do Capitólio ao Aventino",
+   "km": 1.9,
+   "min": 29,
+   "en": "From Michelangelo's square on the Capitoline, walk down past the Mouth of Truth and along the Circus Maximus, then up the Aventine to the Orange Garden and the famous keyhole.",
+   "pt": "Da praça de Miguel Ângelo no Capitólio, desça até à Boca da Verdade, siga ao longo do Circo Máximo e suba o Aventino até ao Jardim das Laranjeiras e à famosa fechadura.",
+   "pts": [
+    {
+     "n": "Piazza del Campidoglio",
+     "lat": 41.8934,
+     "lng": 12.4828
+    },
+    {
+     "n": "Bocca della Verità",
+     "lat": 41.8881,
+     "lng": 12.4816
+    },
+    {
+     "n": "Circo Massimo",
+     "lat": 41.8861,
+     "lng": 12.4851
+    },
+    {
+     "n": "Giardino degli Aranci",
+     "lat": 41.8851,
+     "lng": 12.4804
+    },
+    {
+     "n": "Piazza dei Cavalieri di Malta",
+     "lat": 41.8831,
+     "lng": 12.4779
+    }
+   ]
+  },
+  {
+   "id": "rom-popolo-borghese",
+   "en_n": "Ara Pacis to Villa Borghese",
+   "pt_n": "Da Ara Pacis à Villa Borghese",
+   "km": 2.1,
+   "min": 32,
+   "en": "Start at Augustus's Altar of Peace by the Tiber, reach Piazza del Popolo, climb to the Pincio terrace and cross the Villa Borghese park to the Galleria Borghese.",
+   "pt": "Comece no Altar da Paz de Augusto junto ao Tibre, chegue à Piazza del Popolo, suba ao terraço do Pincio e atravesse o parque da Villa Borghese até à Galleria Borghese.",
+   "pts": [
+    {
+     "n": "Ara Pacis",
+     "lat": 41.9063,
+     "lng": 12.4756
+    },
+    {
+     "n": "Piazza del Popolo",
+     "lat": 41.9107,
+     "lng": 12.4763
+    },
+    {
+     "n": "Terrazza del Pincio",
+     "lat": 41.9114,
+     "lng": 12.4797
+    },
+    {
+     "n": "Villa Borghese",
+     "lat": 41.913,
+     "lng": 12.485
+    },
+    {
+     "n": "Galleria Borghese",
+     "lat": 41.9142,
+     "lng": 12.4921
+    }
+   ]
+  },
+  {
+   "id": "rom-argentina-trastevere",
+   "en_n": "Torre Argentina to Trastevere",
+   "pt_n": "De Torre Argentina a Trastevere",
+   "km": 1.7,
+   "min": 26,
+   "en": "From the temples where Caesar fell, cross Campo de' Fiori and Piazza Farnese, stroll Via Giulia and cross Ponte Sisto into Trastevere.",
+   "pt": "Dos templos onde César foi morto, atravesse o Campo de' Fiori e a Piazza Farnese, passeie pela Via Giulia e cruze a Ponte Sisto até Trastevere.",
+   "pts": [
+    {
+     "n": "Largo di Torre Argentina",
+     "lat": 41.8955,
+     "lng": 12.4768
+    },
+    {
+     "n": "Campo de' Fiori",
+     "lat": 41.8957,
+     "lng": 12.4722
+    },
+    {
+     "n": "Piazza Farnese",
+     "lat": 41.8949,
+     "lng": 12.471
+    },
+    {
+     "n": "Via Giulia",
+     "lat": 41.8955,
+     "lng": 12.4687
+    },
+    {
+     "n": "Ponte Sisto",
+     "lat": 41.8922,
+     "lng": 12.4707
+    },
+    {
+     "n": "Piazza Trilussa",
+     "lat": 41.8914,
+     "lng": 12.4698
+    },
+    {
+     "n": "Santa Maria in Trastevere",
+     "lat": 41.8894,
+     "lng": 12.4697
+    }
+   ]
+  }
+ ]
+}

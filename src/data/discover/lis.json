@@ -1,0 +1,428 @@
+{
+ "places": [
+  {
+   "id": "lis-castelo-sao-jorge",
+   "n": "São Jorge Castle",
+   "a": "Castelo",
+   "lat": 38.7139,
+   "lng": -9.1334,
+   "k": "sight",
+   "top": true,
+   "url": "https://castelodesaojorge.pt",
+   "en": "Moorish-era castle on the highest hill of the historic centre, later a royal residence. Its walls and towers give some of the widest views over Lisbon and the Tagus.",
+   "pt": "Castelo de origem muçulmana na colina mais alta do centro histórico, mais tarde residência real. As muralhas e torres oferecem algumas das vistas mais amplas sobre Lisboa e o Tejo."
+  },
+  {
+   "id": "lis-sao-vicente-de-fora",
+   "n": "Monastery of São Vicente de Fora",
+   "a": "São Vicente",
+   "lat": 38.7152,
+   "lng": -9.1267,
+   "k": "church",
+   "en": "Monastery founded by King Afonso Henriques in the 12th century and rebuilt from the late 16th century. It is known for its azulejo-lined cloisters and the royal pantheon of the Bragança dynasty.",
+   "pt": "Mosteiro fundado por D. Afonso Henriques no século XII e reconstruído a partir do final do século XVI. É conhecido pelos claustros revestidos de azulejos e pelo panteão real da dinastia de Bragança."
+  },
+  {
+   "id": "lis-panteao-nacional",
+   "n": "National Pantheon (Santa Engrácia)",
+   "a": "São Vicente",
+   "lat": 38.7149,
+   "lng": -9.1247,
+   "k": "landmark",
+   "en": "The domed Church of Santa Engrácia, begun in the 17th century and only completed in 1966, gave Portuguese the expression \"obras de Santa Engrácia\" for never-ending works. It now honours notable Portuguese figures, and its terrace looks over the river.",
+   "pt": "A Igreja de Santa Engrácia, iniciada no século XVII e só concluída em 1966, deu origem à expressão \"obras de Santa Engrácia\". Hoje homenageia figuras ilustres portuguesas e o seu terraço tem vista sobre o rio."
+  },
+  {
+   "id": "lis-feira-da-ladra",
+   "n": "Feira da Ladra",
+   "a": "Campo de Santa Clara",
+   "lat": 38.716,
+   "lng": -9.1257,
+   "k": "market",
+   "en": "Lisbon's best-known flea market, held on Campo de Santa Clara between São Vicente de Fora and the National Pantheon. Stalls sell antiques, second-hand goods, records and curiosities.",
+   "pt": "A feira da ladra mais conhecida de Lisboa, no Campo de Santa Clara, entre São Vicente de Fora e o Panteão Nacional. As bancas vendem antiguidades, artigos em segunda mão, discos e curiosidades."
+  },
+  {
+   "id": "lis-museu-do-fado",
+   "n": "Fado Museum",
+   "a": "Alfama",
+   "lat": 38.711,
+   "lng": -9.1275,
+   "k": "museum",
+   "en": "Museum in the heart of Alfama dedicated to fado, the Lisbon song recognised by UNESCO as Intangible Cultural Heritage in 2011. It covers the singers, guitarists and history of the genre.",
+   "pt": "Museu no coração de Alfama dedicado ao fado, a canção de Lisboa reconhecida pela UNESCO como Património Cultural Imaterial em 2011. Apresenta os fadistas, os guitarristas e a história do género."
+  },
+  {
+   "id": "lis-senhora-do-monte",
+   "n": "Miradouro da Senhora do Monte",
+   "a": "Graça",
+   "lat": 38.7191,
+   "lng": -9.1328,
+   "k": "view",
+   "en": "One of the highest viewpoints in Lisbon, beside a small chapel above Graça. It looks across to the castle, the Baixa and the river.",
+   "pt": "Um dos miradouros mais altos de Lisboa, junto a uma pequena capela acima da Graça. Avista o castelo, a Baixa e o rio."
+  },
+  {
+   "id": "lis-museu-azulejo",
+   "n": "National Tile Museum",
+   "a": "Xabregas",
+   "lat": 38.7244,
+   "lng": -9.1139,
+   "k": "museum",
+   "top": true,
+   "en": "Housed in the Madre de Deus Convent, founded in 1509 by Queen Leonor, it traces Portuguese azulejos from the 15th century to today. Highlights include a long tiled panorama of Lisbon before the 1755 earthquake and the gilded convent church.",
+   "pt": "Instalado no Convento da Madre de Deus, fundado em 1509 pela Rainha D. Leonor, mostra o azulejo português do século XV até hoje. Destacam-se o grande painel de Lisboa antes do terramoto de 1755 e a igreja do convento em talha dourada."
+  },
+  {
+   "id": "lis-elevador-santa-justa",
+   "n": "Santa Justa Lift",
+   "a": "Baixa",
+   "lat": 38.7121,
+   "lng": -9.1393,
+   "k": "landmark",
+   "top": true,
+   "en": "Neo-Gothic iron lift designed by Raoul Mesnier du Ponsard and opened in 1902, linking the Baixa with Largo do Carmo. Its upper platform is a popular viewpoint.",
+   "pt": "Elevador neogótico em ferro, projetado por Raoul Mesnier du Ponsard e inaugurado em 1902, que liga a Baixa ao Largo do Carmo. A plataforma superior é um miradouro muito procurado."
+  },
+  {
+   "id": "lis-igreja-sao-roque",
+   "n": "Church of São Roque",
+   "a": "Bairro Alto",
+   "lat": 38.7136,
+   "lng": -9.1433,
+   "k": "church",
+   "free": true,
+   "en": "16th-century Jesuit church with a plain façade and a richly decorated interior. Its Chapel of St John the Baptist was built in Rome and shipped to Lisbon in the 18th century.",
+   "pt": "Igreja jesuíta do século XVI, de fachada sóbria e interior ricamente decorado. A Capela de São João Baptista foi construída em Roma e enviada para Lisboa no século XVIII."
+  },
+  {
+   "id": "lis-time-out-market",
+   "n": "Time Out Market (Mercado da Ribeira)",
+   "a": "Cais do Sodré",
+   "lat": 38.7069,
+   "lng": -9.1458,
+   "k": "food",
+   "en": "Food hall opened in 2014 inside the historic Mercado da Ribeira, with stalls from well-known Lisbon chefs and restaurants. The traditional fresh-produce market still operates in the same building.",
+   "pt": "Mercado de comida inaugurado em 2014 no histórico Mercado da Ribeira, com bancas de chefs e restaurantes conhecidos de Lisboa. O mercado tradicional de frescos continua a funcionar no mesmo edifício."
+  },
+  {
+   "id": "lis-mnaa",
+   "n": "National Museum of Ancient Art",
+   "a": "Janelas Verdes",
+   "lat": 38.7048,
+   "lng": -9.1609,
+   "k": "gallery",
+   "en": "Portugal's national art museum, in a palace overlooking the river. Its best-known works include the Panels of Saint Vincent attributed to Nuno Gonçalves and Bosch's Temptation of Saint Anthony.",
+   "pt": "O museu nacional de arte de Portugal, num palácio com vista para o rio. Entre as obras mais conhecidas estão os Painéis de São Vicente, atribuídos a Nuno Gonçalves, e as Tentações de Santo Antão, de Bosch."
+  },
+  {
+   "id": "lis-basilica-estrela",
+   "n": "Estrela Basilica",
+   "a": "Estrela",
+   "lat": 38.7133,
+   "lng": -9.1597,
+   "k": "church",
+   "free": true,
+   "en": "Late-18th-century basilica commissioned by Queen Maria I, completed in 1790, with a large white dome visible across western Lisbon. The queen's tomb is inside.",
+   "pt": "Basílica do final do século XVIII mandada construir pela Rainha D. Maria I e concluída em 1790, com uma grande cúpula branca visível em toda a zona ocidental de Lisboa. O túmulo da rainha encontra-se no interior."
+  },
+  {
+   "id": "lis-jardim-estrela",
+   "n": "Jardim da Estrela",
+   "a": "Estrela",
+   "lat": 38.7145,
+   "lng": -9.159,
+   "k": "park",
+   "free": true,
+   "en": "Romantic 19th-century garden opposite the Estrela Basilica, with a lake, exotic trees, a bandstand and cafés. A favourite with local families.",
+   "pt": "Jardim romântico do século XIX em frente à Basílica da Estrela, com lago, árvores exóticas, coreto e esplanadas. Muito frequentado por famílias lisboetas."
+  },
+  {
+   "id": "lis-lx-factory",
+   "n": "LX Factory",
+   "a": "Alcântara",
+   "lat": 38.7031,
+   "lng": -9.1788,
+   "k": "district",
+   "en": "Former 19th-century industrial complex beneath the 25 de Abril Bridge, now filled with shops, restaurants, studios and the Ler Devagar bookshop.",
+   "pt": "Antigo complexo industrial do século XIX junto à Ponte 25 de Abril, hoje ocupado por lojas, restaurantes, ateliers e a livraria Ler Devagar."
+  },
+  {
+   "id": "lis-parque-eduardo-vii",
+   "n": "Eduardo VII Park",
+   "a": "Marquês de Pombal",
+   "lat": 38.7285,
+   "lng": -9.1545,
+   "k": "park",
+   "free": true,
+   "en": "Lisbon's largest central park, named after King Edward VII's 1903 visit. From the top there is a long view down Avenida da Liberdade to the Tagus.",
+   "pt": "O maior parque do centro de Lisboa, com o nome do Rei Eduardo VII, que visitou a cidade em 1903. Do topo avista-se a Avenida da Liberdade até ao Tejo."
+  },
+  {
+   "id": "lis-gulbenkian",
+   "n": "Calouste Gulbenkian Museum",
+   "a": "Avenidas Novas",
+   "lat": 38.7375,
+   "lng": -9.1545,
+   "k": "museum",
+   "top": true,
+   "url": "https://gulbenkian.pt",
+   "en": "Museum of the Calouste Gulbenkian Foundation, with the collector's art from ancient Egypt to René Lalique and a modern collection. It is set in landscaped gardens.",
+   "pt": "Museu da Fundação Calouste Gulbenkian, com a coleção do fundador, do Antigo Egito a René Lalique, e uma coleção moderna. Rodeado por jardins paisagísticos."
+  },
+  {
+   "id": "lis-oceanario",
+   "n": "Lisbon Oceanarium",
+   "a": "Parque das Nações",
+   "lat": 38.7635,
+   "lng": -9.0937,
+   "k": "sight",
+   "top": true,
+   "url": "https://www.oceanario.pt",
+   "en": "Large aquarium built for Expo 98 on a pier in Parque das Nações. A huge central tank is surrounded by habitats representing different oceans.",
+   "pt": "Grande aquário construído para a Expo 98, sobre um cais no Parque das Nações. Um enorme tanque central é rodeado por habitats que representam diferentes oceanos."
+  },
+  {
+   "id": "lis-maat",
+   "n": "MAAT",
+   "a": "Belém",
+   "lat": 38.6959,
+   "lng": -9.1945,
+   "k": "museum",
+   "url": "https://www.maat.pt",
+   "en": "Museum of Art, Architecture and Technology of the EDP Foundation, opened in 2016. Its curved riverside building by Amanda Levete has a walkable roof, next to the former Tejo power station.",
+   "pt": "Museu de Arte, Arquitetura e Tecnologia da Fundação EDP, inaugurado em 2016. O edifício curvo à beira-rio, de Amanda Levete, tem uma cobertura percorrível e fica junto à antiga Central Tejo."
+  },
+  {
+   "id": "lis-museu-coches",
+   "n": "National Coach Museum",
+   "a": "Belém",
+   "lat": 38.697,
+   "lng": -9.1987,
+   "k": "museum",
+   "en": "One of the world's finest collections of royal carriages, from the 16th to the 19th century. Most are shown in a modern building by Paulo Mendes da Rocha opened in 2015.",
+   "pt": "Uma das melhores coleções do mundo de coches reais, dos séculos XVI a XIX. A maioria está exposta num edifício moderno de Paulo Mendes da Rocha, inaugurado em 2015."
+  },
+  {
+   "id": "lis-padrao-descobrimentos",
+   "n": "Monument to the Discoveries",
+   "a": "Belém",
+   "lat": 38.6936,
+   "lng": -9.2057,
+   "k": "landmark",
+   "top": true,
+   "en": "Riverside monument completed in 1960 for the 500th anniversary of the death of Prince Henry the Navigator, with figures from the Age of Discovery. A large compass-rose map is set into the pavement in front.",
+   "pt": "Monumento à beira-rio concluído em 1960, nos 500 anos da morte do Infante D. Henrique, com figuras da época dos Descobrimentos. À sua frente, uma grande rosa-dos-ventos com um mapa-múndi está embutida no pavimento."
+  },
+  {
+   "id": "lis-palacio-ajuda",
+   "n": "Ajuda National Palace",
+   "a": "Ajuda",
+   "lat": 38.7076,
+   "lng": -9.1982,
+   "k": "palace",
+   "en": "19th-century royal palace, home of King Luís I and Queen Maria Pia, with its original furnished rooms. A new wing completed in the 2020s houses the Royal Treasure Museum.",
+   "pt": "Palácio real do século XIX, residência do Rei D. Luís I e da Rainha D. Maria Pia, com as salas mobiladas de origem. Uma nova ala concluída na década de 2020 acolhe o Museu do Tesouro Real."
+  },
+  {
+   "id": "lis-cristo-rei",
+   "n": "Cristo Rei",
+   "a": "Almada",
+   "lat": 38.6781,
+   "lng": -9.1713,
+   "k": "view",
+   "en": "Monument to Christ on the south bank of the Tagus, inaugurated in 1959 and inspired by the statue in Rio de Janeiro. Its viewing platform looks back across the river to Lisbon and the 25 de Abril Bridge.",
+   "pt": "Monumento a Cristo na margem sul do Tejo, inaugurado em 1959 e inspirado na estátua do Rio de Janeiro. O miradouro avista Lisboa e a Ponte 25 de Abril do outro lado do rio."
+  }
+ ],
+ "streets": [
+  {
+   "id": "lis-rua-augusta",
+   "n": "Rua Augusta",
+   "a": "Baixa",
+   "lat": 38.71,
+   "lng": -9.1371,
+   "en": "Pedestrian main street of the Baixa, laid out in the grid rebuilt after the 1755 earthquake. It runs from Rossio towards the triumphal arch on the river.",
+   "pt": "Rua pedonal principal da Baixa, traçada na malha reconstruída após o terramoto de 1755. Liga o Rossio ao arco triunfal junto ao rio."
+  },
+  {
+   "id": "lis-av-liberdade",
+   "n": "Avenida da Liberdade",
+   "a": "Avenida",
+   "lat": 38.72,
+   "lng": -9.1455,
+   "en": "Tree-lined 19th-century boulevard from Restauradores to Marquês de Pombal, with gardens, kiosks and international fashion shops.",
+   "pt": "Avenida arborizada do século XIX entre os Restauradores e o Marquês de Pombal, com jardins, quiosques e lojas de marcas internacionais."
+  },
+  {
+   "id": "lis-bairro-alto",
+   "n": "Bairro Alto",
+   "a": "Bairro Alto",
+   "lat": 38.713,
+   "lng": -9.1452,
+   "en": "Hilltop grid of narrow streets laid out in the 16th century, quiet by day and Lisbon's busiest nightlife area after dark, with bars and fado houses.",
+   "pt": "Malha de ruas estreitas no alto da colina, traçada no século XVI, calma de dia e a zona de vida noturna mais animada de Lisboa, com bares e casas de fado."
+  },
+  {
+   "id": "lis-alfama",
+   "n": "Alfama",
+   "a": "Alfama",
+   "lat": 38.7115,
+   "lng": -9.1295,
+   "en": "Lisbon's oldest district, a maze of alleys, stairways and small squares that largely survived the 1755 earthquake. It is at its liveliest during the Santo António festivities in June.",
+   "pt": "O bairro mais antigo de Lisboa, um labirinto de becos, escadinhas e largos que resistiu em grande parte ao terramoto de 1755. Fica mais animado durante as festas de Santo António, em junho."
+  },
+  {
+   "id": "lis-mouraria",
+   "n": "Mouraria",
+   "a": "Mouraria",
+   "lat": 38.7157,
+   "lng": -9.1347,
+   "en": "Historic quarter below the castle where the Moorish population was settled after the 1147 conquest. Often called the birthplace of fado, it is now one of the city's most multicultural neighbourhoods.",
+   "pt": "Bairro histórico abaixo do castelo onde foi instalada a população moura após a conquista de 1147. Considerado o berço do fado, é hoje um dos bairros mais multiculturais da cidade."
+  },
+  {
+   "id": "lis-principe-real",
+   "n": "Príncipe Real",
+   "a": "Príncipe Real",
+   "lat": 38.7167,
+   "lng": -9.1487,
+   "en": "Elegant neighbourhood around a garden with a vast spreading cedar, known for its 19th-century mansions, concept stores and cafés.",
+   "pt": "Bairro elegante em torno de um jardim com um enorme cedro, conhecido pelos palacetes do século XIX, lojas de autor e cafés."
+  },
+  {
+   "id": "lis-rua-nova-carvalho",
+   "n": "Rua Nova do Carvalho (Pink Street)",
+   "a": "Cais do Sodré",
+   "lat": 38.707,
+   "lng": -9.1443,
+   "en": "Short street in Cais do Sodré painted pink, once a sailors' quarter and now a busy nightlife strip of bars and clubs.",
+   "pt": "Rua curta do Cais do Sodré pintada de cor-de-rosa, antiga zona de marinheiros e hoje cheia de bares e discotecas."
+  }
+ ],
+ "walks": [
+  {
+   "id": "lis-mouraria-alfama",
+   "en_n": "Mouraria and Graça down to Alfama",
+   "pt_n": "Da Mouraria e Graça até Alfama",
+   "km": 2.5,
+   "min": 38,
+   "en": "Climb from Martim Moniz through Mouraria to one of the city's highest viewpoints, then cross Graça to São Vicente and the flea-market square before dropping into Alfama. Steep in places.",
+   "pt": "Suba do Martim Moniz pela Mouraria até um dos miradouros mais altos da cidade, atravesse a Graça até São Vicente e ao largo da feira e desça depois para Alfama. Inclinado em alguns troços.",
+   "pts": [
+    {
+     "n": "Praça do Martim Moniz",
+     "lat": 38.7163,
+     "lng": -9.136
+    },
+    {
+     "n": "Largo da Severa (Mouraria)",
+     "lat": 38.7157,
+     "lng": -9.1347
+    },
+    {
+     "n": "Miradouro da Senhora do Monte",
+     "lat": 38.7191,
+     "lng": -9.1328
+    },
+    {
+     "n": "Mosteiro de São Vicente de Fora",
+     "lat": 38.7152,
+     "lng": -9.1267
+    },
+    {
+     "n": "Campo de Santa Clara (Feira da Ladra)",
+     "lat": 38.716,
+     "lng": -9.1257
+    },
+    {
+     "n": "Panteão Nacional",
+     "lat": 38.7149,
+     "lng": -9.1247
+    },
+    {
+     "n": "Museu do Fado",
+     "lat": 38.711,
+     "lng": -9.1275
+    }
+   ]
+  },
+  {
+   "id": "lis-avenida-gulbenkian",
+   "en_n": "Avenida da Liberdade to the Gulbenkian",
+   "pt_n": "Da Avenida da Liberdade à Gulbenkian",
+   "km": 3.1,
+   "min": 47,
+   "en": "Walk up Lisbon's grand boulevard to Marquês de Pombal, climb through Eduardo VII Park for the view back to the river and finish in the Gulbenkian gardens.",
+   "pt": "Suba a grande avenida de Lisboa até ao Marquês de Pombal, atravesse o Parque Eduardo VII para ver o rio lá do alto e termine nos jardins da Gulbenkian.",
+   "pts": [
+    {
+     "n": "Praça dos Restauradores",
+     "lat": 38.7155,
+     "lng": -9.1417
+    },
+    {
+     "n": "Avenida da Liberdade",
+     "lat": 38.72,
+     "lng": -9.1455
+    },
+    {
+     "n": "Marquês de Pombal",
+     "lat": 38.7253,
+     "lng": -9.15
+    },
+    {
+     "n": "Parque Eduardo VII (topo)",
+     "lat": 38.7303,
+     "lng": -9.1548
+    },
+    {
+     "n": "Museu Calouste Gulbenkian",
+     "lat": 38.7375,
+     "lng": -9.1545
+    }
+   ]
+  },
+  {
+   "id": "lis-principe-real-cais",
+   "en_n": "Príncipe Real to Cais do Sodré",
+   "pt_n": "Do Príncipe Real ao Cais do Sodré",
+   "km": 1.7,
+   "min": 26,
+   "en": "A mostly downhill walk from the Príncipe Real garden through Bairro Alto to the Santa Catarina viewpoint, then down the Bica funicular street to the riverside food hall and Pink Street.",
+   "pt": "Um percurso quase sempre a descer, do jardim do Príncipe Real pelo Bairro Alto até ao Miradouro de Santa Catarina, descendo depois a rua do Elevador da Bica até ao Mercado da Ribeira e à Rua Cor-de-Rosa.",
+   "pts": [
+    {
+     "n": "Jardim do Príncipe Real",
+     "lat": 38.7167,
+     "lng": -9.1487
+    },
+    {
+     "n": "Bairro Alto",
+     "lat": 38.713,
+     "lng": -9.1452
+    },
+    {
+     "n": "Miradouro de Santa Catarina",
+     "lat": 38.7096,
+     "lng": -9.1474
+    },
+    {
+     "n": "Rua da Bica de Duarte Belo",
+     "lat": 38.709,
+     "lng": -9.1465
+    },
+    {
+     "n": "Time Out Market (Mercado da Ribeira)",
+     "lat": 38.7069,
+     "lng": -9.1458
+    },
+    {
+     "n": "Rua Nova do Carvalho",
+     "lat": 38.707,
+     "lng": -9.1443
+    }
+   ]
+  }
+ ]
+}

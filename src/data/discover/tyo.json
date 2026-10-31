@@ -1,0 +1,440 @@
+{
+ "places": [
+  {
+   "id": "tyo-tokyo-skytree",
+   "n": "Tokyo Skytree",
+   "ja": "東京スカイツリー",
+   "a": "Oshiage, Sumida",
+   "lat": 35.7101,
+   "lng": 139.8107,
+   "k": "view",
+   "top": true,
+   "url": "https://www.tokyo-skytree.jp",
+   "en": "At 634 m, the broadcasting tower opened in 2012 is the tallest tower in the world. Its two observation decks, at 350 m and 450 m, can see as far as Mount Fuji on clear days.",
+   "pt": "Com 634 m, a torre de telecomunicações inaugurada em 2012 é a torre mais alta do mundo. Dos dois miradouros, a 350 m e a 450 m, avista-se o monte Fuji nos dias limpos."
+  },
+  {
+   "id": "tyo-ueno-park",
+   "n": "Ueno Park",
+   "ja": "上野恩賜公園",
+   "a": "Ueno, Taito",
+   "lat": 35.7156,
+   "lng": 139.774,
+   "k": "park",
+   "top": true,
+   "free": true,
+   "en": "One of Japan's first public parks, opened in 1873, it holds major museums, Ueno Zoo, Shinobazu Pond and some of Tokyo's best-loved cherry blossoms.",
+   "pt": "Um dos primeiros parques públicos do Japão, aberto em 1873, reúne grandes museus, o Jardim Zoológico de Ueno, o lago Shinobazu e algumas das cerejeiras em flor mais apreciadas de Tóquio."
+  },
+  {
+   "id": "tyo-tokyo-national-museum",
+   "n": "Tokyo National Museum",
+   "ja": "東京国立博物館",
+   "a": "Ueno Park",
+   "lat": 35.7189,
+   "lng": 139.7765,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.tnm.jp",
+   "en": "Founded in 1872, Japan's oldest and largest museum holds a vast collection of Japanese and Asian art, including samurai armour, swords, ceramics and national treasures.",
+   "pt": "Fundado em 1872, o museu mais antigo e maior do Japão guarda uma vasta coleção de arte japonesa e asiática, incluindo armaduras de samurai, espadas, cerâmica e tesouros nacionais."
+  },
+  {
+   "id": "tyo-tsukiji-outer-market",
+   "n": "Tsukiji Outer Market",
+   "ja": "築地場外市場",
+   "a": "Tsukiji, Chuo",
+   "lat": 35.6654,
+   "lng": 139.7707,
+   "k": "market",
+   "top": true,
+   "url": "https://www.tsukiji.or.jp",
+   "en": "Narrow lanes of food stalls, sushi counters and kitchenware shops that stayed in Tsukiji when the wholesale fish market moved to Toyosu in 2018.",
+   "pt": "Ruelas de bancas de comida, balcões de sushi e lojas de utensílios de cozinha que ficaram em Tsukiji quando o mercado grossista de peixe se mudou para Toyosu, em 2018."
+  },
+  {
+   "id": "tyo-toyosu-market",
+   "n": "Toyosu Market",
+   "ja": "豊洲市場",
+   "a": "Toyosu, Koto",
+   "lat": 35.6433,
+   "lng": 139.7817,
+   "k": "market",
+   "en": "Tokyo's central wholesale market since 2018, when it replaced the inner market at Tsukiji. Visitors can watch the early-morning tuna auction from viewing galleries and eat sushi in the market restaurants.",
+   "pt": "O mercado grossista central de Tóquio desde 2018, quando substituiu o mercado interior de Tsukiji. Os visitantes podem ver o leilão de atum de madrugada a partir de galerias e comer sushi nos restaurantes do mercado."
+  },
+  {
+   "id": "tyo-tokyo-tower",
+   "n": "Tokyo Tower",
+   "ja": "東京タワー",
+   "a": "Shibakoen, Minato",
+   "lat": 35.6586,
+   "lng": 139.7454,
+   "k": "view",
+   "top": true,
+   "url": "https://www.tokyotower.co.jp",
+   "en": "The red and white 333 m tower, completed in 1958 and inspired by the Eiffel Tower, is a symbol of post-war Tokyo, with observation decks over the city centre.",
+   "pt": "A torre vermelha e branca de 333 m, concluída em 1958 e inspirada na Torre Eiffel, é um símbolo de Tóquio do pós-guerra, com miradouros sobre o centro da cidade."
+  },
+  {
+   "id": "tyo-zojoji",
+   "n": "Zojo-ji Temple",
+   "ja": "増上寺",
+   "a": "Shibakoen, Minato",
+   "lat": 35.6575,
+   "lng": 139.7483,
+   "k": "church",
+   "free": true,
+   "url": "https://www.zojoji.or.jp",
+   "en": "A major Buddhist temple of the Jodo sect and family temple of the Tokugawa shoguns, with the Sangedatsumon gate from 1622 and Tokyo Tower rising behind the main hall.",
+   "pt": "Um importante templo budista da escola Jodo e templo familiar dos xóguns Tokugawa, com o portão Sangedatsumon, de 1622, e a Torre de Tóquio a erguer-se atrás do pavilhão principal."
+  },
+  {
+   "id": "tyo-roppongi-hills",
+   "n": "Roppongi Hills",
+   "ja": "六本木ヒルズ",
+   "a": "Roppongi, Minato",
+   "lat": 35.6604,
+   "lng": 139.7292,
+   "k": "view",
+   "url": "https://www.roppongihills.com",
+   "en": "A complex opened in 2003 around the Mori Tower, home to the Tokyo City View observation deck and the Mori Art Museum near the top, and Louise Bourgeois's giant spider sculpture Maman at its foot.",
+   "pt": "Um complexo inaugurado em 2003 em torno da Mori Tower, com o miradouro Tokyo City View e o Museu de Arte Mori perto do topo, e a aranha gigante Maman, de Louise Bourgeois, à entrada."
+  },
+  {
+   "id": "tyo-national-art-center",
+   "n": "The National Art Center, Tokyo",
+   "ja": "国立新美術館",
+   "a": "Roppongi, Minato",
+   "lat": 35.6653,
+   "lng": 139.7264,
+   "k": "gallery",
+   "url": "https://www.nact.jp",
+   "en": "Opened in 2007 in a building by Kisho Kurokawa with a wave-shaped glass façade, it has no permanent collection and instead hosts large temporary exhibitions.",
+   "pt": "Inaugurado em 2007 num edifício de Kisho Kurokawa com fachada de vidro ondulada, não tem coleção permanente e acolhe grandes exposições temporárias."
+  },
+  {
+   "id": "tyo-shinjuku-gyoen",
+   "n": "Shinjuku Gyoen National Garden",
+   "ja": "新宿御苑",
+   "a": "Shinjuku",
+   "lat": 35.6852,
+   "lng": 139.71,
+   "k": "park",
+   "top": true,
+   "url": "https://www.env.go.jp/garden/shinjukugyoen/",
+   "en": "A former imperial garden opened to the public in 1949, combining traditional Japanese, English landscape and French formal gardens; one of Tokyo's favourite cherry blossom spots.",
+   "pt": "Antigo jardim imperial aberto ao público em 1949, que combina jardim tradicional japonês, jardim paisagista inglês e jardim formal francês; um dos locais preferidos de Tóquio para ver as cerejeiras em flor."
+  },
+  {
+   "id": "tyo-yoyogi-park",
+   "n": "Yoyogi Park",
+   "ja": "代々木公園",
+   "a": "Shibuya",
+   "lat": 35.6717,
+   "lng": 139.6949,
+   "k": "park",
+   "free": true,
+   "en": "A large, open city park next to the Meiji Jingu forest, on the site of the 1964 Olympic athletes' village; busy at weekends with picnics, musicians and dancers.",
+   "pt": "Um grande parque urbano aberto junto à floresta do Meiji Jingu, no local da aldeia olímpica de 1964; animado aos fins de semana com piqueniques, músicos e dançarinos."
+  },
+  {
+   "id": "tyo-hamarikyu",
+   "n": "Hama-rikyu Gardens",
+   "ja": "浜離宮恩賜庭園",
+   "a": "Shiodome, Chuo",
+   "lat": 35.6597,
+   "lng": 139.7636,
+   "k": "park",
+   "en": "A former garden of the Tokugawa shoguns on Tokyo Bay, with a tidal pond fed by seawater, a teahouse on an island and the Shiodome skyscrapers as a backdrop.",
+   "pt": "Antigo jardim dos xóguns Tokugawa na baía de Tóquio, com um lago de maré alimentado por água do mar, uma casa de chá numa ilha e os arranha-céus de Shiodome como pano de fundo."
+  },
+  {
+   "id": "tyo-imperial-palace-east-gardens",
+   "n": "East Gardens of the Imperial Palace",
+   "ja": "皇居東御苑",
+   "a": "Chiyoda",
+   "lat": 35.6873,
+   "lng": 139.7568,
+   "k": "park",
+   "free": true,
+   "en": "Gardens laid out on the inner grounds of the former Edo Castle, including the stone base of the old main keep; entered through the Ote-mon, Hirakawa-mon or Kitahanebashi-mon gates.",
+   "pt": "Jardins instalados no recinto interior do antigo Castelo de Edo, incluindo a base de pedra da antiga torre principal; entra-se pelos portões Ote-mon, Hirakawa-mon ou Kitahanebashi-mon."
+  },
+  {
+   "id": "tyo-odaiba",
+   "n": "Odaiba",
+   "ja": "お台場",
+   "a": "Tokyo Bay",
+   "lat": 35.629,
+   "lng": 139.775,
+   "k": "district",
+   "en": "An artificial island in Tokyo Bay, linked to the centre by the Rainbow Bridge and the driverless Yurikamome line, with a seaside park, shopping malls and the Fuji TV building.",
+   "pt": "Uma ilha artificial na baía de Tóquio, ligada ao centro pela Rainbow Bridge e pela linha automática Yurikamome, com um parque à beira-mar, centros comerciais e o edifício da Fuji TV."
+  },
+  {
+   "id": "tyo-akihabara",
+   "n": "Akihabara",
+   "ja": "秋葉原",
+   "a": "Chiyoda",
+   "lat": 35.6984,
+   "lng": 139.7731,
+   "k": "district",
+   "top": true,
+   "en": "Tokyo's 'Electric Town', packed with electronics stores, anime and manga shops, game arcades and maid cafés around Chuo-dori.",
+   "pt": "A 'Cidade Elétrica' de Tóquio, cheia de lojas de eletrónica, lojas de anime e manga, salas de jogos e maid cafés em torno da Chuo-dori."
+  },
+  {
+   "id": "tyo-nezu-shrine",
+   "n": "Nezu Shrine",
+   "ja": "根津神社",
+   "a": "Bunkyo",
+   "lat": 35.7202,
+   "lng": 139.7607,
+   "k": "church",
+   "free": true,
+   "en": "A Shinto shrine whose lacquered buildings, completed in 1706, are Important Cultural Properties; known for its tunnel of small red torii gates and its azalea garden.",
+   "pt": "Um santuário xintoísta cujos edifícios lacados, concluídos em 1706, são Bens Culturais Importantes; conhecido pelo túnel de pequenos torii vermelhos e pelo jardim de azáleas."
+  },
+  {
+   "id": "tyo-kanda-myojin",
+   "n": "Kanda Myojin",
+   "ja": "神田明神",
+   "a": "Sotokanda, Chiyoda",
+   "lat": 35.7019,
+   "lng": 139.768,
+   "k": "church",
+   "free": true,
+   "en": "A Shinto shrine with a history of some 1,300 years, a short walk from Akihabara, and home of the Kanda Matsuri, one of Tokyo's great festivals.",
+   "pt": "Um santuário xintoísta com cerca de 1300 anos de história, a poucos minutos a pé de Akihabara, e sede do Kanda Matsuri, um dos grandes festivais de Tóquio."
+  },
+  {
+   "id": "tyo-ghibli-museum",
+   "n": "Ghibli Museum, Mitaka",
+   "ja": "三鷹の森ジブリ美術館",
+   "a": "Mitaka",
+   "lat": 35.6962,
+   "lng": 139.5704,
+   "k": "museum",
+   "url": "https://www.ghibli-museum.jp",
+   "en": "Designed by Hayao Miyazaki and opened in 2001 on the edge of Inokashira Park, the museum of Studio Ghibli's animation can only be visited with tickets booked in advance.",
+   "pt": "Desenhado por Hayao Miyazaki e inaugurado em 2001 na orla do Parque Inokashira, o museu da animação do Studio Ghibli só pode ser visitado com bilhetes reservados com antecedência."
+  },
+  {
+   "id": "tyo-rikugien",
+   "n": "Rikugien Garden",
+   "ja": "六義園",
+   "a": "Komagome, Bunkyo",
+   "lat": 35.7331,
+   "lng": 139.7461,
+   "k": "park",
+   "en": "An Edo-period strolling garden created around 1700 by Yanagisawa Yoshiyasu, a senior official of the fifth Tokugawa shogun, with a central pond and hills recreating scenes from famous poems.",
+   "pt": "Um jardim de passeio do período Edo, criado por volta de 1700 por Yanagisawa Yoshiyasu, alto funcionário do quinto xógum Tokugawa, com um lago central e colinas que recriam cenas de poemas famosos."
+  },
+  {
+   "id": "tyo-kabukiza",
+   "n": "Kabuki-za Theatre",
+   "ja": "歌舞伎座",
+   "a": "Higashi-Ginza, Chuo",
+   "lat": 35.6695,
+   "lng": 139.7678,
+   "k": "landmark",
+   "url": "https://www.kabuki-za.co.jp",
+   "en": "Tokyo's principal kabuki theatre; the current building, designed by Kengo Kuma, reopened in 2013 keeping the traditional façade in front of a modern tower.",
+   "pt": "O principal teatro de kabuki de Tóquio; o edifício atual, desenhado por Kengo Kuma, reabriu em 2013 mantendo a fachada tradicional diante de uma torre moderna."
+  },
+  {
+   "id": "tyo-golden-gai",
+   "n": "Shinjuku Golden Gai",
+   "ja": "新宿ゴールデン街",
+   "a": "Kabukicho, Shinjuku",
+   "lat": 35.694,
+   "lng": 139.7046,
+   "k": "food",
+   "en": "A tight grid of six narrow alleys with around 200 tiny bars, many seating only a handful of people, a survivor of post-war Shinjuku.",
+   "pt": "Uma pequena malha de seis ruelas estreitas com cerca de 200 bares minúsculos, muitos com lugar para meia dúzia de pessoas, um sobrevivente da Shinjuku do pós-guerra."
+  }
+ ],
+ "streets": [
+  {
+   "id": "tyo-takeshita-dori",
+   "n": "Takeshita Street",
+   "ja": "竹下通り",
+   "a": "Harajuku",
+   "lat": 35.6712,
+   "lng": 139.7045,
+   "en": "A narrow pedestrian street opposite Harajuku Station, famous for youth fashion, crêpe stands and colourful street style.",
+   "pt": "Uma rua pedonal estreita em frente à estação de Harajuku, famosa pela moda jovem, pelas bancas de crepes e pelo estilo de rua colorido."
+  },
+  {
+   "id": "tyo-omotesando",
+   "n": "Omotesando",
+   "ja": "表参道",
+   "a": "Harajuku / Aoyama",
+   "lat": 35.6672,
+   "lng": 139.7085,
+   "en": "A broad avenue lined with zelkova trees, originally the approach to Meiji Jingu, now known for luxury boutiques in buildings by leading architects.",
+   "pt": "Uma avenida larga ladeada de zelkovas, originalmente o acesso ao Meiji Jingu, hoje conhecida pelas lojas de luxo em edifícios de grandes arquitetos."
+  },
+  {
+   "id": "tyo-ameyoko",
+   "n": "Ameya-Yokocho (Ameyoko)",
+   "ja": "アメ横",
+   "a": "Ueno",
+   "lat": 35.7092,
+   "lng": 139.7744,
+   "en": "A busy market street running beside the railway tracks between Ueno and Okachimachi stations, with stalls selling food, snacks, clothing and cosmetics.",
+   "pt": "Uma movimentada rua de mercado ao longo da linha de comboio entre as estações de Ueno e Okachimachi, com bancas de comida, petiscos, roupa e cosmética."
+  },
+  {
+   "id": "tyo-yanaka-ginza",
+   "n": "Yanaka Ginza",
+   "ja": "谷中銀座商店街",
+   "a": "Yanaka",
+   "lat": 35.7276,
+   "lng": 139.766,
+   "en": "A small old-style shopping street of family-run shops and snack stands in Yanaka, one of the parts of Tokyo that best preserves the feel of the old city.",
+   "pt": "Uma pequena rua comercial à moda antiga, com lojas familiares e bancas de petiscos, em Yanaka, uma das zonas de Tóquio que melhor conserva o ambiente da cidade antiga."
+  },
+  {
+   "id": "tyo-kappabashi",
+   "n": "Kappabashi Kitchen Town",
+   "ja": "かっぱ橋道具街",
+   "a": "Asakusa / Ueno",
+   "lat": 35.7139,
+   "lng": 139.7887,
+   "en": "A street of shops supplying the restaurant trade, selling knives, pottery, kitchen tools and the realistic plastic food models seen in restaurant windows.",
+   "pt": "Uma rua de lojas que abastecem a restauração, com facas, louça, utensílios de cozinha e as réplicas realistas de comida em plástico que se veem nas montras dos restaurantes."
+  },
+  {
+   "id": "tyo-shimokitazawa",
+   "n": "Shimokitazawa",
+   "ja": "下北沢",
+   "a": "Setagaya",
+   "lat": 35.6615,
+   "lng": 139.668,
+   "en": "A laid-back neighbourhood of small streets known for vintage clothing shops, small theatres, live music venues and cafés.",
+   "pt": "Um bairro descontraído de ruas pequenas, conhecido pelas lojas de roupa vintage, pequenos teatros, salas de música ao vivo e cafés."
+  }
+ ],
+ "walks": [
+  {
+   "id": "tyo-ueno-yanaka",
+   "en_n": "Ueno Park to Yanaka",
+   "pt_n": "Do Parque de Ueno a Yanaka",
+   "km": 2.9,
+   "min": 44,
+   "en": "From Shinobazu Pond through Ueno Park's shrines and museums, past Yanaka Cemetery to the old-town shopping street of Yanaka Ginza.",
+   "pt": "Do lago Shinobazu, pelos santuários e museus do Parque de Ueno, passando pelo Cemitério de Yanaka até à rua comercial antiga de Yanaka Ginza.",
+   "pts": [
+    {
+     "n": "Shinobazu Pond Benten-do",
+     "lat": 35.7121,
+     "lng": 139.7703
+    },
+    {
+     "n": "Ueno Toshogu Shrine",
+     "lat": 35.7158,
+     "lng": 139.7714
+    },
+    {
+     "n": "Tokyo National Museum",
+     "lat": 35.7189,
+     "lng": 139.7765
+    },
+    {
+     "n": "Yanaka Cemetery",
+     "lat": 35.7245,
+     "lng": 139.7695
+    },
+    {
+     "n": "Yuyake Dandan steps",
+     "lat": 35.7277,
+     "lng": 139.7672
+    },
+    {
+     "n": "Yanaka Ginza",
+     "lat": 35.7276,
+     "lng": 139.766
+    }
+   ]
+  },
+  {
+   "id": "tyo-harajuku-omotesando",
+   "en_n": "Harajuku and Omotesando",
+   "pt_n": "Harajuku e Omotesando",
+   "km": 2.2,
+   "min": 33,
+   "en": "Through the crowds of Takeshita Street, then down the tree-lined Omotesando avenue to the Nezu Museum and its garden.",
+   "pt": "Pela multidão da Takeshita Street, descendo depois a arborizada avenida Omotesando até ao Museu Nezu e ao seu jardim.",
+   "pts": [
+    {
+     "n": "Harajuku Station",
+     "lat": 35.6702,
+     "lng": 139.7027
+    },
+    {
+     "n": "Takeshita Street",
+     "lat": 35.6712,
+     "lng": 139.7045
+    },
+    {
+     "n": "Jingumae crossing (Meiji-dori / Omotesando)",
+     "lat": 35.6685,
+     "lng": 139.7055
+    },
+    {
+     "n": "Omotesando Hills",
+     "lat": 35.6671,
+     "lng": 139.7088
+    },
+    {
+     "n": "Omotesando crossing (Aoyama-dori)",
+     "lat": 35.6652,
+     "lng": 139.7123
+    },
+    {
+     "n": "Nezu Museum",
+     "lat": 35.6623,
+     "lng": 139.7172
+    }
+   ]
+  },
+  {
+   "id": "tyo-akihabara-ochanomizu",
+   "en_n": "Akihabara to Ochanomizu",
+   "pt_n": "De Akihabara a Ochanomizu",
+   "km": 1.3,
+   "min": 20,
+   "en": "From the neon of Akihabara's Electric Town up to Kanda Myojin shrine, the Confucian Yushima Seido and across the Kanda River to the Orthodox Nikolai-do cathedral.",
+   "pt": "Dos néones da Cidade Elétrica de Akihabara até ao santuário Kanda Myojin, ao templo confucionista Yushima Seido e, atravessando o rio Kanda, à catedral ortodoxa Nikolai-do.",
+   "pts": [
+    {
+     "n": "Akihabara Electric Town (Chuo-dori)",
+     "lat": 35.6995,
+     "lng": 139.7712
+    },
+    {
+     "n": "Kanda Myojin",
+     "lat": 35.7019,
+     "lng": 139.768
+    },
+    {
+     "n": "Yushima Seido",
+     "lat": 35.7006,
+     "lng": 139.7664
+    },
+    {
+     "n": "Hijiri-bashi Bridge",
+     "lat": 35.6997,
+     "lng": 139.7658
+    },
+    {
+     "n": "Holy Resurrection Cathedral (Nikolai-do)",
+     "lat": 35.6972,
+     "lng": 139.7653
+    }
+   ]
+  }
+ ]
+}

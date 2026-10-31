@@ -1,0 +1,432 @@
+{
+ "places": [
+  {
+   "id": "par-musee-orsay",
+   "n": "Musée d'Orsay",
+   "a": "7th arr.",
+   "lat": 48.86,
+   "lng": 2.3266,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.musee-orsay.fr",
+   "en": "Housed in a former railway station built for the 1900 World's Fair, it holds the world's largest collection of Impressionist art.",
+   "pt": "Instalado numa antiga estação ferroviária construída para a Exposição Universal de 1900, tem a maior coleção de arte impressionista do mundo."
+  },
+  {
+   "id": "par-orangerie",
+   "n": "Musée de l'Orangerie",
+   "a": "1st arr.",
+   "lat": 48.8638,
+   "lng": 2.3227,
+   "k": "museum",
+   "url": "https://www.musee-orangerie.fr",
+   "en": "A small museum at the western end of the Tuileries, famous for Monet's huge Water Lilies paintings displayed in two oval rooms.",
+   "pt": "Um pequeno museu no extremo oeste das Tulherias, famoso pelos enormes Nenúfares de Monet expostos em duas salas ovais."
+  },
+  {
+   "id": "par-musee-rodin",
+   "n": "Musée Rodin",
+   "a": "7th arr.",
+   "lat": 48.8553,
+   "lng": 2.3158,
+   "k": "museum",
+   "url": "https://www.musee-rodin.fr",
+   "en": "Rodin's sculptures in the Hôtel Biron, an 18th-century mansion whose rose garden is home to The Thinker.",
+   "pt": "As esculturas de Rodin no Hôtel Biron, uma mansão do século XVIII cujo jardim de rosas acolhe O Pensador."
+  },
+  {
+   "id": "par-invalides",
+   "n": "Les Invalides",
+   "a": "7th arr.",
+   "lat": 48.8562,
+   "lng": 2.3125,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.musee-armee.fr",
+   "en": "Built under Louis XIV for war veterans, it houses the Army Museum and, beneath its golden dome, the tomb of Napoleon.",
+   "pt": "Construído no reinado de Luís XIV para veteranos de guerra, alberga o Museu do Exército e, sob a cúpula dourada, o túmulo de Napoleão."
+  },
+  {
+   "id": "par-pantheon",
+   "n": "Panthéon",
+   "a": "Latin Quarter",
+   "lat": 48.8462,
+   "lng": 2.3464,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.paris-pantheon.fr",
+   "en": "A neoclassical monument on the Montagne Sainte-Geneviève whose crypt holds figures such as Voltaire, Victor Hugo and Marie Curie.",
+   "pt": "Um monumento neoclássico na Montagne Sainte-Geneviève, cuja cripta guarda figuras como Voltaire, Victor Hugo e Marie Curie."
+  },
+  {
+   "id": "par-jardin-luxembourg",
+   "n": "Jardin du Luxembourg",
+   "a": "6th arr.",
+   "lat": 48.8462,
+   "lng": 2.3372,
+   "k": "park",
+   "top": true,
+   "free": true,
+   "en": "A formal garden created for Marie de' Medici in the 17th century, around the palace that now houses the French Senate.",
+   "pt": "Um jardim formal criado para Maria de Médici no século XVII, em torno do palácio que hoje acolhe o Senado francês."
+  },
+  {
+   "id": "par-place-des-vosges",
+   "n": "Place des Vosges",
+   "a": "Le Marais",
+   "lat": 48.8556,
+   "lng": 2.3655,
+   "k": "sight",
+   "en": "The oldest planned square in Paris, inaugurated in 1612, framed by red-brick arcaded houses; Victor Hugo lived at No. 6.",
+   "pt": "A praça planeada mais antiga de Paris, inaugurada em 1612 e rodeada de casas de tijolo vermelho com arcadas; Victor Hugo viveu no n.º 6."
+  },
+  {
+   "id": "par-musee-picasso",
+   "n": "Musée Picasso",
+   "a": "Le Marais",
+   "lat": 48.8598,
+   "lng": 2.3624,
+   "k": "museum",
+   "url": "https://www.museepicassoparis.fr",
+   "en": "One of the largest collections of Picasso's work, displayed in the Hôtel Salé, a 17th-century mansion in the Marais.",
+   "pt": "Uma das maiores coleções da obra de Picasso, exposta no Hôtel Salé, uma mansão do século XVII no Marais."
+  },
+  {
+   "id": "par-carnavalet",
+   "n": "Musée Carnavalet",
+   "a": "Le Marais",
+   "lat": 48.8576,
+   "lng": 2.3625,
+   "k": "museum",
+   "free": true,
+   "url": "https://www.carnavalet.paris.fr",
+   "en": "The museum of the history of Paris, set in two Marais mansions, telling the city's story from prehistory to today.",
+   "pt": "O museu da história de Paris, instalado em duas mansões do Marais, conta a história da cidade desde a pré-história até hoje."
+  },
+  {
+   "id": "par-opera-garnier",
+   "n": "Palais Garnier",
+   "a": "Opéra, 9th arr.",
+   "lat": 48.872,
+   "lng": 2.3316,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.operadeparis.fr",
+   "en": "Charles Garnier's lavish opera house, opened in 1875, with a grand marble staircase and a ceiling painted by Marc Chagall.",
+   "pt": "A sumptuosa ópera de Charles Garnier, inaugurada em 1875, com uma grandiosa escadaria de mármore e um teto pintado por Marc Chagall."
+  },
+  {
+   "id": "par-saint-germain-des-pres",
+   "n": "Église de Saint-Germain-des-Prés",
+   "a": "6th arr.",
+   "lat": 48.8539,
+   "lng": 2.3343,
+   "k": "church",
+   "free": true,
+   "en": "One of the oldest churches in Paris, with a Romanesque bell tower dating from around the year 1000.",
+   "pt": "Uma das igrejas mais antigas de Paris, com uma torre sineira românica que remonta a cerca do ano 1000."
+  },
+  {
+   "id": "par-saint-sulpice",
+   "n": "Église Saint-Sulpice",
+   "a": "6th arr.",
+   "lat": 48.851,
+   "lng": 2.3348,
+   "k": "church",
+   "free": true,
+   "en": "A vast church with two mismatched towers and murals by Eugène Delacroix, facing a square with a monumental fountain.",
+   "pt": "Uma enorme igreja com duas torres diferentes e murais de Eugène Delacroix, virada para uma praça com uma fonte monumental."
+  },
+  {
+   "id": "par-pere-lachaise",
+   "n": "Père Lachaise Cemetery",
+   "a": "20th arr.",
+   "lat": 48.8614,
+   "lng": 2.3933,
+   "k": "sight",
+   "top": true,
+   "en": "Opened in 1804, Paris's largest cemetery is the resting place of Chopin, Oscar Wilde, Édith Piaf and Jim Morrison.",
+   "pt": "Aberto em 1804, o maior cemitério de Paris é o local de repouso de Chopin, Oscar Wilde, Édith Piaf e Jim Morrison."
+  },
+  {
+   "id": "par-versailles",
+   "n": "Palace of Versailles",
+   "a": "Versailles",
+   "lat": 48.8049,
+   "lng": 2.1204,
+   "k": "palace",
+   "top": true,
+   "url": "https://www.chateauversailles.fr",
+   "en": "The former royal palace of Louis XIV, about 20 km west of Paris, with the Hall of Mirrors and vast formal gardens. A UNESCO World Heritage Site.",
+   "pt": "O antigo palácio real de Luís XIV, a cerca de 20 km a oeste de Paris, com a Galeria dos Espelhos e vastos jardins formais. Património Mundial da UNESCO."
+  },
+  {
+   "id": "par-catacombs",
+   "n": "Catacombs of Paris",
+   "a": "Denfert-Rochereau, 14th arr.",
+   "lat": 48.8339,
+   "lng": 2.3324,
+   "k": "sight",
+   "url": "https://www.catacombes.paris.fr",
+   "en": "Underground ossuary in former limestone quarries, where the remains of millions of Parisians were moved from the late 18th century.",
+   "pt": "Ossário subterrâneo em antigas pedreiras de calcário, para onde foram transferidos os restos de milhões de parisienses a partir do final do século XVIII."
+  },
+  {
+   "id": "par-jardin-des-plantes",
+   "n": "Jardin des Plantes",
+   "a": "5th arr.",
+   "lat": 48.844,
+   "lng": 2.3597,
+   "k": "park",
+   "free": true,
+   "en": "The city's main botanical garden, founded in 1635 as a royal garden of medicinal plants, home to the Grand Gallery of Evolution.",
+   "pt": "O principal jardim botânico da cidade, fundado em 1635 como jardim real de plantas medicinais, onde fica a Grande Galeria da Evolução."
+  },
+  {
+   "id": "par-marche-enfants-rouges",
+   "n": "Marché des Enfants Rouges",
+   "a": "Le Marais",
+   "lat": 48.8629,
+   "lng": 2.3617,
+   "k": "market",
+   "free": true,
+   "en": "The oldest covered market in Paris, founded in the early 17th century, with food stalls serving dishes from around the world.",
+   "pt": "O mercado coberto mais antigo de Paris, fundado no início do século XVII, com bancas de comida de várias partes do mundo."
+  },
+  {
+   "id": "par-buttes-chaumont",
+   "n": "Parc des Buttes-Chaumont",
+   "a": "19th arr.",
+   "lat": 48.8809,
+   "lng": 2.3828,
+   "k": "park",
+   "free": true,
+   "en": "A hilly park opened in 1867, with a lake, a waterfall and a small temple perched on a rocky cliff.",
+   "pt": "Um parque acidentado inaugurado em 1867, com um lago, uma cascata e um pequeno templo no alto de um penhasco rochoso."
+  },
+  {
+   "id": "par-petit-palais",
+   "n": "Petit Palais",
+   "a": "8th arr.",
+   "lat": 48.866,
+   "lng": 2.3147,
+   "k": "museum",
+   "free": true,
+   "url": "https://www.petitpalais.paris.fr",
+   "en": "Built for the 1900 World's Fair, it houses the City of Paris Museum of Fine Arts around a peaceful garden courtyard.",
+   "pt": "Construído para a Exposição Universal de 1900, alberga o Museu de Belas-Artes da Cidade de Paris, em torno de um tranquilo pátio ajardinado."
+  },
+  {
+   "id": "par-pont-alexandre-iii",
+   "n": "Pont Alexandre III",
+   "a": "7th / 8th arr.",
+   "lat": 48.8639,
+   "lng": 2.3136,
+   "k": "landmark",
+   "en": "The most ornate bridge in Paris, inaugurated in 1900, decorated with gilded statues and Art Nouveau lamps.",
+   "pt": "A ponte mais ornamentada de Paris, inaugurada em 1900, decorada com estátuas douradas e candeeiros Arte Nova."
+  },
+  {
+   "id": "par-ile-saint-louis",
+   "n": "Île Saint-Louis",
+   "a": "4th arr.",
+   "lat": 48.8516,
+   "lng": 2.3567,
+   "k": "district",
+   "en": "A quiet island in the Seine behind Notre-Dame, lined with 17th-century townhouses, small shops and ice-cream parlours.",
+   "pt": "Uma ilha tranquila no Sena, atrás de Notre-Dame, com moradias do século XVII, pequenas lojas e geladarias."
+  },
+  {
+   "id": "par-quai-branly",
+   "n": "Musée du quai Branly – Jacques Chirac",
+   "a": "7th arr.",
+   "lat": 48.8609,
+   "lng": 2.2977,
+   "k": "museum",
+   "url": "https://www.quaibranly.fr",
+   "en": "Designed by Jean Nouvel and opened in 2006, it shows art and cultures from Africa, Asia, Oceania and the Americas.",
+   "pt": "Projetado por Jean Nouvel e inaugurado em 2006, apresenta artes e culturas de África, Ásia, Oceânia e Américas."
+  }
+ ],
+ "streets": [
+  {
+   "id": "par-marais",
+   "n": "Le Marais (Rue des Francs-Bourgeois)",
+   "a": "3rd / 4th arr.",
+   "lat": 48.8577,
+   "lng": 2.3597,
+   "en": "A historic district of aristocratic mansions, boutiques, galleries and the Jewish quarter around Rue des Rosiers.",
+   "pt": "Um bairro histórico de mansões aristocráticas, boutiques, galerias e o bairro judeu em torno da Rue des Rosiers."
+  },
+  {
+   "id": "par-saint-germain",
+   "n": "Boulevard Saint-Germain",
+   "a": "6th arr.",
+   "lat": 48.8538,
+   "lng": 2.3328,
+   "en": "The Left Bank's literary heart, home to famous cafés such as Les Deux Magots and Café de Flore.",
+   "pt": "O coração literário da Rive Gauche, onde ficam cafés célebres como Les Deux Magots e o Café de Flore."
+  },
+  {
+   "id": "par-latin-quarter",
+   "n": "Latin Quarter",
+   "a": "5th arr.",
+   "lat": 48.8527,
+   "lng": 2.3446,
+   "en": "The student district around the Sorbonne, with lively lanes such as Rue de la Huchette and Boulevard Saint-Michel.",
+   "pt": "O bairro estudantil em torno da Sorbonne, com ruas animadas como a Rue de la Huchette e o Boulevard Saint-Michel."
+  },
+  {
+   "id": "par-rue-mouffetard",
+   "n": "Rue Mouffetard",
+   "a": "5th arr.",
+   "lat": 48.842,
+   "lng": 2.3497,
+   "en": "One of the oldest streets in Paris, a sloping lane of food shops, market stalls and small restaurants.",
+   "pt": "Uma das ruas mais antigas de Paris, uma rua inclinada com lojas de comida, bancas de mercado e pequenos restaurantes."
+  },
+  {
+   "id": "par-rue-montorgueil",
+   "n": "Rue Montorgueil",
+   "a": "2nd arr.",
+   "lat": 48.865,
+   "lng": 2.347,
+   "en": "A pedestrian market street lined with bakeries, cheese shops, cafés and historic pastry shop Stohrer.",
+   "pt": "Uma rua pedonal de comércio, ladeada de padarias, queijarias, cafés e da histórica pastelaria Stohrer."
+  },
+  {
+   "id": "par-canal-saint-martin",
+   "n": "Canal Saint-Martin",
+   "a": "10th arr.",
+   "lat": 48.8714,
+   "lng": 2.3654,
+   "en": "A tree-lined canal with iron footbridges and locks, popular for waterside picnics and independent shops.",
+   "pt": "Um canal arborizado com pontes pedonais de ferro e eclusas, muito procurado para piqueniques à beira-água e lojas independentes."
+  }
+ ],
+ "walks": [
+  {
+   "id": "par-left-bank",
+   "en_n": "Left Bank: Orsay to Rue Mouffetard",
+   "pt_n": "Rive Gauche: do Orsay à Rue Mouffetard",
+   "km": 3.3,
+   "min": 50,
+   "en": "From the Musée d'Orsay through Saint-Germain-des-Prés and the Luxembourg Garden, up to the Panthéon and down Rue Mouffetard.",
+   "pt": "Do Musée d'Orsay por Saint-Germain-des-Prés e pelo Jardim do Luxemburgo, subindo ao Panthéon e descendo a Rue Mouffetard.",
+   "pts": [
+    {
+     "n": "Musée d'Orsay",
+     "lat": 48.86,
+     "lng": 2.3266
+    },
+    {
+     "n": "Saint-Germain-des-Prés",
+     "lat": 48.8539,
+     "lng": 2.3343
+    },
+    {
+     "n": "Saint-Sulpice",
+     "lat": 48.851,
+     "lng": 2.3348
+    },
+    {
+     "n": "Fontaine Médicis (Jardin du Luxembourg)",
+     "lat": 48.8489,
+     "lng": 2.3394
+    },
+    {
+     "n": "Panthéon",
+     "lat": 48.8462,
+     "lng": 2.3464
+    },
+    {
+     "n": "Rue Mouffetard",
+     "lat": 48.842,
+     "lng": 2.3497
+    }
+   ]
+  },
+  {
+   "id": "par-marais-walk",
+   "en_n": "Le Marais: Hôtel de Ville to the Enfants Rouges",
+   "pt_n": "Le Marais: do Hôtel de Ville ao Mercado dos Enfants Rouges",
+   "km": 2.4,
+   "min": 36,
+   "en": "Wander the Marais past the Jewish quarter, the Carnavalet museum and Place des Vosges, finishing at the oldest covered market in Paris.",
+   "pt": "Passeie pelo Marais, passando pelo bairro judeu, pelo Museu Carnavalet e pela Place des Vosges, terminando no mercado coberto mais antigo de Paris.",
+   "pts": [
+    {
+     "n": "Hôtel de Ville",
+     "lat": 48.8564,
+     "lng": 2.3524
+    },
+    {
+     "n": "Rue des Rosiers",
+     "lat": 48.8571,
+     "lng": 2.359
+    },
+    {
+     "n": "Musée Carnavalet",
+     "lat": 48.8576,
+     "lng": 2.3625
+    },
+    {
+     "n": "Place des Vosges",
+     "lat": 48.8556,
+     "lng": 2.3655
+    },
+    {
+     "n": "Musée Picasso",
+     "lat": 48.8598,
+     "lng": 2.3624
+    },
+    {
+     "n": "Marché des Enfants Rouges",
+     "lat": 48.8629,
+     "lng": 2.3617
+    }
+   ]
+  },
+  {
+   "id": "par-invalides-walk",
+   "en_n": "Rodin, Invalides and the Grand Palais",
+   "pt_n": "Rodin, Invalides e o Grand Palais",
+   "km": 1.9,
+   "min": 29,
+   "en": "From Rodin's garden past Napoleon's tomb and along the Esplanade des Invalides, across Pont Alexandre III to the Grand and Petit Palais.",
+   "pt": "Do jardim de Rodin, passando pelo túmulo de Napoleão e pela Esplanade des Invalides, atravessando a Pont Alexandre III até ao Grand e ao Petit Palais.",
+   "pts": [
+    {
+     "n": "Musée Rodin",
+     "lat": 48.8553,
+     "lng": 2.3158
+    },
+    {
+     "n": "Les Invalides",
+     "lat": 48.8562,
+     "lng": 2.3125
+    },
+    {
+     "n": "Esplanade des Invalides",
+     "lat": 48.861,
+     "lng": 2.3136
+    },
+    {
+     "n": "Pont Alexandre III",
+     "lat": 48.8639,
+     "lng": 2.3136
+    },
+    {
+     "n": "Grand Palais",
+     "lat": 48.8661,
+     "lng": 2.3125
+    },
+    {
+     "n": "Petit Palais",
+     "lat": 48.866,
+     "lng": 2.3147
+    }
+   ]
+  }
+ ]
+}
