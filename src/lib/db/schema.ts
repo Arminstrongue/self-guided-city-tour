@@ -675,7 +675,8 @@ export const reservations = pgTable("reservations", {
   lng: doublePrecision("lng"),
   ref: text("ref").notNull().default(""),
   notes: text("notes").notNull().default(""),
-  photo: text("photo").notNull().default(""), // imagem do bilhete (data URL comprimida)
+  photo: text("photo").notNull().default(""), // imagem do bilhete (data URL comprimida) — a primeira de `photos`, para clientes antigos
+  photos: jsonb("photos").$type<string[]>().notNull().default([]), // várias imagens: ida e volta, um QR por pessoa… (até 6)
   paid: boolean("paid").notNull().default(false),
   journey: jsonb("journey").$type<Journey | null>(),   // transporte com troços e mudanças (ex.: Manchester → Crewe → Londres)
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow()
