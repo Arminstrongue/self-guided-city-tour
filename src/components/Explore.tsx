@@ -1,4 +1,5 @@
 "use client";
+import { signedStatus } from "@/lib/signed";
 import { tilesAttr, tilesUrl } from "@/lib/map-config";
 import { useDict } from "@/i18n/client-dict";
 import { SheetX } from "@/components/WinNav";
@@ -120,7 +121,7 @@ export function Explore({ cityId, cityName, locale, t: tProp, moments, agenda, c
     const h = loadHobbies(); setHobbies(h);
     if (h.length) return;
     // Sem interesses neste dispositivo: tenta os da conta; se não houver, pede para escolher.
-    fetch("/api/me/prefs").then((r) => (r.ok ? r.json() : null)).then((p) => {
+    void signedStatus().then((sg) => (sg === false ? null : fetch("/api/me/prefs"))).then((r) => (r?.ok ? r.json() : null)).then((p) => {
       const fromAccount = (p?.hobbies ?? []).filter((x: string) => (HOBBIES as readonly string[]).includes(x)) as Hobby[];
       if (fromAccount.length) { setHobbies(fromAccount); try { localStorage.setItem(KEY, JSON.stringify(fromAccount)); } catch { /* ignorar */ } } // sem interesses: o cartão fica fechado (só "Os seus interesses · Editar"), para não empurrar o conteúdo para baixo
     }).catch(() => null);

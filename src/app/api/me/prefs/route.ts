@@ -12,7 +12,9 @@ const Body = z.object({
   travel: z.object({
     types: z.array(z.enum(["layover", "business", "family", "leisure"])).max(4).optional(),
     pace: z.enum(["calm", "balanced", "intense"]).optional(),
-    access: z.array(z.enum(["steps", "stroller", "wheelchair"])).max(3).optional()
+    access: z.array(z.enum(["steps", "stroller", "wheelchair"])).max(3).optional(),
+    modes: z.array(z.enum(["metro", "tram", "bus", "train", "ferry"])).max(5).optional(),
+    route: z.enum(["best", "transfers", "walk", "wheel", "cost"]).optional()
   }).optional(),
   visited: z.array(z.object({ name: z.string().trim().min(1).max(80), country: z.string().regex(/^[A-Z]{2}$/), year: z.number().int().min(1900).max(2100).optional(), want: z.boolean().optional(), at: z.number() })).max(1000).optional()
 });

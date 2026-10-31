@@ -3,6 +3,7 @@
  * Atualizações dos viajantes (estilo Waze): ver, confirmar ("ainda está / já não está"), denunciar e acrescentar
  * sinais, mudanças de caminho, avisos, alertas, dicas e fotos/vídeos numa cidade ou paragem.
  */
+import { signedStatus } from "@/lib/signed";
 import { useCallback, useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
@@ -147,13 +148,11 @@ function AddSheet({ t, locale, city, cityName, stops, defStop, onClose }: { t: D
 
 /** Secção completa: lista + botão adicionar. `stop` filtra a uma paragem. */
 /** Há sessão? (sem dados pessoais) — partilhado entre as secções da página. */
-let signedP: Promise<boolean> | null = null;
 export function useSigned(given?: boolean) {
   const [s, setS] = useState(given ?? false);
   useEffect(() => {
     if (given !== undefined) { setS(given); return; }
-    signedP ??= fetch("/api/me/status", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((j: { signed?: boolean } | null) => Boolean(j?.signed)).catch(() => false);
-    void signedP.then(setS);
+    void signedStatus().then((v) => setS(Boolean(v)));
   }, [given]);
   return s;
 }

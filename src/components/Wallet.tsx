@@ -1,4 +1,5 @@
 "use client";
+import { signedStatus } from "@/lib/signed";
 import { LinkPass } from "./LinkPass";
 import { lastCity } from "@/lib/last-city";
 import { EmailSignIn } from "./EmailSignIn";
@@ -102,7 +103,8 @@ export function WalletView({ t: tProp, locale, cities, free, countryOf, tzOf = {
   async function load() {
     // Conta e perfil social pedidos em paralelo (antes o perfil só começava depois da conta).
     const socialP = loadSocial();
-    const r = await fetch("/api/me", { cache: "no-store" }).catch(() => null);
+    // Sem sessão (resposta certa de /api/me/status): não pede /api/me (evita o 401 na consola).
+    const r = (await signedStatus(true)) === false ? new Response(null, { status: 401 }) : await fetch("/api/me", { cache: "no-store" }).catch(() => null);
     // Erro do servidor (não "sem sessão"): não mostrar o formulário de entrada, que dava a ideia de que o login falhou.
     // Sem ligação ou erro do servidor: mostrar "tentar de novo", nunca o formulário de entrada (dava a ideia de sessão perdida).
     const failed = !r || r.status >= 500;

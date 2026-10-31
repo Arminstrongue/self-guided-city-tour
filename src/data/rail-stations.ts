@@ -28,3 +28,18 @@ export const PICCADILLY_PHOTOS = {
 };
 /** A viagem passa por Manchester Piccadilly? */
 export const touchesPiccadilly = (texts: (string | undefined | null)[]) => texts.some((s) => /piccadilly/i.test(s ?? "") && /manchester|picc/i.test(s ?? ""));
+
+/** Coordenadas das estações principais (entrada principal): para calcular a hora de sair sem ter de escrever a morada. */
+const STATION_COORDS: Record<string, [number, number]> = {
+  "manchester piccadilly": [53.4774, -2.2309], "manchester oxford road": [53.4740, -2.2420], "manchester victoria": [53.4875, -2.2425],
+  "manchester airport": [53.3654, -2.2729], "stockport": [53.4055, -2.1630], "crewe": [53.0896, -2.4331],
+  "liverpool lime street": [53.4074, -2.9776], "leeds": [53.7955, -1.5481], "sheffield": [53.3781, -1.4623], "preston": [53.7566, -2.7077],
+  "york": [53.9580, -1.0930], "birmingham new street": [52.4778, -1.8996], "london euston": [51.5282, -0.1337],
+  "london king's cross": [51.5308, -0.1238], "london st pancras international": [51.5320, -0.1263], "london paddington": [51.5154, -0.1755],
+  "edinburgh": [55.9520, -3.1890], "edinburgh waverley": [55.9520, -3.1890], "glasgow central": [55.8590, -4.2580]
+};
+export function stationCoords(name: string | undefined | null): { lat: number; lng: number } | null {
+  const k = (name ?? "").trim().toLowerCase().replace(/\bst\b\.?$/, "street").replace(/\s+/g, " ");
+  const c = STATION_COORDS[k] ?? STATION_COORDS[k.replace(/ station$/, "")];
+  return c ? { lat: c[0], lng: c[1] } : null;
+}

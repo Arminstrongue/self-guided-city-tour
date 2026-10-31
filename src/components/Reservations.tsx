@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { fmt, INTL_LOCALE } from "@/i18n/core";
 import { zonedToDate } from "@/lib/zoned";
+import { legDates } from "@/lib/journey-time";
 import { compressPhoto, loadReservations, removeReservation, saveReservation, type Reservation, type ResInput } from "@/lib/trip-local";
 import type { Journey, JourneyLeg } from "@/lib/reservations";
 import type { IcsEvent } from "@/lib/ics";
@@ -14,6 +15,7 @@ import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
 import { RAIL_STATIONS, touchesPiccadilly } from "@/data/rail-stations";
 import { PiccadillyCard } from "./StationCard";
+import { JourneyFollow } from "./JourneyFollow";
 
 /** Fotos da reserva (as antigas só tinham `photo`). */
 export const photosOf = (r: { photo?: string; photos?: string[] }) => (r.photos?.length ? r.photos : r.photo ? [r.photo] : []);
@@ -67,13 +69,6 @@ export function JourneyView({ j, t }: { j: Journey; t: Dict }) {
   );
 }
 
-/** Horas reais de cada troço (passando a meia-noite quando a hora "volta atrás"). */
-function legDates(r: Reservation) {
-  const day = r.localAt.slice(0, 10);
-  let last = new Date(r.startsAt).getTime() - 60_000;
-  const at = (hm: string) => { let d = zonedToDate(`${day}T${hm}`, r.tz).getTime(); while (d < last) d += 86400_000; last = d; return new Date(d); };
-  return (r.journey?.legs ?? []).map((l) => ({ dep: at(l.dep), arr: at(l.arr) }));
-}
 /** O que vai para o calendário, o PDF, o WhatsApp e os lembretes desta reserva. */
 function resExport(r: Reservation, t: Dict, locale: Locale) {
   const w = resWhen(r, locale);
@@ -106,6 +101,8 @@ function resExport(r: Reservation, t: Dict, locale: Locale) {
 /** O bilhete em ecrã inteiro: foto, referência em letra grande, local e hora (indicada pelo viajante). */
 export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict; locale: Locale; onClose: () => void }) {
   const w = resWhen(r, locale);
+  const [follow, setFollow] = useState(false);
+  if (follow) return <JourneyFollow r={r} t={t} onClose={() => { setFollow(false); onClose(); }} />;
   return (
     <Portal><div className="sheet-bg" onClick={onClose}>
       <div className="sheet stack tk-sheet" style={{ gap: 12 }} onClick={(e) => e.stopPropagation()} role="dialog" aria-label={r.title}>
@@ -113,6 +110,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         <b style={{ fontSize: 18 }}>{RES_ICON[r.kind]} {r.title}</b>
         <span className="hint">{w.day} · <b>{w.hm}</b> <span className="is-tag">{t.isYou}</span></span>
         {r.journey?.legs.length ? <JourneyView j={r.journey} t={t} /> : null}
+        {r.kind === "transport" && r.journey?.legs.length ? <button type="button" className="btn press jf-start" onClick={() => setFollow(true)}>▶ {t.jf.start}</button> : null}
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
         {r.kind === "transport" && touchesPiccadilly([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <PiccadillyCard t={t} />}
         {r.ref && <div className="tk-ref"><small>{t.rsRef}</small><b>{r.ref}</b></div>}
@@ -148,7 +146,7 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
   t: Dict; locale: Locale; cities: Record<string, string>; tzOf: Record<string, string>; signed: boolean; initial: Reservation | null; onClose: (changed: boolean) => void;
 }) {
   // Cidade pelo contexto (plano escolhido ou roteiro em curso); sem cidade, o fuso tem de ser escolhido (nunca assumido).
-  const [f, setF] = useState<ResInput>(() => initial ? { ...initial, photos: photosOf(initial) } : { kind: "ticket", title: "", city: contextCity(cities), localAt: "", tz: "", place: "", lat: null, lng: null, ref: "", notes: "", photo: "", photos: [], paid: false });
+  const [f, setF] = useState<ResInput>(() => initial ? { ...initial, photos: photosOf(initial) } : { kind: "ticket", title: "", city: contextCity(cities), localAt: "", tz: deviceTz(), place: "", lat: null, lng: null, ref: "", notes: "", photo: "", photos: [], paid: false });
   const blank: JourneyLeg = { from: "", to: "", dep: "", arr: "" };
   const [legs, setLegs] = useState<JourneyLeg[]>(() => initial?.journey?.legs?.length ? initial.journey.legs : [blank]);
   const setLeg = (i: number, p: Partial<JourneyLeg>) => setLegs((ls) => ls.map((l, k) => (k === i ? { ...l, ...p } : l)));
@@ -275,6 +273,7 @@ export function Reservations({ t, locale, cities, tzOf, signed }: { t: Dict; loc
   const [list, setList] = useState<Reservation[] | null>(null);
   const [edit, setEdit] = useState<Reservation | null | "new">(null);
   const [show, setShow] = useState<Reservation | null>(null);
+  const [arm, setArm] = useState<string | null>(null);
   const reload = () => void loadReservations(signed).then(setList);
   useEffect(reload, [signed]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
@@ -290,7 +289,7 @@ export function Reservations({ t, locale, cities, tzOf, signed }: { t: Dict; loc
               <span className="stack" style={{ gap: 2, minWidth: 0 }}><b>{r.title}</b><span className="hint">{w.day} · {r.journey?.legs.length ? journeyLine(r.journey, t) : w.hm}{r.city && cities[r.city] ? ` · ${cities[r.city]}` : ""}</span>{r.place && <span className="hint ad-ellip">📍 {r.place}</span>}</span>
               {(photosOf(r).length > 0 || r.ref) && <span className="chip walk">{t.rsTicket}</span>}
             </button>
-            <div className="rs-acts"><button className="link-btn" onClick={() => setEdit(r)}>{t.rsEdit}</button><button className="link-btn danger" onClick={async () => { await removeReservation(signed, r.id); reload(); }}>{t.ofRemove}</button></div>
+            <div className="rs-acts"><button className="link-btn" onClick={() => setEdit(r)}>{t.rsEdit}</button><button className="link-btn danger" onClick={async () => { if (arm !== r.id) { setArm(r.id); setTimeout(() => setArm((x) => (x === r.id ? null : x)), 4000); return; } setArm(null); await removeReservation(signed, r.id); reload(); }}>{arm === r.id ? t.rsSure : t.ofRemove}</button></div>
           </div>
         );
       })}
