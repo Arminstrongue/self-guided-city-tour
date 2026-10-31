@@ -12,6 +12,8 @@ import { TimeBreakdown, TripPicker, endIcon, endLabel } from "./TripPicker";
 import { loadTrip, saveTrip, tripKey } from "./trip-store";
 import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
 import { cityCenterOf } from "@/lib/city-center";
+import { RouteHero } from "./RouteHero";
+import { NavSheet } from "./NavSheet";
 import { NextCard, BackNow, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
@@ -201,6 +203,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
   // Para "Continuar onde ficou" no início: último passeio em curso, com o nome legível e o progresso.
   useEffect(() => { if (started) try { localStorage.setItem("sgct:last-tour", JSON.stringify({ id: city.id, name: cityLabel, done: doneN, n: plan.stops.length, at: Date.now() })); } catch { /* ignorar */ } }, [started, city.id, cityLabel, doneN, plan.stops.length]);
   const [planOpen, setPlanOpen] = useState(false);
+  const [nav, setNav] = useState<{ id: string; leg: Leg } | null>(null);
   // Começa à noite (19h–7h na hora da cidade)? Interiores pagos passam a "só exterior".
   const startHour = Number(new Intl.DateTimeFormat("en-GB", { timeZone: city.tz ?? "UTC", hour: "2-digit", hour12: false }).format(((d) => (Number.isFinite(d.getTime()) ? d : new Date()))(trip.startAt ? zonedToDate(trip.startAt, city.tz ?? "UTC") : new Date())).slice(0, 2));
   const night = startHour >= 19 || startHour < 7;
@@ -338,22 +341,35 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             <a className="link-btn" href={preview.signIn}>{t.pvHave}</a>
           </div>
         )}
-        {started && tab === "route" && !preview ? (<>
-          {/* A caminhar: o próximo passo é a primeira coisa no ecrã; o plano fica recolhido. */}
-        {(
+        {tab === "route" && !preview && (
+          <RouteHero t={t} stops={plan.stops} done={done} museums={museums} airport={city.ap} pos={geo.pos} gmapsKey={explore?.gmapsKey} online={online}
+            hours={hrs(plan.minutesTour)} transport={plan.transport > 0 ? money(plan.transport) : ""} onFullMap={() => { setTab(explore ? "live" : "map"); setFocus(null); }}
+            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
+        )}
+        {tab === "route" && !preview && !started && (
+          <button type="button" className="btn tram press tg-go" onClick={() => { setGoing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
+            <span>▶ {t.tg.start}</span><small>{t.tg.startSub}</small>
+          </button>
+        )}
+        {tab === "route" && !preview && (
           <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
             onward={<><OnwardLink t={t} locale={locale} from={here} cities={allCities} next={trip.next} />{!trip.next && <NearbyCities t={t} locale={locale} from={here} cities={allCities} max={4} />}</>}
-            onDone={(id) => toggleDone(id)}
+            onDone={(id) => toggleDone(id)} onNav={(id, leg) => setNav({ id, leg })}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
         {tab === "route" && !preview && <AroundMe t={t} locale={locale} cityId={city.id} tz={tz} pos={geo.pos} geoState={geo.state} onGeo={geo.start} museums={museums} updates={updates.list} onShow={showOnMap} />}
+        {tab === "route" && !preview && started && (
           <WalkTools t={t} locale={locale} cityId={city.id} slack={slack}
             places={plan.stops.filter((s) => !done[s.id]).map((s) => ({ id: s.id, name: stopName(s, locale), lat: s.lat, lng: s.lng }))} />
+        )}
+        {/* Planeamento (tempo, início e fim, custos, voo, offline, conversor): recolhido numa linha, para o percurso vir primeiro. */}
+        {tab === "route" && !preview && (
           <button type="button" className="ios-row press" onClick={() => setPlanOpen(!planOpen)} aria-expanded={planOpen}>
             <span className="ios-tx"><b>{t.tg.plan}</b><small>{fmt(t.fitOpt, { n: plan.stops.length, h: hrs(plan.minutesTour) })}</small></span>
             <ChevronRight size={18} className="ios-chev" style={{ transform: planOpen ? "rotate(90deg)" : undefined }} aria-hidden="true" />
           </button>
-          {planOpen && <>
+        )}
+        {((tab === "route" && planOpen) || preview) && (
         <div className="card stack" style={{ gap: 10, padding: 14 }}>
           <WeatherCard cityId={city.id} t={t} locale={locale} />
           <div className="bp-line">
@@ -391,65 +407,20 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
           </button>
           {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
         </div>
-          </>}
-        </>) : (<>
-        {/* Plano (tempo, início e fim, versões do roteiro): só no separador Roteiro — nos outros, o conteúdo aparece logo em cima. */}
-        {(tab === "route" || preview) && <div className="card stack" style={{ gap: 10, padding: 14 }}>
-          <WeatherCard cityId={city.id} t={t} locale={locale} />
-          <div className="bp-line">
-            <span>{trip.origin && <>📍 {trip.origin.label} → </>}{endIcon(trip.start)} {endLabel(trip.start, t)} → {endIcon(trip.end)} {endName}</span>
-            <button className="link-btn" onClick={() => setBaseOpen(!baseOpen)}>{baseOpen ? t.close : t.bpChange}</button>
-          </div>
-          {baseOpen && <TripPicker t={t} locale={locale} city={city.id} cityName={cityLabel} center={cityCenterOf(city)} value={trip} onChange={setTrip} cities={allCities} airport={city.ap?.iata} />}
-          {baseOpen && !tripReady(trip) && <p className="tp-need">{t.tpNeedEnd}</p>}
-          <RouteFit options={options} value={chosen.key} onChange={setLvl} availMin={avail} t={t} extName={[...new Set(extras.map((s) => s.a))].join(", ")}
-            locale={locale} single={city.single} money={money} tz={city.tz ?? "UTC"} ticket={city.cardName} night={night} share={routeShare}
-            from={trip.start.kind === "airport" ? (city.ap ? { lat: city.ap.lat, lng: city.ap.lng, n: t.bpAirport } : null) : Number.isFinite(trip.start.lat) ? { lat: trip.start.lat, lng: trip.start.lng, n: endLabel(trip.start, t) } : null} />
-          <TimeBreakdown b={bd} t={t} trip={trip} hrs={hrs} />
-          {!lvl && flightDate && fits && <p className="hint">{t.fitAuto}</p>}
-          {accessCount(plan.stops.map((s) => s.id)) > 0 && <p className="hint">♿ {fmt(t.acSum, { n: accessCount(plan.stops.map((s) => s.id)) })}</p>}
-          {hasExtension(city) && <p className="hint">{t.extras}: {fmt(t.extrasSub, { n: extras.length, h: hrs(extraMin) })}</p>}
-          {avail !== null && leave && (
-            <p className={`fit ${fits ? "ok" : "bad"}`}>
-              {fits ? fmt(t.tpFitsOk, { a: hrs(plan.minutesTour), b: hrs(avail), p: endName })
-                : avail <= 0 ? fmt(t.tpLate, { p: endName, t: when(leave) })
-                  : fmt(t.fitsBad, { a: hrs(plan.minutesTour), b: hrs(avail) }) + (ext && hasExtension(city) ? t.fitsTip : t.fitsTip2)}
-            </p>
-          )}
-          {leave && avail !== null && avail > 15 && (
-            notice ? <p className="hint">🔔 {notice}</p> : <button className="btn ghost" style={{ padding: 10, fontSize: 14 }} onClick={remind}>🔔 {t.notifyBtn}</button>
-          )}
-          {trip.mode === "plane" && <FlightCard city={city} flightNo={flightNoEff} flightAt={flightDate} enabled={flightApi} t={t} locale={locale}
-            onUse={(iso) => setFo({ at: iso, no: flightNoEff })} onEdit={(o) => setFo(o)} />}
-          {!online && <p className="note">{t.offline}</p>}
-          {!preview && <OfflineButton t={t} locale={locale} city={city.id} />}
-          {!preview && <OfflineStatus t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
-          {!preview && <OfflineCheck t={t} locale={locale} city={city.id} audioLang={Object.values(bios)[0]?.lang ?? (locale === "pt" ? "pt" : "en")} />}
-          <button type="button" className="ios-row press" onClick={() => setFxOpen(true)}>
-            <span className="ios-ic" style={{ background: "#ff9500" }}><ArrowLeftRight size={17} color="#fff" aria-hidden="true" /></span>
-            <span className="ios-tx"><b>{t.ttFx}</b>{city.cur !== fx.cur && <small>{city.cur} → {fx.cur}</small>}</span><ChevronRight size={18} className="ios-chev" aria-hidden="true" />
-          </button>
-          {t.contentNote && Object.values(bios)[0]?.lang !== locale && <p className="note">{t.contentNote}</p>}
-        </div>}
-          {tab === "route" && !preview && (
-            <button type="button" className="btn tram press tg-go" onClick={() => { setGoing(true); window.scrollTo({ top: 0, behavior: "smooth" }); }}>
-              <span>▶ {t.tg.start}</span><small>{t.tg.startSub}</small>
-            </button>
-          )}
-        {tab === "route" && !preview && (
-          <NextCard city={city} stops={plan.stops} done={done} startHop={bp.to} backLabel={atPlace ? fmt(t.bpBackAt, { p: endName, t: backAt ? when(backAt) : "" }) : undefined} museums={museums} today={today} money={money} t={t} locale={locale} pos={geo.pos}
-            onward={<><OnwardLink t={t} locale={locale} from={here} cities={allCities} next={trip.next} />{!trip.next && <NearbyCities t={t} locale={locale} from={here} cities={allCities} max={4} />}</>}
-            onDone={(id) => toggleDone(id)}
-            onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
-        {tab === "route" && !preview && <AroundMe t={t} locale={locale} cityId={city.id} tz={tz} pos={geo.pos} geoState={geo.state} onGeo={geo.start} museums={museums} updates={updates.list} onShow={showOnMap} />}
-        </>)}
 
         {tab === "route" && flightDate && trip.mode === "plane" && trip.end.kind === "airport" && (
           <BackNow city={city} cityName={cityLabel} flightAt={leave && flightDate ? flightDate : null} pos={geo.pos} geoState={geo.state} onGeo={geo.start}
             next={nextStop} now={now} t={t} locale={locale} />
         )}
 
+        {nav && (() => {
+          const st = plan.stops.find((x) => x.id === nav.id);
+          if (!st) return null;
+          const nx = plan.stops.slice(plan.stops.indexOf(st) + 1).find((x) => !done[x.id]) ?? null;
+          return <NavSheet t={t} locale={locale} stop={st} leg={nav.leg} next={nx} from={geo.pos} stops={plan.stops} done={done} museums={museums} gmapsKey={explore?.gmapsKey}
+            onArrive={(id) => { if (!done[id]) toggleDone(id); }} onClose={() => setNav(null)} />;
+        })()}
         <SosButton cityId={city.id} country={COUNTRY[city.id]} cityName={cityLabel} center={{ lat: city.stops[0].lat, lng: city.stops[0].lng }} t={t} locale={locale} />
         {(tab === "map" || tab === "live") && !online && <RouteSketch stops={plan.stops} done={done} base={toBase(trip.start)} pos={geo.pos} t={t} />}
         {tab === "live" && explore && online && <Explore cityId={city.id} cityName={cityLabel} locale={locale} t={t} bare {...explore}

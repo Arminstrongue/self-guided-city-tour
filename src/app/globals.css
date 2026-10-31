@@ -4079,3 +4079,65 @@ main section.sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .pl-search-top{position:static;width:100%;border:1px solid var(--line);min-height:48px;font-size:16px;color:var(--muted);cursor:pointer;text-align:start;font:inherit}
 .pl-search-top .pl-search-ph{flex:1}
 .pl-search-day{font-size:13px;color:var(--cobalt);font-weight:600}
+
+/* Topo do roteiro: melhor percurso (mapa + paragens em fila) */
+.rh{padding:14px;display:flex;flex-direction:column;gap:10px}
+.rh-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.rh-t{display:block;font-size:19px;letter-spacing:-.01em}
+.rh-s{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.leaflet-box.rh-box{height:min(42vh,300px);border-radius:16px;box-shadow:none;border:1px solid var(--line)}
+.rh-skel{background:linear-gradient(90deg,var(--surface-2),color-mix(in srgb,var(--ink) 6%,var(--surface)),var(--surface-2));background-size:200% 100%;animation:rhsk 1.4s linear infinite}
+@keyframes rhsk{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.rh-skel{animation:none}}
+.rh-chips{list-style:none;margin:0 -14px;padding:2px 14px 4px;display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none}
+.rh-chips::-webkit-scrollbar{display:none}
+.rh-chip{scroll-snap-align:start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:6px 12px 6px 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:14px;white-space:nowrap;cursor:pointer}
+.rh-chip[aria-pressed=true]{border-color:var(--cobalt);box-shadow:0 0 0 3px var(--cobalt-soft)}
+.rh-n{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--cobalt);color:var(--on-cobalt);font-weight:700;font-size:14px}
+.rh-chip.done{color:var(--muted)}.rh-chip.done .rh-n{background:var(--good)}
+.rh-chip.next{background:var(--cobalt);color:var(--on-cobalt);border-color:var(--cobalt)}.rh-chip.next .rh-n{background:var(--on-cobalt);color:var(--cobalt)}
+.rh-star{color:#ffb020}
+
+/* Próxima paragem: como chegar em destaque */
+.nx-how{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--cobalt-soft);border:1px solid color-mix(in srgb,var(--cobalt) 25%,transparent);margin:4px 0}
+.nx-how.ride{background:color-mix(in srgb,var(--tram) 16%,var(--surface));border-color:color-mix(in srgb,var(--tram) 45%,transparent)}
+.nx-how-ic{flex:none;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:var(--surface)}
+.nx-how-tx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.nx-how-tx small{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.nx-how-tx b{font-size:18px;line-height:1.2}
+.nx-how-tx em{font-style:normal;font-size:14px;color:var(--ink);opacity:.85}
+.nx-nav{background:var(--cobalt);color:var(--on-cobalt);font-size:17px;font-weight:700}
+
+/* Navegação dentro da app (ecrã inteiro) */
+.nav{position:fixed;inset:0;z-index:210;background:var(--bg);display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 0 calc(8px + env(safe-area-inset-bottom));max-width:720px;margin:0 auto}
+.nav-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:0 16px 10px}
+.nav-k{display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--cobalt)}
+.nav-t{display:block;font-size:24px;line-height:1.15;letter-spacing:-.02em}
+.nav-s{display:block;font-size:17px;color:var(--muted);margin-top:2px}
+.nav-x{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--surface);font-size:18px;color:var(--ink);cursor:pointer}
+.nav-map{position:relative;padding:0 16px}
+.leaflet-box.nav-box{height:min(38vh,320px);border-radius:18px;box-shadow:none;border:1px solid var(--line)}
+.nav-arrow{position:absolute;inset-inline-end:26px;bottom:10px;z-index:500;display:flex;align-items:center;gap:8px;background:var(--surface);border-radius:999px;padding:6px 12px 6px 6px;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.nav-arrow span{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--cobalt);color:#fff;font-size:16px}
+.nav-arrow span{rotate:-90deg}
+.nav-arrow small{font-size:14px;font-weight:600}
+.nav-steps{flex:1;overflow-y:auto;padding:12px 16px 0;display:flex;flex-direction:column;gap:10px}
+.nav-plan{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--surface)}
+.nav-plan span:last-child{display:flex;flex-direction:column}.nav-plan small{font-size:13px;color:var(--muted)}
+.nav-ic{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:22px;background:var(--surface-2)}
+.nav-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.nav-list li{position:relative;display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:14px;background:var(--surface);border:2px solid transparent}
+.nav-list li > span:nth-child(2){display:flex;flex-direction:column;gap:2px;min-width:0}
+.nav-list li b{font-size:16px;line-height:1.3}.nav-list li small{font-size:13px;color:var(--muted)}
+.nav-list li.now{border-color:var(--cobalt);box-shadow:0 0 0 4px var(--cobalt-soft)}
+.nav-list li.now b{font-size:18px}
+.nav-list li.past{opacity:.5}
+.nav-now{position:absolute;top:8px;inset-inline-end:10px;font-style:normal;font-size:11px;font-weight:800;color:var(--cobalt);text-transform:uppercase;letter-spacing:.06em}
+.nav-line{display:inline-block;padding:1px 8px;border-radius:6px;background:var(--ink);color:var(--bg);font-weight:800;margin-inline-end:4px}
+.nav-attr{font-size:11px;color:var(--muted)}
+.nav-done{margin:14px 16px 0;padding:16px;border-radius:18px;background:var(--good-soft);display:flex;flex-direction:column;gap:10px}
+.nav-done b{font-size:20px}
+.nav-go{background:var(--good);color:#fff;font-size:17px}
+.nav-acts{display:flex;gap:10px}.nav-acts .btn{flex:1}
+.nav-foot{display:flex;justify-content:center;gap:18px;padding:8px 16px 0;font-size:14px}
+.nx-how-tx b::first-letter,.nav-plan b::first-letter{text-transform:uppercase}
