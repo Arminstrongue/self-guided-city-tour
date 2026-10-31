@@ -10,6 +10,7 @@ import type { IcsEvent } from "@/lib/ics";
 import { notifId, type Reminder, type TripDoc } from "@/lib/trip-export";
 import { ExportBar } from "./ExportBar";
 import Portal from "./Portal";
+import { BoardHelperButton } from "./BoardHelper";
 import { SheetX } from "./WinNav";
 import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
@@ -110,6 +111,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         <b style={{ fontSize: 18 }}>{RES_ICON[r.kind]} {r.title}</b>
         <span className="hint">{w.day} · <b>{w.hm}</b> <span className="is-tag">{t.isYou}</span></span>
         {r.journey?.legs.length ? <JourneyView j={r.journey} t={t} /> : null}
+        {r.kind === "transport" && r.journey?.legs.length ? <BoardHelperButton t={t} from={r.journey.legs[0].from} to={r.journey.legs[0].to} /> : null}
         {r.kind === "transport" && r.journey?.legs.length ? <button type="button" className="btn press jf-start" onClick={() => { askNotify(); setFollow(true); }}>▶ {t.jf.start}</button> : null}
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
         {r.kind === "transport" && touchesPiccadilly([r.title, r.place, ...(r.journey?.legs ?? []).flatMap((l) => [l.from, l.to])]) && <PiccadillyCard t={t} />}

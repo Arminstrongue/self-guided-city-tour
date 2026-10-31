@@ -4,6 +4,7 @@
  * Fotografias próprias da VOYBU (pessoas desfocadas). Aparece no bilhete de comboio que passa por Piccadilly.
  */
 import { useState } from "react";
+import { BoardHelperButton } from "./BoardHelper";
 import type { Dict } from "@/i18n/dictionaries";
 import { EUSTON_PHOTOS, PICCADILLY_PHOTOS } from "@/data/rail-stations";
 
@@ -32,6 +33,7 @@ export function PiccadillyCard({ t }: { t: Dict }) {
           </ul>
         </div>
         <p className="pic-staff">🙋 {p.b4}</p>
+        <BoardHelperButton t={t} from="Manchester Piccadilly" />
       </div>
       {big && (
         <div className="pic-zoom" role="dialog" aria-label={p.title} onClick={() => setBig(null)}>
@@ -65,6 +67,7 @@ export function EustonCard({ t }: { t: Dict }) {
           <li>🚪 {e.doors}</li>
         </ol>
         <p className="pic-staff">🙋 {e.staff}</p>
+        <BoardHelperButton t={t} from="London Euston" />
       </div>
       {big && (
         <div className="pic-zoom" role="dialog" aria-label={e.title} onClick={() => setBig(false)}>
