@@ -27,7 +27,7 @@ export function transitLink(to: Pos) {
 
 export type Extra = { lat: number; lng: number; icon: string; title: string };
 type MapProps = { stops: Stop[]; done: Record<string, boolean>; museums: Museum[]; airport?: Airport; pos: Pos | null; focus: Focus | null; t: Dict; gmapsKey?: string;
-  extra?: Extra[]; center?: Pos; legend?: boolean };
+  extra?: Extra[]; center?: Pos; legend?: boolean; boxClass?: string; card?: boolean };
 
 /** Google Maps quando há chave de navegador; senão o mapa OpenStreetMap. */
 export function MapView(p: MapProps) {
@@ -35,7 +35,7 @@ export function MapView(p: MapProps) {
   return p.gmapsKey && !failed ? <GoogleRouteMap {...p} onFail={() => setFailed(true)} /> : <OsmMap {...p} />;
 }
 
-function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail, extra = [], center, legend = true }: MapProps & { onFail: () => void }) {
+function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey, onFail, extra = [], center, legend = true, boxClass = "", card = true }: MapProps & { onFail: () => void }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<G>(null);
   const objs = useRef<G[]>([]);
@@ -84,8 +84,8 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
   const d = focus && pos ? km(pos, focus) : null;
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <div ref={el} className="leaflet-box g-route-map" role="region" aria-label={t.map} />
-      {focus && (
+      <div ref={el} className={`leaflet-box g-route-map ${boxClass}`} role="region" aria-label={t.map} />
+      {focus && card && (
         <div className="card stack" style={{ gap: 8, padding: 14 }}>
           <b>★ {focus.name}</b>
           {d !== null && <p>{fmt(t.mapDist, { d: d < 1 ? `${Math.round(d * 1000)} m` : `${d.toFixed(1)} km`, w: walkMin(d) })}</p>}
@@ -100,7 +100,7 @@ function GoogleRouteMap({ stops, done, museums, airport, pos, focus, t, gmapsKey
   );
 }
 
-function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], center, legend = true }: MapProps) {
+function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], center, legend = true, boxClass = "", card = true }: MapProps) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<LMap | null>(null);
   const layer = useRef<LayerGroup | null>(null);
@@ -153,8 +153,8 @@ function OsmMap({ stops, done, museums, airport, pos, focus, t, extra = [], cent
   const d = focus && pos ? km(pos, focus) : null;
   return (
     <div className="stack" style={{ gap: 10 }}>
-      <div ref={el} className="leaflet-box" role="region" aria-label={t.map} />
-      {focus && (
+      <div ref={el} className={`leaflet-box ${boxClass}`} role="region" aria-label={t.map} />
+      {focus && card && (
         <div className="card stack" style={{ gap: 8, padding: 14 }}>
           <b>★ {focus.name}</b>
           {d !== null && <p>{fmt(t.mapDist, { d: d < 1 ? `${Math.round(d * 1000)} m` : `${d.toFixed(1)} km`, w: walkMin(d) })}</p>}

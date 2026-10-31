@@ -363,11 +363,11 @@ export function Speak({ text, lang, fallback, t }: { text: string; lang: string;
 /* ---------- Guia prático ---------- */
 type MuseumLite = { id: string; n: string; lat: number; lng: number; price: number; h: [number[], string, string][]; book?: boolean; url: string };
 
-export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel, pos, onward }: {
+export function NextCard({ city, stops, done, museums, today, money, onDone, onOpen, t, locale, startHop, backLabel, pos, onward, onNav }: {
   city: City; stops: Stop[]; done: Record<string, boolean>; museums: MuseumLite[]; today: number; pos?: { lat: number; lng: number } | null;
   startHop?: { m: "walk" | "metro"; min: number } | null; backLabel?: string;
   money: (v: number) => string; onDone: (id: string) => void; onOpen: (id: string) => void; t: Dict; locale: Locale;
- onward?: React.ReactNode;}) {
+ onward?: React.ReactNode; onNav?: (id: string, leg: Leg) => void }) {
   const idx = stops.findIndex((s) => !done[s.id]);
   // Tempo nas próximas horas (chuva ou calor), para a sugestão "para agora".
   const [wx, setWx] = useState<{ rain: boolean; hot: boolean } | null>(null);
@@ -431,7 +431,16 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
       </div>
       <button className="nx-name" onClick={() => onOpen(s.id)}><b>{s.n}</b><small>{s.a} · {s.v} min</small></button>
       <div className="nx-rows">
-        <div className="nx-row"><span aria-hidden="true">{leg.m === "walk" ? "🚶" : leg.m === "car" ? "🚕" : "🚇"}</span><span><small>{t.nxHow}</small>{how}</span></div>
+        {/* Como chegar: em destaque (meio, linha, tempo, preço e distância a partir de onde está). */}
+        <div className={`nx-how ${leg.m === "walk" ? "walk" : "ride"}`}>
+          <span className="nx-how-ic" aria-hidden="true">{leg.m === "walk" ? "🚶" : leg.m === "car" ? "🚕" : leg.m === "tram" ? "🚊" : leg.m === "bus" ? "🚌" : leg.m === "train" ? "🚆" : leg.m === "ferry" ? "⛴" : "🚇"}</span>
+          <span className="nx-how-tx">
+            <small>{t.nxHow}</small>
+            <b>{leg.m === "walk" ? `${t.walk} · ${leg.min} min` : `${t[leg.m]} · ${leg.min} min`}{(leg.f ?? 0) + (leg.r ?? 0) * city.single > 0 ? ` · ${money((leg.f ?? 0) + (leg.r ?? 0) * city.single)}` : leg.m === "walk" ? ` · ${t.free.toLowerCase()}` : ""}</b>
+            {leg.line && <em>{idx === 0 && startHop ? how : lineText(leg.line, locale)}</em>}
+            {pos && <em className="num">📍 {(() => { const dd = km(pos, s); return dd < 1 ? `${Math.round(dd * 1000)} m` : `${dd.toFixed(1)} km`; })()} · {t.nav.fromYou}</em>}
+          </span>
+        </div>
         {status && <div className={`nx-row ${status.cls}`}><span aria-hidden="true">🕒</span><span>{status.txt}</span></div>}
         {(s.o || (mus && mus.price > 0)) && (
           <div className="nx-row"><span aria-hidden="true">🎟</span><span>
@@ -455,7 +464,7 @@ export function NextCard({ city, stops, done, museums, today, money, onDone, onO
         </div>
       ) : (
       <div className="nx-acts">
-        <ExtLink className="btn tram" href={dir}>{t.directions}</ExtLink>
+        {onNav ? <button type="button" className="btn press nx-nav" onClick={() => onNav(s.id, leg)}>🧭 {t.nav.go}</button> : <ExtLink className="btn tram" href={dir}>{t.directions}</ExtLink>}
         <button className="btn ghost" onClick={() => markHere(s)}>{t.nxHere}</button>
       </div>
       )}
