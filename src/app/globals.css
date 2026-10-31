@@ -4073,3 +4073,4 @@ main section.sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .jf-late{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:15px}
 .jf-late .chip{min-width:48px;min-height:36px;justify-content:center;cursor:pointer;border:0}
 .stop-local{font-size:15px;color:var(--ink);opacity:.8;margin-top:2px}
+.now-qt{align-self:flex-start;font-size:14px}
