@@ -156,6 +156,12 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
         ))}
       </div>
 
+      {/* Pesquisa sempre à vista no topo do dia: abre logo a lista com o teclado (antes só existia no fim, depois de todos os lugares). */}
+      {plan.city && (
+        <button type="button" className="pl-search pl-search-top press" onClick={() => setAdding("places")} aria-label={t.plSearch}>
+          <span aria-hidden="true">🔍</span><span className="pl-search-ph">{t.plSearch}</span><span className="pl-search-day">{fmt(t.plDay, { n: day })}</span>
+        </button>
+      )}
       <div className="stack" style={{ gap: 8 }}>
         {dayItems.length === 0 && <p className="hint">{t.plEmptyDay}</p>}
         {/* Lista compacta: uma linha por lugar; tocar abre os detalhes. A lista inteira também se esconde. */}
@@ -214,7 +220,7 @@ export function PlanView({ t: tProp, locale, plan: initial, moments, tz = "UTC" 
           <div className="card stack ex-sheet" style={{ maxHeight: "85vh" }}>
             <div className="row-between"><b>{t.plAddPlaces} · {fmt(t.plDay, { n: day })}</b><button className="link-btn" onClick={() => { setAdding(null); setQ(""); }} aria-label={t.close}>✕</button></div>
             <label className="pl-search"><span aria-hidden="true">🔍</span>
-              <input type="text" inputMode="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.plSearch} aria-label={t.plSearch} autoComplete="off" enterKeyHint="search" />
+              <input type="text" inputMode="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t.plSearch} aria-label={t.plSearch} autoComplete="off" enterKeyHint="search" autoFocus />
               {q && <button type="button" className="link-btn" onClick={() => setQ("")} aria-label={t.close}>✕</button>}
             </label>
             {[...moments.map((m) => ({ key: `m:${m.id}`, title: m.title, icon: m.icon, lat: m.lat, lng: m.lng, sub: m.text, kind: "moment" as const, sheet: { name: m.title, lat: m.lat, lng: m.lng, icon: m.icon, text: m.text } as SheetPlace })),

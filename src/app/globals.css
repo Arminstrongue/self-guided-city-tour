@@ -4076,3 +4076,6 @@ main section.sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .now-qt{align-self:flex-start;font-size:14px}
 .jf-nr{background:var(--warn-soft);color:var(--ink);border-radius:14px;padding:10px 14px;font-size:14px}
 .jf-nr b{color:var(--warn)}.jf-nr p{margin:4px 0 0}
+.pl-search-top{position:static;width:100%;border:1px solid var(--line);min-height:48px;font-size:16px;color:var(--muted);cursor:pointer;text-align:start;font:inherit}
+.pl-search-top .pl-search-ph{flex:1}
+.pl-search-day{font-size:13px;color:var(--cobalt);font-weight:600}
