@@ -17,7 +17,7 @@ import type { Offer } from "@/lib/merchants";
 import { dualMoney, type FxContext } from "@/lib/currency";
 import { ExtLink } from "./ExtLink";
 import type { Focus } from "./MapView";
-import { stopName, lineText } from "@/data/stop-names";
+import { localName, stopName, lineText } from "@/data/stop-names";
 import type { Museum } from "@/data/museums";
 import { Credit, Img, StopMedia, useCityMedia } from "./Media";
 import { SosButton } from "./SosButton";
@@ -514,6 +514,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
                         <div style={{ minWidth: 0 }}>
                           <h3>{s.n}{s.top && <span className="top-badge">{t.topStop}</span>}</h3>
                           <p className="meta">{s.a} · {s.v} {t.visit}{s.o ? ` · ${t.optPaid}` : ""}{here.length ? ` · ${here.length} ★` : ""}</p>
+                          {(() => { const ln = localName(s.id); return ln && ln.lang !== locale ? <p className="meta stop-local" lang={ln.lang} dir={ln.lang === "ar" ? "rtl" : undefined}>{ln.n}</p> : null; })()}
                           {closedToday(s) && <span className="closed-chip">{t.closedToday}</span>}
                           {(warn[s.id] ?? []).map((k) => <span key={k} className="ac-chip warn">⚠ {t.rpWarn[k as keyof Dict["rpWarn"]]}</span>)}
                           {accessOf(s.id).map((a) => <span key={a} className={`ac-chip ${a}`}>{a === "hill" ? "⛰" : a === "steps" ? "🪜" : "🪨"} {t.ac[a]}</span>)}
