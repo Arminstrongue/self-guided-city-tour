@@ -15,6 +15,8 @@ import { legDates } from "@/lib/journey-time";
 import { callsBetween, coordsOf, type Call } from "@/data/rail-lines";
 
 import { notifId } from "@/lib/trip-export";
+import { crsOf } from "@/data/crs";
+import type { LiveBoard } from "@/lib/rail-live";
 import { ALL_MODES, saveTransit, useTransitPrefs, type RouteOpt } from "@/lib/transit-prefs";
 import Portal from "./Portal";
 
@@ -78,7 +80,9 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   const base = useMemo(() => legDates(r), [r]);
   // Atraso medido pela localização (onde está vs. onde o horário diz que devia estar). O botão manual tem prioridade.
   const [auto, setAuto] = useState(0);
-  const delay = manual > 0 ? manual : auto;
+  // Tempo real da National Rail (quando o servidor tem a chave): atraso oficial tem prioridade sobre o estimado pelo GPS.
+  const [live, setLive] = useState<{ delay: number | null; etd: string; platform: string | null; cancelled: boolean; reason: string | null; messages: string[]; at: string } | null>(null);
+  const delay = manual > 0 ? manual : live?.delay != null ? live.delay : auto;
   const ld = useMemo(() => base.map((d) => ({ dep: new Date(d.dep.getTime() + delay * 60_000), arr: new Date(d.arr.getTime() + delay * 60_000) })), [base, delay]);
   const stops = useMemo(() => stopsOf(r), [r]);
   const prefs = useTransitPrefs();
@@ -249,6 +253,50 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
     onClose();
   };
 
+  // Que painel pedir: antes de partir, a estação de partida; a bordo, a próxima paragem (o comboio aparece lá com a hora prevista).
+  const liveQ = useMemo(() => {
+    const li = phase.k === "change" ? phase.i + 1 : phase.i;
+    const lg = legs[li];
+    if (!lg || phase.k === "done") return null;
+    const to = crsOf(lg.to);
+    if (phase.k === "before" || phase.k === "change") { const c = crsOf(lg.from); return c && to ? { crs: c, to, std: lg.dep, li, op: lg.op ?? "" } : null; }
+    const nx = ride && ride.next.n !== lg.to ? crsOf(ride.next.n) : null;
+    return nx && to ? { crs: nx, to, std: "", li, op: lg.op ?? "" } : null;
+  }, [phase.k, phase.i, ride?.next.n]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!liveQ) return;
+    let on = true;
+    const mins = (h: string) => { const m = /^(\d{2}):(\d{2})$/.exec(h); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+    const diff = (a: string, b: string) => { const x = mins(a), y = mins(b); if (x === null || y === null) return null; let d = x - y; if (d < -720) d += 1440; if (d > 720) d -= 1440; return d; };
+    const load = async () => {
+      if (document.visibilityState !== "visible") return;
+      const r = await fetch(`/api/rail/board?crs=${liveQ.crs}&to=${liveQ.to}`).catch(() => null);
+      if (!r?.ok) return;
+      const b = (await r.json()) as LiveBoard;
+      // O nosso comboio: com hora marcada, o de partida igual (±2 min); a bordo, o próximo a chegar a esta paragem.
+      const nowHm = hm(new Date(), tz);
+      // Mesmo operador do bilhete (ex.: Northern), para não confundir com um comboio mais rápido de outra companhia.
+      const opOk = (x: { operator: string }) => !liveQ.op || x.operator.toLowerCase().includes(liveQ.op.toLowerCase().split(" ")[0]) || liveQ.op.toLowerCase().includes(x.operator.toLowerCase().split(" ")[0]);
+      b.services = b.services.filter(opOk);
+      const svc = liveQ.std
+        ? b.services.find((x) => Math.abs(diff(x.std, liveQ.std) ?? 99) <= 2)
+        : b.services.filter((x) => (diff(x.std, nowHm) ?? -99) >= -30).sort((a2, b2) => (diff(a2.std, nowHm) ?? 0) - (diff(b2.std, nowHm) ?? 0))[0];
+      if (!on) return;
+      if (!svc) { setLive((v) => (v ? { ...v, messages: b.messages, at: b.at } : { delay: null, etd: "", platform: null, cancelled: false, reason: null, messages: b.messages, at: b.at })); return; }
+      // Atraso: chegada prevista ao destino (se o painel a traz), senão a partida prevista nesta estação.
+      const dest = svc.calls.find((c) => c.crs === liveQ.to);
+      const dArr = dest ? (dest.et === "On time" ? 0 : diff(dest.et, dest.st)) : null;
+      const dDep = svc.etd === "On time" ? 0 : diff(svc.etd, svc.std);
+      const d = dArr ?? dDep;
+      setLive({ delay: d === null ? null : Math.max(0, d), etd: svc.etd, platform: svc.platform, cancelled: svc.cancelled, reason: svc.reason, messages: b.messages, at: b.at });
+    };
+    void load();
+    const iv = setInterval(() => void load(), 60_000);
+    const vis = () => void load();
+    document.addEventListener("visibilitychange", vis);
+    return () => { on = false; clearInterval(iv); document.removeEventListener("visibilitychange", vis); };
+  }, [liveQ?.crs, liveQ?.to, liveQ?.std]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const legI = phase.k === "ride" ? phase.i : phase.k === "change" ? phase.i + 1 : phase.k === "before" ? 0 : legs.length - 1;
   const st = stops[legI] ?? [];
   const k = phase.k === "ride" && ride ? ride.k : phase.k === "done" || (phase.k === "change" && legI <= phase.i) ? st.length - 1 : -1;
@@ -266,6 +314,13 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
           <button type="button" className="jf-x" onClick={onClose} aria-label={t.close}>⌄</button>
         </header>
 
+        {live?.cancelled && <div className="jf-off" role="alert">❌ {j.liveCancelled}{live.reason ? `: ${live.reason}` : ""}. {j.liveCancelHint}</div>}
+        {live && live.messages.length > 0 && (
+          <div className="jf-nr" role="status">
+            <b>⚠️ {j.nrSrc}</b>
+            {live.messages.slice(0, 2).map((m, x) => <p key={x}>{m}</p>)}
+          </div>
+        )}
         {ride?.getOff && <div className="jf-off" role="alert">🚉 {fmt(j.getOffNext, { s: legs[ride.i].to })}</div>}
         {phase.k === "change" && <div className="jf-chg" role="status">🔁 {fmt(j.change, { s: legs[phase.i].to })} · <span className="num">{sub}</span></div>}
 
@@ -273,7 +328,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
 
         {l && (
           <section className="jf-leg">
-            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{ld[legI] ? `${hm(ld[legI].dep, tz)} → ${hm(ld[legI].arr, tz)}` : `${l.dep} → ${l.arr}`}</span>{delay > 0 && <span className="chip paid num">{fmt(manual > 0 ? j.lateBy : j.lateAuto, { m: delay })}</span>}{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
+            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{ld[legI] ? `${hm(ld[legI].dep, tz)} → ${hm(ld[legI].arr, tz)}` : `${l.dep} → ${l.arr}`}</span>{delay > 0 && <span className="chip paid num">{fmt(manual > 0 ? j.lateBy : live?.delay != null ? j.liveLate : j.lateAuto, { m: delay })}</span>}{live && !live.cancelled && live.delay === 0 && manual === 0 && <span className="chip walk">● {j.liveOnTime}</span>}{live?.platform && <span className="chip">{fmt(j.livePf, { p: live.platform })}</span>}{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
             <ol className="jf-stops">
               {st.map((s, x) => (
                 <li key={x} className={x <= k ? "past" : x === k + 1 ? "next" : ""}>
