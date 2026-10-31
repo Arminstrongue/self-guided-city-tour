@@ -4070,3 +4070,6 @@ main section.sec{content-visibility:auto;contain-intrinsic-size:auto 720px}
 .jf-end{background:#d70015;color:#fff}
 .jf-start{background:var(--cobalt);color:var(--on-cobalt)}
 .jf-walk{margin-inline-start:4px}
+.jf-late{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:15px}
+.jf-late .chip{min-width:48px;min-height:36px;justify-content:center;cursor:pointer;border:0}
+.stop-local{font-size:15px;color:var(--ink);opacity:.8;margin-top:2px}

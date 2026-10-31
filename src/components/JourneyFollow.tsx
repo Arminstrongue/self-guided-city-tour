@@ -73,7 +73,9 @@ async function alertNote(title: string, body: string, id: number) {
 export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onClose: () => void }) {
   const j = t.jf;
   const legs = r.journey?.legs ?? [];
-  const ld = useMemo(() => legDates(r), [r]);
+  // Atraso indicado pelo viajante (sem dados em tempo real): desloca todas as horas e os avisos.
+  const [delay, setDelay] = useState<number>(() => { try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as { id: string; delay?: number } | null; return x?.id === r.id ? x.delay ?? 0 : 0; } catch { return 0; } });
+  const ld = useMemo(() => legDates(r).map((d) => ({ dep: new Date(d.dep.getTime() + delay * 60_000), arr: new Date(d.arr.getTime() + delay * 60_000) })), [r, delay]);
   const stops = useMemo(() => stopsOf(r), [r]);
   const prefs = useTransitPrefs();
   const [now, setNow] = useState(() => Date.now());
@@ -90,18 +92,19 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   // Guardar "em curso" (retomar ao reabrir) e agendar avisos no sistema (tocam com o ecrã desligado, na app instalada).
   useEffect(() => {
     const until = (ld[ld.length - 1]?.arr.getTime() ?? Date.now()) + 30 * 60_000;
-    try { localStorage.setItem(KEY, JSON.stringify({ id: r.id, until })); } catch { /* ignorar */ }
+    try { localStorage.setItem(KEY, JSON.stringify({ id: r.id, until, delay })); } catch { /* ignorar */ }
     void (async () => {
       if (isNative()) {
         try {
           const { LocalNotifications } = await import("@capacitor/local-notifications");
           const perm = await LocalNotifications.requestPermissions();
           if (perm.display !== "granted") return;
+          await LocalNotifications.cancel({ notifications: legs.map((_, i) => ({ id: notifId(`${r.id}:jf-off${i}`) })) }).catch(() => null);
           const list = legs.flatMap((l, i) => {
             const nx = legs[i + 1];
             const at = new Date(ld[i].arr.getTime() - GET_OFF_MIN * 60_000);
             return at.getTime() > Date.now() + 30_000 ? [{ id: notifId(`${r.id}:jf-off${i}`), title: `🚉 ${fmt(j.getOffNext, { s: l.to })}`,
-              body: nx ? fmt(j.changeNext, { t: nx.dep, p: nx.pf ? ` · ${t.pf.short} ${nx.pf}` : "", m: Math.max(0, Math.round((ld[i + 1].dep.getTime() - ld[i].arr.getTime()) / 60_000)) }) : j.pfCheck,
+              body: nx ? fmt(j.changeNext, { t: hm(ld[i + 1].dep, tz), p: nx.pf ? ` · ${t.pf.short} ${nx.pf}` : "", m: Math.max(0, Math.round((ld[i + 1].dep.getTime() - ld[i].arr.getTime()) / 60_000)) }) : j.pfCheck,
               schedule: { at, allowWhileIdle: true } }] : [];
           });
           if (list.length) await LocalNotifications.schedule({ notifications: list });
@@ -110,7 +113,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
         void Notification.requestPermission().catch(() => null);
       }
     })();
-  }, [r.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [r.id, delay]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Relógio (10 s) e localização.
   useEffect(() => {
@@ -163,11 +166,11 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
       // Passou a paragem mais próxima se já está mais perto da seguinte do que ela da anterior (aprox.): conta como passada quando a <400 m ou depois.
       const at = bd < 400 ? best : best - 1;
       k = Math.max(k, Math.min(at, st.length - 2));
+      passed.current[i] = k; // só a posição real fica guardada (o horário é uma estimativa e não pode "empurrar" o GPS)
     } else {
       const f = Math.min(1, Math.max(0, (now - dep) / Math.max(60_000, arr - dep)));
       k = Math.max(k, Math.min(st.length - 2, Math.floor(f * (st.length - 1))));
     }
-    passed.current[i] = k;
     const next = st[Math.min(k + 1, st.length - 1)];
     const left = st.length - 1 - k;
     const end = st[st.length - 1];
@@ -182,8 +185,8 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   // Notificação de progresso + alerta (uma vez) quando é para sair ou mudar.
   const title = phase.k === "ride" && ride ? fmt(j.ride, { s: legs[ride.i].to }) : phase.k === "change" ? fmt(j.change, { s: legs[phase.i].to }) : phase.k === "before" ? fmt(j.board, { s: legs[0]?.from ?? "" }) : fmt(j.arrived, { s: legs[legs.length - 1]?.to ?? "" });
   const sub = phase.k === "ride" && ride ? fmt(ride.left === 1 ? j.stop1 : j.stopsMin, { n: ride.left, m: ride.min })
-    : phase.k === "change" ? fmt(j.changeNext, { t: legs[phase.i + 1].dep, p: legs[phase.i + 1].pf ? ` · ${t.pf.short} ${legs[phase.i + 1].pf}` : "", m: minsTo(ld[phase.i + 1].dep, now) })
-    : phase.k === "before" ? fmt(j.departsIn, { m: minsTo(ld[0].dep, now), t: legs[0]?.dep ?? "" }) : "";
+    : phase.k === "change" ? fmt(j.changeNext, { t: hm(ld[phase.i + 1].dep, tz), p: legs[phase.i + 1].pf ? ` · ${t.pf.short} ${legs[phase.i + 1].pf}` : "", m: minsTo(ld[phase.i + 1].dep, now) })
+    : phase.k === "before" ? fmt(j.departsIn, { m: minsTo(ld[0].dep, now), t: ld[0] ? hm(ld[0].dep, tz) : "" }) : "";
   useEffect(() => { if (phase.k !== "done") void progressNote(`🚆 ${title}`, sub, noteId); }, [title, sub]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!ride?.getOff) return;
@@ -232,7 +235,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
 
         {l && (
           <section className="jf-leg">
-            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{l.dep} → {l.arr}</span>{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
+            <div className="jf-legh"><span className="chip">{l.op || t.train}</span><span className="num">{ld[legI] ? `${hm(ld[legI].dep, tz)} → ${hm(ld[legI].arr, tz)}` : `${l.dep} → ${l.arr}`}</span>{delay > 0 && <span className="chip paid num">{fmt(j.lateBy, { m: delay })}</span>}{l.pf && <span className="chip">{t.pf.short} {l.pf}</span>}</div>
             <ol className="jf-stops">
               {st.map((s, x) => (
                 <li key={x} className={x <= k ? "past" : x === k + 1 ? "next" : ""}>
@@ -246,6 +249,13 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
           </section>
         )}
 
+        {phase.k !== "done" && (
+          <div className="jf-late" role="group" aria-label={j.late}>
+            <span>⏱ {j.late}</span>
+            {[5, 10, 15].map((m) => <button key={m} type="button" className="chip press num" onClick={() => setDelay((d) => Math.min(180, d + m))}>+{m}</button>)}
+            {delay > 0 && <button type="button" className="link-btn" onClick={() => setDelay(0)}>{j.onTime}</button>}
+          </div>
+        )}
         <p className="jf-pf">⚠️ {j.pfCheck}</p>
         {prefs.wheel && <p className="jf-pf">♿ {j.assist}</p>}
 

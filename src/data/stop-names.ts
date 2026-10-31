@@ -93,6 +93,8 @@ const EN: Record<string, string> = {
 
 export function stopName(s: { id: string; n: string }, locale: string): string {
   if (locale === "pt") return s.n;
+  const loc = localName(s.id);
+  if (loc && loc.lang === locale) return loc.n; // ex.: japonês no Japão, árabe no Médio Oriente
   return EN[s.id] ?? s.n.replace(/ e /g, " & ");
 }
 
@@ -123,4 +125,56 @@ const LINE_EN: [RegExp, string][] = [
 export function lineText(line: string | undefined, locale: string): string {
   if (!line || locale === "pt") return line ?? "";
   return LINE_EN.reduce((s, [re, to]) => s.replace(re, to), line);
+}
+
+/**
+ * Nome no alfabeto local (para mostrar a quem fala essa língua e, aos outros, por baixo do nome: ajuda a reconhecer
+ * placas e a mostrar ao taxista). Nomes oficiais/correntes dos locais.
+ */
+type LocalLang = "ja" | "zh" | "ar" | "th";
+const LOCAL: Record<LocalLang, Record<string, string>> = {
+  ja: {
+    "tyo-sensoji": "浅草寺・雷門", "tyo-ginza": "銀座（中央通り）", "tyo-kokyo": "皇居外苑・二重橋", "tyo-marunouchi": "東京駅（丸の内ビルディング）",
+    "tyo-meiji": "明治神宮", "tyo-shibuya": "渋谷スクランブル交差点・ハチ公", "tyo-tocho": "東京都庁展望室", "tyo-omoide": "思い出横丁",
+    "hij-shukkeien": "縮景園", "hij-castle": "広島城", "hij-dome": "原爆ドーム", "hij-peace-park": "平和記念公園", "hij-museum": "平和記念資料館",
+    "hij-hondori": "本通商店街", "hij-miyajima": "宮島・厳島神社",
+    "kyo-inari": "伏見稲荷大社", "kyo-kiyomizu": "清水寺", "kyo-sannenzaka": "三年坂・二年坂・八坂の塔", "kyo-yasaka": "八坂神社", "kyo-hanamikoji": "祇園・花見小路",
+    "kyo-shirakawa": "白川", "kyo-nishiki": "錦市場", "kyo-nijo": "二条城",
+    "osa-dotonbori": "道頓堀・戎橋", "osa-hozenji": "法善寺横丁", "osa-kuromon": "黒門市場", "osa-shinsekai": "新世界・通天閣", "osa-shitennoji": "四天王寺",
+    "osa-castle": "大阪城", "osa-umeda": "梅田スカイビル"
+  },
+  zh: {
+    "hkg-statue-square": "皇后像廣場・終審法院", "hkg-peak": "太平山頂（山頂纜車）", "hkg-tai-kwun": "大館", "hkg-man-mo": "文武廟", "hkg-tst": "天星小輪・尖沙咀鐘樓",
+    "hkg-avenue-stars": "星光大道・幻彩詠香江", "hkg-temple-street": "廟街夜市", "hkg-ladies-market": "女人街（通菜街）"
+  },
+  ar: {
+    "al-fahidi": "حي الفهيدي التاريخي (البستكية)", "abra": "عبرة الخور وسوق التوابل", "gold-souk": "سوق الذهب", "museum-future": "متحف المستقبل",
+    "burj-khalifa": "برج خليفة ودبي مول والنافورة", "marina": "دبي مارينا وشاطئ جي بي آر",
+    "grand-mosque": "جامع الشيخ زايد الكبير", "qasr-watan": "قصر الوطن", "emirates-palace": "قصر الإمارات وأبراج الاتحاد", "heritage-village": "القرية التراثية",
+    "corniche-auh": "كورنيش أبوظبي", "louvre-auh": "متحف اللوفر أبوظبي",
+    "msheireb": "مشيرب قلب الدوحة", "souq-waqif": "سوق واقف", "nmoq": "متحف قطر الوطني", "mia": "متحف الفن الإسلامي وحديقته", "corniche-doh": "الكورنيش والمراكب الشراعية", "katara": "الحي الثقافي كتارا",
+    "kafd": "مركز الملك عبدالله المالي", "kingdom": "برج المملكة وجسر السماء", "masmak": "قصر المصمك وسوق الزل", "national-museum-ruh": "المتحف الوطني السعودي",
+    "murabba": "قصر المربع", "diriyah": "الدرعية: حي الطريف والبجيري",
+    "al-balad": "جدة التاريخية (البلد) وبيت نصيف", "souq-alawi": "سوق العلوي", "matbouli": "بيت المتبولي", "corniche-jed": "الكورنيش ونافورة الملك فهد", "al-rahma": "مسجد الرحمة (العائم)",
+    "gem": "المتحف المصري الكبير", "pyramids": "أهرامات الجيزة", "sphinx": "أبو الهول ومعبد الوادي", "egyptian-museum": "المتحف المصري بالتحرير",
+    "khan": "خان الخليلي وشارع المعز", "citadel-cai": "قلعة صلاح الدين ومسجد محمد علي",
+    "citadel": "جبل القلعة", "roman-theatre": "المدرج الروماني", "downtown-amm": "وسط البلد والأسواق", "rainbow": "شارع الرينبو", "abdullah-mosque": "مسجد الملك عبدالله الأول",
+    "grand-mosque-mct": "جامع السلطان قابوس الأكبر", "opera-mct": "دار الأوبرا السلطانية مسقط", "mutrah": "كورنيش مطرح وسوقه", "al-alam": "قصر العلم ومسقط القديمة",
+    "national-museum-om": "المتحف الوطني العماني",
+    "rak-koutoubia": "جامع الكتبية", "rak-jemaa": "ساحة جامع الفنا", "rak-souks": "الأسواق ومدرسة ابن يوسف", "rak-bahia": "قصر الباهية", "rak-saadian": "قبور السعديين والقصبة",
+    "rak-majorelle": "حديقة ماجوريل ومتحف إيف سان لوران",
+    "cas-unite": "ساحة محمد الخامس ووسط المدينة", "cas-sacrecoeur": "كاتدرائية القلب المقدس وحديقة الجامعة العربية", "cas-habous": "حي الأحباس", "cas-medina": "المدينة القديمة والسقالة",
+    "cas-hassan": "مسجد الحسن الثاني", "cas-corniche": "كورنيش عين الذياب",
+    "tun-bourguiba": "شارع الحبيب بورقيبة", "tun-babbhar": "باب البحر", "tun-zitouna": "جامع الزيتونة والأسواق", "tun-dar": "دار بن عبد الله وتربة الباي", "tun-bardo": "متحف باردو",
+    "tun-sidibou": "سيدي بوسعيد وقرطاج"
+  },
+  th: {
+    "bkk-grand-palace": "พระบรมมหาราชวัง · วัดพระแก้ว", "bkk-wat-pho": "วัดโพธิ์", "bkk-wat-arun": "วัดอรุณราชวราราม", "bkk-yaowarat": "เยาวราช",
+    "bkk-wat-traimit": "วัดไตรมิตรวิทยาราม", "bkk-lumphini": "สวนลุมพินี", "bkk-jim-thompson": "บ้านจิมทอมป์สัน"
+  }
+};
+/** Nome no alfabeto local, com a língua (para o atributo lang). */
+export function localName(id: string): { n: string; lang: LocalLang } | null {
+  for (const lang of Object.keys(LOCAL) as LocalLang[]) { const n = LOCAL[lang][id]; if (n) return { n, lang }; }
+  return null;
 }
