@@ -1601,7 +1601,7 @@
 "rsRef": "Rezervasyon kodu",
 "rsPaid": "Ödendi",
 "rsToPay": "Yerinde ödenecek",
-"rsPhoto": "Bilet / QR fotoğrafı veya ekran görüntüsü",
+"rsPhoto": "Biletlerin / QR kodlarının fotoğrafı veya ekran görüntüsü (en fazla 6)",
 "rsPhotoNote": "Hesabınızda ve bu telefonda saklanır, internetsiz de açılır.",
 "rsNotes": "Talimatlar",
 "rsNotesPh": "Giriş, kapı, yanınıza alacaklarınız…",

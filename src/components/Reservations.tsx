@@ -13,6 +13,10 @@ import { SheetX } from "./WinNav";
 import { TipsButton } from "./TravelTips";
 import { tipsFor } from "@/data/travel-tips";
 
+/** Fotos da reserva (as antigas só tinham `photo`). */
+export const photosOf = (r: { photo?: string; photos?: string[] }) => (r.photos?.length ? r.photos : r.photo ? [r.photo] : []);
+const MAX_PHOTOS = 6;
+
 export const RES_ICON: Record<string, string> = { hotel: "🏨", ticket: "🎟", food: "🍽", transport: "🚆", tour: "🧭", other: "📌" };
 const KINDS = ["hotel", "ticket", "food", "transport", "tour", "other"] as const;
 const deviceTz = () => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "UTC"; } };
@@ -110,7 +114,7 @@ export function TicketSheet({ r, t, locale, onClose }: { r: Reservation; t: Dict
         {r.kind === "transport" && <TipsButton t={t} tips={tipsFor({ cities: r.city ? [r.city] : [], mode: "train", hasChange: (r.journey?.legs.length ?? 1) > 1 })} />}
         {r.ref && <div className="tk-ref"><small>{t.rsRef}</small><b>{r.ref}</b></div>}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {r.photo && <img className="tk-img" src={r.photo} alt={t.rsPhoto} />}
+        {photosOf(r).map((src, i, all) => <img key={i} className="tk-img" src={src} alt={all.length > 1 ? `${t.rsPhoto} ${i + 1}/${all.length}` : t.rsPhoto} />)}
         {r.place && <p>📍 {r.place}</p>}
         {r.notes && <p className="hint">{r.notes}</p>}
         <span className={`chip ${r.paid ? "walk" : "paid"}`}>{r.paid ? t.rsPaid : t.rsToPay}</span>
@@ -141,7 +145,7 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
   t: Dict; locale: Locale; cities: Record<string, string>; tzOf: Record<string, string>; signed: boolean; initial: Reservation | null; onClose: (changed: boolean) => void;
 }) {
   // Cidade pelo contexto (plano escolhido ou roteiro em curso); sem cidade, o fuso tem de ser escolhido (nunca assumido).
-  const [f, setF] = useState<ResInput>(() => initial ? { ...initial } : { kind: "ticket", title: "", city: contextCity(cities), localAt: "", tz: "", place: "", lat: null, lng: null, ref: "", notes: "", photo: "", paid: false });
+  const [f, setF] = useState<ResInput>(() => initial ? { ...initial, photos: photosOf(initial) } : { kind: "ticket", title: "", city: contextCity(cities), localAt: "", tz: "", place: "", lat: null, lng: null, ref: "", notes: "", photo: "", photos: [], paid: false });
   const blank: JourneyLeg = { from: "", to: "", dep: "", arr: "" };
   const [legs, setLegs] = useState<JourneyLeg[]>(() => initial?.journey?.legs?.length ? initial.journey.legs : [blank]);
   const setLeg = (i: number, p: Partial<JourneyLeg>) => setLegs((ls) => ls.map((l, k) => (k === i ? { ...l, ...p } : l)));
@@ -171,7 +175,8 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
     const at = localAt && tz ? zonedToDate(localAt, tz) : null;
     if (!title || !at || isNaN(at.getTime())) { setErr(t.rsErr); return; }
     setBusy(true);
-    const r = await saveReservation(signed, { ...f, title, localAt, tz, journey }, at.toISOString(), initial?.id);
+    const photos = (f.photos ?? []).slice(0, MAX_PHOTOS);
+    const r = await saveReservation(signed, { ...f, photos, photo: photos[0] ?? "", title, localAt, tz, journey }, at.toISOString(), initial?.id);
     setBusy(false);
     if (!r) { setErr(t.tsError); return; }
     onClose(true);
@@ -228,9 +233,22 @@ function Editor({ t, locale, cities, tzOf, signed, initial, onClose }: {
         <div className="field"><label htmlFor="rs-r">{t.rsRef}</label><input id="rs-r" value={f.ref} maxLength={80} onChange={(e) => set({ ref: e.target.value })} /></div>
         <label className="rs-paid"><input type="checkbox" checked={f.paid} onChange={(e) => set({ paid: e.target.checked })} /> <span>{t.rsPaid}</span></label>
         <div className="field"><label htmlFor="rs-ph">{t.rsPhoto}</label>
-          <input id="rs-ph" type="file" accept="image/*" onChange={async (e) => { const file = e.target.files?.[0]; if (file) set({ photo: await compressPhoto(file).catch(() => "") }); }} />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {f.photo && <span className="row" style={{ gap: 8 }}><img src={f.photo} alt="" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }} /><button type="button" className="link-btn danger" onClick={() => set({ photo: "" })}>{t.ofRemove}</button></span>}
+          {(f.photos ?? []).length < MAX_PHOTOS && <input id="rs-ph" type="file" accept="image/*" multiple onChange={async (e) => {
+            const files = [...(e.target.files ?? [])].slice(0, MAX_PHOTOS - (f.photos ?? []).length);
+            e.target.value = "";
+            const out = (await Promise.all(files.map((file) => compressPhoto(file, 380_000).catch(() => "")))).filter(Boolean);
+            if (out.length) setF((x) => ({ ...x, photos: [...(x.photos ?? []), ...out].slice(0, MAX_PHOTOS) }));
+          }} />}
+          {(f.photos ?? []).length > 0 && <div className="rs-photos">
+            {(f.photos ?? []).map((src, i) => (
+              <span key={i} className="rs-ph">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={src} alt={`${t.rsPhoto} ${i + 1}`} />
+                <button type="button" className="rs-ph-x" aria-label={`${t.ofRemove} ${i + 1}`} onClick={() => setF((x) => ({ ...x, photos: (x.photos ?? []).filter((_, k) => k !== i) }))}>×</button>
+              </span>
+            ))}
+            <small className="hint num">{(f.photos ?? []).length}/{MAX_PHOTOS}</small>
+          </div>}
           <small className="hint">{t.rsPhotoNote}</small></div>
         <div className="field"><label htmlFor="rs-n">{t.rsNotes}</label><textarea id="rs-n" rows={2} maxLength={600} value={f.notes} onChange={(e) => set({ notes: e.target.value })} placeholder={t.rsNotesPh} /></div>
         {when && !isNaN(when.getTime()) && f.title && (
@@ -266,7 +284,7 @@ export function Reservations({ t, locale, cities, tzOf, signed }: { t: Dict; loc
             <button className="rs-main press" onClick={() => setShow(r)}>
               <span className="rs-ic" aria-hidden="true">{RES_ICON[r.kind]}</span>
               <span className="stack" style={{ gap: 2, minWidth: 0 }}><b>{r.title}</b><span className="hint">{w.day} · {r.journey?.legs.length ? journeyLine(r.journey, t) : w.hm}{r.city && cities[r.city] ? ` · ${cities[r.city]}` : ""}</span>{r.place && <span className="hint ad-ellip">📍 {r.place}</span>}</span>
-              {(r.photo || r.ref) && <span className="chip walk">{t.rsTicket}</span>}
+              {(photosOf(r).length > 0 || r.ref) && <span className="chip walk">{t.rsTicket}</span>}
             </button>
             <div className="rs-acts"><button className="link-btn" onClick={() => setEdit(r)}>{t.rsEdit}</button><button className="link-btn danger" onClick={async () => { await removeReservation(signed, r.id); reload(); }}>{t.ofRemove}</button></div>
           </div>

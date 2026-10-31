@@ -20,7 +20,7 @@ const Body = z.object({
   localAt: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/), tz: z.string().min(1).max(60),
   place: z.string().max(200).default(""), lat: z.number().min(-90).max(90).nullable().default(null), lng: z.number().min(-180).max(180).nullable().default(null),
   ref: z.string().max(80).default(""), notes: z.string().max(600).default(""),
-  photo: z.literal("").or(imageDataUrl(600_000)).default(""), paid: z.boolean().default(false),
+  photo: z.literal("").or(imageDataUrl(600_000)).default(""), photos: z.array(imageDataUrl(600_000)).max(6).default([]), paid: z.boolean().default(false),
   // Viagem com troços (comboio/autocarro): até 6 troços, horas "HH:MM".
   journey: z.object({ legs: z.array(z.object({
     from: z.string().trim().min(1).max(80), to: z.string().trim().min(1).max(80),

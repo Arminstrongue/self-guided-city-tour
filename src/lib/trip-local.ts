@@ -11,7 +11,9 @@ export function cachedReservations(): Reservation[] {
   try { return JSON.parse(localStorage.getItem(KEY) ?? "[]") ?? []; } catch { return []; }
 }
 function cache(list: Reservation[]) {
-  try { localStorage.setItem(KEY, JSON.stringify(list)); } catch { /* cheio: fica sem cópia offline */ }
+  // Com muitas fotos o telemóvel pode não ter espaço: guarda então só a primeira foto de cada reserva, e por fim sem fotos.
+  const tries = [list, list.map((r) => ({ ...r, photos: (r.photos ?? []).slice(0, 1) })), list.map((r) => ({ ...r, photo: "", photos: [] }))];
+  for (const l of tries) { try { localStorage.setItem(KEY, JSON.stringify(l)); break; } catch { /* cheio: tenta mais leve */ } }
   window.dispatchEvent(new Event("sgct:res"));
 }
 
@@ -51,7 +53,7 @@ export async function removeReservation(signed: boolean, id: string) {
 }
 
 /** Foto do bilhete reduzida (lado maior 1400 px, JPEG) para caber na conta e no telemóvel. */
-export async function compressPhoto(file: File): Promise<string> {
+export async function compressPhoto(file: File, maxLen = 550_000): Promise<string> {
   const url = URL.createObjectURL(file);
   try {
     const img = await new Promise<HTMLImageElement>((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = url; });
@@ -59,7 +61,7 @@ export async function compressPhoto(file: File): Promise<string> {
     const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
     c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
     let q = 0.8, out = c.toDataURL("image/jpeg", q);
-    while (out.length > 550_000 && q > 0.4) { q -= 0.1; out = c.toDataURL("image/jpeg", q); }
+    while (out.length > maxLen && q > 0.35) { q -= 0.1; out = c.toDataURL("image/jpeg", q); }
     return out;
   } finally { URL.revokeObjectURL(url); }
 }

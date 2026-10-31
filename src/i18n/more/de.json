@@ -1143,7 +1143,7 @@
 "rsRef": "Buchungsnummer",
 "rsPaid": "Bereits bezahlt",
 "rsToPay": "Vor Ort zu zahlen",
-"rsPhoto": "Foto oder Screenshot des Tickets / QR",
+"rsPhoto": "Fotos oder Screenshots der Tickets / QR-Codes (bis zu 6)",
 "rsPhotoNote": "Wird in Ihrem Konto und auf diesem Handy gespeichert und öffnet sich auch offline.",
 "rsNotes": "Hinweise",
 "rsNotesPh": "Check-in, Eingang, was mitbringen…",

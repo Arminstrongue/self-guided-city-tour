@@ -1601,7 +1601,7 @@
 "rsRef": "예약 번호",
 "rsPaid": "결제 완료",
 "rsToPay": "현장 결제",
-"rsPhoto": "티켓 / QR 사진 또는 스크린샷",
+"rsPhoto": "티켓 / QR 코드 사진 또는 캡처 (최대 6장)",
 "rsPhotoNote": "계정과 이 휴대폰에 저장되어 인터넷 없이도 열려요.",
 "rsNotes": "안내",
 "rsNotesPh": "체크인, 입구, 준비물…",
