@@ -13,6 +13,7 @@ import { loadTrip, saveTrip, tripKey } from "./trip-store";
 import { accessCount, accessOf, PRICES_CHECKED } from "@/data/access";
 import { cityCenterOf } from "@/lib/city-center";
 import { RouteHero } from "./RouteHero";
+import { TubeHelperButton } from "./TubeHelper";
 import { NavSheet } from "./NavSheet";
 import { NextCard, BackNow, dayNames, FlightCard, RouteFit, Speak, useGeo, WeatherCard, weekdayIn, type FlightOverride } from "./TourExtras";
 import type { Offer } from "@/lib/merchants";
@@ -357,6 +358,7 @@ export function TourView({ locale, t: tProp, city: cityIn, cityLabel, flightAt, 
             onDone={(id) => toggleDone(id)} onNav={(id, leg) => setNav({ id, leg })}
             onOpen={(id) => { setOpen(id); requestAnimationFrame(() => document.getElementById(`s-${id}`)?.scrollIntoView({ behavior: "smooth", block: "start" })); }} />
         )}
+        {tab === "route" && !preview && city.id === "lon" && <TubeHelperButton t={t} />}
         {tab === "route" && !preview && <AroundMe t={t} locale={locale} cityId={city.id} tz={tz} pos={geo.pos} geoState={geo.state} onGeo={geo.start} museums={museums} updates={updates.list} onShow={showOnMap} />}
         {tab === "route" && !preview && started && (
           <WalkTools t={t} locale={locale} cityId={city.id} slack={slack}
