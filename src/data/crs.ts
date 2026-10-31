@@ -7,7 +7,10 @@ const CRS: Record<string, string> = {
   "liverpool lime street": "LIV", "leeds": "LDS", "sheffield": "SHF", "preston": "PRE", "york": "YRK", "birmingham new street": "BHM",
   "london euston": "EUS", "london king's cross": "KGX", "london st pancras international": "STP", "london paddington": "PAD",
   "edinburgh": "EDB", "edinburgh waverley": "EDB", "glasgow central": "GLC", "warrington bank quay": "WBQ", "milton keynes central": "MKC",
-  "stafford": "STA", "lancaster": "LAN", "newcastle": "NCL"
+  "stafford": "STA", "lancaster": "LAN", "newcastle": "NCL",
+  "rugby": "RUG", "coventry": "COV", "birmingham international": "BHI", "wolverhampton": "WVH", "wigan north western": "WGN",
+  "liverpool south parkway": "LPY", "runcorn": "RUN", "watford junction": "WFJ", "chester": "CTR", "holyhead": "HHD",
+  "carlisle": "CAR", "oxenholme lake district": "OXN", "tring": "TRI", "northampton": "NMP", "nuneaton": "NUN"
 };
 export const crsOf = (name: string | undefined | null) => (name ? CRS[normStation(name)] ?? null : null);
 

@@ -19,6 +19,7 @@ import { crsOf } from "@/data/crs";
 import type { LiveBoard } from "@/lib/rail-live";
 import { ALL_MODES, saveTransit, useTransitPrefs, type RouteOpt } from "@/lib/transit-prefs";
 import Portal from "./Portal";
+import { BoardHelperButton } from "./BoardHelper";
 
 type Pos = { lat: number; lng: number };
 type Stop = { n: string; lat: number | null; lng: number | null };
@@ -371,6 +372,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
             {manual > 0 && <button type="button" className="link-btn" onClick={() => setDelay(0)}>{j.onTime}</button>}
           </div>
         )}
+        {(phase.k === "before" || phase.k === "change") && l && <BoardHelperButton t={t} from={l.from} to={l.to} />}
         <p className="jf-pf">⚠️ {j.pfCheck}</p>
         {prefs.wheel && <p className="jf-pf">♿ {j.assist}</p>}
 
