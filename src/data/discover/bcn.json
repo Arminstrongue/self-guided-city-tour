@@ -1,0 +1,403 @@
+{
+ "places": [
+  {
+   "id": "bcn-park-guell",
+   "n": "Park Güell",
+   "a": "Gràcia",
+   "lat": 41.4145,
+   "lng": 2.1527,
+   "k": "park",
+   "top": true,
+   "url": "https://parkguell.barcelona",
+   "en": "Gaudí's hillside park, built between 1900 and 1914, with the famous mosaic dragon, the serpentine bench and wide views over the city. It is part of the UNESCO World Heritage listing of Gaudí's works.",
+   "pt": "O parque de Gaudí na encosta, construído entre 1900 e 1914, com o famoso dragão de mosaico, o banco ondulante e amplas vistas sobre a cidade. Faz parte do Património Mundial da UNESCO dedicado às obras de Gaudí."
+  },
+  {
+   "id": "bcn-casa-vicens",
+   "n": "Casa Vicens",
+   "a": "Gràcia",
+   "lat": 41.4035,
+   "lng": 2.1506,
+   "k": "sight",
+   "url": "https://casavicens.org",
+   "en": "Gaudí's first major house, built in 1883–1885, with colourful tiles and Moorish-inspired details. It opened to the public as a museum in 2017.",
+   "pt": "A primeira grande casa projetada por Gaudí, construída entre 1883 e 1885, com azulejos coloridos e pormenores de inspiração mourisca. Abriu ao público como museu em 2017."
+  },
+  {
+   "id": "bcn-palau-musica",
+   "n": "Palau de la Música Catalana",
+   "a": "Sant Pere",
+   "lat": 41.3876,
+   "lng": 2.1753,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.palaumusica.cat",
+   "en": "A concert hall by Lluís Domènech i Montaner, completed in 1908, famous for its stained-glass skylight and rich Modernista decoration. It is a UNESCO World Heritage Site.",
+   "pt": "Sala de concertos de Lluís Domènech i Montaner, concluída em 1908, famosa pela claraboia de vitral e pela rica decoração modernista. É Património Mundial da UNESCO."
+  },
+  {
+   "id": "bcn-montjuic-castle",
+   "n": "Montjuïc Castle",
+   "a": "Montjuïc",
+   "lat": 41.363,
+   "lng": 2.1651,
+   "k": "view",
+   "top": true,
+   "en": "A military fortress on top of Montjuïc hill, with origins in the 17th century. Its walls give sweeping views over the port, the sea and the city.",
+   "pt": "Fortaleza militar no topo da colina de Montjuïc, com origens no século XVII. Das muralhas tem-se uma vista ampla sobre o porto, o mar e a cidade."
+  },
+  {
+   "id": "bcn-mnac",
+   "n": "Museu Nacional d'Art de Catalunya (MNAC)",
+   "a": "Montjuïc",
+   "lat": 41.3684,
+   "lng": 2.1536,
+   "k": "museum",
+   "top": true,
+   "url": "https://www.museunacional.cat",
+   "en": "Catalonia's national art museum, housed in the Palau Nacional built for the 1929 International Exhibition. It is best known for its outstanding collection of Romanesque murals.",
+   "pt": "O museu nacional de arte da Catalunha, instalado no Palau Nacional, construído para a Exposição Internacional de 1929. É especialmente conhecido pela notável coleção de pinturas murais românicas."
+  },
+  {
+   "id": "bcn-magic-fountain",
+   "n": "Magic Fountain of Montjuïc",
+   "a": "Montjuïc",
+   "lat": 41.3712,
+   "lng": 2.1517,
+   "k": "landmark",
+   "top": true,
+   "en": "A large fountain designed by Carles Buïgas for the 1929 International Exhibition. On scheduled evenings it hosts light, water and music shows open to everyone.",
+   "pt": "Grande fonte projetada por Carles Buïgas para a Exposição Internacional de 1929. Em noites programadas recebe espetáculos de luz, água e música abertos a todos."
+  },
+  {
+   "id": "bcn-fundacio-miro",
+   "n": "Fundació Joan Miró",
+   "a": "Montjuïc",
+   "lat": 41.3686,
+   "lng": 2.1599,
+   "k": "gallery",
+   "url": "https://www.fmirobcn.org",
+   "en": "A museum devoted to Joan Miró, opened in 1975 in a white building designed by Josep Lluís Sert. It holds paintings, sculptures and tapestries by the artist.",
+   "pt": "Museu dedicado a Joan Miró, inaugurado em 1975 num edifício branco projetado por Josep Lluís Sert. Reúne pinturas, esculturas e tapeçarias do artista."
+  },
+  {
+   "id": "bcn-museu-picasso",
+   "n": "Museu Picasso",
+   "a": "El Born",
+   "lat": 41.3852,
+   "lng": 2.1809,
+   "k": "gallery",
+   "top": true,
+   "en": "Opened in 1963 in a row of medieval palaces on Carrer de Montcada. It has one of the most complete collections of Picasso's early work.",
+   "pt": "Inaugurado em 1963 num conjunto de palácios medievais da Carrer de Montcada. Tem uma das coleções mais completas das obras de juventude de Picasso."
+  },
+  {
+   "id": "bcn-ciutadella",
+   "n": "Parc de la Ciutadella",
+   "a": "Ciutat Vella",
+   "lat": 41.3881,
+   "lng": 2.1873,
+   "k": "park",
+   "top": true,
+   "free": true,
+   "en": "The city's main central park, laid out on the site of an old citadel and used for the 1888 Universal Exhibition. Highlights include the monumental Cascada fountain and a boating lake; the Catalan Parliament also stands here.",
+   "pt": "O principal parque central da cidade, criado no local de uma antiga cidadela e usado na Exposição Universal de 1888. Destacam-se a monumental fonte da Cascada e um lago com barcos; aqui fica também o Parlamento da Catalunha."
+  },
+  {
+   "id": "bcn-arc-de-triomf",
+   "n": "Arc de Triomf",
+   "a": "Sant Pere",
+   "lat": 41.391,
+   "lng": 2.1806,
+   "k": "landmark",
+   "en": "A red-brick triumphal arch built as the main entrance to the 1888 Universal Exhibition. It opens onto a wide promenade leading to Parc de la Ciutadella.",
+   "pt": "Arco do triunfo em tijolo vermelho, construído como entrada principal da Exposição Universal de 1888. Abre para um largo passeio que leva ao Parc de la Ciutadella."
+  },
+  {
+   "id": "bcn-camp-nou",
+   "n": "Spotify Camp Nou",
+   "a": "Les Corts",
+   "lat": 41.3809,
+   "lng": 2.1228,
+   "k": "sight",
+   "top": true,
+   "en": "FC Barcelona's home stadium since 1957 and the largest football stadium in Europe. It has been undergoing a major redevelopment, and the club museum is on site.",
+   "pt": "O estádio do FC Barcelona desde 1957 e o maior estádio de futebol da Europa. Tem estado em grandes obras de remodelação e o museu do clube fica no mesmo local."
+  },
+  {
+   "id": "bcn-tibidabo",
+   "n": "Tibidabo",
+   "a": "Collserola",
+   "lat": 41.4221,
+   "lng": 2.1188,
+   "k": "view",
+   "en": "The highest hill around Barcelona, topped by the Temple of the Sacred Heart and a historic amusement park. It offers some of the widest views over the city and the coast.",
+   "pt": "A colina mais alta à volta de Barcelona, coroada pelo Templo do Sagrado Coração e por um parque de diversões histórico. Oferece algumas das vistas mais amplas sobre a cidade e a costa."
+  },
+  {
+   "id": "bcn-bunkers-carmel",
+   "n": "Bunkers del Carmel (Turó de la Rovira)",
+   "a": "El Carmel",
+   "lat": 41.4193,
+   "lng": 2.1618,
+   "k": "view",
+   "en": "The remains of a Spanish Civil War anti-aircraft battery on top of Turó de la Rovira hill, now looked after by the city history museum (MUHBA). It is one of the best 360-degree viewpoints over Barcelona.",
+   "pt": "Os vestígios de uma bateria antiaérea da Guerra Civil Espanhola no topo da colina do Turó de la Rovira, hoje a cargo do museu de história da cidade (MUHBA). É um dos melhores miradouros de 360 graus sobre Barcelona."
+  },
+  {
+   "id": "bcn-sant-pau",
+   "n": "Recinte Modernista de Sant Pau",
+   "a": "El Guinardó",
+   "lat": 41.4117,
+   "lng": 2.1743,
+   "k": "sight",
+   "url": "https://www.santpaubarcelona.org",
+   "en": "A former hospital designed by Lluís Domènech i Montaner, built in the early 20th century as a complex of richly decorated pavilions. It is a UNESCO World Heritage Site.",
+   "pt": "Antigo hospital projetado por Lluís Domènech i Montaner, construído no início do século XX como um conjunto de pavilhões ricamente decorados. É Património Mundial da UNESCO."
+  },
+  {
+   "id": "bcn-palau-guell",
+   "n": "Palau Güell",
+   "a": "El Raval",
+   "lat": 41.3789,
+   "lng": 2.1742,
+   "k": "palace",
+   "url": "https://www.palauguell.cat",
+   "en": "A town palace Gaudí designed for his patron Eusebi Güell in 1886–1888, just off La Rambla. Its rooftop is covered with colourful chimneys; it is part of the UNESCO listing of Gaudí's works.",
+   "pt": "Palácio urbano que Gaudí projetou para o seu mecenas Eusebi Güell entre 1886 e 1888, junto à Rambla. O terraço está coberto de chaminés coloridas; faz parte do Património Mundial da UNESCO dedicado às obras de Gaudí."
+  },
+  {
+   "id": "bcn-macba",
+   "n": "MACBA – Museum of Contemporary Art",
+   "a": "El Raval",
+   "lat": 41.3833,
+   "lng": 2.1668,
+   "k": "gallery",
+   "url": "https://www.macba.cat",
+   "en": "Barcelona's contemporary art museum, opened in 1995 in a white building by Richard Meier. The square in front, Plaça dels Àngels, is a well-known skateboarding spot.",
+   "pt": "O museu de arte contemporânea de Barcelona, inaugurado em 1995 num edifício branco de Richard Meier. A praça em frente, a Plaça dels Àngels, é um conhecido ponto de encontro de skaters."
+  },
+  {
+   "id": "bcn-santa-caterina",
+   "n": "Mercat de Santa Caterina",
+   "a": "Sant Pere",
+   "lat": 41.3864,
+   "lng": 2.1782,
+   "k": "market",
+   "en": "A neighbourhood food market dating from 1848, renovated by Enric Miralles and Benedetta Tagliabue. Its wavy roof is covered in colourful ceramic tiles.",
+   "pt": "Mercado de bairro que remonta a 1848, renovado por Enric Miralles e Benedetta Tagliabue. A cobertura ondulada está revestida de cerâmica colorida."
+  },
+  {
+   "id": "bcn-sant-antoni",
+   "n": "Mercat de Sant Antoni",
+   "a": "Sant Antoni",
+   "lat": 41.3786,
+   "lng": 2.162,
+   "k": "market",
+   "en": "A large iron-and-glass market from 1882 that reopened in 2018 after a long restoration. On Sunday mornings it hosts a well-known second-hand book and collectors' market.",
+   "pt": "Grande mercado de ferro e vidro de 1882 que reabriu em 2018 após uma longa restauração. Aos domingos de manhã acolhe uma conhecida feira de livros usados e colecionismo."
+  },
+  {
+   "id": "bcn-poble-espanyol",
+   "n": "Poble Espanyol",
+   "a": "Montjuïc",
+   "lat": 41.3691,
+   "lng": 2.1467,
+   "k": "sight",
+   "url": "https://www.poble-espanyol.com",
+   "en": "An open-air architectural museum built for the 1929 International Exhibition. Its streets and squares reproduce buildings from regions all over Spain, with craft workshops and restaurants.",
+   "pt": "Museu de arquitetura ao ar livre construído para a Exposição Internacional de 1929. As ruas e praças reproduzem edifícios de várias regiões de Espanha, com oficinas de artesanato e restaurantes."
+  },
+  {
+   "id": "bcn-columbus-monument",
+   "n": "Columbus Monument (Mirador de Colom)",
+   "a": "Port Vell",
+   "lat": 41.3758,
+   "lng": 2.1778,
+   "k": "landmark",
+   "en": "A tall column topped by a statue of Christopher Columbus, built for the 1888 Universal Exhibition at the bottom of La Rambla. A lift inside goes up to a small viewing platform.",
+   "pt": "Alta coluna encimada por uma estátua de Cristóvão Colombo, erguida para a Exposição Universal de 1888 no fundo da Rambla. Um elevador no interior sobe até um pequeno miradouro."
+  }
+ ],
+ "streets": [
+  {
+   "id": "bcn-rambla-catalunya",
+   "n": "Rambla de Catalunya",
+   "a": "Eixample",
+   "lat": 41.3915,
+   "lng": 2.1613,
+   "en": "A leafy, mostly pedestrian promenade running parallel to Passeig de Gràcia, lined with cafés, shops and Modernista buildings.",
+   "pt": "Passeio arborizado, em grande parte pedonal, paralelo ao Passeig de Gràcia, com cafés, lojas e edifícios modernistas."
+  },
+  {
+   "id": "bcn-gracia",
+   "n": "Gràcia",
+   "a": "Gràcia",
+   "lat": 41.4018,
+   "lng": 2.1569,
+   "en": "A former independent town absorbed by Barcelona in the late 19th century, with narrow streets and lively squares such as Plaça del Sol. Its Festa Major in August fills the streets with decorations.",
+   "pt": "Antiga vila independente integrada em Barcelona no final do século XIX, com ruas estreitas e praças animadas como a Plaça del Sol. A Festa Major, em agosto, enche as ruas de decorações."
+  },
+  {
+   "id": "bcn-el-born",
+   "n": "Passeig del Born",
+   "a": "El Born",
+   "lat": 41.3847,
+   "lng": 2.1829,
+   "en": "A short, wide promenade at the heart of El Born, surrounded by medieval lanes full of small shops, bars and restaurants.",
+   "pt": "Passeio curto e largo no coração do Born, rodeado de ruelas medievais cheias de pequenas lojas, bares e restaurantes."
+  },
+  {
+   "id": "bcn-raval",
+   "n": "Rambla del Raval",
+   "a": "El Raval",
+   "lat": 41.3785,
+   "lng": 2.1693,
+   "en": "A broad, palm-lined avenue in the multicultural Raval district, home to Fernando Botero's large bronze cat sculpture.",
+   "pt": "Avenida larga ladeada de palmeiras no multicultural bairro do Raval, onde se encontra o grande gato de bronze de Fernando Botero."
+  },
+  {
+   "id": "bcn-poblenou",
+   "n": "Rambla del Poblenou",
+   "a": "Poblenou",
+   "lat": 41.401,
+   "lng": 2.2006,
+   "en": "The tree-lined main street of Poblenou, a former industrial district, running about 1 km down towards the beach with plenty of terraces along the way.",
+   "pt": "A rua principal, arborizada, do Poblenou, antigo bairro industrial, que desce cerca de 1 km em direção à praia, com muitas esplanadas pelo caminho."
+  },
+  {
+   "id": "bcn-carrer-blai",
+   "n": "Carrer de Blai",
+   "a": "Poble-sec",
+   "lat": 41.3737,
+   "lng": 2.1645,
+   "en": "A pedestrian street at the foot of Montjuïc packed with pintxos bars, popular with locals for an evening of small bites.",
+   "pt": "Rua pedonal no sopé de Montjuïc repleta de bares de pintxos, muito procurada pelos locais para uma noite de petiscos."
+  }
+ ],
+ "walks": [
+  {
+   "id": "bcn-montjuic-walk",
+   "en_n": "Montjuïc: Plaça d'Espanya to the Castle",
+   "pt_n": "Montjuïc: da Plaça d'Espanya ao Castelo",
+   "km": 3.3,
+   "min": 50,
+   "en": "An uphill walk from Plaça d'Espanya past the Magic Fountain and the MNAC to the 1992 Olympic Stadium, the Miró Foundation and finally Montjuïc Castle, with city views along the way.",
+   "pt": "Um passeio a subir desde a Plaça d'Espanya, passando pela Fonte Mágica e pelo MNAC, até ao Estádio Olímpico de 1992, à Fundação Miró e, por fim, ao Castelo de Montjuïc, com vistas sobre a cidade pelo caminho.",
+   "pts": [
+    {
+     "n": "Plaça d'Espanya",
+     "lat": 41.375,
+     "lng": 2.149
+    },
+    {
+     "n": "Magic Fountain of Montjuïc",
+     "lat": 41.3712,
+     "lng": 2.1517
+    },
+    {
+     "n": "MNAC (Palau Nacional)",
+     "lat": 41.3684,
+     "lng": 2.1536
+    },
+    {
+     "n": "Estadi Olímpic Lluís Companys",
+     "lat": 41.3648,
+     "lng": 2.1556
+    },
+    {
+     "n": "Fundació Joan Miró",
+     "lat": 41.3686,
+     "lng": 2.1599
+    },
+    {
+     "n": "Montjuïc Castle",
+     "lat": 41.363,
+     "lng": 2.1651
+    }
+   ]
+  },
+  {
+   "id": "bcn-ciutadella-born-walk",
+   "en_n": "Arc de Triomf, Ciutadella and El Born",
+   "pt_n": "Arc de Triomf, Ciutadella e o Born",
+   "km": 2.3,
+   "min": 35,
+   "en": "From the Arc de Triomf through Parc de la Ciutadella to the Cascada fountain, then into El Born for the old market, the Picasso Museum, Santa Caterina market and the Palau de la Música.",
+   "pt": "Do Arc de Triomf, atravessando o Parc de la Ciutadella até à fonte da Cascada, e depois pelo Born: o antigo mercado, o Museu Picasso, o Mercado de Santa Caterina e o Palau de la Música.",
+   "pts": [
+    {
+     "n": "Arc de Triomf",
+     "lat": 41.391,
+     "lng": 2.1806
+    },
+    {
+     "n": "Cascada, Parc de la Ciutadella",
+     "lat": 41.3902,
+     "lng": 2.1866
+    },
+    {
+     "n": "El Born Centre de Cultura i Memòria",
+     "lat": 41.3857,
+     "lng": 2.1837
+    },
+    {
+     "n": "Museu Picasso",
+     "lat": 41.3852,
+     "lng": 2.1809
+    },
+    {
+     "n": "Mercat de Santa Caterina",
+     "lat": 41.3864,
+     "lng": 2.1782
+    },
+    {
+     "n": "Palau de la Música Catalana",
+     "lat": 41.3876,
+     "lng": 2.1753
+    }
+   ]
+  },
+  {
+   "id": "bcn-gracia-walk",
+   "en_n": "Gràcia squares to Park Güell",
+   "pt_n": "Praças de Gràcia até ao Park Güell",
+   "km": 3.4,
+   "min": 51,
+   "en": "From the top of Passeig de Gràcia into the village-like streets of Gràcia, linking its squares and Gaudí's Casa Vicens, then climbing to Park Güell.",
+   "pt": "Do topo do Passeig de Gràcia para as ruas com ar de aldeia de Gràcia, ligando as suas praças e a Casa Vicens de Gaudí, subindo depois até ao Park Güell.",
+   "pts": [
+    {
+     "n": "Jardinets de Gràcia",
+     "lat": 41.3969,
+     "lng": 2.1591
+    },
+    {
+     "n": "Plaça de la Vila de Gràcia",
+     "lat": 41.4004,
+     "lng": 2.1574
+    },
+    {
+     "n": "Plaça del Sol",
+     "lat": 41.4018,
+     "lng": 2.1569
+    },
+    {
+     "n": "Casa Vicens",
+     "lat": 41.4035,
+     "lng": 2.1506
+    },
+    {
+     "n": "Plaça de la Virreina",
+     "lat": 41.4048,
+     "lng": 2.1571
+    },
+    {
+     "n": "Park Güell",
+     "lat": 41.4145,
+     "lng": 2.1527
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,412 @@
+{
+ "places": [
+  {
+   "id": "mad-reina-sofia",
+   "n": "Museo Reina Sofía",
+   "a": "Atocha",
+   "lat": 40.4079,
+   "lng": -3.6946,
+   "k": "gallery",
+   "top": true,
+   "url": "https://www.museoreinasofia.es",
+   "en": "Spain's national museum of modern and contemporary art, set in a former hospital building. Its best-known work is Picasso's Guernica, alongside major pieces by Dalí and Miró.",
+   "pt": "O museu nacional espanhol de arte moderna e contemporânea, instalado num antigo edifício hospitalar. A obra mais conhecida é a Guernica de Picasso, ao lado de peças importantes de Dalí e Miró."
+  },
+  {
+   "id": "mad-thyssen",
+   "n": "Museo Nacional Thyssen-Bornemisza",
+   "a": "Paseo del Prado",
+   "lat": 40.416,
+   "lng": -3.6949,
+   "k": "gallery",
+   "top": true,
+   "url": "https://www.museothyssen.org",
+   "en": "A museum in the Villahermosa Palace built around the Thyssen-Bornemisza family collection, acquired by the Spanish state in 1993. It covers European art from the 13th to the 20th century.",
+   "pt": "Museu no Palácio de Villahermosa, construído em torno da coleção da família Thyssen-Bornemisza, adquirida pelo Estado espanhol em 1993. Abrange arte europeia do século XIII ao século XX."
+  },
+  {
+   "id": "mad-caixaforum",
+   "n": "CaixaForum Madrid",
+   "a": "Paseo del Prado",
+   "lat": 40.4111,
+   "lng": -3.6936,
+   "k": "gallery",
+   "en": "An exhibition centre in a former power station transformed by Herzog & de Meuron. Next to it is a large vertical garden by botanist Patrick Blanc.",
+   "pt": "Centro de exposições numa antiga central elétrica transformada por Herzog & de Meuron. Ao lado fica um grande jardim vertical do botânico Patrick Blanc."
+  },
+  {
+   "id": "mad-jardin-botanico",
+   "n": "Real Jardín Botánico",
+   "a": "Paseo del Prado",
+   "lat": 40.4111,
+   "lng": -3.6911,
+   "k": "park",
+   "url": "https://www.rjb.csic.es",
+   "en": "Madrid's royal botanical garden, moved to this site beside the Prado in the 1780s under King Carlos III. Its terraces hold thousands of plant species and historic greenhouses.",
+   "pt": "O jardim botânico real de Madrid, transferido para este local junto ao Prado na década de 1780, no reinado de Carlos III. Os seus socalcos reúnem milhares de espécies de plantas e estufas históricas."
+  },
+  {
+   "id": "mad-cibeles",
+   "n": "Palacio de Cibeles (CentroCentro)",
+   "a": "Cibeles",
+   "lat": 40.419,
+   "lng": -3.6921,
+   "k": "landmark",
+   "top": true,
+   "url": "https://www.centrocentro.org",
+   "en": "A grand white palace built as the city's main post office and now Madrid City Hall, overlooking the Cibeles fountain. Inside, the CentroCentro cultural space hosts exhibitions and a rooftop viewpoint.",
+   "pt": "Um grandioso palácio branco construído como estação central dos correios e hoje sede da Câmara Municipal de Madrid, virado para a fonte de Cibeles. No interior, o espaço cultural CentroCentro acolhe exposições e um miradouro no topo."
+  },
+  {
+   "id": "mad-puerta-alcala",
+   "n": "Puerta de Alcalá",
+   "a": "Retiro",
+   "lat": 40.42,
+   "lng": -3.6887,
+   "k": "landmark",
+   "top": true,
+   "en": "A neoclassical granite gateway designed by Francesco Sabatini for King Carlos III and completed in 1778. It stands in Plaza de la Independencia at the edge of Retiro Park.",
+   "pt": "Porta neoclássica em granito projetada por Francesco Sabatini para o rei Carlos III e concluída em 1778. Ergue-se na Plaza de la Independencia, à entrada do Parque do Retiro."
+  },
+  {
+   "id": "mad-bernabeu",
+   "n": "Santiago Bernabéu Stadium",
+   "a": "Chamartín",
+   "lat": 40.453,
+   "lng": -3.6884,
+   "k": "sight",
+   "top": true,
+   "en": "Real Madrid's home stadium since 1947, recently remodelled with a new outer skin and a retractable roof. The stadium tour includes the club's trophy museum.",
+   "pt": "O estádio do Real Madrid desde 1947, recentemente remodelado com uma nova fachada e uma cobertura amovível. A visita ao estádio inclui o museu de troféus do clube."
+  },
+  {
+   "id": "mad-san-francisco-grande",
+   "n": "Basílica de San Francisco el Grande",
+   "a": "La Latina",
+   "lat": 40.4105,
+   "lng": -3.7145,
+   "k": "church",
+   "en": "An 18th-century basilica whose huge dome is one of the largest in Spain. Inside are paintings by major Spanish artists, including an early work by Goya.",
+   "pt": "Basílica do século XVIII cuja enorme cúpula é uma das maiores de Espanha. No interior há pinturas de grandes artistas espanhóis, incluindo uma obra da juventude de Goya."
+  },
+  {
+   "id": "mad-descalzas-reales",
+   "n": "Monasterio de las Descalzas Reales",
+   "a": "Sol",
+   "lat": 40.4183,
+   "lng": -3.7065,
+   "k": "palace",
+   "url": "https://www.patrimonionacional.es",
+   "en": "A convent founded in the 16th century by Joanna of Austria, daughter of Emperor Charles V, still home to a community of nuns. Its rich art collection includes tapestries designed by Rubens and is shown on guided visits.",
+   "pt": "Convento fundado no século XVI por Joana de Áustria, filha do imperador Carlos V, ainda hoje habitado por uma comunidade de freiras. A rica coleção de arte inclui tapeçarias desenhadas por Rubens e mostra-se em visitas guiadas."
+  },
+  {
+   "id": "mad-el-rastro",
+   "n": "El Rastro",
+   "a": "La Latina",
+   "lat": 40.4108,
+   "lng": -3.7071,
+   "k": "market",
+   "top": true,
+   "free": true,
+   "en": "Madrid's famous open-air flea market, held on Sundays and public holidays around Plaza de Cascorro and the sloping Ribera de Curtidores. Stalls sell antiques, clothes, books and bric-a-brac.",
+   "pt": "A famosa feira da ladra de Madrid, ao ar livre, realizada aos domingos e feriados à volta da Plaza de Cascorro e da inclinada Ribera de Curtidores. As bancas vendem antiguidades, roupa, livros e velharias."
+  },
+  {
+   "id": "mad-mercado-san-anton",
+   "n": "Mercado de San Antón",
+   "a": "Chueca",
+   "lat": 40.4221,
+   "lng": -3.6977,
+   "k": "market",
+   "en": "A modern neighbourhood market in Chueca with fresh food stalls, tapas counters and a rooftop terrace.",
+   "pt": "Mercado de bairro moderno em Chueca, com bancas de produtos frescos, balcões de tapas e um terraço no topo."
+  },
+  {
+   "id": "mad-plaza-espana",
+   "n": "Plaza de España",
+   "a": "Centro",
+   "lat": 40.4236,
+   "lng": -3.7132,
+   "k": "landmark",
+   "en": "A large square at the end of Gran Vía with a monument to Cervantes and statues of Don Quixote and Sancho Panza. It is framed by two early skyscrapers, the Edificio España and the Torre de Madrid.",
+   "pt": "Grande praça no fim da Gran Vía, com um monumento a Cervantes e estátuas de D. Quixote e Sancho Pança. É ladeada por dois dos primeiros arranha-céus da cidade, o Edificio España e a Torre de Madrid."
+  },
+  {
+   "id": "mad-madrid-rio",
+   "n": "Madrid Río",
+   "a": "Arganzuela",
+   "lat": 40.3986,
+   "lng": -3.7147,
+   "k": "park",
+   "free": true,
+   "en": "A long riverside park along the Manzanares, created after the M-30 ring road was moved into tunnels. It has walking and cycling paths, playgrounds and modern footbridges.",
+   "pt": "Um longo parque ribeirinho ao longo do rio Manzanares, criado depois de a circular M-30 ter sido enterrada em túneis. Tem percursos pedonais e cicláveis, parques infantis e pontes pedonais modernas."
+  },
+  {
+   "id": "mad-museo-sorolla",
+   "n": "Museo Sorolla",
+   "a": "Chamberí",
+   "lat": 40.4354,
+   "lng": -3.6925,
+   "k": "gallery",
+   "en": "The former home and studio of the painter Joaquín Sorolla, kept much as he left it, with an Andalusian-style garden he designed himself. It holds the largest collection of his luminous paintings.",
+   "pt": "A antiga casa e atelier do pintor Joaquín Sorolla, mantida quase como ele a deixou, com um jardim de estilo andaluz que ele próprio desenhou. Guarda a maior coleção das suas luminosas pinturas."
+  },
+  {
+   "id": "mad-arqueologico",
+   "n": "Museo Arqueológico Nacional",
+   "a": "Salamanca",
+   "lat": 40.4233,
+   "lng": -3.6888,
+   "k": "museum",
+   "url": "https://www.man.es",
+   "en": "Spain's national archaeology museum, covering the Iberian Peninsula from prehistory to modern times. Its most famous piece is the Lady of Elche, an Iberian stone bust.",
+   "pt": "O museu nacional de arqueologia de Espanha, que percorre a Península Ibérica da pré-história aos tempos modernos. A peça mais famosa é a Dama de Elche, um busto ibérico em pedra."
+  },
+  {
+   "id": "mad-azotea-circulo",
+   "n": "Círculo de Bellas Artes Rooftop",
+   "a": "Centro",
+   "lat": 40.4183,
+   "lng": -3.6965,
+   "k": "view",
+   "en": "The rooftop terrace of the Círculo de Bellas Artes, a cultural centre in a building by Antonio Palacios on Calle de Alcalá. It gives classic views over Gran Vía and the city's domes.",
+   "pt": "O terraço no topo do Círculo de Bellas Artes, centro cultural num edifício de Antonio Palacios na Calle de Alcalá. Oferece vistas clássicas sobre a Gran Vía e as cúpulas da cidade."
+  },
+  {
+   "id": "mad-san-antonio-florida",
+   "n": "Ermita de San Antonio de la Florida",
+   "a": "Moncloa",
+   "lat": 40.4254,
+   "lng": -3.7256,
+   "k": "church",
+   "free": true,
+   "en": "A small neoclassical chapel whose dome Goya covered with frescoes in 1798. The painter is buried inside.",
+   "pt": "Pequena capela neoclássica cuja cúpula Goya cobriu de frescos em 1798. O pintor está sepultado no seu interior."
+  },
+  {
+   "id": "mad-plaza-villa",
+   "n": "Plaza de la Villa",
+   "a": "Madrid de los Austrias",
+   "lat": 40.4152,
+   "lng": -3.7105,
+   "k": "sight",
+   "en": "One of Madrid's oldest squares, surrounded by the 17th-century Casa de la Villa (the former city hall), the 15th-century Torre de los Lujanes and the Casa de Cisneros.",
+   "pt": "Uma das praças mais antigas de Madrid, rodeada pela Casa de la Villa do século XVII (antiga câmara municipal), pela Torre de los Lujanes do século XV e pela Casa de Cisneros."
+  },
+  {
+   "id": "mad-las-ventas",
+   "n": "Plaza de Toros de Las Ventas",
+   "a": "Salamanca",
+   "lat": 40.4321,
+   "lng": -3.6633,
+   "k": "landmark",
+   "en": "Spain's largest bullring, opened in 1931 and built in Neo-Mudéjar style with brick and ceramic tile decoration.",
+   "pt": "A maior praça de touros de Espanha, inaugurada em 1931 e construída em estilo neomudéjar, com decoração em tijolo e azulejo."
+  },
+  {
+   "id": "mad-museo-historia",
+   "n": "Museo de Historia de Madrid",
+   "a": "Malasaña",
+   "lat": 40.4257,
+   "lng": -3.7007,
+   "k": "museum",
+   "free": true,
+   "en": "The city history museum, housed in the former Royal Hospice of San Fernando with its elaborate Baroque doorway by Pedro de Ribera. Highlights include a detailed scale model of Madrid made in 1830.",
+   "pt": "O museu de história da cidade, instalado no antigo Real Hospício de San Fernando, com o elaborado portal barroco de Pedro de Ribera. Destaca-se uma maqueta detalhada de Madrid feita em 1830."
+  },
+  {
+   "id": "mad-matadero",
+   "n": "Matadero Madrid",
+   "a": "Arganzuela",
+   "lat": 40.3919,
+   "lng": -3.6979,
+   "k": "sight",
+   "url": "https://www.mataderomadrid.org",
+   "en": "A former municipal slaughterhouse beside Madrid Río, turned into a large contemporary arts and culture centre with exhibitions, theatre and cinema.",
+   "pt": "Antigo matadouro municipal junto ao Madrid Río, transformado num grande centro de artes e cultura contemporânea, com exposições, teatro e cinema."
+  }
+ ],
+ "streets": [
+  {
+   "id": "mad-barrio-letras",
+   "n": "Barrio de las Letras (Calle de las Huertas)",
+   "a": "Centro",
+   "lat": 40.4139,
+   "lng": -3.7001,
+   "en": "The Literary Quarter, once home to Cervantes, Lope de Vega and Quevedo. Quotes from their works are set into the paving of Calle de las Huertas, now lined with bars.",
+   "pt": "O Bairro das Letras, onde viveram Cervantes, Lope de Vega e Quevedo. Há citações das suas obras gravadas no pavimento da Calle de las Huertas, hoje cheia de bares."
+  },
+  {
+   "id": "mad-malasana",
+   "n": "Malasaña",
+   "a": "Centro",
+   "lat": 40.4267,
+   "lng": -3.7041,
+   "en": "A lively, bohemian district centred on Plaza del Dos de Mayo, known for vintage shops, cafés and the 1980s Movida madrileña scene.",
+   "pt": "Bairro animado e boémio centrado na Plaza del Dos de Mayo, conhecido pelas lojas vintage, pelos cafés e pela Movida madrileña dos anos 80."
+  },
+  {
+   "id": "mad-chueca",
+   "n": "Chueca",
+   "a": "Centro",
+   "lat": 40.4229,
+   "lng": -3.6976,
+   "en": "A colourful district around Plaza de Chueca, the heart of Madrid's LGBTQ+ community, full of independent shops, bars and restaurants.",
+   "pt": "Bairro colorido em torno da Plaza de Chueca, coração da comunidade LGBTQ+ de Madrid, cheio de lojas independentes, bares e restaurantes."
+  },
+  {
+   "id": "mad-cava-baja",
+   "n": "Calle de la Cava Baja",
+   "a": "La Latina",
+   "lat": 40.4125,
+   "lng": -3.709,
+   "en": "A narrow street in La Latina lined with traditional taverns and tapas bars, at its busiest in the evening and on Sundays.",
+   "pt": "Rua estreita da La Latina repleta de tabernas tradicionais e bares de tapas, mais animada ao fim do dia e aos domingos."
+  },
+  {
+   "id": "mad-lavapies",
+   "n": "Lavapiés",
+   "a": "Centro",
+   "lat": 40.4088,
+   "lng": -3.7013,
+   "en": "One of Madrid's most multicultural neighbourhoods, with steep streets, old corrala tenement buildings and a wide choice of international food around Plaza de Lavapiés.",
+   "pt": "Um dos bairros mais multiculturais de Madrid, com ruas inclinadas, antigos prédios de corrala e grande variedade de comida internacional à volta da Plaza de Lavapiés."
+  },
+  {
+   "id": "mad-serrano",
+   "n": "Calle de Serrano",
+   "a": "Salamanca",
+   "lat": 40.426,
+   "lng": -3.6877,
+   "en": "The main shopping street of the elegant Salamanca district, home to Spanish and international fashion brands.",
+   "pt": "A principal rua comercial do elegante bairro de Salamanca, com marcas de moda espanholas e internacionais."
+  }
+ ],
+ "walks": [
+  {
+   "id": "mad-paseo-arte-walk",
+   "en_n": "Paseo del Arte: Puerta de Alcalá to Reina Sofía",
+   "pt_n": "Paseo del Arte: da Puerta de Alcalá ao Reina Sofía",
+   "km": 2.2,
+   "min": 35,
+   "en": "Along Madrid's great art boulevard, from the Puerta de Alcalá and Cibeles past the Thyssen, CaixaForum and the Botanical Garden to the Reina Sofía.",
+   "pt": "Pelo grande eixo das artes de Madrid, da Puerta de Alcalá e de Cibeles, passando pelo Thyssen, pelo CaixaForum e pelo Jardim Botânico, até ao Reina Sofía.",
+   "pts": [
+    {
+     "n": "Puerta de Alcalá",
+     "lat": 40.42,
+     "lng": -3.6887
+    },
+    {
+     "n": "Plaza de Cibeles",
+     "lat": 40.4193,
+     "lng": -3.6931
+    },
+    {
+     "n": "Museo Thyssen-Bornemisza",
+     "lat": 40.416,
+     "lng": -3.6949
+    },
+    {
+     "n": "CaixaForum Madrid",
+     "lat": 40.4111,
+     "lng": -3.6936
+    },
+    {
+     "n": "Real Jardín Botánico",
+     "lat": 40.4111,
+     "lng": -3.6911
+    },
+    {
+     "n": "Museo Reina Sofía",
+     "lat": 40.4079,
+     "lng": -3.6946
+    }
+   ]
+  },
+  {
+   "id": "mad-latina-rastro-walk",
+   "en_n": "Old Madrid: Plaza de la Villa to Lavapiés",
+   "pt_n": "Madrid antiga: da Plaza de la Villa a Lavapiés",
+   "km": 2.2,
+   "min": 35,
+   "en": "Through the oldest part of the city: Plaza de la Villa, Plaza de la Paja and San Francisco el Grande, then the taverns of Cava Baja, the Rastro area and down to Lavapiés.",
+   "pt": "Pela zona mais antiga da cidade: Plaza de la Villa, Plaza de la Paja e San Francisco el Grande, depois as tabernas da Cava Baja, a zona do Rastro e a descida até Lavapiés.",
+   "pts": [
+    {
+     "n": "Plaza de la Villa",
+     "lat": 40.4152,
+     "lng": -3.7105
+    },
+    {
+     "n": "Plaza de la Paja",
+     "lat": 40.4129,
+     "lng": -3.7114
+    },
+    {
+     "n": "Basílica de San Francisco el Grande",
+     "lat": 40.4105,
+     "lng": -3.7145
+    },
+    {
+     "n": "Calle de la Cava Baja",
+     "lat": 40.4125,
+     "lng": -3.709
+    },
+    {
+     "n": "Plaza de Cascorro (El Rastro)",
+     "lat": 40.4108,
+     "lng": -3.7071
+    },
+    {
+     "n": "Plaza de Lavapiés",
+     "lat": 40.4088,
+     "lng": -3.7013
+    }
+   ]
+  },
+  {
+   "id": "mad-malasana-chueca-walk",
+   "en_n": "Malasaña and Chueca",
+   "pt_n": "Malasaña e Chueca",
+   "km": 2.5,
+   "min": 38,
+   "en": "From Plaza de España into the streets of Malasaña and Chueca, via the city history museum and San Antón market, ending at the Círculo de Bellas Artes rooftop.",
+   "pt": "Da Plaza de España pelas ruas de Malasaña e Chueca, passando pelo museu de história da cidade e pelo Mercado de San Antón, terminando no terraço do Círculo de Bellas Artes.",
+   "pts": [
+    {
+     "n": "Plaza de España",
+     "lat": 40.4236,
+     "lng": -3.7132
+    },
+    {
+     "n": "Plaza del Dos de Mayo",
+     "lat": 40.4267,
+     "lng": -3.7041
+    },
+    {
+     "n": "Museo de Historia de Madrid",
+     "lat": 40.4257,
+     "lng": -3.7007
+    },
+    {
+     "n": "Plaza de Chueca",
+     "lat": 40.4229,
+     "lng": -3.6976
+    },
+    {
+     "n": "Mercado de San Antón",
+     "lat": 40.4221,
+     "lng": -3.6977
+    },
+    {
+     "n": "Círculo de Bellas Artes",
+     "lat": 40.4183,
+     "lng": -3.6965
+    }
+   ]
+  }
+ ]
+}
