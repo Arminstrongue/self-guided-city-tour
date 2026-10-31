@@ -3,7 +3,7 @@ import { useDict } from "@/i18n/client-dict";
 import { useEffect, useState } from "react";
 import type { Dict, Locale } from "@/i18n/dictionaries";
 import { INTL_LOCALE } from "@/i18n/core";
-import { MAX_OPTIONS, MAX_PHOTOS, bookKind } from "@/lib/booking";
+import { MAX_OPTIONS, MAX_PHOTOS, bookKind } from "@/lib/booking-core";
 import { shrink } from "@/lib/photo-shrink";
 
 type CityOpt = { id: string; name: string; stops: { id: string; name: string; lat: number; lng: number }[] };

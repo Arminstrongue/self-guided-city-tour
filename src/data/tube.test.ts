@@ -21,3 +21,8 @@ test("tube: Victoria line and a change at Euston", () => {
   assert.deepEqual(c.legs.map((l) => l.line), ["northern", "victoria"]); assert.equal(c.legs[0].to, "Euston");
 });
 test("tube: unknown station → null", () => { assert.equal(tubeAdvice("Atlantis", "Bank"), null); });
+test("tube: Battersea Power Station only via Charing Cross (from the Bank branch: change at Kennington)", () => {
+  const a = tubeAdvice("London Bridge", "Nine Elms")!;
+  assert.equal(a.legs.length, 2); assert.equal(a.legs[0].to, "Kennington");
+  assert.equal(tubeAdvice("Waterloo", "Nine Elms")!.legs.length, 1);
+});

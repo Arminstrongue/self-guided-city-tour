@@ -60,6 +60,16 @@ async function progressNote(title: string, body: string, id: number) {
     }
   } catch { /* ignorar */ }
 }
+async function clearProgress(id: number) {
+  try {
+    if (isNative()) { const { LocalNotifications } = await import("@capacitor/local-notifications"); await LocalNotifications.cancel({ notifications: [{ id }] }); }
+    else { const reg = await navigator.serviceWorker?.getRegistration(); (await reg?.getNotifications({ tag: "voybu-journey" }))?.forEach((n) => n.close()); }
+  } catch { /* ignorar */ }
+}
+/** Pedir licença para notificações num toque do viajante (o iPhone só aceita assim nas apps web). */
+export function askNotify() {
+  try { if (!isNative() && "Notification" in window && Notification.permission === "default") void Notification.requestPermission().catch(() => null); } catch { /* ignorar */ }
+}
 async function alertNote(title: string, body: string, id: number) {
   try {
     if (isNative()) {
@@ -75,6 +85,7 @@ async function alertNote(title: string, body: string, id: number) {
 export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onClose: () => void }) {
   const j = t.jf;
   const legs = r.journey?.legs ?? [];
+  const [now, setNow] = useState(() => Date.now());
   // Atraso indicado pelo viajante (sem dados em tempo real): desloca todas as horas e os avisos.
   const [manual, setDelay] = useState<number>(() => { try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as { id: string; delay?: number } | null; return x?.id === r.id ? x.delay ?? 0 : 0; } catch { return 0; } });
   const base = useMemo(() => legDates(r), [r]);
@@ -83,24 +94,32 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   // Tempo real da National Rail (quando o servidor tem a chave): atraso oficial tem prioridade sobre o estimado pelo GPS.
   const [live, setLive] = useState<{ delay: number | null; etd: string; platform: string | null; cancelled: boolean; reason: string | null; messages: string[]; at: string } | null>(null);
   const delay = manual > 0 ? manual : live?.delay != null ? live.delay : auto;
-  const ld = useMemo(() => base.map((d) => ({ dep: new Date(d.dep.getTime() + delay * 60_000), arr: new Date(d.arr.getTime() + delay * 60_000) })), [base, delay]);
+  // O atraso só se aplica ao troço em curso (e aos anteriores): a ligação seguinte mantém o horário (não espera por nós).
+  const ld = useMemo(() => {
+    const sh = (d: Date) => new Date(d.getTime() + delay * 60_000);
+    const t0 = Date.now();
+    let act = base.findIndex((d) => sh(d.arr).getTime() + 60_000 > t0);
+    if (act < 0) act = base.length - 1;
+    return base.map((d, i) => (i <= act ? { dep: sh(d.dep), arr: sh(d.arr) } : d));
+  }, [base, delay, now]); // eslint-disable-line react-hooks/exhaustive-deps
   const stops = useMemo(() => stopsOf(r), [r]);
   const prefs = useTransitPrefs();
-  const [now, setNow] = useState(() => Date.now());
   const [pos, setPos] = useState<Pos | null>(null);
   const [gps, setGps] = useState<"wait" | "on" | "off">("wait");
   const [keepOn, setKeepOn] = useState(true);
   const [lockOk, setLockOk] = useState(false);
   const [showPrefs, setShowPrefs] = useState(false);
   const passed = useRef<number[]>(legs.map(() => 0));   // maior índice de paragem já passada, por troço (nunca recua)
-  const alerted = useRef<Set<string>>(new Set());
+  const alerted = useRef<Set<string>>(new Set((() => { try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as { id: string; alerted?: string[] } | null; return x?.id === r.id ? x.alerted ?? [] : []; } catch { return []; } })()));
+  const ended = useRef(false);
   const noteId = notifId(`${r.id}:jf`);
   const tz = r.tz;
 
   // Guardar "em curso" (retomar ao reabrir) e agendar avisos no sistema (tocam com o ecrã desligado, na app instalada).
   useEffect(() => {
     const until = (ld[ld.length - 1]?.arr.getTime() ?? Date.now()) + 30 * 60_000;
-    try { localStorage.setItem(KEY, JSON.stringify({ id: r.id, until, delay })); } catch { /* ignorar */ }
+    if (ended.current) return;
+    try { localStorage.setItem(KEY, JSON.stringify({ id: r.id, until, delay: manual, alerted: [...alerted.current] })); } catch { /* ignorar */ }
     void (async () => {
       if (isNative()) {
         try {
@@ -121,7 +140,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
         void Notification.requestPermission().catch(() => null);
       }
     })();
-  }, [r.id, delay]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [r.id, delay, manual]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Atraso automático: projeta a posição na linha (paragens com coordenadas) e compara com a hora prevista nesse ponto.
   useEffect(() => {
@@ -229,17 +248,19 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
   const sub = phase.k === "ride" && ride ? fmt(ride.left === 1 ? j.stop1 : j.stopsMin, { n: ride.left, m: ride.min })
     : phase.k === "change" ? fmt(j.changeNext, { t: hm(ld[phase.i + 1].dep, tz), p: legs[phase.i + 1].pf ? ` · ${t.pf.short} ${legs[phase.i + 1].pf}` : "", m: minsTo(ld[phase.i + 1].dep, now) })
     : phase.k === "before" ? fmt(j.departsIn, { m: minsTo(ld[0].dep, now), t: ld[0] ? hm(ld[0].dep, tz) : "" }) : "";
-  useEffect(() => { if (phase.k !== "done") void progressNote(`🚆 ${title}`, sub, noteId); }, [title, sub]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { if (phase.k !== "done") void progressNote(`🚆 ${title}`, sub, noteId); else void clearProgress(noteId); }, [title, sub, phase.k]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!ride?.getOff) return;
     const key = `off${ride.i}`;
     if (alerted.current.has(key)) return;
     alerted.current.add(key);
+    try { const x = JSON.parse(localStorage.getItem(KEY) ?? "null") as Record<string, unknown> | null; if (x) localStorage.setItem(KEY, JSON.stringify({ ...x, alerted: [...alerted.current] })); } catch { /* ignorar */ }
     try { navigator.vibrate?.([200, 100, 200, 100, 200]); } catch { /* ignorar */ }
-    void alertNote(`🚉 ${fmt(j.getOffNext, { s: legs[ride.i].to })}`, legs[ride.i + 1] ? fmt(j.change, { s: legs[ride.i].to }) : j.pfCheck, notifId(`${r.id}:jf-now${ride.i}`));
+    void alertNote(`🚉 ${fmt(j.getOffNext, { s: legs[ride.i].to })}`, legs[ride.i + 1] ? fmt(j.change, { s: legs[ride.i].to }) : j.pfCheck, notifId(`${r.id}:jf-off${ride.i}`));
   }, [ride?.getOff, ride?.i]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const end = async () => {
+    ended.current = true;
     try { localStorage.removeItem(KEY); localStorage.removeItem("sgct:jf-adhoc"); } catch { /* ignorar */ }
     try {
       if (isNative()) {
@@ -346,7 +367,7 @@ export function JourneyFollow({ r, t, onClose }: { r: Reservation; t: Dict; onCl
         {phase.k !== "done" && (
           <div className="jf-late" role="group" aria-label={j.late}>
             <span>⏱ {j.late}</span>
-            {[5, 10, 15].map((m) => <button key={m} type="button" className="chip press num" onClick={() => setDelay((d) => Math.min(180, (d || auto) + m))}>+{m}</button>)}
+            {[5, 10, 15].map((m) => <button key={m} type="button" className="chip press num" onClick={() => setDelay(Math.min(180, delay + m))}>+{m}</button>)}
             {manual > 0 && <button type="button" className="link-btn" onClick={() => setDelay(0)}>{j.onTime}</button>}
           </div>
         )}

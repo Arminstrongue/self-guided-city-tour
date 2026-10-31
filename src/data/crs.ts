@@ -10,3 +10,5 @@ const CRS: Record<string, string> = {
   "stafford": "STA", "lancaster": "LAN", "newcastle": "NCL"
 };
 export const crsOf = (name: string | undefined | null) => (name ? CRS[normStation(name)] ?? null : null);
+
+export const KNOWN_CRS = new Set(Object.values(CRS));

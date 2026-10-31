@@ -16,7 +16,8 @@ const N_BPS = ["Nine Elms", "Battersea Power Station"];
 const VIC = ["Walthamstow Central", "Blackhorse Road", "Tottenham Hale", "Seven Sisters", "Finsbury Park", "Highbury & Islington", "King's Cross St. Pancras", "Euston", "Warren Street", "Oxford Circus", "Green Park", "Victoria", "Pimlico", "Vauxhall", "Stockwell", "Brixton"];
 
 const PATHS: Path[] = [];
-for (const north of [N_EDG, N_HB, N_MHE]) for (const [via, mid] of [["cx", N_CX], ["bank", N_BANK]] as const) for (const south of [N_MOR, N_BPS]) {
+// Os comboios para Battersea Power Station vão só pelo ramal de Charing Cross.
+for (const north of [N_EDG, N_HB, N_MHE]) for (const [via, mid] of [["cx", N_CX], ["bank", N_BANK]] as const) for (const south of via === "cx" ? [N_MOR, N_BPS] : [N_MOR]) {
   PATHS.push({ line: "northern", via, st: [...north, ...mid, ...south] });
 }
 PATHS.push({ line: "victoria", st: VIC });

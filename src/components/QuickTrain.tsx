@@ -9,6 +9,7 @@ import type { Reservation } from "@/lib/trip-local";
 import { LINE_STATIONS, normStation } from "@/data/rail-lines";
 import { RAIL_STATIONS, STATIONS_WITH_COORDS } from "@/data/rail-stations";
 import Portal from "./Portal";
+import { askNotify } from "./JourneyFollow";
 import { SheetX } from "./WinNav";
 
 export const ADHOC_KEY = "sgct:jf-adhoc";
@@ -63,9 +64,10 @@ export function QuickTrain({ t, onStart, onClose }: { t: Dict; onStart: (r: Rese
       arrHm = hhmm(new Date(now.getTime() + min * 60_000), tz);
     }
     // A partida "agora" (ou há pouco): a localização corrige o resto.
-    const dep = hhmm(new Date(now.getTime() - 60_000), tz);
+    const depD = new Date(now.getTime() - 60_000);
+    const dep = hhmm(depD, tz);
     const r: Reservation = {
-      id: `adhoc-${now.getTime()}`, kind: "transport", title: `🚆 ${from} → ${to}`, city: "", localAt: `${ymd(now, tz)}T${dep}`, tz,
+      id: `adhoc-${now.getTime()}`, kind: "transport", title: `🚆 ${from} → ${to}`, city: "", localAt: `${ymd(depD, tz)}T${dep}`, tz,
       startsAt: new Date(now.getTime() - 60_000).toISOString(), place: "", lat: null, lng: null, ref: "", notes: arr ? "" : j.qtEst, photo: "", photos: [], paid: true,
       journey: { legs: [{ from, to, dep, arr: arrHm, op: op || undefined }] }
     };
@@ -87,7 +89,7 @@ export function QuickTrain({ t, onStart, onClose }: { t: Dict; onStart: (r: Rese
         <div className="field"><label htmlFor="qt-arr">{j.qtArr}</label><input id="qt-arr" type="time" value={arr} onChange={(e) => setArr(e.target.value)} /></div>
         <small className="hint">{j.qtHint}</small>
         {err && <p className="err" role="alert">{err}</p>}
-        <button type="button" className="btn press jf-start" onClick={start}>▶ {j.start}</button>
+        <button type="button" className="btn press jf-start" onClick={() => { askNotify(); start(); }}>▶ {j.start}</button>
       </div>
     </div></Portal>
   );
